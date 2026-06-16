@@ -1,0 +1,102 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  docs:
+    name: Validate repository structure
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check required documentation
+        run: |
+          test -f README.md
+          test -f PROMPT_FOR_CODEX.md
+          test -f docs/00_README_CODEX.md
+          test -f docs/11_CODEX_TASKS.md
+
+  backend:
+    name: Backend build and tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check backend existence
+        id: backend-check
+        run: |
+          if [ -f backend/pom.xml ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Java
+        if: steps.backend-check.outputs.exists == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Run backend tests
+        if: steps.backend-check.outputs.exists == 'true'
+        working-directory: backend
+        run: mvn clean verify
+
+      - name: Skip backend
+        if: steps.backend-check.outputs.exists == 'false'
+        run: echo "backend/pom.xml not found yet. Backend CI will run when the backend project exists."
+
+  frontend:
+    name: Frontend build and tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check frontend existence
+        id: frontend-check
+        run: |
+          if [ -f frontend/package.json ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Node
+        if: steps.frontend-check.outputs.exists == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        if: steps.frontend-check.outputs.exists == 'true'
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run frontend tests
+        if: steps.frontend-check.outputs.exists == 'true'
+        working-directory: frontend
+        run: npm test -- --watch=false
+
+      - name: Build frontend
+        if: steps.frontend-check.outputs.exists == 'true'
+        working-directory: frontend
+        run: npm run build
+
+      - name: Skip frontend
+        if: steps.frontend-check.outputs.exists == 'false'
+        run: echo "frontend/package.json not found yet. Frontend CI will run when the frontend project exists."
