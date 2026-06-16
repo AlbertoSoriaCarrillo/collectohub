@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: ${TEST_DATABASE_URL:jdbc:tc:postgresql:17-alpine:///collectohub_test}
+    username: ${TEST_DATABASE_USERNAME:collectohub}
+    password: ${TEST_DATABASE_PASSWORD:collectohub}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    enabled: true

@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:127.0.0.1}:${POSTGRES_PORT:5432}/${POSTGRES_DB:collectohub}
+    username: ${POSTGRES_USER:collectohub}
+    password: ${POSTGRES_PASSWORD:collectohub_local_password}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    enabled: true
+
+logging:
+  level:
+    liquibase: info
+    org.springframework.boot.liquibase: debug

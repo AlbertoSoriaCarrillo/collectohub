@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 000-initial-backend-baseline
+      author: codex
+      comment: Initial empty baseline prepared for future CollectoHub migrations.
+      changes:
+        - tagDatabase:
+            tag: initial-backend-baseline
+  - include:
+      file: db/changelog/changes/001-create-mvp-schema.sql
+  - include:
+      file: db/changelog/changes/002-seed-reference-data.sql
