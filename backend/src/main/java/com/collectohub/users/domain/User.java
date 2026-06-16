@@ -119,7 +119,13 @@ public class User {
         return STATUS_ACTIVE.equals(status) && deletedAt == null;
     }
 
+    public boolean hasRole(String code) {
+        return roles.stream().anyMatch(role -> role.getCode().equals(code));
+    }
+
     public void addRole(Role role) {
-        roles.add(role);
+        if (!hasRole(role.getCode())) {
+            roles.add(role);
+        }
     }
 }

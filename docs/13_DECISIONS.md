@@ -89,8 +89,8 @@
 - Motivo: la API de esta fase define el pais de tienda como opcional inicialmente y no hay un pais por defecto universal seguro.
 - Decision: usar `EUR` y 48 horas como valores por defecto configurables para tiendas.
 - Motivo: coincide con el MVP de reservas sin pago y permite cambiar defaults por entorno mediante variables.
-- Decision: no asignar automaticamente el rol global `SHOP_OWNER` al crear una tienda en esta fase.
-- Motivo: la propiedad operativa de tienda queda representada por `shop_members` con rol interno `OWNER`; la autorizacion global por rol queda para una fase posterior.
+- Decision: asignar automaticamente el rol global `SHOP_OWNER` cuando un usuario crea una tienda y todavia no tiene ese rol.
+- Motivo: los roles globales son acumulables; `SHOP_OWNER` identifica capacidad global de gestionar tiendas, mientras que `shop_members.OWNER` define permisos dentro de una tienda concreta.
 
 ## 2026-06-16 - Edad recomendada
 

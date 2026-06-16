@@ -91,3 +91,13 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Anadidos tests unitarios y MVC para creacion, seguridad sin token, miembro OWNER automatico, listado de tiendas propias, bloqueo de tienda ajena, actualizacion por propietario y validaciones.
 - Ejecutado `.\mvnw.cmd clean verify`.
 - Resultado: build correcto; 27 tests totales, 25 ejecutados correctamente y 2 saltados por no estar Docker instalado.
+
+## 2026-06-17 - Ajuste de rol global SHOP_OWNER
+
+- Modificada la creacion de tienda para asignar el rol global `SHOP_OWNER` al usuario si todavia no lo tiene.
+- Mantenida la creacion automatica del `shop_member` con rol interno `OWNER`.
+- Anadida comprobacion para no duplicar roles globales si el usuario ya tiene `SHOP_OWNER`.
+- Anadidos tests para primera tienda, usuario que ya tiene `SHOP_OWNER` y continuidad de creacion de `shop_member OWNER`.
+- Actualizada la decision previa de EPIC 4 sobre rol global `SHOP_OWNER`.
+- Ejecutado `.\mvnw.cmd clean verify`.
+- Resultado: build correcto; 29 tests totales, 27 ejecutados correctamente y 2 saltados por no estar Docker instalado.

@@ -11,6 +11,7 @@ import com.collectohub.shops.infrastructure.ShopMemberRepository;
 import com.collectohub.shops.infrastructure.ShopRepository;
 import com.collectohub.users.domain.Role;
 import com.collectohub.users.domain.User;
+import com.collectohub.users.infrastructure.RoleRepository;
 import com.collectohub.users.infrastructure.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -42,6 +44,9 @@ class ShopServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private RoleRepository roleRepository;
+
     private ShopService shopService;
 
     private User owner;
@@ -53,6 +58,7 @@ class ShopServiceTest {
                 shopRepository,
                 shopMemberRepository,
                 userRepository,
+                roleRepository,
                 new ShopProperties("EUR", 48)
         );
         owner = user(42L, "owner@example.com");
@@ -62,6 +68,7 @@ class ShopServiceTest {
     @Test
     void authenticatedUserCreatesShopAndOwnerMember() {
         when(userRepository.findById(42L)).thenReturn(Optional.of(owner));
+        when(roleRepository.findByCode("SHOP_OWNER")).thenReturn(Optional.of(new Role("SHOP_OWNER", "Shop owner")));
         when(shopRepository.save(any(Shop.class))).thenAnswer(invocation -> withId(invocation.getArgument(0), 100L));
         when(shopMemberRepository.save(any(ShopMember.class))).thenAnswer(invocation -> withId(invocation.getArgument(0), 200L));
 
@@ -83,6 +90,7 @@ class ShopServiceTest {
         assertThat(response.currency()).isEqualTo("EUR");
         assertThat(response.defaultReservationExpirationHours()).isEqualTo(48);
         assertThat(response.currentUserMembership().role()).isEqualTo("OWNER");
+        assertThat(owner.getRoles()).extracting(Role::getCode).containsExactlyInAnyOrder("USER", "SHOP_OWNER");
 
         ArgumentCaptor<ShopMember> memberCaptor = ArgumentCaptor.forClass(ShopMember.class);
         verify(shopMemberRepository).save(memberCaptor.capture());
@@ -90,6 +98,50 @@ class ShopServiceTest {
         assertThat(member.getUser().getId()).isEqualTo(42L);
         assertThat(member.getShop().getId()).isEqualTo(100L);
         assertThat(member.getRole()).isEqualTo(ShopMemberRole.OWNER);
+    }
+
+    @Test
+    void firstShopCreationAssignsGlobalShopOwnerRole() {
+        when(userRepository.findById(42L)).thenReturn(Optional.of(owner));
+        when(roleRepository.findByCode("SHOP_OWNER")).thenReturn(Optional.of(new Role("SHOP_OWNER", "Shop owner")));
+        when(shopRepository.save(any(Shop.class))).thenAnswer(invocation -> withId(invocation.getArgument(0), 100L));
+        when(shopMemberRepository.save(any(ShopMember.class))).thenAnswer(invocation -> withId(invocation.getArgument(0), 200L));
+
+        shopService.createShop(authenticatedOwner, new CreateShopRequest(
+                "Collector Cave",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        ));
+
+        assertThat(owner.getRoles()).extracting(Role::getCode).containsExactlyInAnyOrder("USER", "SHOP_OWNER");
+    }
+
+    @Test
+    void shopOwnerGlobalRoleIsNotDuplicatedWhenAlreadyPresent() {
+        owner.addRole(new Role("SHOP_OWNER", "Shop owner"));
+        when(userRepository.findById(42L)).thenReturn(Optional.of(owner));
+        when(shopRepository.save(any(Shop.class))).thenAnswer(invocation -> withId(invocation.getArgument(0), 100L));
+        when(shopMemberRepository.save(any(ShopMember.class))).thenAnswer(invocation -> withId(invocation.getArgument(0), 200L));
+
+        shopService.createShop(authenticatedOwner, new CreateShopRequest(
+                "Collector Cave",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        ));
+
+        assertThat(owner.getRoles()).extracting(Role::getCode)
+                .containsExactlyInAnyOrder("USER", "SHOP_OWNER");
+        verify(roleRepository, never()).findByCode("SHOP_OWNER");
     }
 
     @Test

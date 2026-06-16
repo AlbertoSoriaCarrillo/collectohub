@@ -10,7 +10,10 @@ import com.collectohub.shops.dto.ShopResponse;
 import com.collectohub.shops.dto.UpdateShopRequest;
 import com.collectohub.shops.infrastructure.ShopMemberRepository;
 import com.collectohub.shops.infrastructure.ShopRepository;
+import com.collectohub.auth.application.RoleNotConfiguredException;
+import com.collectohub.users.domain.Role;
 import com.collectohub.users.domain.User;
+import com.collectohub.users.infrastructure.RoleRepository;
 import com.collectohub.users.infrastructure.UserRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -27,27 +30,32 @@ public class ShopService {
             ShopMemberRole.OWNER,
             ShopMemberRole.MANAGER
     );
+    private static final String SHOP_OWNER_GLOBAL_ROLE = "SHOP_OWNER";
 
     private final ShopRepository shopRepository;
     private final ShopMemberRepository shopMemberRepository;
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final ShopProperties shopProperties;
 
     public ShopService(
             ShopRepository shopRepository,
             ShopMemberRepository shopMemberRepository,
             UserRepository userRepository,
+            RoleRepository roleRepository,
             ShopProperties shopProperties
     ) {
         this.shopRepository = shopRepository;
         this.shopMemberRepository = shopMemberRepository;
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.shopProperties = shopProperties;
     }
 
     @Transactional
     public ShopResponse createShop(AuthenticatedUser authenticatedUser, CreateShopRequest request) {
         User owner = currentUser(authenticatedUser);
+        ensureShopOwnerGlobalRole(owner);
         Shop shop = Shop.create(
                 owner,
                 normalizeRequired(request.name()),
@@ -65,6 +73,15 @@ public class ShopService {
         Shop savedShop = shopRepository.save(shop);
         ShopMember ownerMember = shopMemberRepository.save(ShopMember.owner(savedShop, owner));
         return ShopResponse.from(savedShop, ownerMember);
+    }
+
+    private void ensureShopOwnerGlobalRole(User owner) {
+        if (owner.hasRole(SHOP_OWNER_GLOBAL_ROLE)) {
+            return;
+        }
+        Role shopOwnerRole = roleRepository.findByCode(SHOP_OWNER_GLOBAL_ROLE)
+                .orElseThrow(() -> new RoleNotConfiguredException(SHOP_OWNER_GLOBAL_ROLE));
+        owner.addRole(shopOwnerRole);
     }
 
     @Transactional(readOnly = true)
