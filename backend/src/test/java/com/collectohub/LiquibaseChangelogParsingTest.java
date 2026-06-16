@@ -25,7 +25,9 @@ class LiquibaseChangelogParsingTest {
                 .contains(
                         "000-initial-backend-baseline",
                         "001-create-mvp-schema",
-                        "002-seed-reference-data"
+                        "002-seed-reference-data",
+                        "003-create-refresh-tokens",
+                        "004-alter-shops-country-nullable"
                 );
     }
 }

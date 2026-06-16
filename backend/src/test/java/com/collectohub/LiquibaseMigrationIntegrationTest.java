@@ -33,7 +33,8 @@ class LiquibaseMigrationIntegrationTest {
             "shop_products",
             "collections",
             "collection_items",
-            "reservations"
+            "reservations",
+            "refresh_tokens"
     );
 
     private static final List<String> REQUIRED_INDEXES = List.of(
@@ -52,7 +53,10 @@ class LiquibaseMigrationIntegrationTest {
             "idx_collection_items_master_product_id",
             "idx_reservations_user_id",
             "idx_reservations_shop_id",
-            "idx_reservations_status"
+            "idx_reservations_status",
+            "uk_refresh_tokens_token_hash",
+            "idx_refresh_tokens_user_id",
+            "idx_refresh_tokens_expires_at"
     );
 
     private static final List<String> REQUIRED_CONSTRAINTS = List.of(
@@ -67,7 +71,9 @@ class LiquibaseMigrationIntegrationTest {
             "fk_shop_products_master_product",
             "fk_reservations_user",
             "fk_reservations_shop",
-            "fk_reservations_shop_product"
+            "fk_reservations_shop_product",
+            "uk_refresh_tokens_token_hash",
+            "fk_refresh_tokens_user"
     );
 
     @Container

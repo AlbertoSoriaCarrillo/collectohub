@@ -69,6 +69,29 @@
 - Decision: incluir `org.springframework.boot:spring-boot-liquibase` ademas de `org.liquibase:liquibase-core`.
 - Motivo: en Spring Boot 4 la autoconfiguracion de Liquibase esta en un modulo separado; `liquibase-core` por si solo no registra `LiquibaseAutoConfiguration`.
 
+## 2026-06-16 - Autenticacion JWT
+
+- Decision: usar `org.springframework.security:spring-security-oauth2-jose` para firmar y validar JWT HS256.
+- Motivo: evita implementar JWT manualmente y mantiene la seguridad dentro del stack de Spring Security.
+- Decision: exigir `JWT_SECRET` de al menos 32 bytes y actualizar el valor local de ejemplo.
+- Motivo: HS256 requiere una clave suficiente; el valor por defecto es solo para desarrollo local y debe cambiarse fuera de local.
+- Decision: normalizar emails a minusculas durante registro y login.
+- Motivo: evita duplicados logicos por diferencias de mayusculas aunque PostgreSQL trate `email` como texto sensible a mayusculas.
+
+## 2026-06-16 - Refresh tokens
+
+- Decision: crear tabla `refresh_tokens` y almacenar solo hash SHA-256 del refresh token opaco.
+- Motivo: prepara refresh/logout futuros sin guardar tokens reutilizables en claro en base de datos.
+
+## 2026-06-16 - Tiendas MVP
+
+- Decision: hacer nullable `shops.country` mediante Liquibase.
+- Motivo: la API de esta fase define el pais de tienda como opcional inicialmente y no hay un pais por defecto universal seguro.
+- Decision: usar `EUR` y 48 horas como valores por defecto configurables para tiendas.
+- Motivo: coincide con el MVP de reservas sin pago y permite cambiar defaults por entorno mediante variables.
+- Decision: no asignar automaticamente el rol global `SHOP_OWNER` al crear una tienda en esta fase.
+- Motivo: la propiedad operativa de tienda queda representada por `shop_members` con rol interno `OWNER`; la autorizacion global por rol queda para una fase posterior.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

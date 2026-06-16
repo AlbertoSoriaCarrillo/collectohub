@@ -16,3 +16,13 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+collectohub:
+  security:
+    jwt:
+      secret: ${JWT_SECRET:local-development-jwt-secret-change-before-production}
+      access-token-expiration-minutes: ${JWT_ACCESS_EXPIRATION_MINUTES:15}
+      refresh-token-expiration-days: ${JWT_REFRESH_EXPIRATION_DAYS:7}
+  shops:
+    default-currency: ${SHOP_DEFAULT_CURRENCY:EUR}
+    default-reservation-expiration-hours: ${SHOP_DEFAULT_RESERVATION_EXPIRATION_HOURS:48}

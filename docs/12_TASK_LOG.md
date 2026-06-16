@@ -54,3 +54,40 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Anadido test `LiquibaseAutoConfigurationClasspathTest` para detectar si la autoconfiguracion de Liquibase desaparece del classpath.
 - Ejecutado `.\mvnw.cmd clean verify`; resultado correcto con 6 tests totales, 4 ejecutados correctamente y 2 saltados por no estar Docker instalado.
 - Ejecutado `.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=local"`; Liquibase creo `public.databasechangelog`, ejecuto los 3 changesets y completo correctamente la actualizacion.
+
+## 2026-06-16 - EPIC 3 - Autenticacion y usuarios
+
+- Creadas entidades JPA `User`, `Role` y `RefreshToken`.
+- Mapeada la relacion many-to-many entre `users` y `roles` mediante `user_roles`.
+- Creados repositorios `UserRepository`, `RoleRepository` y `RefreshTokenRepository`.
+- Creados DTOs `RegisterRequest`, `LoginRequest`, `AuthResponse` y `UserMeResponse`.
+- Implementado `POST /api/auth/register` con validacion, normalizacion de email, comprobacion de duplicados, BCrypt y rol `USER` por defecto.
+- Implementado `POST /api/auth/login` con validacion de credenciales y generacion de access token y refresh token.
+- Implementado `GET /api/users/me` protegido por JWT.
+- Configurada seguridad stateless con endpoints publicos `/api/health`, `/api/auth/register`, `/api/auth/login`, `/v3/api-docs/**`, `/swagger-ui/**` y `/swagger-ui.html`.
+- Anadida generacion y validacion JWT con `spring-security-oauth2-jose` y firma HS256.
+- Anadida tabla `refresh_tokens` por Liquibase para almacenar hashes de refresh tokens.
+- Actualizado `infra/.env.example` con un `JWT_SECRET` local de longitud compatible con HS256.
+- Corregido `backend/mvnw.cmd` para evitar fallo de PowerShell al resolver `.m2` cuando no es enlace simbolico.
+- Anadidos tests unitarios y MVC para registro, email duplicado, login correcto, login incorrecto, `/api/users/me` sin token, `/api/users/me` con token y `/api/health` publico.
+- Ejecutado `.\mvnw.cmd clean verify`.
+- Resultado: build correcto; 16 tests totales, 14 ejecutados correctamente y 2 saltados por no estar Docker instalado.
+
+## 2026-06-16 - EPIC 4 - Tiendas y miembros de tienda
+
+- Creadas entidades JPA `Shop` y `ShopMember`, con enums de estado y rol interno.
+- Mapeadas las tablas existentes `shops` y `shop_members`.
+- Creados repositorios `ShopRepository` y `ShopMemberRepository`.
+- Creados DTOs `CreateShopRequest`, `UpdateShopRequest`, `ShopResponse` y `ShopMemberResponse`.
+- Implementado `POST /api/shops` protegido por JWT para crear tiendas asociadas al usuario autenticado.
+- Implementada creacion automatica de `shop_members` con rol interno `OWNER` al crear una tienda.
+- Implementado `GET /api/shops/my` protegido por JWT para listar tiendas asociadas al usuario autenticado.
+- Implementado `GET /api/shops/{shopId}` como consulta publica de datos basicos de tienda.
+- Implementado `PUT /api/shops/{shopId}` protegido por JWT y limitado a miembros `OWNER` o `MANAGER`.
+- Anadido aislamiento logico de modificacion mediante `shop_members`.
+- Anadidas validaciones de nombre obligatorio, email de contacto, pais opcional, moneda y horas de expiracion de reserva.
+- Anadidas propiedades `SHOP_DEFAULT_CURRENCY` y `SHOP_DEFAULT_RESERVATION_EXPIRATION_HOURS`.
+- Anadida migracion Liquibase `004-alter-shops-country-nullable.sql` para hacer `shops.country` opcional.
+- Anadidos tests unitarios y MVC para creacion, seguridad sin token, miembro OWNER automatico, listado de tiendas propias, bloqueo de tienda ajena, actualizacion por propietario y validaciones.
+- Ejecutado `.\mvnw.cmd clean verify`.
+- Resultado: build correcto; 27 tests totales, 25 ejecutados correctamente y 2 saltados por no estar Docker instalado.
