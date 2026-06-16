@@ -1,0 +1,49 @@
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/wrapper/maven-wrapper.jar
+
+# Node / Angular
+node_modules/
+dist/
+.angular/
+coverage/
+.npm/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.*
+!.env.example
+application-local.yml
+application-local.properties
+
+# Logs
+*.log
+logs/
+
+# Docker / local data
+.docker-data/
+data/
+uploads/
+
+# Test reports
+surefire-reports/
+failsafe-reports/
+
+# Sonar
+.scannerwork/
