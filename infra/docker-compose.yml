@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: collectohub-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-collectohub}
+      POSTGRES_USER: ${POSTGRES_USER:-collectohub}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-collectohub_local_password}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - collectohub_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-collectohub} -d ${POSTGRES_DB:-collectohub}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  collectohub_postgres_data:
