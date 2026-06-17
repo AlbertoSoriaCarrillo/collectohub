@@ -220,3 +220,19 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Intentado `.\mvnw.cmd clean verify` sin permisos de red; fallo al resolver dependencias en Maven Central por bloqueo del sandbox.
 - Ejecutado `.\mvnw.cmd clean verify` con acceso autorizado.
 - Resultado: build correcto; 161 tests totales, 159 ejecutados correctamente y 2 saltados por no estar Docker instalado.
+
+## 2026-06-17 - EPIC 10 - Endurecimiento y revision backend MVP
+
+- Revisados controladores de `auth`, `users`, `shops`, `catalog`, `inventory`, `collections`, `recommendations` y `reservations`.
+- Revisada configuracion de seguridad: endpoints publicos, endpoints protegidos por JWT, `@PreAuthorize` en catalogo maestro y reglas de pertenencia por `shop_members`.
+- Revisada gestion homogenea de errores mediante `ErrorResponse` y `GlobalExceptionHandler` para `400`, `401`, `403`, `404` y `409`.
+- Revisado que las respuestas de usuario/autenticacion no exponen `passwordHash` ni hashes de refresh token.
+- Revisado aislamiento logico de tiendas, inventario, colecciones privadas, recomendaciones propias y reservas por usuario/tienda.
+- Revisado `.github/workflows/ci.yml`: Java 25, `chmod +x mvnw`, build con `./mvnw clean verify`, sin Maven global y frontend omitido si no existe `frontend/package.json`.
+- Anadido esquema OpenAPI `bearer-jwt` para facilitar pruebas de endpoints protegidos desde Swagger UI.
+- Creado `docs/16_MVP_API_ENDPOINTS.md` con matriz de endpoints MVP, permisos, bodies, respuestas y errores principales.
+- Creado `docs/17_MANUAL_TESTING_FLOW.md` con flujo manual PowerShell completo usando `Invoke-RestMethod`.
+- Documentado que, tras crear la primera tienda, el cliente debe obtener un token nuevo para que el JWT incluya `SHOP_OWNER`.
+- Intentado `.\mvnw.cmd clean verify` sin permisos de red; fallo al resolver dependencias en Maven Central por bloqueo del sandbox.
+- Ejecutado `.\mvnw.cmd clean verify` con acceso autorizado.
+- Resultado: build correcto; 161 tests totales, 159 ejecutados correctamente y 2 saltados por no estar Docker instalado.

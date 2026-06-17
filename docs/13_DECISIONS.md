@@ -149,6 +149,13 @@
 - Decision: permitir que la tienda gestione estados mediante `PUT /api/shops/{shopId}/reservations/{reservationId}/status` y el usuario cancele mediante `PUT /api/reservations/{reservationId}/cancel`.
 - Motivo: son los endpoints solicitados para esta fase y separan permisos de tienda de acciones del usuario propietario.
 
+## 2026-06-17 - Endurecimiento backend MVP
+
+- Decision: declarar en OpenAPI el esquema de seguridad `bearer-jwt` sin aplicar un requisito global a todas las operaciones.
+- Motivo: Swagger UI puede autorizar llamadas protegidas sin marcar incorrectamente como protegidos los endpoints publicos del MVP.
+- Decision: mantener el JWT como token stateless que no cambia al asignar `SHOP_OWNER` durante la creacion de la primera tienda.
+- Motivo: evita introducir rotacion automatica de token en esta fase; el cliente debe obtener un token nuevo mediante login o futuro refresh para recibir los roles actualizados.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.
