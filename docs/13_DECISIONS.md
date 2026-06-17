@@ -138,6 +138,17 @@
 - Decision: deduplicar por `shopProductId` y devolver una sola coincidencia principal por producto recomendado.
 - Motivo: evita respuestas repetidas cuando el usuario tiene el mismo producto maestro en varias colecciones. Si hay varias coincidencias, se prioriza `MISSING` sobre `WANTED`.
 
+## 2026-06-17 - Reservas MVP
+
+- Decision: crear reservas sin reducir automaticamente `shop_products.stock_quantity`.
+- Motivo: en el MVP la reserva es una solicitud sin pago ni bloqueo transaccional de stock; reducir stock queda para una fase posterior con reglas de concurrencia y expiracion mas completas.
+- Decision: calcular `expires_at` al crear la reserva usando `shops.default_reservation_expiration_hours`.
+- Motivo: respeta la configuracion de reserva por tienda ya modelada desde la fase de tiendas.
+- Decision: no implementar job automatico para pasar reservas a `EXPIRED`.
+- Motivo: la expiracion automatica esta documentada como proceso futuro y no forma parte del alcance solicitado para esta fase.
+- Decision: permitir que la tienda gestione estados mediante `PUT /api/shops/{shopId}/reservations/{reservationId}/status` y el usuario cancele mediante `PUT /api/reservations/{reservationId}/cancel`.
+- Motivo: son los endpoints solicitados para esta fase y separan permisos de tienda de acciones del usuario propietario.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

@@ -198,3 +198,25 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Intentado `.\mvnw.cmd clean verify` sin permisos de red; fallo al resolver dependencias en Maven Central por bloqueo del sandbox.
 - Ejecutado `.\mvnw.cmd clean verify` con acceso autorizado.
 - Resultado: build correcto; 125 tests totales, 123 ejecutados correctamente y 2 saltados por no estar Docker instalado.
+
+## 2026-06-17 - EPIC 9 - Reservas MVP
+
+- Creado modulo backend `reservations` con capas `api`, `application`, `domain`, `dto` e `infrastructure`.
+- Creada entidad JPA `Reservation` y enum `ReservationStatus` mapeando la tabla existente `reservations`.
+- Creado repositorio `ReservationRepository`.
+- Creados DTOs `CreateReservationRequest`, `UpdateReservationStatusRequest` y `ReservationResponse`.
+- Implementado `POST /api/reservations` protegido por JWT para crear reservas `PENDING` sobre productos de tienda reservables.
+- Implementado `GET /api/reservations/my` con filtros opcionales `status` y `shopId`.
+- Implementado `GET /api/reservations/{reservationId}` con acceso para el usuario propietario o miembros `OWNER`/`MANAGER` de la tienda.
+- Implementado `GET /api/shops/{shopId}/reservations` para miembros `OWNER`/`MANAGER`, con filtros `status`, `userId` y `shopProductId`.
+- Implementado `PUT /api/shops/{shopId}/reservations/{reservationId}/status` con transiciones validas de tienda.
+- Implementado `PUT /api/reservations/{reservationId}/cancel` para cancelar reservas propias `PENDING` o `ACCEPTED`.
+- Anadidas reglas de reservabilidad: producto de tienda existente, no eliminado, visible, `AVAILABLE`, con stock mayor que cero, tienda activa y producto maestro activo.
+- Anadida validacion de stock insuficiente, transiciones invalidas, producto no reservable y aislamiento por usuario/tienda con respuestas `400`, `403`, `404` y `409`.
+- Se mantiene el stock sin reduccion automatica en MVP.
+- Anadidos tests unitarios y MVC para creacion, errores de reservabilidad, stock, consultas de usuario/tienda, permisos, transiciones, cancelacion y conversion HTTP de errores.
+- Ejecutado `.\mvnw.cmd test`.
+- Resultado: build correcto; 161 tests totales, 159 ejecutados correctamente y 2 saltados por no estar Docker instalado.
+- Intentado `.\mvnw.cmd clean verify` sin permisos de red; fallo al resolver dependencias en Maven Central por bloqueo del sandbox.
+- Ejecutado `.\mvnw.cmd clean verify` con acceso autorizado.
+- Resultado: build correcto; 161 tests totales, 159 ejecutados correctamente y 2 saltados por no estar Docker instalado.

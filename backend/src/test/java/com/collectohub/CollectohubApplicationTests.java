@@ -6,6 +6,7 @@ import com.collectohub.catalog.infrastructure.ProductCategoryRepository;
 import com.collectohub.collections.infrastructure.CollectionItemRepository;
 import com.collectohub.collections.infrastructure.CollectionRepository;
 import com.collectohub.inventory.infrastructure.ShopProductRepository;
+import com.collectohub.reservations.infrastructure.ReservationRepository;
 import com.collectohub.shops.infrastructure.ShopMemberRepository;
 import com.collectohub.shops.infrastructure.ShopRepository;
 import com.collectohub.users.infrastructure.RoleRepository;
@@ -86,6 +87,11 @@ class CollectohubApplicationTests {
         @Bean
         CollectionItemRepository collectionItemRepository() {
             return mock(CollectionItemRepository.class);
+        }
+
+        @Bean
+        ReservationRepository reservationRepository() {
+            return mock(ReservationRepository.class);
         }
     }
 }

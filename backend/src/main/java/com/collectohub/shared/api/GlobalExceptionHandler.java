@@ -9,6 +9,11 @@ import com.collectohub.catalog.application.ProductCategoryNotFoundException;
 import com.collectohub.collections.application.CollectionItemNotFoundException;
 import com.collectohub.collections.application.CollectionNotFoundException;
 import com.collectohub.inventory.application.ShopProductNotFoundException;
+import com.collectohub.reservations.application.InvalidReservationFilterException;
+import com.collectohub.reservations.application.InvalidReservationRequestException;
+import com.collectohub.reservations.application.InvalidReservationTransitionException;
+import com.collectohub.reservations.application.ReservationNotFoundException;
+import com.collectohub.reservations.application.ReservationUnavailableException;
 import com.collectohub.shops.application.ShopNotFoundException;
 import com.collectohub.shared.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,6 +57,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             ProductCategoryNotFoundException.class,
             InvalidCatalogFilterException.class,
+            InvalidReservationFilterException.class,
+            InvalidReservationRequestException.class,
             UnsupportedInterfaceLanguageException.class
     })
     ResponseEntity<ErrorResponse> handleCatalogBadRequest(RuntimeException ex, HttpServletRequest request) {
@@ -95,6 +102,22 @@ public class GlobalExceptionHandler {
             HttpServletRequest request
     ) {
         return build(HttpStatus.NOT_FOUND, ex.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(ReservationNotFoundException.class)
+    ResponseEntity<ErrorResponse> handleReservationNotFound(
+            ReservationNotFoundException ex,
+            HttpServletRequest request
+    ) {
+        return build(HttpStatus.NOT_FOUND, ex.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler({
+            ReservationUnavailableException.class,
+            InvalidReservationTransitionException.class
+    })
+    ResponseEntity<ErrorResponse> handleReservationConflict(RuntimeException ex, HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, ex.getMessage(), request, List.of());
     }
 
     @ExceptionHandler(AccessDeniedException.class)
