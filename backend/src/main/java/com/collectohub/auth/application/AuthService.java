@@ -19,6 +19,7 @@ import java.util.Locale;
 public class AuthService {
 
     private static final String DEFAULT_ROLE = "USER";
+    private static final String DEFAULT_INTERFACE_LANGUAGE = "es";
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -53,6 +54,7 @@ public class AuthService {
                 email,
                 passwordEncoder.encode(request.password()),
                 request.displayName().trim(),
+                normalizeInterfaceLanguage(request.preferredInterfaceLanguage()),
                 userRole
         );
         User savedUser = userRepository.save(user);
@@ -81,5 +83,16 @@ public class AuthService {
 
     private String normalizeEmail(String email) {
         return email.trim().toLowerCase(Locale.ROOT);
+    }
+
+    private String normalizeInterfaceLanguage(String language) {
+        if (language == null) {
+            return DEFAULT_INTERFACE_LANGUAGE;
+        }
+        String normalized = language.trim().toLowerCase(Locale.ROOT);
+        if ("es".equals(normalized) || "en".equals(normalized)) {
+            return normalized;
+        }
+        throw new UnsupportedInterfaceLanguageException(language);
     }
 }

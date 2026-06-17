@@ -1,6 +1,12 @@
 package com.collectohub.shared.api;
 
 import com.collectohub.auth.application.EmailAlreadyExistsException;
+import com.collectohub.auth.application.UnsupportedInterfaceLanguageException;
+import com.collectohub.catalog.application.DuplicateMasterProductException;
+import com.collectohub.catalog.application.InvalidCatalogFilterException;
+import com.collectohub.catalog.application.MasterProductNotFoundException;
+import com.collectohub.catalog.application.ProductCategoryNotFoundException;
+import com.collectohub.inventory.application.ShopProductNotFoundException;
 import com.collectohub.shops.application.ShopNotFoundException;
 import com.collectohub.shared.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,6 +39,23 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.CONFLICT, ex.getMessage(), request, List.of());
     }
 
+    @ExceptionHandler(DuplicateMasterProductException.class)
+    ResponseEntity<ErrorResponse> handleDuplicateMasterProduct(
+            DuplicateMasterProductException ex,
+            HttpServletRequest request
+    ) {
+        return build(HttpStatus.CONFLICT, ex.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler({
+            ProductCategoryNotFoundException.class,
+            InvalidCatalogFilterException.class,
+            UnsupportedInterfaceLanguageException.class
+    })
+    ResponseEntity<ErrorResponse> handleCatalogBadRequest(RuntimeException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request, List.of());
+    }
+
     @ExceptionHandler(BadCredentialsException.class)
     ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException ex, HttpServletRequest request) {
         return build(HttpStatus.UNAUTHORIZED, "Invalid credentials", request, List.of());
@@ -40,6 +63,22 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ShopNotFoundException.class)
     ResponseEntity<ErrorResponse> handleShopNotFound(ShopNotFoundException ex, HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, ex.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(MasterProductNotFoundException.class)
+    ResponseEntity<ErrorResponse> handleMasterProductNotFound(
+            MasterProductNotFoundException ex,
+            HttpServletRequest request
+    ) {
+        return build(HttpStatus.NOT_FOUND, ex.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(ShopProductNotFoundException.class)
+    ResponseEntity<ErrorResponse> handleShopProductNotFound(
+            ShopProductNotFoundException ex,
+            HttpServletRequest request
+    ) {
         return build(HttpStatus.NOT_FOUND, ex.getMessage(), request, List.of());
     }
 

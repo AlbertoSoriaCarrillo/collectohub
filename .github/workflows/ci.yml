@@ -52,7 +52,7 @@ jobs:
       - name: Run backend tests
         if: steps.backend-check.outputs.exists == 'true'
         working-directory: backend
-        run: mvn clean verify
+        run: ./mvnw clean verify
 
       - name: Skip backend
         if: steps.backend-check.outputs.exists == 'false'

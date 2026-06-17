@@ -90,6 +90,22 @@ class AuthControllerTest {
     }
 
     @Test
+    void registerEndpointRejectsUnsupportedInterfaceLanguage() throws Exception {
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "email": "alice@example.com",
+                                  "password": "secret123",
+                                  "displayName": "Alice",
+                                  "preferredInterfaceLanguage": "fr"
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400));
+    }
+
+    @Test
     void loginEndpointReturnsTokens() throws Exception {
         when(authService.login(any())).thenReturn(authResponse());
 

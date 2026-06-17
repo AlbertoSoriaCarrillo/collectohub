@@ -46,7 +46,7 @@ public final class AuthenticatedUser implements UserDetails {
                 .sorted()
                 .toList();
         List<GrantedAuthority> authorities = roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                .map(SimpleGrantedAuthority::new)
                 .map(GrantedAuthority.class::cast)
                 .toList();
         return new AuthenticatedUser(

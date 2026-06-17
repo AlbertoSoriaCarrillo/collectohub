@@ -92,6 +92,30 @@
 - Decision: asignar automaticamente el rol global `SHOP_OWNER` cuando un usuario crea una tienda y todavia no tiene ese rol.
 - Motivo: los roles globales son acumulables; `SHOP_OWNER` identifica capacidad global de gestionar tiendas, mientras que `shop_members.OWNER` define permisos dentro de una tienda concreta.
 
+## 2026-06-17 - Catalogo maestro MVP
+
+- Decision: mantener los endpoints de esta fase como `/api/product-categories` y `/api/master-products`.
+- Motivo: son los endpoints solicitados para la fase de catalogo maestro y quedan aislados dentro del modulo backend `catalog`.
+- Decision: almacenar `limitedEditionTotalUnits` dentro de `master_products.attributes` con la clave `limitedEditionTotalUnits`.
+- Motivo: la tabla MVP `master_products` no define una columna especifica para ese dato y ya existe `attributes JSONB` para atributos flexibles; las unidades concretas de tienda o coleccion siguen perteneciendo a tablas futuras como `shop_products` y `collection_items`.
+- Decision: limitar la creacion y actualizacion de productos maestros a usuarios con rol global `ADMIN` o `SHOP_OWNER`.
+- Motivo: el catalogo maestro es reutilizable por tiendas, colecciones e inventario; en el MVP solo perfiles con capacidad de administracion de plataforma o tienda pueden modificarlo.
+- Decision: aplicar deteccion de duplicados solo sobre productos activos y no eliminados.
+- Motivo: evita bloquear futuras recreaciones de datos retirados por borrado logico y mantiene la deteccion alineada con el listado publico del catalogo.
+
+## 2026-06-17 - Seguridad por roles e inventario MVP
+
+- Decision: habilitar `@EnableMethodSecurity` y aplicar `@PreAuthorize` en endpoints con permisos globales de catalogo maestro.
+- Motivo: centraliza la autorizacion global en Spring Security sin mezclarla con reglas de pertenencia a tienda.
+- Decision: usar authorities sin prefijo `ROLE_` para que las expresiones sean `hasAnyAuthority('ADMIN', 'SHOP_OWNER')`.
+- Motivo: alinea las expresiones de seguridad con los codigos de roles globales almacenados en base de datos y expuestos en JWT.
+- Decision: mantener los permisos de inventario por tienda en `InventoryService`, usando `shop_members` y roles internos `OWNER` o `MANAGER`.
+- Motivo: la autorizacion de inventario depende del `shopId` de la ruta y de la pertenencia activa a una tienda concreta, no solo del rol global del usuario.
+- Decision: usar en inventario MVP los estados comerciales `AVAILABLE`, `RESERVED`, `SOLD` y `HIDDEN`, y las condiciones fisicas `NEW`, `LIKE_NEW`, `GOOD`, `ACCEPTABLE` y `DAMAGED`.
+- Motivo: son los estados solicitados para esta fase; otros estados descritos en la especificacion de base de datos quedan como ampliacion futura para no aumentar el alcance del MVP.
+- Decision: considerar producto de tienda publicable solo cuando no esta eliminado, `visible=true` y `commercial_status=AVAILABLE`.
+- Motivo: evita exponer productos ocultos, reservados o vendidos en endpoints publicos.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

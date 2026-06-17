@@ -68,11 +68,13 @@ class AuthServiceTest {
         var response = authService.register(new RegisterRequest(
                 "Alice@Example.com",
                 "secret123",
-                " Alice "
+                " Alice ",
+                null
         ));
 
         assertThat(response.email()).isEqualTo("alice@example.com");
         assertThat(response.displayName()).isEqualTo("Alice");
+        assertThat(response.preferredInterfaceLanguage()).isEqualTo("es");
         assertThat(response.roles()).containsExactly("USER");
         assertThat(response.accessToken()).isEqualTo("access-token");
         assertThat(response.refreshToken()).isEqualTo("refresh-token");
@@ -82,7 +84,52 @@ class AuthServiceTest {
         User savedUser = userCaptor.getValue();
         assertThat(savedUser.getPasswordHash()).isNotEqualTo("secret123");
         assertThat(passwordEncoder.matches("secret123", savedUser.getPasswordHash())).isTrue();
+        assertThat(savedUser.getPreferredInterfaceLanguage()).isEqualTo("es");
         assertThat(savedUser.getRoles()).extracting(Role::getCode).containsExactly("USER");
+    }
+
+    @Test
+    void registerStoresEnglishInterfaceLanguageWhenProvided() {
+        Role userRole = new Role("USER", "User");
+        when(userRepository.existsByEmailIgnoreCaseAndDeletedAtIsNull("alice@example.com")).thenReturn(false);
+        when(roleRepository.findByCode("USER")).thenReturn(Optional.of(userRole));
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(jwtService.generateAccessToken(any(User.class))).thenReturn("access-token");
+        when(refreshTokenService.createRefreshToken(any(User.class))).thenReturn("refresh-token");
+
+        var response = authService.register(new RegisterRequest(
+                "alice@example.com",
+                "secret123",
+                "Alice",
+                "en"
+        ));
+
+        assertThat(response.preferredInterfaceLanguage()).isEqualTo("en");
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(userCaptor.capture());
+        assertThat(userCaptor.getValue().getPreferredInterfaceLanguage()).isEqualTo("en");
+    }
+
+    @Test
+    void registerNormalizesInterfaceLanguageToLowercase() {
+        Role userRole = new Role("USER", "User");
+        when(userRepository.existsByEmailIgnoreCaseAndDeletedAtIsNull("alice@example.com")).thenReturn(false);
+        when(roleRepository.findByCode("USER")).thenReturn(Optional.of(userRole));
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(jwtService.generateAccessToken(any(User.class))).thenReturn("access-token");
+        when(refreshTokenService.createRefreshToken(any(User.class))).thenReturn("refresh-token");
+
+        var response = authService.register(new RegisterRequest(
+                "alice@example.com",
+                "secret123",
+                "Alice",
+                "ES"
+        ));
+
+        assertThat(response.preferredInterfaceLanguage()).isEqualTo("es");
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(userCaptor.capture());
+        assertThat(userCaptor.getValue().getPreferredInterfaceLanguage()).isEqualTo("es");
     }
 
     @Test
@@ -92,7 +139,8 @@ class AuthServiceTest {
         assertThatThrownBy(() -> authService.register(new RegisterRequest(
                 "alice@example.com",
                 "secret123",
-                "Alice"
+                "Alice",
+                null
         ))).isInstanceOf(EmailAlreadyExistsException.class);
 
         verify(userRepository, never()).save(any());

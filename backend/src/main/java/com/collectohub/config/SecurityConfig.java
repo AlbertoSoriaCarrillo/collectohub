@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -32,6 +33,7 @@ import tools.jackson.databind.ObjectMapper;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -53,6 +55,11 @@ public class SecurityConfig {
                                 "/swagger-ui.html"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/shops/{shopId:[0-9]+}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/product-categories").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/master-products").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/master-products/{productId:[0-9]+}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/shops/{shopId:[0-9]+}/products").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/shop-products/{shopProductId:[0-9]+}").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint((request, response, authException) -> {

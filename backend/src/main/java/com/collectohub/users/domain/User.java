@@ -72,11 +72,21 @@ public class User {
     }
 
     public static User register(String email, String passwordHash, String displayName, Role defaultRole) {
+        return register(email, passwordHash, displayName, DEFAULT_INTERFACE_LANGUAGE, defaultRole);
+    }
+
+    public static User register(
+            String email,
+            String passwordHash,
+            String displayName,
+            String preferredInterfaceLanguage,
+            Role defaultRole
+    ) {
         User user = new User();
         user.email = email;
         user.passwordHash = passwordHash;
         user.displayName = displayName;
-        user.preferredInterfaceLanguage = DEFAULT_INTERFACE_LANGUAGE;
+        user.preferredInterfaceLanguage = preferredInterfaceLanguage;
         user.status = STATUS_ACTIVE;
         user.createdAt = Instant.now();
         user.addRole(defaultRole);

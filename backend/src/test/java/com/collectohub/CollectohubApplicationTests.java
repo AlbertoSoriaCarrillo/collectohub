@@ -1,6 +1,9 @@
 package com.collectohub;
 
 import com.collectohub.auth.infrastructure.RefreshTokenRepository;
+import com.collectohub.catalog.infrastructure.MasterProductRepository;
+import com.collectohub.catalog.infrastructure.ProductCategoryRepository;
+import com.collectohub.inventory.infrastructure.ShopProductRepository;
 import com.collectohub.shops.infrastructure.ShopMemberRepository;
 import com.collectohub.shops.infrastructure.ShopRepository;
 import com.collectohub.users.infrastructure.RoleRepository;
@@ -56,6 +59,21 @@ class CollectohubApplicationTests {
         @Bean
         ShopMemberRepository shopMemberRepository() {
             return mock(ShopMemberRepository.class);
+        }
+
+        @Bean
+        ProductCategoryRepository productCategoryRepository() {
+            return mock(ProductCategoryRepository.class);
+        }
+
+        @Bean
+        MasterProductRepository masterProductRepository() {
+            return mock(MasterProductRepository.class);
+        }
+
+        @Bean
+        ShopProductRepository shopProductRepository() {
+            return mock(ShopProductRepository.class);
         }
     }
 }

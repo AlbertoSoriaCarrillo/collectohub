@@ -101,3 +101,47 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Actualizada la decision previa de EPIC 4 sobre rol global `SHOP_OWNER`.
 - Ejecutado `.\mvnw.cmd clean verify`.
 - Resultado: build correcto; 29 tests totales, 27 ejecutados correctamente y 2 saltados por no estar Docker instalado.
+
+## 2026-06-17 - EPIC 5 - Catalogo maestro de productos
+
+- Creadas entidades JPA `ProductCategory` y `MasterProduct`.
+- Mapeadas las tablas existentes `product_categories` y `master_products`, incluyendo campos JSONB para `publication_countries` y `attributes`.
+- Creados repositorios `ProductCategoryRepository` y `MasterProductRepository`.
+- Creados DTOs `CreateMasterProductRequest`, `UpdateMasterProductRequest`, `MasterProductResponse` y `ProductCategoryResponse`.
+- Implementado endpoint publico `GET /api/product-categories`.
+- Implementados endpoints publicos `GET /api/master-products` y `GET /api/master-products/{id}`.
+- Implementados endpoints protegidos `POST /api/master-products` y `PUT /api/master-products/{id}` para usuarios con rol global `ADMIN` o `SHOP_OWNER`.
+- Anadida busqueda basica por `categoryCode`, `name`, `franchise`, `collectionName`, `language` y `status`, limitada a productos activos y no eliminados.
+- Anadida deteccion basica de duplicados por ISBN, EAN y combinacion logica normalizada de nombre, franquicia, volumen e idioma.
+- Anadidas respuestas controladas para duplicados `409`, producto no encontrado `404`, categoria/filtro invalido `400` y acceso denegado `403`.
+- Abiertos en seguridad los GET publicos de categorias y productos maestros, manteniendo protegidos POST/PUT.
+- Anadidos tests unitarios y MVC para listado publico, creacion como `SHOP_OWNER`, creacion sin token, bloqueo a `USER`, duplicados 409, actualizacion y validaciones 400.
+- Intentado `.\mvnw.cmd clean verify` sin permisos de red; fallo al resolver dependencias en Maven Central por bloqueo del sandbox.
+- Ejecutado `.\mvnw.cmd clean verify` con acceso autorizado a Maven Central.
+- Resultado: build correcto; 46 tests totales, 44 ejecutados correctamente y 2 saltados por no estar Docker instalado.
+
+## 2026-06-17 - Ajustes tecnicos e EPIC 6 - Inventario de tienda
+
+- Actualizado `RegisterRequest` para aceptar `preferredInterfaceLanguage` opcional.
+- Implementadas reglas de idioma de interfaz: valor por defecto `es`, idiomas permitidos `es` y `en`, y normalizacion a minusculas.
+- Anadidos tests para registro sin idioma, registro con `en`, registro con `ES` y rechazo HTTP `400` para idioma no soportado.
+- Actualizado `.github/workflows/ci.yml` para ejecutar el backend con `./mvnw clean verify` desde `backend`.
+- Habilitada method security con `@EnableMethodSecurity`.
+- Anadida autorizacion declarativa con `@PreAuthorize("hasAnyAuthority('ADMIN', 'SHOP_OWNER')")` en endpoints protegidos de catalogo maestro.
+- Creadas entidades/enums de inventario `ShopProduct`, `ShopProductCommercialStatus` y `PhysicalCondition`.
+- Mapeada la tabla existente `shop_products` con tienda, producto maestro, precio, moneda, stock, estado comercial, condicion fisica, visibilidad, unidad limitada, notas, auditoria y borrado logico.
+- Creado `ShopProductRepository` con busquedas por tienda, producto maestro, detalle activo y productos visibles/disponibles.
+- Creados DTOs `CreateShopProductRequest`, `UpdateShopProductRequest` y `ShopProductResponse`.
+- Implementado `POST /api/shops/{shopId}/products` protegido para miembros `OWNER` o `MANAGER`.
+- Implementado `PUT /api/shops/{shopId}/products/{shopProductId}` protegido para miembros `OWNER` o `MANAGER`.
+- Implementado `GET /api/shops/{shopId}/products/my` protegido para miembros de la tienda.
+- Implementado `GET /api/shops/{shopId}/products` publico, limitado a productos visibles, disponibles y no eliminados.
+- Implementado `GET /api/shop-products/{shopProductId}` publico, limitado a productos visibles, disponibles y no eliminados.
+- Anadido aislamiento logico por `shopId`: no se permite crear ni actualizar inventario de tiendas ajenas y el producto de tienda debe pertenecer al `shopId` de la ruta.
+- Anadidas respuestas controladas `404` para producto de tienda no encontrado y reutilizadas las existentes para tienda/producto maestro no encontrados.
+- Anadidos tests unitarios y MVC para creacion como `OWNER` y `MANAGER`, seguridad `401/403`, producto maestro inexistente `404`, validaciones de precio/stock `400`, listado interno, listado publico visible, ocultos no expuestos, actualizacion y bloqueo por `shopId` incorrecto.
+- Intentado `.\mvnw.cmd clean verify` sin permisos de red; fallo al resolver dependencias en Maven Central por bloqueo del sandbox.
+- Ejecutado `.\mvnw.cmd clean verify` con acceso autorizado; fallo inicial por `@PreAuthorize` aplicado al servicio de catalogo en tests MVC con mocks proxificados.
+- Movida la autorizacion declarativa de catalogo desde el servicio al controlador para proteger el endpoint y mantener tests MVC con mocks limpios.
+- Ejecutado de nuevo `.\mvnw.cmd clean verify`.
+- Resultado: build correcto; 70 tests totales, 68 ejecutados correctamente y 2 saltados por no estar Docker instalado.
