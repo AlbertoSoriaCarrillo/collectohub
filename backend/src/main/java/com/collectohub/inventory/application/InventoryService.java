@@ -95,7 +95,7 @@ public class InventoryService {
                 Objects.requireNonNullElse(request.physicalCondition(), shopProduct.getPhysicalCondition()),
                 Objects.requireNonNullElse(request.visible(), shopProduct.isVisible()),
                 normalizeNullableOrExisting(request.unitNumber(), shopProduct.getUnitNumber()),
-                Objects.requireNonNullElse(request.totalLimitedUnits(), shopProduct.getTotalLimitedUnits()),
+                request.totalLimitedUnits() == null ? shopProduct.getTotalLimitedUnits() : request.totalLimitedUnits(),
                 normalizeNullableOrExisting(request.notes(), shopProduct.getNotes()),
                 authenticatedUser.id()
         );

@@ -116,6 +116,17 @@
 - Decision: considerar producto de tienda publicable solo cuando no esta eliminado, `visible=true` y `commercial_status=AVAILABLE`.
 - Motivo: evita exponer productos ocultos, reservados o vendidos en endpoints publicos.
 
+## 2026-06-17 - Colecciones MVP
+
+- Decision: usar los estados de item de coleccion `OWNED`, `WANTED`, `MISSING`, `DUPLICATED`, `SELLABLE` y `TRADABLE`.
+- Motivo: son los estados solicitados para esta fase de colecciones personales; otros estados descritos en la especificacion de base de datos quedan para ampliaciones futuras.
+- Decision: reutilizar `PhysicalCondition` del modulo de inventario en `collection_items`.
+- Motivo: evita duplicar vocabulario de condicion fisica y mantiene consistencia entre inventario de tienda y colecciones personales.
+- Decision: devolver `404 Not Found` al intentar leer una coleccion privada ajena o sus items.
+- Motivo: evita revelar la existencia de colecciones privadas; las operaciones de modificacion ajenas devuelven `403 Forbidden`.
+- Decision: aplicar borrado logico en colecciones e items mediante `deleted_at` y `deleted_by`.
+- Motivo: respeta el modelo de auditoria ya creado en las tablas MVP y evita borrado fisico de datos de usuario.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

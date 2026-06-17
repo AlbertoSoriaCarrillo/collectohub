@@ -60,6 +60,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/master-products/{productId:[0-9]+}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/shops/{shopId:[0-9]+}/products").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/shop-products/{shopProductId:[0-9]+}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/collections/{collectionId:[0-9]+}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/collections/{collectionId:[0-9]+}/items").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint((request, response, authException) -> {

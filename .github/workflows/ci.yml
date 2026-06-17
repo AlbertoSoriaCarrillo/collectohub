@@ -49,6 +49,11 @@ jobs:
           java-version: '25'
           cache: maven
 
+      - name: Make Maven Wrapper executable
+        if: steps.backend-check.outputs.exists == 'true'
+        working-directory: backend
+        run: chmod +x mvnw
+
       - name: Run backend tests
         if: steps.backend-check.outputs.exists == 'true'
         working-directory: backend

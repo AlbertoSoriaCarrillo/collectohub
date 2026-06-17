@@ -6,6 +6,8 @@ import com.collectohub.catalog.application.DuplicateMasterProductException;
 import com.collectohub.catalog.application.InvalidCatalogFilterException;
 import com.collectohub.catalog.application.MasterProductNotFoundException;
 import com.collectohub.catalog.application.ProductCategoryNotFoundException;
+import com.collectohub.collections.application.CollectionItemNotFoundException;
+import com.collectohub.collections.application.CollectionNotFoundException;
 import com.collectohub.inventory.application.ShopProductNotFoundException;
 import com.collectohub.shops.application.ShopNotFoundException;
 import com.collectohub.shared.dto.ErrorResponse;
@@ -77,6 +79,19 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ShopProductNotFoundException.class)
     ResponseEntity<ErrorResponse> handleShopProductNotFound(
             ShopProductNotFoundException ex,
+            HttpServletRequest request
+    ) {
+        return build(HttpStatus.NOT_FOUND, ex.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(CollectionNotFoundException.class)
+    ResponseEntity<ErrorResponse> handleCollectionNotFound(CollectionNotFoundException ex, HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, ex.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(CollectionItemNotFoundException.class)
+    ResponseEntity<ErrorResponse> handleCollectionItemNotFound(
+            CollectionItemNotFoundException ex,
             HttpServletRequest request
     ) {
         return build(HttpStatus.NOT_FOUND, ex.getMessage(), request, List.of());

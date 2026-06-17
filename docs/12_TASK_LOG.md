@@ -145,3 +145,36 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Movida la autorizacion declarativa de catalogo desde el servicio al controlador para proteger el endpoint y mantener tests MVC con mocks limpios.
 - Ejecutado de nuevo `.\mvnw.cmd clean verify`.
 - Resultado: build correcto; 70 tests totales, 68 ejecutados correctamente y 2 saltados por no estar Docker instalado.
+
+## 2026-06-17 - EPIC 7 - Colecciones de usuario
+
+- Creadas entidades JPA `Collection` y `CollectionItem`.
+- Mapeadas las tablas existentes `collections` y `collection_items`.
+- Creados enums `CollectionVisibility` y `CollectionItemStatus`.
+- Reutilizado `PhysicalCondition` del modulo de inventario para condicion fisica de items de coleccion.
+- Creados repositorios `CollectionRepository` y `CollectionItemRepository`.
+- Creados DTOs `CreateCollectionRequest`, `UpdateCollectionRequest`, `CollectionResponse`, `CreateCollectionItemRequest`, `UpdateCollectionItemRequest` y `CollectionItemResponse`.
+- Implementado `POST /api/collections` protegido por JWT para crear colecciones del usuario autenticado.
+- Implementado `GET /api/collections/my` protegido por JWT con filtros opcionales `visibility` y `categoryCode`.
+- Implementado `GET /api/collections/{collectionId}` publico/protegido: colecciones publicas sin token y privadas solo para propietario.
+- Implementado `PUT /api/collections/{collectionId}` protegido para propietario.
+- Implementado `DELETE /api/collections/{collectionId}` con borrado logico para propietario.
+- Implementado `POST /api/collections/{collectionId}/items` protegido para propietario.
+- Implementado `GET /api/collections/{collectionId}/items` publico/protegido segun visibilidad y propiedad.
+- Implementado `PUT /api/collections/{collectionId}/items/{itemId}` protegido para propietario.
+- Implementado `DELETE /api/collections/{collectionId}/items/{itemId}` con borrado logico para propietario.
+- Anadido aislamiento logico: no se permite modificar colecciones ni items ajenos, y las colecciones privadas ajenas no se exponen en lecturas.
+- Anadidas respuestas controladas `404` para coleccion o item no encontrado y reutilizadas las respuestas existentes para producto maestro y categoria.
+- Anadidos tests unitarios y MVC para creacion, seguridad `401`, validaciones `400`, listado y filtros, lectura publica/privada, actualizacion, borrado logico, alta/listado/actualizacion/borrado de items, producto maestro inexistente y aislamiento de colecciones ajenas.
+- Intentado `.\mvnw.cmd clean verify` sin permisos de red; fallo al resolver dependencias en Maven Central por bloqueo del sandbox.
+- Ejecutado `.\mvnw.cmd clean verify` con acceso autorizado.
+- Resultado: build correcto; 107 tests totales, 105 ejecutados correctamente y 2 saltados por no estar Docker instalado.
+
+## 2026-06-17 - Correccion CI Maven Wrapper Linux
+
+- Revisado `.github/workflows/ci.yml`.
+- Anadido paso `Make Maven Wrapper executable` en el job `backend` para ejecutar `chmod +x mvnw` desde `backend` antes de lanzar los tests.
+- Mantenido el build de backend con `./mvnw clean verify`; no se vuelve a usar `mvn clean verify` directamente.
+- Revisado `backend/mvnw` con `git ls-files --eol`; el wrapper Unix ya esta en LF.
+- Ejecutado `.\mvnw.cmd clean verify`.
+- Resultado: build correcto; 107 tests totales, 105 ejecutados correctamente y 2 saltados por no estar Docker instalado.

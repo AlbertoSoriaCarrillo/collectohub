@@ -1,0 +1,284 @@
+package com.collectohub.collections.application;
+
+import com.collectohub.auth.security.AuthenticatedUser;
+import com.collectohub.catalog.application.MasterProductNotFoundException;
+import com.collectohub.catalog.application.ProductCategoryNotFoundException;
+import com.collectohub.catalog.domain.MasterProduct;
+import com.collectohub.catalog.domain.ProductCategory;
+import com.collectohub.catalog.infrastructure.MasterProductRepository;
+import com.collectohub.catalog.infrastructure.ProductCategoryRepository;
+import com.collectohub.collections.domain.Collection;
+import com.collectohub.collections.domain.CollectionItem;
+import com.collectohub.collections.domain.CollectionItemStatus;
+import com.collectohub.collections.domain.CollectionVisibility;
+import com.collectohub.collections.dto.CollectionItemResponse;
+import com.collectohub.collections.dto.CollectionResponse;
+import com.collectohub.collections.dto.CreateCollectionItemRequest;
+import com.collectohub.collections.dto.CreateCollectionRequest;
+import com.collectohub.collections.dto.UpdateCollectionItemRequest;
+import com.collectohub.collections.dto.UpdateCollectionRequest;
+import com.collectohub.collections.infrastructure.CollectionItemRepository;
+import com.collectohub.collections.infrastructure.CollectionRepository;
+import com.collectohub.inventory.domain.PhysicalCondition;
+import com.collectohub.users.domain.User;
+import com.collectohub.users.infrastructure.UserRepository;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+
+@Service
+public class CollectionService {
+
+    private final CollectionRepository collectionRepository;
+    private final CollectionItemRepository collectionItemRepository;
+    private final UserRepository userRepository;
+    private final ProductCategoryRepository productCategoryRepository;
+    private final MasterProductRepository masterProductRepository;
+
+    public CollectionService(
+            CollectionRepository collectionRepository,
+            CollectionItemRepository collectionItemRepository,
+            UserRepository userRepository,
+            ProductCategoryRepository productCategoryRepository,
+            MasterProductRepository masterProductRepository
+    ) {
+        this.collectionRepository = collectionRepository;
+        this.collectionItemRepository = collectionItemRepository;
+        this.userRepository = userRepository;
+        this.productCategoryRepository = productCategoryRepository;
+        this.masterProductRepository = masterProductRepository;
+    }
+
+    @Transactional
+    public CollectionResponse createCollection(AuthenticatedUser authenticatedUser, CreateCollectionRequest request) {
+        User owner = currentUser(authenticatedUser);
+        ProductCategory category = findCategoryIfProvided(request.categoryCode());
+        Collection collection = Collection.create(
+                owner,
+                normalizeRequired(request.name()),
+                normalizeNullable(request.description()),
+                Objects.requireNonNullElse(request.visibility(), CollectionVisibility.PRIVATE),
+                category
+        );
+        return CollectionResponse.from(collectionRepository.save(collection));
+    }
+
+    @Transactional(readOnly = true)
+    public List<CollectionResponse> myCollections(
+            AuthenticatedUser authenticatedUser,
+            CollectionVisibility visibility,
+            String categoryCode
+    ) {
+        Long userId = requireAuthenticated(authenticatedUser).id();
+        ProductCategory category = findCategoryIfProvided(categoryCode);
+        Specification<Collection> specification = (root, query, criteriaBuilder) -> criteriaBuilder.and(
+                criteriaBuilder.equal(root.get("user").get("id"), userId),
+                criteriaBuilder.isNull(root.get("deletedAt"))
+        );
+        if (visibility != null) {
+            specification = specification.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("visibility"), visibility));
+        }
+        if (category != null) {
+            specification = specification.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("category").get("id"), category.getId()));
+        }
+        return collectionRepository.findAll(specification, Sort.by("id").ascending()).stream()
+                .map(CollectionResponse::from)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public CollectionResponse getCollection(AuthenticatedUser authenticatedUser, Long collectionId) {
+        Collection collection = findActiveCollection(collectionId);
+        ensureCanRead(authenticatedUser, collection);
+        return CollectionResponse.from(collection, itemResponses(collectionId));
+    }
+
+    @Transactional
+    public CollectionResponse updateCollection(
+            AuthenticatedUser authenticatedUser,
+            Long collectionId,
+            UpdateCollectionRequest request
+    ) {
+        Collection collection = findActiveCollection(collectionId);
+        ensureOwner(authenticatedUser, collection);
+        ProductCategory category = request.categoryCode() == null
+                ? collection.getCategory()
+                : findCategoryIfProvided(request.categoryCode());
+        collection.update(
+                normalizeRequiredOrExisting(request.name(), collection.getName()),
+                normalizeNullableOrExisting(request.description(), collection.getDescription()),
+                Objects.requireNonNullElse(request.visibility(), collection.getVisibility()),
+                category,
+                authenticatedUser.id()
+        );
+        return CollectionResponse.from(collection, itemResponses(collectionId));
+    }
+
+    @Transactional
+    public void deleteCollection(AuthenticatedUser authenticatedUser, Long collectionId) {
+        Collection collection = findActiveCollection(collectionId);
+        ensureOwner(authenticatedUser, collection);
+        collection.softDelete(authenticatedUser.id());
+    }
+
+    @Transactional
+    public CollectionItemResponse addItem(
+            AuthenticatedUser authenticatedUser,
+            Long collectionId,
+            CreateCollectionItemRequest request
+    ) {
+        Collection collection = findActiveCollection(collectionId);
+        ensureOwner(authenticatedUser, collection);
+        MasterProduct masterProduct = findActiveMasterProduct(request.masterProductId());
+        CollectionItem item = CollectionItem.create(
+                collection,
+                masterProduct,
+                request.collectionStatus(),
+                request.physicalCondition(),
+                normalizeNullable(request.unitNumber()),
+                request.totalLimitedUnits(),
+                normalizeNullable(request.notes()),
+                request.acquiredAt(),
+                authenticatedUser.id()
+        );
+        return CollectionItemResponse.from(collectionItemRepository.save(item));
+    }
+
+    @Transactional
+    public CollectionItemResponse updateItem(
+            AuthenticatedUser authenticatedUser,
+            Long collectionId,
+            Long itemId,
+            UpdateCollectionItemRequest request
+    ) {
+        Collection collection = findActiveCollection(collectionId);
+        ensureOwner(authenticatedUser, collection);
+        CollectionItem item = collectionItemRepository.findByIdAndCollection_IdAndDeletedAtIsNull(itemId, collectionId)
+                .orElseThrow(() -> new CollectionItemNotFoundException(itemId));
+        item.update(
+                Objects.requireNonNullElse(request.collectionStatus(), item.getCollectionStatus()),
+                nullablePhysicalConditionOrExisting(request.physicalCondition(), item.getPhysicalCondition()),
+                normalizeNullableOrExisting(request.unitNumber(), item.getUnitNumber()),
+                request.totalLimitedUnits() == null ? item.getTotalLimitedUnits() : request.totalLimitedUnits(),
+                normalizeNullableOrExisting(request.notes(), item.getNotes()),
+                nullableDateOrExisting(request.acquiredAt(), item.getAcquiredAt()),
+                authenticatedUser.id()
+        );
+        return CollectionItemResponse.from(item);
+    }
+
+    @Transactional
+    public void deleteItem(AuthenticatedUser authenticatedUser, Long collectionId, Long itemId) {
+        Collection collection = findActiveCollection(collectionId);
+        ensureOwner(authenticatedUser, collection);
+        CollectionItem item = collectionItemRepository.findByIdAndCollection_IdAndDeletedAtIsNull(itemId, collectionId)
+                .orElseThrow(() -> new CollectionItemNotFoundException(itemId));
+        item.softDelete(authenticatedUser.id());
+    }
+
+    @Transactional(readOnly = true)
+    public List<CollectionItemResponse> listItems(AuthenticatedUser authenticatedUser, Long collectionId) {
+        Collection collection = findActiveCollection(collectionId);
+        ensureCanRead(authenticatedUser, collection);
+        return itemResponses(collectionId);
+    }
+
+    private User currentUser(AuthenticatedUser authenticatedUser) {
+        return userRepository.findById(requireAuthenticated(authenticatedUser).id())
+                .filter(User::isActive)
+                .orElseThrow(() -> new AccessDeniedException("Authenticated user is not available"));
+    }
+
+    private AuthenticatedUser requireAuthenticated(AuthenticatedUser authenticatedUser) {
+        if (authenticatedUser == null) {
+            throw new AccessDeniedException("Authentication is required");
+        }
+        return authenticatedUser;
+    }
+
+    private Collection findActiveCollection(Long collectionId) {
+        return collectionRepository.findByIdAndDeletedAtIsNull(collectionId)
+                .filter(Collection::isActive)
+                .orElseThrow(() -> new CollectionNotFoundException(collectionId));
+    }
+
+    private ProductCategory findCategoryIfProvided(String categoryCode) {
+        String normalized = normalizeCode(categoryCode);
+        if (normalized == null) {
+            return null;
+        }
+        return productCategoryRepository.findByCodeAndDeletedAtIsNull(normalized)
+                .orElseThrow(() -> new ProductCategoryNotFoundException(normalized));
+    }
+
+    private MasterProduct findActiveMasterProduct(Long masterProductId) {
+        return masterProductRepository.findByIdAndDeletedAtIsNull(masterProductId)
+                .filter(MasterProduct::isActive)
+                .orElseThrow(() -> new MasterProductNotFoundException(masterProductId));
+    }
+
+    private void ensureOwner(AuthenticatedUser authenticatedUser, Collection collection) {
+        Long userId = requireAuthenticated(authenticatedUser).id();
+        if (!collection.isOwnedBy(userId)) {
+            throw new AccessDeniedException("User cannot manage this collection");
+        }
+    }
+
+    private void ensureCanRead(AuthenticatedUser authenticatedUser, Collection collection) {
+        if (collection.isPublic()) {
+            return;
+        }
+        if (authenticatedUser != null && collection.isOwnedBy(authenticatedUser.id())) {
+            return;
+        }
+        throw new CollectionNotFoundException(collection.getId());
+    }
+
+    private List<CollectionItemResponse> itemResponses(Long collectionId) {
+        return collectionItemRepository.findByCollection_IdAndDeletedAtIsNullOrderByIdAsc(collectionId).stream()
+                .map(CollectionItemResponse::from)
+                .toList();
+    }
+
+    private String normalizeRequired(String value) {
+        return value.trim();
+    }
+
+    private String normalizeRequiredOrExisting(String value, String existing) {
+        return value == null ? existing : normalizeRequired(value);
+    }
+
+    private String normalizeNullable(String value) {
+        if (value == null) {
+            return null;
+        }
+        String normalized = value.trim();
+        return normalized.isEmpty() ? null : normalized;
+    }
+
+    private String normalizeNullableOrExisting(String value, String existing) {
+        return value == null ? existing : normalizeNullable(value);
+    }
+
+    private String normalizeCode(String value) {
+        String normalized = normalizeNullable(value);
+        return normalized == null ? null : normalized.toUpperCase(Locale.ROOT);
+    }
+
+    private PhysicalCondition nullablePhysicalConditionOrExisting(PhysicalCondition value, PhysicalCondition existing) {
+        return value == null ? existing : value;
+    }
+
+    private LocalDate nullableDateOrExisting(LocalDate value, LocalDate existing) {
+        return value == null ? existing : value;
+    }
+}
