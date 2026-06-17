@@ -178,3 +178,23 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Revisado `backend/mvnw` con `git ls-files --eol`; el wrapper Unix ya esta en LF.
 - Ejecutado `.\mvnw.cmd clean verify`.
 - Resultado: build correcto; 107 tests totales, 105 ejecutados correctamente y 2 saltados por no estar Docker instalado.
+
+## 2026-06-17 - EPIC 8 - Recomendaciones simples
+
+- Creado modulo backend `recommendations` con capas `api`, `application` y `dto`.
+- Creados DTOs `RecommendedShopProductResponse`, `RecommendationReasonResponse`, `UserRecommendationResponse` y `UserRecommendationSummaryResponse`.
+- Implementado endpoint protegido `GET /api/recommendations/my`.
+- Implementado endpoint protegido `GET /api/recommendations/my/summary`.
+- Anadida busqueda de items propios de coleccion en estado `MISSING` o `WANTED`.
+- Anadida busqueda de productos de tienda recomendables: visibles, `AVAILABLE`, con stock mayor que cero, no eliminados, con tienda activa y producto maestro activo.
+- Anadidos filtros opcionales `categoryCode`, `maxPrice`, `currency`, `physicalCondition` y `shopId`.
+- Anadida validacion de filtros invalidos con respuesta controlada `400`.
+- Anadida deduplicacion por `shopProductId` y seleccion de una coincidencia principal priorizando `MISSING` sobre `WANTED`.
+- Anadido orden de recomendaciones por prioridad `MISSING`, nombre de producto y precio ascendente.
+- Anadido resumen con conteos de items `MISSING`, items `WANTED`, productos recomendables, tiendas distintas y categorias con coincidencias.
+- Anadidos tests unitarios y MVC para seguridad `401`, usuario sin colecciones, coincidencias `MISSING` y `WANTED`, exclusion de productos ocultos/sin stock/reservados/vendidos/ocultos/eliminados, filtros, summary y deduplicacion.
+- Ejecutado `.\mvnw.cmd test`.
+- Resultado: build correcto; 125 tests totales, 123 ejecutados correctamente y 2 saltados por no estar Docker instalado.
+- Intentado `.\mvnw.cmd clean verify` sin permisos de red; fallo al resolver dependencias en Maven Central por bloqueo del sandbox.
+- Ejecutado `.\mvnw.cmd clean verify` con acceso autorizado.
+- Resultado: build correcto; 125 tests totales, 123 ejecutados correctamente y 2 saltados por no estar Docker instalado.

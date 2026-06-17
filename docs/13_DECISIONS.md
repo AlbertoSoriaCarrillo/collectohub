@@ -127,6 +127,17 @@
 - Decision: aplicar borrado logico en colecciones e items mediante `deleted_at` y `deleted_by`.
 - Motivo: respeta el modelo de auditoria ya creado en las tablas MVP y evita borrado fisico de datos de usuario.
 
+## 2026-06-17 - Recomendaciones simples MVP
+
+- Decision: implementar los endpoints de esta fase como `GET /api/recommendations/my` y `GET /api/recommendations/my/summary`.
+- Motivo: son los endpoints solicitados para recomendaciones simples y quedan aislados dentro del modulo backend `recommendations`.
+- Decision: ordenar recomendaciones primero por items `MISSING`, despues `WANTED`, despues por nombre de producto y despues por precio ascendente.
+- Motivo: un producto marcado como faltante representa una necesidad mas directa dentro de una coleccion que un producto deseado.
+- Decision: si `maxPrice` se informa sin `currency`, filtrar comparando el importe numerico contra la moneda propia de cada producto, sin conversion de divisa.
+- Motivo: el MVP no incluye conversion de divisas ni fuentes de tipo de cambio; la regla sigue siendo explicable y predecible.
+- Decision: deduplicar por `shopProductId` y devolver una sola coincidencia principal por producto recomendado.
+- Motivo: evita respuestas repetidas cuando el usuario tiene el mismo producto maestro en varias colecciones. Si hay varias coincidencias, se prioriza `MISSING` sobre `WANTED`.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.
