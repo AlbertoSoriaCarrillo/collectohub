@@ -202,6 +202,17 @@
 - Decision: usar `/reservations/{reservationId}` como detalle comun de reserva y reservar `/shops/{shopId}/reservations` para acciones de gestion de tienda.
 - Motivo: el backend ya aplica permisos de lectura por propietario o gestor de tienda; separar la mutacion de tienda evita mostrar acciones administrativas fuera del panel de tienda.
 
+## 2026-06-18 - Empaquetado Docker local MVP
+
+- Decision: preparar Docker Compose local con PostgreSQL, backend y frontend, sin anadir despliegue cloud ni Kubernetes.
+- Motivo: permite levantar el MVP completo en local manteniendo el alcance de empaquetado solicitado.
+- Decision: usar Dockerfile multi-stage para backend con Maven Wrapper y Eclipse Temurin Java 25.
+- Motivo: respeta el stack Java 25/Spring Boot 4.1.x y no exige Maven global dentro de la imagen.
+- Decision: servir el frontend Angular con nginx, mapeando el puerto del host `4200` al puerto interno `80`.
+- Motivo: permite probar el build estatico del MVP sin introducir un servidor Node en runtime.
+- Decision: mantener `apiBaseUrl` del frontend en `http://localhost:8080` para Docker local y permitir CORS configurable en backend.
+- Motivo: desde el navegador del host `localhost:8080` apunta al backend publicado por Compose; evita introducir runtime config Angular en esta fase.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

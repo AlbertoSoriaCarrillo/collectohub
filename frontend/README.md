@@ -67,6 +67,26 @@ El flujo recomendado para una demo completa esta en:
 ../docs/18_DEMO_FLOW.md
 ```
 
+## Docker
+
+El frontend tiene un Dockerfile multi-stage:
+
+- build con Node.js 24 y `npm ci`.
+- publicacion del build Angular con nginx.
+- puerto de contenedor `80`, mapeado por Compose a `http://localhost:4200`.
+
+Desde la raiz del repositorio:
+
+```powershell
+Copy-Item infra\.env.example infra\.env
+cd infra
+docker compose up --build
+```
+
+Limitacion MVP: `src/environments/environment.ts` mantiene `apiBaseUrl` en
+`http://localhost:8080`. En Docker local el navegador del host accede a ese
+backend publicado y Spring permite CORS para `localhost:4200`.
+
 ## Comandos
 
 ```bash

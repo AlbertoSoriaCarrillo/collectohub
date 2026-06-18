@@ -23,7 +23,21 @@ Este repositorio está en fase inicial. La primera etapa no debe intentar constr
 
 ## Ejecucion local
 
-### Backend
+Hay dos formas soportadas para levantar el MVP en local:
+
+- Opcion 1: ejecucion clasica con PostgreSQL local, backend con Maven Wrapper y frontend con npm.
+- Opcion 2: ejecucion empaquetada con Docker Compose.
+
+### Requisitos comunes
+
+- Git.
+- Java 25 para la opcion clasica de backend.
+- Node.js 24.x y npm 11.x para la opcion clasica de frontend.
+- Docker Desktop o Docker Engine con Docker Compose para la opcion Docker.
+
+La guia paso a paso esta en `docs/20_DEPLOYMENT_LOCAL.md`.
+
+### Opcion 1 - Backend clasico
 
 Requisitos:
 
@@ -41,7 +55,7 @@ cd backend
 
 El backend escucha en `http://localhost:8080` y expone `GET /api/health`.
 
-### Frontend
+### Opcion 1 - Frontend clasico
 
 Requisitos:
 
@@ -61,12 +75,49 @@ npm start
 
 El frontend escucha en `http://localhost:4200` y consume la API local del backend.
 
+### Opcion 2 - Docker Compose
+
+Crear el fichero local de variables:
+
+```powershell
+Copy-Item infra\.env.example infra\.env
+```
+
+Levantar el MVP:
+
+```powershell
+cd infra
+docker compose up --build
+```
+
+Servicios:
+
+- PostgreSQL: `localhost:5432`
+- Backend: `http://localhost:8080`
+- Swagger UI: `http://localhost:8080/swagger-ui.html`
+- Frontend: `http://localhost:4200`
+
+Comandos utiles:
+
+```powershell
+cd infra
+docker compose ps
+docker compose logs -f backend
+docker compose down
+docker compose down -v
+```
+
+Limitacion conocida: el frontend Angular se compila con `apiBaseUrl` apuntando a
+`http://localhost:8080`. En Docker local esto funciona desde el navegador del
+host y el backend permite CORS para `localhost:4200`.
+
 ## Validacion y demo
 
 - Endpoints MVP: `docs/16_MVP_API_ENDPOINTS.md`.
 - Flujo manual por API: `docs/17_MANUAL_TESTING_FLOW.md`.
 - Flujo de demo desde la UI: `docs/18_DEMO_FLOW.md`.
 - Estado MVP, limitaciones y pasos siguientes: `docs/19_MVP_STATUS.md`.
+- Despliegue local y empaquetado: `docs/20_DEPLOYMENT_LOCAL.md`.
 
 ## Orden de desarrollo
 

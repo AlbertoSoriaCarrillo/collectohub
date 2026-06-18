@@ -395,3 +395,30 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Actualizado `README.md` con instrucciones de ejecucion local, validacion y enlaces de demo.
 - Actualizado `frontend/README.md` con enlace al flujo de demo local.
 - No se modifica logica de negocio ni se amplia el alcance MVP en esta fase.
+
+## 2026-06-18 - EPIC 18 - Preparacion de despliegue local y empaquetado MVP
+
+- Revisada documentacion requerida antes de modificar codigo/documentacion: prompt, README raiz, frontend README, task log, decisiones, demo flow, estado MVP, CI, `infra/docker-compose.yml` e `infra/.env.example`.
+- Revisada infraestructura actual: `infra/docker-compose.yml` solo levantaba PostgreSQL; faltaban backend y frontend dockerizados.
+- Creado `backend/Dockerfile` multi-stage con Eclipse Temurin Java 25, Maven Wrapper, jar Spring Boot y healthcheck sobre `/api/health`.
+- Creado `backend/.dockerignore`.
+- Anadido perfil `docker` en `backend/src/main/resources/application-docker.yml`, conectando por defecto a `jdbc:postgresql://postgres:5432/collectohub`.
+- Anadida configuracion CORS local en backend mediante `CORS_ALLOWED_ORIGINS`, por defecto `http://localhost:4200,http://127.0.0.1:4200`.
+- Creado `frontend/Dockerfile` multi-stage con Node.js 24 para build Angular y nginx para servir estaticos.
+- Creado `frontend/.dockerignore` y `frontend/nginx.conf` con fallback SPA, healthcheck `/health` y proxy preparado para `/api`.
+- Actualizado `infra/docker-compose.yml` para levantar PostgreSQL, backend y frontend en red interna `collectohub-network`, con volumen de PostgreSQL y puertos `5432`, `8080` y `4200`.
+- Actualizado `infra/.env.example` con `FRONTEND_PORT`, `CORS_ALLOWED_ORIGINS` y aviso de valores locales de ejemplo.
+- Actualizado `README.md` con opciones de ejecucion clasica y Docker Compose, URLs y comandos utiles.
+- Actualizado `frontend/README.md` con seccion Docker y limitacion de `apiBaseUrl`.
+- Actualizado `docs/18_DEMO_FLOW.md` con alternativa de arranque mediante Docker Compose.
+- Actualizado `docs/19_MVP_STATUS.md` con estado de empaquetado local y limitaciones.
+- Creado `docs/20_DEPLOYMENT_LOCAL.md` con pasos de ejecucion clasica y Docker Compose.
+- Actualizado `docs/13_DECISIONS.md` con decisiones de empaquetado Docker local.
+- Revisado `.github/workflows/ci.yml`; se mantiene CI sin despliegue y sin anadir build Docker para no alargar el pipeline en esta fase.
+- Ejecutado `.\mvnw.cmd clean verify` en backend. Primer intento dentro del sandbox fallo por bloqueo de red Maven Central; reejecutado con permisos autorizados correctamente.
+- Resultado backend: build correcto; 161 tests totales, 159 correctos y 2 saltados por falta de Docker/Testcontainers.
+- Ejecutado `npm ci`, `npm test -- --watch=false` y `npm run build` en frontend con permisos autorizados.
+- Resultado frontend: `npm ci` correcto con 5 vulnerabilidades transitivas/dev ya conocidas; 31 archivos de test y 60 tests correctos; build correcto.
+- Intentado comprobar Docker con `docker --version`, `docker compose version` y `docker info`; no se pudo validar Compose porque `docker` no esta instalado o no esta en PATH en este entorno.
+- Revisado que no hay `.env` reales versionados; solo existe `infra/.env.example`.
+- No se implementa despliegue cloud ni funcionalidades nuevas fuera del empaquetado local.

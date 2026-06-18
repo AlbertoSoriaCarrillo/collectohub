@@ -32,6 +32,14 @@ El frontend consume el backend en:
 http://localhost:8080
 ```
 
+Alternativa Docker Compose:
+
+```powershell
+Copy-Item infra\.env.example infra\.env
+cd infra
+docker compose up --build
+```
+
 ## 2. Datos sugeridos
 
 Usa un sufijo distinto en cada demo para evitar duplicados:
