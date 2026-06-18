@@ -307,3 +307,44 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Ejecutado `npm run build` con permisos autorizados.
 - Resultado: tests correctos con 19 archivos y 29 tests; build correcto.
 - Observacion: `npm ci` mantiene 5 vulnerabilidades totales en dependencias de desarrollo/transitivas y deprecacion de `@angular/animations`; no se cambian versiones en esta fase.
+
+## 2026-06-18 - EPIC 14 - Frontend colecciones de usuario
+
+- Revisada documentacion requerida antes de modificar codigo: prompt, README, frontend README, specs de producto/arquitectura/API/seguridad/testing, task log, decisiones, endpoints MVP y flujo manual.
+- Creados modelos frontend `CollectionResponse`, `CollectionItemResponse`, `CreateCollectionRequest`, `UpdateCollectionRequest`, `CreateCollectionItemRequest`, `UpdateCollectionItemRequest`, `CollectionSearchFilters`, `CollectionVisibility` y `CollectionItemStatus`.
+- Reutilizado `PhysicalCondition` desde los modelos frontend de inventario.
+- Creado `CollectionService` con llamadas a colecciones e items: crear, listar propias, detalle, actualizar, borrar, anadir item, listar items, actualizar item y borrar item.
+- Anadidas rutas `/collections`, `/collections/new`, `/collections/:collectionId`, `/collections/:collectionId/edit`, `/collections/:collectionId/items/new` y `/collections/:collectionId/items/:itemId/edit`.
+- Protegidas con `authGuard` las rutas propias/de modificacion; el detalle queda publico/protegido segun visibilidad backend.
+- Implementada pantalla `Mis colecciones` con filtros por visibilidad y categoria, listado, empty state, acciones de detalle, edicion y borrado con confirmacion.
+- Implementadas pantallas de crear y editar coleccion con formularios reactivos y categorias del catalogo.
+- Implementada pantalla de detalle de coleccion con carga de items, vista publica/privada y acciones de propietario cuando el usuario autenticado coincide con `userId`.
+- Implementadas pantallas de anadir y editar item de coleccion con busqueda de productos maestros, estados de coleccion, condicion fisica opcional, unidad limitada, notas y fecha de adquisicion.
+- Integrado dashboard para que `Mis colecciones` navegue a `/collections`.
+- Integrado detalle de producto maestro con accion `Anadir a coleccion` hacia `/collections`.
+- Actualizado `frontend/README.md` con rutas, modulo y endpoints de colecciones.
+- Anadidos tests de `CollectionService`, rutas protegidas, listado de colecciones vacio/con datos, creacion, detalle con items, alta de item y edicion de item.
+- Ejecutado `npx.cmd tsc -p tsconfig.app.json --noEmit`.
+- Ejecutado `npx.cmd tsc -p tsconfig.spec.json --noEmit`.
+- Intentado ejecutar `npm ci` con permisos autorizados; el entorno rechazo la ejecucion elevada por limite de uso de la sesion en ese momento.
+- La validacion completa de frontend se retoma y completa durante EPIC 15.
+
+## 2026-06-18 - EPIC 15 - Frontend recomendaciones
+
+- Revisada documentacion requerida antes de modificar codigo: prompt, README, frontend README, specs de producto/arquitectura/API/seguridad/testing, task log, decisiones, endpoints MVP y flujo manual.
+- Creados modelos frontend `RecommendedShopProductResponse`, `RecommendationReasonResponse`, `UserRecommendationResponse`, `UserRecommendationSummaryResponse` y `RecommendationFilters`.
+- Creado `RecommendationService` con llamadas a `GET /api/recommendations/my` y `GET /api/recommendations/my/summary`, incluyendo filtros `categoryCode`, `maxPrice`, `currency`, `physicalCondition` y `shopId`.
+- Anadida ruta protegida `/recommendations`.
+- Implementada pantalla de recomendaciones con resumen, filtros, categorias desde `CatalogService.getCategories()`, estados vacios diferenciados y cards enlazadas a producto de tienda, producto maestro y tienda.
+- Integrado enlace `Recomendaciones` en navegacion autenticada, dashboard y detalle de coleccion propia.
+- Actualizado `frontend/README.md` con ruta, modulo y endpoints de recomendaciones.
+- Anadidos tests de `RecommendationService`, pantalla de recomendaciones, filtros, ruta protegida y enlace de dashboard.
+- Ejecutado `npx.cmd tsc -p tsconfig.app.json --noEmit`.
+- Ejecutado `npx.cmd tsc -p tsconfig.spec.json --noEmit`.
+- Intentado `npm test -- --watch=false` y `npm run build` dentro del sandbox; ambos fallan por `Acceso denegado` al resolver archivos SCSS/specs desde directorios superiores.
+- Ejecutado `npm ci` con permisos autorizados.
+- Ejecutado `npm test -- --watch=false` con permisos autorizados.
+- Ejecutado `npm run build` con permisos autorizados.
+- Reejecutado `npm test -- --watch=false` con permisos autorizados tras `npm ci`.
+- Resultado: tests correctos con 27 archivos y 47 tests; build correcto.
+- Observacion: `npm ci` mantiene 5 vulnerabilidades totales en dependencias de desarrollo/transitivas y deprecacion de `@angular/animations`; no se cambian versiones en esta fase.

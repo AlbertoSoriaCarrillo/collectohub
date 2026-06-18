@@ -1,0 +1,178 @@
+<section class="recommendations-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Recomendaciones</p>
+      <h1>Coincidencias para tus colecciones</h1>
+    </div>
+    <a mat-button routerLink="/collections">Mis colecciones</a>
+  </header>
+
+  @if (summary(); as currentSummary) {
+    <div class="summary-grid" aria-label="Resumen de recomendaciones">
+      <mat-card class="summary-card">
+        <mat-card-content>
+          <span>Faltantes</span>
+          <strong>{{ currentSummary.missingCollectionItems }}</strong>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="summary-card">
+        <mat-card-content>
+          <span>Buscados</span>
+          <strong>{{ currentSummary.wantedCollectionItems }}</strong>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="summary-card">
+        <mat-card-content>
+          <span>Recomendados</span>
+          <strong>{{ currentSummary.recommendedProducts }}</strong>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="summary-card">
+        <mat-card-content>
+          <span>Tiendas</span>
+          <strong>{{ currentSummary.matchedShops }}</strong>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    @if (currentSummary.matchedCategoryCodes.length > 0) {
+      <mat-card class="category-card">
+        <mat-card-content>
+          <span>Categorias con coincidencias</span>
+          <mat-chip-set aria-label="Categorias con coincidencias">
+            @for (categoryCode of currentSummary.matchedCategoryCodes; track categoryCode) {
+              <mat-chip>{{ categoryCode }}</mat-chip>
+            }
+          </mat-chip-set>
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+
+  <mat-card class="filters-card">
+    <mat-card-content>
+      <form class="filters-grid" [formGroup]="filters" (ngSubmit)="loadRecommendations()" novalidate>
+        <mat-form-field appearance="outline">
+          <mat-label>Categoria</mat-label>
+          <mat-select formControlName="categoryCode">
+            <mat-option value="">Todas</mat-option>
+            @for (category of categories(); track category.code) {
+              <mat-option [value]="category.code">{{ category.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Precio maximo</mat-label>
+          <input matInput type="number" min="0" step="0.01" formControlName="maxPrice" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Moneda</mat-label>
+          <input matInput maxlength="3" formControlName="currency" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Condicion</mat-label>
+          <mat-select formControlName="physicalCondition">
+            <mat-option value="">Todas</mat-option>
+            @for (condition of physicalConditions; track condition) {
+              <mat-option [value]="condition">{{ condition }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>ID tienda</mat-label>
+          <input matInput type="number" min="1" step="1" formControlName="shopId" />
+        </mat-form-field>
+
+        <div class="filter-actions">
+          <button mat-flat-button color="primary" type="submit" [disabled]="loading()">
+            {{ loading() ? 'Buscando...' : 'Filtrar' }}
+          </button>
+          <button mat-button type="button" (click)="resetFilters()">Limpiar</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  @if (errorMessage()) {
+    <p class="form-error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="status-text">Cargando recomendaciones...</p>
+  }
+
+  @if (!loading() && !errorMessage() && recommendations().length === 0) {
+    @if (hasCollectionNeeds()) {
+      <mat-card class="empty-card">
+        <mat-card-content>
+          <h2>No hay coincidencias disponibles</h2>
+          <p>Ajusta los filtros o revisa mas tarde cuando haya productos disponibles en tiendas.</p>
+        </mat-card-content>
+      </mat-card>
+    } @else {
+      <mat-card class="empty-card">
+        <mat-card-content>
+          <h2>No hay items buscados o faltantes</h2>
+          <p>Marca items de tus colecciones como MISSING o WANTED para recibir recomendaciones.</p>
+          <a mat-stroked-button routerLink="/collections">Ver colecciones</a>
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+
+  @if (recommendations().length > 0) {
+    <div class="recommendation-grid">
+      @for (recommendation of recommendations(); track recommendation.shopProductId) {
+        <mat-card class="recommendation-card">
+          <mat-card-header>
+            <mat-card-title>{{ recommendation.productName }}</mat-card-title>
+            <mat-card-subtitle>{{ recommendation.shopName }}</mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <mat-chip-set aria-label="Datos de recomendacion">
+              <mat-chip>{{ recommendation.matchedCollectionItemStatus }}</mat-chip>
+              <mat-chip>{{ recommendation.physicalCondition }}</mat-chip>
+              <mat-chip>{{ recommendation.stockQuantity }} en stock</mat-chip>
+            </mat-chip-set>
+
+            <dl>
+              <div>
+                <dt>Precio</dt>
+                <dd>{{ priceLabel(recommendation) }}</dd>
+              </div>
+              <div>
+                <dt>Coleccion</dt>
+                <dd>{{ recommendation.matchedCollectionName }}</dd>
+              </div>
+              <div>
+                <dt>Franquicia</dt>
+                <dd>{{ recommendation.franchise || 'No informada' }}</dd>
+              </div>
+              <div>
+                <dt>Linea</dt>
+                <dd>{{ recommendation.collectionName || 'No informada' }}</dd>
+              </div>
+            </dl>
+
+            <p class="reason">{{ recommendation.recommendationReason.message }}</p>
+          </mat-card-content>
+
+          <mat-card-actions>
+            <a mat-button [routerLink]="['/shop-products', recommendation.shopProductId]">
+              Ver producto
+            </a>
+            <a mat-button [routerLink]="['/catalog', recommendation.masterProductId]">
+              Catalogo
+            </a>
+            <a mat-button [routerLink]="['/shops', recommendation.shopId]">Tienda</a>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  }
+</section>

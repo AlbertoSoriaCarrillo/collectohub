@@ -1,0 +1,85 @@
+<section class="collections-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Colecciones</p>
+      <h1>Mis colecciones</h1>
+    </div>
+    <a mat-flat-button color="primary" routerLink="/collections/new">Crear coleccion</a>
+  </header>
+
+  <mat-card class="filters-card">
+    <mat-card-content>
+      <form class="filters-grid" [formGroup]="filters" (ngSubmit)="loadCollections()" novalidate>
+        <mat-form-field appearance="outline">
+          <mat-label>Visibilidad</mat-label>
+          <mat-select formControlName="visibility">
+            <mat-option value="">Todas</mat-option>
+            @for (visibility of visibilities; track visibility) {
+              <mat-option [value]="visibility">{{ visibility }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Categoria</mat-label>
+          <mat-select formControlName="categoryCode">
+            <mat-option value="">Todas</mat-option>
+            @for (category of categories(); track category.code) {
+              <mat-option [value]="category.code">{{ category.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <div class="filter-actions">
+          <button mat-flat-button type="submit" [disabled]="loading()">
+            {{ loading() ? 'Filtrando...' : 'Filtrar' }}
+          </button>
+          <button mat-button type="button" (click)="resetFilters()">Limpiar</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  @if (errorMessage()) {
+    <p class="form-error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="status-text">Cargando colecciones...</p>
+  }
+
+  @if (!loading() && !errorMessage() && collections().length === 0) {
+    <mat-card class="empty-card">
+      <mat-card-content>
+        <h2>Aun no tienes colecciones</h2>
+        <p>Crea tu primera coleccion para registrar productos que tienes, buscas o te faltan.</p>
+        <a mat-stroked-button routerLink="/collections/new">Crear coleccion</a>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (collections().length > 0) {
+    <div class="collection-grid">
+      @for (collection of collections(); track collection.id) {
+        <mat-card class="collection-card">
+          <mat-card-header>
+            <mat-card-title>{{ collection.name }}</mat-card-title>
+            <mat-card-subtitle>{{ collection.categoryName || 'Sin categoria' }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p>{{ collection.description || 'Sin descripcion.' }}</p>
+            <mat-chip-set aria-label="Datos de coleccion">
+              <mat-chip>{{ collection.visibility }}</mat-chip>
+              <mat-chip>{{ collection.items.length }} items</mat-chip>
+            </mat-chip-set>
+          </mat-card-content>
+          <mat-card-actions>
+            <a mat-button [routerLink]="['/collections', collection.id]">Ver detalle</a>
+            <a mat-button [routerLink]="['/collections', collection.id, 'edit']">Editar</a>
+            <button mat-button type="button" (click)="deleteCollection(collection)">Eliminar</button>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  }
+</section>

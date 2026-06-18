@@ -181,6 +181,20 @@
 - Decision: cargar la pantalla de edicion desde `GET /api/shops/{shopId}/products/my` y filtrar por `shopProductId`.
 - Motivo: el contrato MVP no expone un endpoint interno de detalle por `shopId`; la lista interna garantiza permisos de miembro y permite validar pertenencia a la tienda de la ruta.
 
+## 2026-06-18 - Frontend colecciones de usuario
+
+- Decision: mostrar acciones de propietario en el detalle de coleccion solo cuando el usuario autenticado coincide con `CollectionResponse.userId`.
+- Motivo: el contrato MVP no expone un flag `owner`; comparar con `/api/users/me` evita ofrecer acciones de modificacion a lectores de colecciones publicas.
+- Decision: mantener la adicion a coleccion desde catalogo como navegacion a `/collections` sin modal avanzado.
+- Motivo: cumple el alcance de EPIC 14 sin introducir un flujo cruzado complejo entre catalogo y colecciones.
+
+## 2026-06-18 - Frontend recomendaciones
+
+- Decision: mantener `shopId` como filtro numerico manual en `/recommendations`.
+- Motivo: el contrato MVP ya acepta `shopId`, pero no existe todavia un selector dedicado de tiendas para recomendaciones; evita introducir endpoints o flujos nuevos.
+- Decision: no aplicar filtro de moneda por defecto en la pantalla de recomendaciones.
+- Motivo: filtrar inicialmente por `EUR` ocultaria productos recomendables en otras monedas; la moneda se envia solo cuando el usuario la informa.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

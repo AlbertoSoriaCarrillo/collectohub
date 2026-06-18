@@ -81,6 +81,61 @@ export const routes: Routes = [
           )
       },
       {
+        path: 'collections',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/collections/my-collections/my-collections.component').then(
+            (m) => m.MyCollectionsComponent
+          )
+      },
+      {
+        path: 'collections/new',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/collections/collection-create/collection-create.component').then(
+            (m) => m.CollectionCreateComponent
+          )
+      },
+      {
+        path: 'collections/:collectionId/edit',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/collections/collection-edit/collection-edit.component').then(
+            (m) => m.CollectionEditComponent
+          )
+      },
+      {
+        path: 'collections/:collectionId/items/new',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import(
+            './features/collections/collection-item-create/collection-item-create.component'
+          ).then((m) => m.CollectionItemCreateComponent)
+      },
+      {
+        path: 'collections/:collectionId/items/:itemId/edit',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/collections/collection-item-edit/collection-item-edit.component').then(
+            (m) => m.CollectionItemEditComponent
+          )
+      },
+      {
+        path: 'collections/:collectionId',
+        loadComponent: () =>
+          import('./features/collections/collection-detail/collection-detail.component').then(
+            (m) => m.CollectionDetailComponent
+          )
+      },
+      {
+        path: 'recommendations',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/recommendations/recommendations/recommendations.component').then(
+            (m) => m.RecommendationsComponent
+          )
+      },
+      {
         path: 'catalog',
         loadComponent: () =>
           import('./features/catalog/catalog-list/catalog-list.component').then(

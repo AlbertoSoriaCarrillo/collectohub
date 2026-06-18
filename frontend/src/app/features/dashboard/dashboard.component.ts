@@ -31,8 +31,12 @@ export class DashboardComponent implements OnInit {
     { title: 'Mis tiendas', description: 'Gestion de tiendas y miembros.', route: '/shops' },
     { title: 'Catalogo', description: 'Productos maestros reutilizables.', route: '/catalog' },
     { title: 'Inventario', description: 'Stock visible y estados comerciales.', route: '/shops' },
-    { title: 'Mis colecciones', description: 'Colecciones privadas y publicas.', route: null },
-    { title: 'Recomendaciones', description: 'Coincidencias con productos buscados.', route: null },
+    { title: 'Mis colecciones', description: 'Colecciones privadas y publicas.', route: '/collections' },
+    {
+      title: 'Recomendaciones',
+      description: 'Coincidencias con productos buscados.',
+      route: '/recommendations'
+    },
     { title: 'Reservas', description: 'Solicitudes sin pago del MVP.', route: null }
   ];
 

@@ -1,0 +1,120 @@
+<section class="collection-detail-page">
+  @if (loading()) {
+    <p class="status-text">Cargando coleccion...</p>
+  }
+
+  @if (errorMessage()) {
+    <p class="form-error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (collection(); as collectionDetail) {
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">Coleccion</p>
+        <h1>{{ collectionDetail.name }}</h1>
+      </div>
+      <a mat-button routerLink="/collections">Mis colecciones</a>
+    </header>
+
+    <mat-card class="detail-card">
+      <mat-card-content>
+        <mat-chip-set aria-label="Datos de coleccion">
+          <mat-chip>{{ collectionDetail.visibility }}</mat-chip>
+          @if (collectionDetail.categoryName) {
+            <mat-chip>{{ collectionDetail.categoryName }}</mat-chip>
+          }
+          <mat-chip>{{ items().length }} items</mat-chip>
+        </mat-chip-set>
+
+        <p>{{ collectionDetail.description || 'Sin descripcion.' }}</p>
+      </mat-card-content>
+
+      @if (isOwner()) {
+        <mat-card-actions>
+          <a mat-flat-button [routerLink]="['/collections', collectionDetail.id, 'items', 'new']">
+            Anadir item
+          </a>
+          <a mat-button [routerLink]="['/collections', collectionDetail.id, 'edit']">
+            Editar coleccion
+          </a>
+          <a mat-button routerLink="/recommendations">Ver recomendaciones</a>
+        </mat-card-actions>
+      }
+    </mat-card>
+
+    @if (itemsLoading()) {
+      <p class="status-text">Cargando items...</p>
+    }
+
+    @if (!itemsLoading() && items().length === 0) {
+      <mat-card class="empty-card">
+        <mat-card-content>
+          <h2>Esta coleccion aun no tiene items</h2>
+          @if (isOwner()) {
+            <a mat-stroked-button [routerLink]="['/collections', collectionDetail.id, 'items', 'new']">
+              Anadir item
+            </a>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+
+    @if (items().length > 0) {
+      <div class="item-grid">
+        @for (item of items(); track item.id) {
+          <mat-card class="item-card">
+            <mat-card-header>
+              <mat-card-title>{{ item.masterProductName }}</mat-card-title>
+              <mat-card-subtitle>
+                {{ item.masterProductFranchise || item.masterProductCategoryCode }}
+              </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-chip-set aria-label="Datos del item">
+                <mat-chip>{{ item.collectionStatus }}</mat-chip>
+                @if (item.physicalCondition) {
+                  <mat-chip>{{ item.physicalCondition }}</mat-chip>
+                }
+              </mat-chip-set>
+
+              <dl>
+                <div>
+                  <dt>Coleccion</dt>
+                  <dd>{{ item.masterProductCollectionName || 'No informada' }}</dd>
+                </div>
+                <div>
+                  <dt>Volumen</dt>
+                  <dd>{{ item.masterProductVolumeNumber || 'No informado' }}</dd>
+                </div>
+                <div>
+                  <dt>Unidad</dt>
+                  <dd>{{ item.unitNumber || 'No informada' }}</dd>
+                </div>
+                <div>
+                  <dt>Adquirido</dt>
+                  <dd>{{ item.acquiredAt || 'No informado' }}</dd>
+                </div>
+              </dl>
+
+              @if (item.notes) {
+                <p class="notes">{{ item.notes }}</p>
+              }
+            </mat-card-content>
+
+            @if (isOwner()) {
+              <mat-card-actions>
+                <a
+                  mat-button
+                  [routerLink]="['/collections', collectionDetail.id, 'items', item.id, 'edit']"
+                >
+                  Editar
+                </a>
+                <button mat-button type="button" (click)="deleteItem(item)">Eliminar</button>
+              </mat-card-actions>
+            }
+          </mat-card>
+        }
+      </div>
+    }
+  }
+</section>

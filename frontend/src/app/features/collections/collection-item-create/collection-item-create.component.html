@@ -1,0 +1,104 @@
+<section class="item-form-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Colecciones</p>
+      <h1>Anadir item</h1>
+    </div>
+    @if (collectionId(); as id) {
+      <a mat-button [routerLink]="['/collections', id]">Volver a la coleccion</a>
+    }
+  </header>
+
+  <mat-card class="form-card">
+    <mat-card-content>
+      <form class="search-form" [formGroup]="productSearch" (ngSubmit)="searchProducts()" novalidate>
+        <mat-form-field appearance="outline">
+          <mat-label>Buscar producto maestro</mat-label>
+          <input matInput type="search" formControlName="name" />
+        </mat-form-field>
+        <button mat-stroked-button type="submit" [disabled]="searching()">
+          {{ searching() ? 'Buscando...' : 'Buscar' }}
+        </button>
+      </form>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="form-grid">
+          <mat-form-field class="wide" appearance="outline">
+            <mat-label>Producto maestro</mat-label>
+            <mat-select formControlName="masterProductId">
+              @for (product of products(); track product.id) {
+                <mat-option [value]="product.id">
+                  {{ product.name }} - {{ product.franchise || product.category.name }}
+                </mat-option>
+              }
+            </mat-select>
+            @if (
+              form.controls.masterProductId.hasError('required') &&
+              form.controls.masterProductId.touched
+            ) {
+              <mat-error>Selecciona un producto maestro.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Estado</mat-label>
+            <mat-select formControlName="collectionStatus">
+              @for (status of statuses; track status) {
+                <mat-option [value]="status">{{ status }}</mat-option>
+              }
+            </mat-select>
+            @if (
+              form.controls.collectionStatus.hasError('required') &&
+              form.controls.collectionStatus.touched
+            ) {
+              <mat-error>Selecciona el estado.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Condicion fisica</mat-label>
+            <mat-select formControlName="physicalCondition">
+              <mat-option value="">Sin condicion</mat-option>
+              @for (condition of conditions; track condition) {
+                <mat-option [value]="condition">{{ condition }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Unidad</mat-label>
+            <input matInput formControlName="unitNumber" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Total unidades limitadas</mat-label>
+            <input matInput type="number" min="1" formControlName="totalLimitedUnits" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Fecha adquisicion</mat-label>
+            <input matInput type="date" formControlName="acquiredAt" />
+          </mat-form-field>
+
+          <mat-form-field class="wide" appearance="outline">
+            <mat-label>Notas</mat-label>
+            <textarea matInput rows="4" formControlName="notes"></textarea>
+          </mat-form-field>
+        </div>
+
+        @if (errorMessage()) {
+          <p class="form-error" role="alert">{{ errorMessage() }}</p>
+        }
+
+        <div class="form-actions">
+          <button mat-flat-button color="primary" type="submit" [disabled]="loading()">
+            {{ loading() ? 'Anadiendo...' : 'Anadir item' }}
+          </button>
+          @if (collectionId(); as id) {
+            <a mat-button [routerLink]="['/collections', id]">Cancelar</a>
+          }
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</section>

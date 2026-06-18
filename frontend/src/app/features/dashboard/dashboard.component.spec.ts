@@ -45,4 +45,17 @@ describe('DashboardComponent', () => {
     expect(compiled.textContent).toContain('collector@example.com');
     expect(compiled.textContent).toContain('SHOP_OWNER');
   });
+
+  it('links recommendations from dashboard sections', async () => {
+    const fixture = TestBed.createComponent(DashboardComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const recommendationLink = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll('a')
+    ).find((link) => link.textContent?.includes('Abrir') && link.getAttribute('href') === '/recommendations');
+
+    expect(recommendationLink).toBeTruthy();
+  });
 });
