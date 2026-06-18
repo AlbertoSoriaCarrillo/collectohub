@@ -163,6 +163,15 @@
 - Decision: usar `localStorage` para persistir `accessToken`, `refreshToken` y datos publicos del usuario durante el MVP frontend.
 - Motivo: permite mantener la sesion tras recargar la pagina y simplifica la base inicial; no se registran tokens en logs ni se muestran en pantalla. Antes de produccion se revisara la estrategia junto con refresh/logout completo.
 
+## 2026-06-18 - Frontend tiendas y catalogo
+
+- Decision: mantener la autorizacion real de creacion de productos maestros en backend y anadir bloqueo UX en frontend para usuarios sin `SHOP_OWNER` o `ADMIN`.
+- Motivo: el frontend mejora la experiencia, pero la seguridad efectiva sigue residiendo en Spring Security.
+- Decision: capturar `master_products.attributes` en el formulario frontend como objeto JSON textual opcional, enviando `{}` cuando queda vacio.
+- Motivo: respeta el modelo flexible JSONB del backend sin inventar campos especificos fuera del alcance MVP.
+- Decision: normalizar `frontend/tsconfig.app.json` a la forma estandar Angular CLI con `files: ["src/main.ts"]` e `include: ["src/**/*.d.ts"]`.
+- Motivo: `tsc -p tsconfig.app.json --noEmit` ya pasaba, pero esta configuracion evita que el proyecto app trate todos los `.ts` como entradas raiz y reduce avisos del editor.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

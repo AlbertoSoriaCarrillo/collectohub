@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -10,11 +11,12 @@ import { UserMeResponse } from '../../core/models/user-me-response.model';
 interface DashboardSection {
   title: string;
   description: string;
+  route: string | null;
 }
 
 @Component({
   selector: 'app-dashboard',
-  imports: [MatButtonModule, MatCardModule, MatChipsModule],
+  imports: [RouterLink, MatButtonModule, MatCardModule, MatChipsModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -26,12 +28,12 @@ export class DashboardComponent implements OnInit {
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly sections: DashboardSection[] = [
-    { title: 'Mis tiendas', description: 'Gestion de tiendas y miembros.' },
-    { title: 'Catalogo', description: 'Productos maestros reutilizables.' },
-    { title: 'Inventario', description: 'Stock visible y estados comerciales.' },
-    { title: 'Mis colecciones', description: 'Colecciones privadas y publicas.' },
-    { title: 'Recomendaciones', description: 'Coincidencias con productos buscados.' },
-    { title: 'Reservas', description: 'Solicitudes sin pago del MVP.' }
+    { title: 'Mis tiendas', description: 'Gestion de tiendas y miembros.', route: '/shops' },
+    { title: 'Catalogo', description: 'Productos maestros reutilizables.', route: '/catalog' },
+    { title: 'Inventario', description: 'Stock visible y estados comerciales.', route: null },
+    { title: 'Mis colecciones', description: 'Colecciones privadas y publicas.', route: null },
+    { title: 'Recomendaciones', description: 'Coincidencias con productos buscados.', route: null },
+    { title: 'Reservas', description: 'Solicitudes sin pago del MVP.', route: null }
   ];
 
   ngOnInit(): void {

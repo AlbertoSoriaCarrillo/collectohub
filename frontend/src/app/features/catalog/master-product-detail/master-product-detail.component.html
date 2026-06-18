@@ -1,0 +1,84 @@
+<section class="product-detail-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Catalogo maestro</p>
+      <h1>{{ product()?.name || 'Producto' }}</h1>
+    </div>
+    <a mat-button routerLink="/catalog">Volver al catalogo</a>
+  </header>
+
+  @if (errorMessage()) {
+    <p class="form-error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (product(); as item) {
+    <mat-card class="detail-card">
+      <mat-card-header>
+        <mat-card-title>{{ item.name }}</mat-card-title>
+        <mat-card-subtitle>{{ item.franchise || 'Sin franquicia' }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <mat-chip-set aria-label="Clasificacion del producto">
+          <mat-chip>{{ item.category.name }}</mat-chip>
+          <mat-chip>{{ item.status }}</mat-chip>
+          @if (item.language) {
+            <mat-chip>{{ item.language }}</mat-chip>
+          }
+          @if (item.limitedEdition) {
+            <mat-chip>Edicion limitada</mat-chip>
+          }
+        </mat-chip-set>
+
+        @if (item.description) {
+          <p class="description">{{ item.description }}</p>
+        }
+
+        <dl>
+          <div>
+            <dt>Coleccion</dt>
+            <dd>{{ item.collectionName || 'No informada' }}</dd>
+          </div>
+          <div>
+            <dt>Volumen</dt>
+            <dd>{{ item.volumeNumber || 'No informado' }}</dd>
+          </div>
+          <div>
+            <dt>Editorial</dt>
+            <dd>{{ item.publisher || 'No informada' }}</dd>
+          </div>
+          <div>
+            <dt>ISBN</dt>
+            <dd>{{ item.isbn || 'No informado' }}</dd>
+          </div>
+          <div>
+            <dt>EAN</dt>
+            <dd>{{ item.ean || 'No informado' }}</dd>
+          </div>
+          <div>
+            <dt>Lanzamiento</dt>
+            <dd>{{ item.releaseDate || 'No informado' }}</dd>
+          </div>
+          <div>
+            <dt>Paises</dt>
+            <dd>{{ item.publicationCountries.length ? item.publicationCountries.join(', ') : 'No informados' }}</dd>
+          </div>
+          <div>
+            <dt>Unidades limitadas</dt>
+            <dd>{{ item.limitedEditionTotalUnits || 'No informadas' }}</dd>
+          </div>
+        </dl>
+      </mat-card-content>
+
+      @if (canManageProduct()) {
+        <mat-card-actions>
+          <button mat-button type="button" disabled>Editar proximamente</button>
+        </mat-card-actions>
+      }
+    </mat-card>
+  } @else if (loading()) {
+    <mat-card class="detail-card">
+      <mat-card-content>Cargando producto...</mat-card-content>
+    </mat-card>
+  }
+</section>

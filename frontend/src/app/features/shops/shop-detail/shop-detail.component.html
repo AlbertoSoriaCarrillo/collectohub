@@ -1,0 +1,58 @@
+<section class="detail-page">
+  @if (loading()) {
+    <p class="status-text">Cargando tienda...</p>
+  }
+
+  @if (successMessage()) {
+    <p class="message success" role="status">{{ successMessage() }}</p>
+  }
+
+  @if (errorMessage()) {
+    <p class="message error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (shop(); as shopDetail) {
+    <mat-card class="detail-card">
+      <mat-card-header>
+        <mat-card-title>{{ shopDetail.name }}</mat-card-title>
+        <mat-card-subtitle>{{ shopDetail.country || 'Pais no informado' }} - {{ shopDetail.currency }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ shopDetail.description || 'Sin descripcion publica.' }}</p>
+
+        <dl>
+          <div>
+            <dt>Email</dt>
+            <dd>{{ shopDetail.contactEmail || 'No informado' }}</dd>
+          </div>
+          <div>
+            <dt>Telefono</dt>
+            <dd>{{ shopDetail.contactPhone || 'No informado' }}</dd>
+          </div>
+          <div>
+            <dt>Reservas</dt>
+            <dd>{{ shopDetail.defaultReservationExpirationHours }} horas</dd>
+          </div>
+          <div>
+            <dt>Estado</dt>
+            <dd>{{ shopDetail.status }}</dd>
+          </div>
+        </dl>
+
+        <mat-chip-set aria-label="Permisos de tienda">
+          @if (membership()) {
+            <mat-chip>{{ membership()?.role }}</mat-chip>
+          } @else {
+            <mat-chip>Vista publica</mat-chip>
+          }
+        </mat-chip-set>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button routerLink="/shops">Mis tiendas</a>
+        @if (canManage()) {
+          <button mat-button type="button" disabled>Editar proximamente</button>
+        }
+      </mat-card-actions>
+    </mat-card>
+  }
+</section>

@@ -1,0 +1,57 @@
+.detail-page {
+  display: grid;
+  gap: 16px;
+  margin: 0 auto;
+  max-width: 920px;
+}
+
+.detail-card {
+  border-radius: 8px;
+}
+
+.status-text,
+.detail-card p,
+dd {
+  color: #9fb0c1;
+}
+
+dl {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 24px 0;
+}
+
+dt {
+  color: #f7f9fb;
+  font-weight: 700;
+}
+
+dd {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.message {
+  border-radius: 8px;
+  margin: 0;
+  padding: 12px;
+}
+
+.success {
+  background: rgba(125, 211, 199, 0.12);
+  border: 1px solid rgba(125, 211, 199, 0.38);
+  color: #b7fff5;
+}
+
+.error {
+  background: rgba(255, 82, 82, 0.12);
+  border: 1px solid rgba(255, 82, 82, 0.38);
+  color: #ffb4ab;
+}
+
+@media (max-width: 640px) {
+  dl {
+    grid-template-columns: 1fr;
+  }
+}

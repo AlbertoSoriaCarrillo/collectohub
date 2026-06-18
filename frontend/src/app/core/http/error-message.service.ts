@@ -14,10 +14,27 @@ export class ErrorMessageService {
 
       const body = error.error as Partial<ErrorResponse> | null;
       const detailsMessage = this.detailsToMessage(body?.details);
-      return detailsMessage || body?.message || error.message || 'La operacion no se pudo completar.';
+      return detailsMessage || body?.message || this.fallbackByStatus(error.status) || error.message;
     }
 
     return 'La operacion no se pudo completar.';
+  }
+
+  private fallbackByStatus(status: number): string | null {
+    switch (status) {
+      case 400:
+        return 'Revisa los datos del formulario.';
+      case 401:
+        return 'Inicia sesion para continuar.';
+      case 403:
+        return 'No tienes permisos para realizar esta accion.';
+      case 404:
+        return 'No se encontro el recurso solicitado.';
+      case 409:
+        return 'Ya existe un recurso con esos datos.';
+      default:
+        return null;
+    }
   }
 
   private detailsToMessage(details: ErrorResponse['details']): string | null {

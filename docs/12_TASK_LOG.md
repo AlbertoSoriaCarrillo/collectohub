@@ -264,3 +264,24 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Intentado `.\mvnw.cmd clean verify` sin permisos de red; fallo al resolver dependencias en Maven Central por bloqueo del sandbox.
 - Ejecutado `.\mvnw.cmd clean verify` con acceso autorizado.
 - Resultado: build correcto; 161 tests totales, 159 ejecutados correctamente y 2 saltados por no estar Docker instalado.
+
+## 2026-06-18 - EPIC 12 - Frontend tiendas y catalogo
+
+- Revisada documentacion requerida antes de modificar codigo: prompt, README, specs de producto/arquitectura/API/seguridad/testing, task log, decisiones, endpoints MVP y flujo manual.
+- Creados modelos frontend `ShopResponse`, `ShopMemberResponse`, `CreateShopRequest`, `UpdateShopRequest`, `ProductCategoryResponse`, `MasterProductResponse`, `CreateMasterProductRequest`, `UpdateMasterProductRequest` y filtros de busqueda de catalogo.
+- Creados servicios `ShopService` y `CatalogService` conectados a endpoints MVP de tiendas y catalogo.
+- Anadidas rutas `/shops`, `/shops/new`, `/shops/:id`, `/catalog`, `/catalog/new` y `/catalog/:id`; protegidas con `authGuard` las rutas privadas solicitadas.
+- Actualizada navegacion principal y dashboard para enlazar `Mis tiendas` y `Catalogo`, manteniendo el resto de modulos futuros como placeholders.
+- Implementadas pantallas de tiendas: listado de tiendas propias, creacion de tienda y detalle publico con deteccion de pertenencia autenticada.
+- Implementadas pantallas de catalogo: listado/busqueda publica de productos maestros, creacion protegida por rol `SHOP_OWNER`/`ADMIN` y detalle publico.
+- Anadido bloqueo UI para impedir que un usuario autenticado sin `SHOP_OWNER` o `ADMIN` cree productos maestros.
+- Mejorado `ErrorMessageService` con mensajes fallback para `400`, `401`, `403`, `404` y `409`.
+- Revisado `frontend/tsconfig.app.json`; `tsc -p tsconfig.app.json --noEmit` pasaba sin errores y se normalizo la configuracion a la forma estandar de Angular CLI con `files: ["src/main.ts"]`.
+- Actualizado `frontend/README.md` con rutas, servicios y modulos frontend MVP.
+- Anadidos tests de servicios, rutas protegidas, listado de tiendas, validacion de tienda, listado de catalogo, validacion de producto maestro y bloqueo UI por rol.
+- Intentado `npm test -- --watch=false` dentro del sandbox; fallo por bloqueo de lectura de directorios superiores del entorno.
+- Ejecutado `npm ci` con permisos autorizados.
+- Ejecutado `npm test -- --watch=false` con permisos autorizados.
+- Ejecutado `npm run build` con permisos autorizados.
+- Resultado: tests correctos con 14 archivos y 20 tests; build correcto.
+- Observacion: `npm ci` informa 5 vulnerabilidades totales en dependencias de desarrollo/transitivas y la deprecacion de `@angular/animations`; no se cambian versiones en esta fase.

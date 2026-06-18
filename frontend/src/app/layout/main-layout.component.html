@@ -2,8 +2,10 @@
   <a class="brand" routerLink="/dashboard">CollectoHub</a>
 
   <nav class="nav-links" aria-label="Navegacion principal">
+    <a mat-button routerLink="/catalog" routerLinkActive="active-link">Catalogo</a>
     @if (authService.isAuthenticated()) {
       <a mat-button routerLink="/dashboard" routerLinkActive="active-link">Dashboard</a>
+      <a mat-button routerLink="/shops" routerLinkActive="active-link">Mis tiendas</a>
     }
   </nav>
 

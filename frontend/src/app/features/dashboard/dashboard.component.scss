@@ -57,6 +57,10 @@
   min-height: 128px;
 }
 
+.section-card-link {
+  border-color: rgba(125, 211, 199, 0.32);
+}
+
 @media (max-width: 900px) {
   .profile-grid,
   .section-grid {

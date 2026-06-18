@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
 import { UserMeResponse } from '../../core/models/user-me-response.model';
@@ -20,6 +21,7 @@ describe('DashboardComponent', () => {
       imports: [DashboardComponent],
       providers: [
         provideAnimationsAsync('noop'),
+        provideRouter([]),
         {
           provide: AuthService,
           useValue: {

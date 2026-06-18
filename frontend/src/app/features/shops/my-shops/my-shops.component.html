@@ -1,0 +1,50 @@
+<section class="page-shell">
+  <header class="page-header">
+    <div>
+      <h1>Mis tiendas</h1>
+      <p>Tiendas asociadas a tu usuario autenticado.</p>
+    </div>
+    <a mat-flat-button routerLink="/shops/new">Crear tienda</a>
+  </header>
+
+  @if (loading()) {
+    <p class="status-text">Cargando tiendas...</p>
+  }
+
+  @if (errorMessage()) {
+    <p class="message error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (!loading() && !errorMessage() && shops().length === 0) {
+    <mat-card class="empty-card">
+      <mat-card-content>
+        <h2>Aun no tienes tiendas</h2>
+        <p>Crea tu primera tienda para empezar a gestionar catalogo e inventario en futuras fases.</p>
+        <a mat-stroked-button routerLink="/shops/new">Crear tienda</a>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <div class="shop-grid">
+    @for (shop of shops(); track shop.id) {
+      <mat-card class="shop-card">
+        <mat-card-header>
+          <mat-card-title>{{ shop.name }}</mat-card-title>
+          <mat-card-subtitle>{{ shop.country || 'Pais no informado' }} - {{ shop.currency }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>{{ shop.description || 'Sin descripcion publica.' }}</p>
+          <mat-chip-set aria-label="Datos de tienda">
+            <mat-chip>{{ shop.status }}</mat-chip>
+            @if (shop.currentUserMembership) {
+              <mat-chip>{{ shop.currentUserMembership.role }}</mat-chip>
+            }
+          </mat-chip-set>
+        </mat-card-content>
+        <mat-card-actions>
+          <a mat-button [routerLink]="['/shops', shop.id]">Ver detalle</a>
+        </mat-card-actions>
+      </mat-card>
+    }
+  </div>
+</section>

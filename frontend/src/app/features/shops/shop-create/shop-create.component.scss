@@ -1,0 +1,50 @@
+.form-page {
+  display: grid;
+  place-items: start center;
+}
+
+.form-card {
+  border-radius: 8px;
+  width: min(100%, 760px);
+}
+
+form {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.form-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+.message {
+  border-radius: 8px;
+  margin: 0;
+  padding: 12px;
+}
+
+.success {
+  background: rgba(125, 211, 199, 0.12);
+  border: 1px solid rgba(125, 211, 199, 0.38);
+  color: #b7fff5;
+}
+
+.error {
+  background: rgba(255, 82, 82, 0.12);
+  border: 1px solid rgba(255, 82, 82, 0.38);
+  color: #ffb4ab;
+}
+
+@media (max-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}

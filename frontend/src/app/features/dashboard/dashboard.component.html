@@ -45,11 +45,18 @@
 
   <div class="section-grid">
     @for (section of sections; track section.title) {
-      <mat-card class="section-card">
+      <mat-card class="section-card" [class.section-card-link]="section.route">
         <mat-card-header>
           <mat-card-title>{{ section.title }}</mat-card-title>
           <mat-card-subtitle>{{ section.description }}</mat-card-subtitle>
         </mat-card-header>
+        <mat-card-actions>
+          @if (section.route; as route) {
+            <a mat-button [routerLink]="route">Abrir</a>
+          } @else {
+            <button mat-button type="button" disabled>Proximamente</button>
+          }
+        </mat-card-actions>
       </mat-card>
     }
   </div>

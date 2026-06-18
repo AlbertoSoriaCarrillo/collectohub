@@ -73,9 +73,31 @@ npm run build
 
 - `/login`
 - `/register`
-- `/dashboard`
+- `/dashboard` protegida.
+- `/shops` protegida.
+- `/shops/new` protegida.
+- `/shops/:id` publica.
+- `/catalog` publica.
+- `/catalog/new` protegida; la pantalla solo permite crear a `SHOP_OWNER` o `ADMIN`.
+- `/catalog/:id` publica.
 - `/`
 - `**` redirige de forma controlada a dashboard/login.
+
+## Modulos MVP frontend
+
+- Autenticacion: login, registro, sesion local y dashboard autenticado.
+- Tiendas: listado de tiendas propias, creacion de tienda y detalle publico.
+- Catalogo maestro: listado/busqueda publica, detalle publico y creacion protegida por rol.
+
+Los servicios frontend usan los endpoints MVP documentados:
+
+- `GET /api/shops/my`
+- `POST /api/shops`
+- `GET /api/shops/{id}`
+- `GET /api/product-categories`
+- `GET /api/master-products`
+- `POST /api/master-products`
+- `GET /api/master-products/{id}`
 
 ## Sesion
 

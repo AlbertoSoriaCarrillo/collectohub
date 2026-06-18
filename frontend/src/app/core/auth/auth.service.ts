@@ -54,4 +54,8 @@ export class AuthService {
   hasRole(role: string): boolean {
     return this.tokenStorage.getRoles().includes(role);
   }
+
+  hasAnyRole(roles: string[]): boolean {
+    return roles.some((role) => this.hasRole(role));
+  }
 }
