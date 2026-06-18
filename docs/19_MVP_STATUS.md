@@ -16,7 +16,8 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 8. Recomendaciones simples por items `MISSING` o `WANTED`.
 9. Reservas sin pago.
 10. Empaquetado local con Docker Compose.
-11. CI con jobs de documentacion, backend y frontend.
+11. Tests E2E locales basicos con Playwright.
+12. CI con jobs de documentacion, backend y frontend.
 
 ## Implementado backend
 
@@ -43,6 +44,7 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 - Tests de servicios, guards, rutas y pantallas principales.
 - Build de produccion con `npm run build`.
 - Dockerfile multi-stage con build Node.js y nginx para servir estaticos.
+- Tests E2E Playwright en `frontend/e2e` para smoke, auth/dashboard y flujo MVP principal.
 
 ## No implementado en MVP
 
@@ -71,6 +73,7 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 - El Docker frontend usa `apiBaseUrl = "http://localhost:8080"` y depende del backend publicado en el host.
 - `npm ci` informa 5 vulnerabilidades en dependencias de desarrollo/transitivas; no se han actualizado versiones fuera del alcance de esta fase.
 - Los tests Testcontainers se saltan si Docker no esta disponible.
+- Los E2E Playwright no se ejecutan en CI y requieren entorno local ya levantado.
 
 ## Decisiones vigentes relevantes
 
@@ -78,6 +81,7 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 - Maven Wrapper dentro de `backend` para evitar Maven global.
 - Angular 21.x por compatibilidad con Node.js 24.14/24.x del entorno.
 - Docker Compose local levanta PostgreSQL, backend y frontend; no implica despliegue cloud.
+- Playwright E2E se ubica en `frontend/e2e` y usa Chromium en esta primera fase.
 - `SHOP_OWNER` global es acumulable con `USER`.
 - El rol interno `OWNER` de `shop_members` controla permisos dentro de una tienda concreta.
 - El rol global `SHOP_OWNER` permite capacidades de gestion de tiendas/plataforma.
@@ -139,6 +143,25 @@ Postgres:  localhost:5432
 
 Guia completa: `docs/20_DEPLOYMENT_LOCAL.md`.
 
+## Como ejecutar E2E
+
+Con backend y frontend ya levantados:
+
+```powershell
+cd frontend
+npm run e2e:install
+npm run e2e
+```
+
+Variables opcionales:
+
+```powershell
+$env:E2E_BASE_URL="http://localhost:4200"
+$env:E2E_API_BASE_URL="http://localhost:8080"
+```
+
+Guia completa: `docs/21_E2E_TESTING.md`.
+
 ## Estado CI
 
 El workflow local `.github/workflows/ci.yml` define:
@@ -146,6 +169,7 @@ El workflow local `.github/workflows/ci.yml` define:
 - Validacion de estructura documental.
 - Backend con Java 25, `chmod +x mvnw` y `./mvnw clean verify`.
 - Frontend con Node 24, `npm ci`, `npm test -- --watch=false` y `npm run build`.
+- Playwright E2E queda fuera de CI en esta fase.
 
 La revision de este archivo no encontro necesidad de cambios en esta fase.
 

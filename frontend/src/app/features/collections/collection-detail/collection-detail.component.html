@@ -16,7 +16,7 @@
       <a mat-button routerLink="/collections">Mis colecciones</a>
     </header>
 
-    <mat-card class="detail-card">
+    <mat-card class="detail-card" data-testid="collection-detail">
       <mat-card-content>
         <mat-chip-set aria-label="Datos de coleccion">
           <mat-chip>{{ collectionDetail.visibility }}</mat-chip>
@@ -31,7 +31,11 @@
 
       @if (isOwner()) {
         <mat-card-actions>
-          <a mat-flat-button [routerLink]="['/collections', collectionDetail.id, 'items', 'new']">
+          <a
+            mat-flat-button
+            [routerLink]="['/collections', collectionDetail.id, 'items', 'new']"
+            data-testid="add-collection-item-link"
+          >
             Anadir item
           </a>
           <a mat-button [routerLink]="['/collections', collectionDetail.id, 'edit']">
@@ -60,9 +64,9 @@
     }
 
     @if (items().length > 0) {
-      <div class="item-grid">
+      <div class="item-grid" data-testid="collection-items-list">
         @for (item of items(); track item.id) {
-          <mat-card class="item-card">
+          <mat-card class="item-card" data-testid="collection-item-card">
             <mat-card-header>
               <mat-card-title>{{ item.masterProductName }}</mat-card-title>
               <mat-card-subtitle>

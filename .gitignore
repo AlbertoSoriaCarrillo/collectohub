@@ -45,6 +45,8 @@ uploads/
 # Test reports
 surefire-reports/
 failsafe-reports/
+frontend/test-results/
+frontend/playwright-report/
 
 # Sonar
 .scannerwork/

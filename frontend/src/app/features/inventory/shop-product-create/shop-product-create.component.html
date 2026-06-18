@@ -15,10 +15,20 @@
       <form class="search-form" [formGroup]="productSearch" (ngSubmit)="searchProducts()" novalidate>
         <mat-form-field appearance="outline">
           <mat-label>Buscar producto maestro</mat-label>
-          <input matInput type="search" formControlName="name" />
+          <input
+            matInput
+            type="search"
+            formControlName="name"
+            data-testid="shop-product-search-master-product"
+          />
         </mat-form-field>
 
-        <button mat-stroked-button type="submit" [disabled]="searching()">
+        <button
+          mat-stroked-button
+          type="submit"
+          [disabled]="searching()"
+          data-testid="shop-product-search-submit"
+        >
           {{ searching() ? 'Buscando...' : 'Buscar' }}
         </button>
       </form>
@@ -27,7 +37,7 @@
         <div class="form-grid">
           <mat-form-field class="wide" appearance="outline">
             <mat-label>Producto maestro</mat-label>
-            <mat-select formControlName="masterProductId">
+            <mat-select formControlName="masterProductId" data-testid="shop-product-master-product">
               @for (product of masterProducts(); track product.id) {
                 <mat-option [value]="product.id">
                   {{ product.name }} - {{ product.franchise || product.category.name }}
@@ -113,7 +123,13 @@
         }
 
         <div class="form-actions">
-          <button mat-flat-button color="primary" type="submit" [disabled]="loading()">
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="loading()"
+            data-testid="create-shop-product-submit"
+          >
             {{ loading() ? 'Creando...' : 'Crear producto' }}
           </button>
           @if (shopId(); as id) {

@@ -93,6 +93,10 @@ backend publicado y Spring permite CORS para `localhost:4200`.
 npm start
 npm test
 npm run build
+npm run e2e:install
+npm run e2e
+npm run e2e:headed
+npm run e2e:ui
 ```
 
 El workflow de CI ejecuta:
@@ -101,6 +105,43 @@ El workflow de CI ejecuta:
 npm ci
 npm test -- --watch=false
 npm run build
+```
+
+Los E2E Playwright no se ejecutan todavia en CI. Requieren backend, frontend y
+base de datos levantados previamente.
+
+## E2E Playwright
+
+Los tests end-to-end viven en:
+
+```text
+e2e/
+```
+
+Instalar Chromium:
+
+```powershell
+npm run e2e:install
+```
+
+Ejecutar E2E contra `http://localhost:4200` y API `http://localhost:8080`:
+
+```powershell
+npm run e2e
+```
+
+Variables opcionales:
+
+```powershell
+$env:E2E_BASE_URL="http://localhost:4200"
+$env:E2E_API_BASE_URL="http://localhost:8080"
+npm run e2e
+```
+
+Guia completa:
+
+```text
+../docs/21_E2E_TESTING.md
 ```
 
 ## Rutas iniciales

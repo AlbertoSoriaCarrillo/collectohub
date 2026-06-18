@@ -6,10 +6,15 @@
     </mat-card-header>
 
     <mat-card-content>
-      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate data-testid="create-shop-form">
         <mat-form-field appearance="outline">
           <mat-label>Nombre</mat-label>
-          <input matInput formControlName="name" autocomplete="organization" />
+          <input
+            matInput
+            formControlName="name"
+            autocomplete="organization"
+            data-testid="create-shop-name"
+          />
           @if (form.controls.name.hasError('required') && form.controls.name.touched) {
             <mat-error>El nombre es obligatorio.</mat-error>
           }
@@ -69,7 +74,12 @@
         }
 
         <div class="actions">
-          <button mat-flat-button type="submit" [disabled]="loading()">
+          <button
+            mat-flat-button
+            type="submit"
+            [disabled]="loading()"
+            data-testid="create-shop-submit"
+          >
             {{ loading() ? 'Creando...' : 'Crear tienda' }}
           </button>
           <a mat-button routerLink="/shops">Cancelar</a>

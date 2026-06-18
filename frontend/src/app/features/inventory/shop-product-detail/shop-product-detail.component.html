@@ -19,7 +19,7 @@
   }
 
   @if (product(); as item) {
-    <mat-card class="detail-card">
+    <mat-card class="detail-card" data-testid="shop-product-detail">
       <mat-card-header>
         <mat-card-title>{{ item.masterProductName }}</mat-card-title>
         <mat-card-subtitle>
@@ -89,7 +89,13 @@
                 <textarea matInput rows="3" maxlength="1000" formControlName="userMessage"></textarea>
               </mat-form-field>
 
-              <button mat-flat-button color="primary" type="submit" [disabled]="creatingReservation()">
+              <button
+                mat-flat-button
+                color="primary"
+                type="submit"
+                [disabled]="creatingReservation()"
+                data-testid="create-reservation-submit"
+              >
                 {{ creatingReservation() ? 'Reservando...' : 'Reservar' }}
               </button>
             </form>

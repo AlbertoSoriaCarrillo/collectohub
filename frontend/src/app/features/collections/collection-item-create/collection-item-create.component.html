@@ -14,9 +14,19 @@
       <form class="search-form" [formGroup]="productSearch" (ngSubmit)="searchProducts()" novalidate>
         <mat-form-field appearance="outline">
           <mat-label>Buscar producto maestro</mat-label>
-          <input matInput type="search" formControlName="name" />
+          <input
+            matInput
+            type="search"
+            formControlName="name"
+            data-testid="collection-item-search-master-product"
+          />
         </mat-form-field>
-        <button mat-stroked-button type="submit" [disabled]="searching()">
+        <button
+          mat-stroked-button
+          type="submit"
+          [disabled]="searching()"
+          data-testid="collection-item-search-submit"
+        >
           {{ searching() ? 'Buscando...' : 'Buscar' }}
         </button>
       </form>
@@ -25,7 +35,7 @@
         <div class="form-grid">
           <mat-form-field class="wide" appearance="outline">
             <mat-label>Producto maestro</mat-label>
-            <mat-select formControlName="masterProductId">
+            <mat-select formControlName="masterProductId" data-testid="collection-item-master-product">
               @for (product of products(); track product.id) {
                 <mat-option [value]="product.id">
                   {{ product.name }} - {{ product.franchise || product.category.name }}
@@ -42,7 +52,7 @@
 
           <mat-form-field appearance="outline">
             <mat-label>Estado</mat-label>
-            <mat-select formControlName="collectionStatus">
+            <mat-select formControlName="collectionStatus" data-testid="collection-item-status">
               @for (status of statuses; track status) {
                 <mat-option [value]="status">{{ status }}</mat-option>
               }
@@ -91,7 +101,13 @@
         }
 
         <div class="form-actions">
-          <button mat-flat-button color="primary" type="submit" [disabled]="loading()">
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="loading()"
+            data-testid="add-collection-item-submit"
+          >
             {{ loading() ? 'Anadiendo...' : 'Anadir item' }}
           </button>
           @if (collectionId(); as id) {

@@ -27,7 +27,7 @@
 
   <div class="shop-grid">
     @for (shop of shops(); track shop.id) {
-      <mat-card class="shop-card">
+      <mat-card class="shop-card" data-testid="shop-card">
         <mat-card-header>
           <mat-card-title>{{ shop.name }}</mat-card-title>
           <mat-card-subtitle>{{ shop.country || 'Pais no informado' }} - {{ shop.currency }}</mat-card-subtitle>

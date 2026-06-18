@@ -17,11 +17,11 @@
   } @else {
     <mat-card class="form-card">
       <mat-card-content>
-        <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <form [formGroup]="form" (ngSubmit)="submit()" novalidate data-testid="create-master-product-form">
           <div class="form-grid">
             <mat-form-field appearance="outline">
               <mat-label>Nombre</mat-label>
-              <input matInput formControlName="name" />
+              <input matInput formControlName="name" data-testid="create-master-product-name" />
               @if (form.controls.name.hasError('required') && form.controls.name.touched) {
                 <mat-error>El nombre es obligatorio.</mat-error>
               }
@@ -29,7 +29,7 @@
 
             <mat-form-field appearance="outline">
               <mat-label>Categoria</mat-label>
-              <mat-select formControlName="categoryCode">
+              <mat-select formControlName="categoryCode" data-testid="create-master-product-category">
                 @for (category of categories(); track category.code) {
                   <mat-option [value]="category.code">{{ category.name }}</mat-option>
                 }
@@ -124,7 +124,13 @@
           }
 
           <div class="form-actions">
-            <button mat-flat-button color="primary" type="submit" [disabled]="loading()">
+            <button
+              mat-flat-button
+              color="primary"
+              type="submit"
+              [disabled]="loading()"
+              data-testid="create-master-product-submit"
+            >
               {{ loading() ? 'Creando...' : 'Crear producto' }}
             </button>
             <a mat-button routerLink="/catalog">Cancelar</a>

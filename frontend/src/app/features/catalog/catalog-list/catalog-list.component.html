@@ -68,7 +68,7 @@
   @if (products().length > 0) {
     <div class="product-grid">
       @for (product of products(); track product.id) {
-        <mat-card class="product-card">
+        <mat-card class="product-card" data-testid="master-product-card">
           <mat-card-header>
             <mat-card-title>{{ product.name }}</mat-card-title>
             <mat-card-subtitle>

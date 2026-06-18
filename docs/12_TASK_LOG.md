@@ -422,3 +422,38 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Intentado comprobar Docker con `docker --version`, `docker compose version` y `docker info`; no se pudo validar Compose porque `docker` no esta instalado o no esta en PATH en este entorno.
 - Revisado que no hay `.env` reales versionados; solo existe `infra/.env.example`.
 - No se implementa despliegue cloud ni funcionalidades nuevas fuera del empaquetado local.
+
+## 2026-06-18 - EPIC 19 - Tests end-to-end basicos con Playwright
+
+- Revisada documentacion requerida antes de modificar codigo: prompt, README raiz, frontend README, task log, decisiones, demo flow, estado MVP, despliegue local, CI, `frontend/package.json`, rutas y componentes/servicios frontend de auth, tiendas, catalogo, inventario, colecciones, recomendaciones y reservas.
+- Anadido `@playwright/test` como dependencia de desarrollo del frontend.
+- Anadidos scripts frontend `e2e`, `e2e:headed`, `e2e:ui` y `e2e:install`.
+- Creado `frontend/playwright.config.ts` con `testDir: ./e2e`, `E2E_BASE_URL`, `E2E_API_BASE_URL`, Chromium, screenshots solo en fallo, traces en fallo y timeout local.
+- Creada estructura `frontend/e2e/helpers/` y `frontend/e2e/specs/`.
+- Creados helpers E2E para datos unicos, auth, navegacion, selects Material y flujo MVP.
+- Creados tests `01-smoke.spec.ts`, `02-auth-dashboard.spec.ts` y `03-mvp-flow.spec.ts`.
+- Anadidos `data-testid` minimos en layout, auth, dashboard, tiendas, catalogo, inventario, colecciones, recomendaciones y reservas para estabilizar selectores E2E.
+- Corregido el shell frontend para evitar doble layout: `App` ahora hospeda `router-outlet` y `MainLayoutComponent` queda como layout de rutas.
+- Actualizado el test unitario de `App` para validar el `router-outlet`.
+- Anadido `.gitignore` para artefactos locales de Playwright: `frontend/test-results/` y `frontend/playwright-report/`.
+- Creado `docs/21_E2E_TESTING.md` con requisitos, ejecucion Docker/clasica, instalacion de Chromium, comandos, interpretacion de errores y limitaciones.
+- Actualizados `README.md`, `frontend/README.md`, `docs/19_MVP_STATUS.md` y `docs/13_DECISIONS.md`.
+- No se anade Playwright al CI en esta fase.
+- Ejecutado `cd frontend && npm ci` con permisos autorizados.
+- Resultado `npm ci`: correcto; se mantienen 5 vulnerabilidades dev/transitivas ya conocidas y deprecacion de `@angular/animations`.
+- Ejecutado `cd backend && .\mvnw.cmd clean verify`. Primer intento dentro del sandbox fallo por bloqueo de red Maven Central; reejecutado con permisos autorizados correctamente.
+- Resultado backend: build correcto; 161 tests correctos, 0 fallos, 0 errores, 0 saltados.
+- Ejecutado `cd frontend && npm test -- --watch=false` con permisos autorizados.
+- Resultado frontend unit tests: 31 archivos de test y 60 tests correctos.
+- Ejecutado `cd frontend && npm run build` con permisos autorizados.
+- Resultado frontend build: correcto.
+- Ejecutado `cd frontend && npm run e2e:install`; Chromium, headless shell, FFmpeg y dependencias Playwright descargadas correctamente.
+- Ejecutado `cd frontend && npx playwright test --list`; detecta 3 tests en 3 archivos.
+- Levantado entorno con `cd infra && docker compose up --build -d`; backend y frontend responden `200` en `/api/health` y `/`.
+- Ejecutado `cd frontend && npm run e2e`.
+- Resultado Playwright headless final: 3 tests correctos.
+- Ejecutado `cd frontend && npm run e2e:headed`.
+- Resultado Playwright headed: 3 tests correctos.
+- Ejecutado `cd infra && docker compose down` para parar contenedores sin borrar volumen.
+- Durante la primera ejecucion E2E se detectaron y corrigieron selectores demasiado amplios, el doble layout de Angular y la interaccion con overlays de Angular Material.
+- No se implementan funcionalidades nuevas fuera de la capa E2E y la correccion minima del shell frontend.

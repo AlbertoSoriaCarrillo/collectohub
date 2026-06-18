@@ -213,6 +213,17 @@
 - Decision: mantener `apiBaseUrl` del frontend en `http://localhost:8080` para Docker local y permitir CORS configurable en backend.
 - Motivo: desde el navegador del host `localhost:8080` apunta al backend publicado por Compose; evita introducir runtime config Angular en esta fase.
 
+## 2026-06-18 - Playwright E2E MVP
+
+- Decision: ubicar los tests E2E en `frontend/e2e/`.
+- Motivo: la UI Angular es quien ejecuta los flujos de navegador, Playwright queda cerca del `package.json` frontend y se evita crear otro paquete Node en la raiz del monorepo.
+- Decision: no ejecutar Playwright en GitHub Actions durante esta fase.
+- Motivo: la suite requiere backend, frontend y base de datos levantados; se deja para una fase posterior para no hacer el pipeline mas lento o fragil.
+- Decision: usar Chromium como unico navegador E2E inicial.
+- Motivo: reduce coste de instalacion y mantiene una primera capa smoke mantenible.
+- Decision: dejar `App` como host de `router-outlet` y mantener `MainLayoutComponent` solo como layout de rutas.
+- Motivo: evita renderizar dos barras/layouts al mismo tiempo y estabiliza la UI real que validan los E2E.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

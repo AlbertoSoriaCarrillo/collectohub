@@ -54,9 +54,9 @@
   }
 
   @if (reservations().length > 0) {
-    <div class="reservation-grid">
+    <div class="reservation-grid" data-testid="reservations-list">
       @for (reservation of reservations(); track reservation.id) {
-        <mat-card class="reservation-card">
+        <mat-card class="reservation-card" data-testid="reservation-card">
           <mat-card-header>
             <mat-card-title>{{ reservation.productName }}</mat-card-title>
             <mat-card-subtitle>{{ reservation.shopName }}</mat-card-subtitle>

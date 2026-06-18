@@ -75,6 +75,17 @@ npm start
 
 El frontend escucha en `http://localhost:4200` y consume la API local del backend.
 
+Tests E2E locales con Playwright:
+
+```powershell
+cd frontend
+npm run e2e:install
+npm run e2e
+```
+
+Los E2E asumen que backend y frontend ya estan levantados. La guia completa esta
+en `docs/21_E2E_TESTING.md`.
+
 ### Opcion 2 - Docker Compose
 
 Crear el fichero local de variables:
@@ -118,6 +129,7 @@ host y el backend permite CORS para `localhost:4200`.
 - Flujo de demo desde la UI: `docs/18_DEMO_FLOW.md`.
 - Estado MVP, limitaciones y pasos siguientes: `docs/19_MVP_STATUS.md`.
 - Despliegue local y empaquetado: `docs/20_DEPLOYMENT_LOCAL.md`.
+- Tests E2E Playwright: `docs/21_E2E_TESTING.md`.
 
 ## Orden de desarrollo
 

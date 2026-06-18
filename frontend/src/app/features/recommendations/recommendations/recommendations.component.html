@@ -125,9 +125,9 @@
   }
 
   @if (recommendations().length > 0) {
-    <div class="recommendation-grid">
+    <div class="recommendation-grid" data-testid="recommendations-list">
       @for (recommendation of recommendations(); track recommendation.shopProductId) {
-        <mat-card class="recommendation-card">
+        <mat-card class="recommendation-card" data-testid="recommendation-card">
           <mat-card-header>
             <mat-card-title>{{ recommendation.productName }}</mat-card-title>
             <mat-card-subtitle>{{ recommendation.shopName }}</mat-card-subtitle>
@@ -170,7 +170,11 @@
               Catalogo
             </a>
             <a mat-button [routerLink]="['/shops', recommendation.shopId]">Tienda</a>
-            <a mat-flat-button [routerLink]="['/shop-products', recommendation.shopProductId]">
+            <a
+              mat-flat-button
+              [routerLink]="['/shop-products', recommendation.shopProductId]"
+              data-testid="recommendation-reserve-link"
+            >
               Reservar
             </a>
           </mat-card-actions>

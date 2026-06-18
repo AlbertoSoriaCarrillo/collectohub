@@ -1,5 +1,5 @@
-<mat-toolbar class="app-toolbar">
-  <a class="brand" routerLink="/dashboard">CollectoHub</a>
+<mat-toolbar class="app-toolbar" data-testid="app-toolbar">
+  <a class="brand" routerLink="/dashboard" data-testid="app-brand">CollectoHub</a>
 
   <nav class="nav-links" aria-label="Navegacion principal">
     <a mat-button routerLink="/catalog" routerLinkActive="active-link">Catalogo</a>
@@ -16,11 +16,24 @@
   <span class="toolbar-spacer"></span>
 
   @if (authService.isAuthenticated()) {
-    <span class="session-label">{{ authService.currentUser()?.displayName || 'Sesion activa' }}</span>
-    <button mat-stroked-button type="button" (click)="logout()">Logout</button>
+    <span class="session-label" data-testid="session-label">
+      {{ authService.currentUser()?.displayName || 'Sesion activa' }}
+    </span>
+    <button mat-stroked-button type="button" (click)="logout()" data-testid="logout-button">
+      Logout
+    </button>
   } @else {
-    <a mat-button routerLink="/login" routerLinkActive="active-link">Login</a>
-    <a mat-flat-button routerLink="/register" routerLinkActive="active-link">Registro</a>
+    <a mat-button routerLink="/login" routerLinkActive="active-link" data-testid="login-link">
+      Login
+    </a>
+    <a
+      mat-flat-button
+      routerLink="/register"
+      routerLinkActive="active-link"
+      data-testid="register-link"
+    >
+      Registro
+    </a>
   }
 </mat-toolbar>
 
