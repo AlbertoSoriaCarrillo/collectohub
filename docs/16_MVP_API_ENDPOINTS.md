@@ -1,6 +1,6 @@
 # CollectoHub MVP API endpoints
 
-Estado: backend MVP antes de frontend Angular.
+Estado: contrato backend MVP consumido por el frontend Angular y validado en el flujo local.
 
 Esta guia documenta el contrato real expuesto por el backend actual. Todos los
 errores controlados usan el envelope `ErrorResponse`:

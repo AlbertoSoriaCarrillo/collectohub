@@ -82,12 +82,24 @@ npm run e2e:install
 
 Esta fase instala solo Chromium.
 
+Si PowerShell bloquea `npm.ps1`, usa:
+
+```powershell
+npm.cmd run e2e:install
+```
+
 ## Ejecutar E2E
 
 Desde `frontend`:
 
 ```powershell
 npm run e2e
+```
+
+Alternativa con `npm.cmd`:
+
+```powershell
+npm.cmd run e2e
 ```
 
 Variables opcionales:
@@ -104,10 +116,22 @@ npm run e2e
 npm run e2e:headed
 ```
 
+Alternativa:
+
+```powershell
+npm.cmd run e2e:headed
+```
+
 ## Abrir Playwright UI
 
 ```powershell
 npm run e2e:ui
+```
+
+Alternativa:
+
+```powershell
+npm.cmd run e2e:ui
 ```
 
 ## Tests actuales

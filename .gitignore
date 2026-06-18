@@ -29,6 +29,8 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+infra/.env
+!infra/.env.example
 application-local.yml
 application-local.properties
 !backend/src/main/resources/application-local.yml
@@ -45,8 +47,14 @@ uploads/
 # Test reports
 surefire-reports/
 failsafe-reports/
+test-results/
+playwright-report/
 frontend/test-results/
 frontend/playwright-report/
 
 # Sonar
 .scannerwork/
+
+# Temporary files
+*.tmp
+*.swp

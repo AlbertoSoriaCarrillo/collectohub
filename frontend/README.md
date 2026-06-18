@@ -1,6 +1,8 @@
 # CollectoHub Frontend
 
-Aplicacion Angular base para el MVP de CollectoHub.
+SPA Angular del MVP de CollectoHub. Consume el backend real en
+`http://localhost:8080` y cubre auth, dashboard, tiendas, catalogo, inventario,
+colecciones, recomendaciones y reservas.
 
 ## Stack
 
@@ -11,6 +13,7 @@ Aplicacion Angular base para el MVP de CollectoHub.
 - Formularios reactivos.
 - HTTP Client con interceptor JWT.
 - SCSS.
+- Playwright para E2E locales.
 
 ## Requisitos
 
@@ -18,26 +21,40 @@ Aplicacion Angular base para el MVP de CollectoHub.
 - npm 11.x.
 - Backend local en `http://localhost:8080`.
 
-En Windows PowerShell, si `npm` falla por politica de ejecucion de scripts,
-usa `npm.cmd`:
+En Windows PowerShell, si `npm` falla por politica de ejecucion de scripts, usa
+`npm.cmd`:
 
 ```powershell
-& "C:\Program Files\nodejs\npm.cmd" install
+npm.cmd ci
+npm.cmd test -- --watch=false
+npm.cmd run build
 ```
 
-## Instalacion
+## Instalacion Y Comandos
 
-```bash
-npm install
-```
-
-Para CI o una instalacion limpia desde `package-lock.json`:
-
-```bash
+```powershell
+cd frontend
 npm ci
+npm test -- --watch=false
+npm run build
+npm start
 ```
 
-## Backend local
+Abrir:
+
+```text
+http://localhost:4200
+```
+
+El workflow de CI ejecuta:
+
+```powershell
+npm ci
+npm test -- --watch=false
+npm run build
+```
+
+## Backend Local
 
 El frontend usa:
 
@@ -51,20 +68,6 @@ Arranca el backend en otra terminal:
 ```powershell
 cd backend
 .\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=local"
-```
-
-## Demo local
-
-Con backend y frontend levantados, abre:
-
-```text
-http://localhost:4200
-```
-
-El flujo recomendado para una demo completa esta en:
-
-```text
-../docs/18_DEMO_FLOW.md
 ```
 
 ## Docker
@@ -87,47 +90,34 @@ Limitacion MVP: `src/environments/environment.ts` mantiene `apiBaseUrl` en
 `http://localhost:8080`. En Docker local el navegador del host accede a ese
 backend publicado y Spring permite CORS para `localhost:4200`.
 
-## Comandos
-
-```bash
-npm start
-npm test
-npm run build
-npm run e2e:install
-npm run e2e
-npm run e2e:headed
-npm run e2e:ui
-```
-
-El workflow de CI ejecuta:
-
-```bash
-npm ci
-npm test -- --watch=false
-npm run build
-```
-
-Los E2E Playwright no se ejecutan todavia en CI. Requieren backend, frontend y
-base de datos levantados previamente.
-
 ## E2E Playwright
 
 Los tests end-to-end viven en:
 
 ```text
-e2e/
+frontend/e2e/
 ```
 
 Instalar Chromium:
 
 ```powershell
+cd frontend
 npm run e2e:install
 ```
 
 Ejecutar E2E contra `http://localhost:4200` y API `http://localhost:8080`:
 
 ```powershell
+cd frontend
 npm run e2e
+```
+
+Modo headed y UI:
+
+```powershell
+cd frontend
+npm run e2e:headed
+npm run e2e:ui
 ```
 
 Variables opcionales:
@@ -138,13 +128,10 @@ $env:E2E_API_BASE_URL="http://localhost:8080"
 npm run e2e
 ```
 
-Guia completa:
+Los E2E no se ejecutan todavia en CI porque requieren backend, frontend y base de
+datos levantados previamente. Guia completa: `../docs/21_E2E_TESTING.md`.
 
-```text
-../docs/21_E2E_TESTING.md
-```
-
-## Rutas iniciales
+## Rutas MVP
 
 - `/login`
 - `/register`
@@ -169,50 +156,31 @@ Guia completa:
 - `/catalog` publica.
 - `/catalog/new` protegida; la pantalla solo permite crear a `SHOP_OWNER` o `ADMIN`.
 - `/catalog/:id` publica.
-- `/`
+- `/` redirige a dashboard/login.
 - `**` redirige de forma controlada a dashboard/login.
 
-## Modulos MVP frontend
+## Modulos MVP Frontend
 
 - Autenticacion: login, registro, sesion local y dashboard autenticado.
 - Tiendas: listado de tiendas propias, creacion de tienda y detalle publico.
 - Catalogo maestro: listado/busqueda publica, detalle publico y creacion protegida por rol.
 - Inventario de tienda: listado interno, alta, edicion y detalle publico de producto de tienda.
-- Colecciones personales: listado propio, creacion, detalle, edicion, borrado e items de coleccion.
+- Colecciones personales: listado propio, creacion, detalle, edicion, borrado e items.
 - Recomendaciones: resumen, filtros y listado de productos de tienda que coinciden con items `MISSING` o `WANTED`.
 - Reservas: creacion desde producto de tienda, listado propio, detalle y gestion de reservas de tienda.
 
-Los servicios frontend usan los endpoints MVP documentados:
+## Endpoints Consumidos
 
-- `GET /api/shops/my`
-- `POST /api/shops`
-- `GET /api/shops/{id}`
-- `GET /api/product-categories`
-- `GET /api/master-products`
-- `POST /api/master-products`
-- `GET /api/master-products/{id}`
-- `GET /api/shops/{shopId}/products/my`
-- `POST /api/shops/{shopId}/products`
-- `PUT /api/shops/{shopId}/products/{shopProductId}`
-- `GET /api/shops/{shopId}/products`
-- `GET /api/shop-products/{shopProductId}`
-- `GET /api/collections/my`
-- `POST /api/collections`
-- `GET /api/collections/{collectionId}`
-- `PUT /api/collections/{collectionId}`
-- `DELETE /api/collections/{collectionId}`
-- `GET /api/collections/{collectionId}/items`
-- `POST /api/collections/{collectionId}/items`
-- `PUT /api/collections/{collectionId}/items/{itemId}`
-- `DELETE /api/collections/{collectionId}/items/{itemId}`
-- `GET /api/recommendations/my`
-- `GET /api/recommendations/my/summary`
-- `POST /api/reservations`
-- `GET /api/reservations/my`
-- `GET /api/reservations/{reservationId}`
-- `GET /api/shops/{shopId}/reservations`
-- `PUT /api/shops/{shopId}/reservations/{reservationId}/status`
-- `PUT /api/reservations/{reservationId}/cancel`
+Los servicios frontend usan los endpoints MVP documentados en
+`../docs/16_MVP_API_ENDPOINTS.md`, incluyendo:
+
+- Auth y usuario: `/api/auth/register`, `/api/auth/login`, `/api/users/me`.
+- Tiendas: `/api/shops`, `/api/shops/my`, `/api/shops/{id}`.
+- Catalogo: `/api/product-categories`, `/api/master-products`.
+- Inventario: `/api/shops/{shopId}/products`, `/api/shop-products/{shopProductId}`.
+- Colecciones: `/api/collections`, `/api/collections/my`, `/api/collections/{collectionId}/items`.
+- Recomendaciones: `/api/recommendations/my`, `/api/recommendations/my/summary`.
+- Reservas: `/api/reservations`, `/api/reservations/my`, `/api/shops/{shopId}/reservations`.
 
 ## Sesion
 
@@ -223,3 +191,11 @@ registran en logs.
 Si el usuario crea su primera tienda, el backend le asigna `SHOP_OWNER` en base
 de datos. El JWT actual no cambia; el usuario debe volver a iniciar sesion o usar
 un futuro refresh token para ver los roles actualizados.
+
+## Demo
+
+Flujo recomendado desde UI:
+
+```text
+../docs/18_DEMO_FLOW.md
+```

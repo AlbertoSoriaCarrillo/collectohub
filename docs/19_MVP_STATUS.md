@@ -71,7 +71,7 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 - Algunos filtros frontend MVP son numericos/manuales, como `shopId`, `userId` o `shopProductId`.
 - No hay subida real de imagenes; los productos y colecciones se gestionan sin archivos.
 - El Docker frontend usa `apiBaseUrl = "http://localhost:8080"` y depende del backend publicado en el host.
-- `npm ci` informa 5 vulnerabilidades en dependencias de desarrollo/transitivas; no se han actualizado versiones fuera del alcance de esta fase.
+- `npm ci` informa 7 vulnerabilidades en dependencias de desarrollo/transitivas; no se han actualizado versiones fuera del alcance de esta fase.
 - Los tests Testcontainers se saltan si Docker no esta disponible.
 - Los E2E Playwright no se ejecutan en CI y requieren entorno local ya levantado.
 
@@ -182,11 +182,14 @@ La revision de este archivo no encontro necesidad de cambios en esta fase.
 - Backend local: arranque con perfil `local` y health check correcto.
 - Frontend local: `npm start` compila y responde `200 OK` en `http://127.0.0.1:4200/`.
 - Smoke test por API del flujo MVP completo correcto: registro, login, tienda, relogin con `SHOP_OWNER`, producto maestro, inventario, coleccion, recomendacion, reserva completada y reserva cancelada.
-- Docker Compose: preparado con PostgreSQL, backend y frontend; no ejecutado en esta revision porque `docker` no esta instalado o no esta en PATH en el entorno local actual.
+- Docker Compose: validado localmente con PostgreSQL, backend y frontend.
+- Playwright headless: `npm run e2e` correcto con smoke, auth/dashboard y flujo MVP principal.
+- Playwright headed: `npm run e2e:headed` correcto.
 
 ## Siguientes pasos recomendados
 
-1. Ejecutar una demo humana completa desde navegador usando `docs/18_DEMO_FLOW.md`.
-2. Anadir pruebas end-to-end ligeras cuando se decida una herramienta, por ejemplo Playwright.
-3. Revisar vulnerabilidades npm y compatibilidad de versiones Angular/Node antes de preparar un entorno compartido.
-4. Definir la siguiente fase funcional sin ampliar accidentalmente pagos, chat, marketplace u OAuth.
+1. Preparar capturas reales para `docs/assets/screenshots/` y enlazarlas desde el README.
+2. Revisar vulnerabilidades npm transitivas y compatibilidad de versiones Angular/Node antes de compartir el entorno.
+3. Valorar un job E2E opcional/separado en CI cuando Docker Compose en Actions sea estable.
+4. Endurecer seguridad antes de produccion: gestion de secretos, estrategia de refresh/logout, cookies o almacenamiento revisado y cabeceras.
+5. Definir la siguiente fase funcional sin ampliar accidentalmente pagos, chat, marketplace u OAuth.

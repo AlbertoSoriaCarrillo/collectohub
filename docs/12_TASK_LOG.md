@@ -419,7 +419,7 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Resultado backend: build correcto; 161 tests totales, 159 correctos y 2 saltados por falta de Docker/Testcontainers.
 - Ejecutado `npm ci`, `npm test -- --watch=false` y `npm run build` en frontend con permisos autorizados.
 - Resultado frontend: `npm ci` correcto con 5 vulnerabilidades transitivas/dev ya conocidas; 31 archivos de test y 60 tests correctos; build correcto.
-- Intentado comprobar Docker con `docker --version`, `docker compose version` y `docker info`; no se pudo validar Compose porque `docker` no esta instalado o no esta en PATH en este entorno.
+- La validacion completa de Docker Compose queda retomada y completada en fases posteriores con PostgreSQL, backend y frontend levantados localmente.
 - Revisado que no hay `.env` reales versionados; solo existe `infra/.env.example`.
 - No se implementa despliegue cloud ni funcionalidades nuevas fuera del empaquetado local.
 
@@ -457,3 +457,32 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Ejecutado `cd infra && docker compose down` para parar contenedores sin borrar volumen.
 - Durante la primera ejecucion E2E se detectaron y corrigieron selectores demasiado amplios, el doble layout de Angular y la interaccion con overlays de Angular Material.
 - No se implementan funcionalidades nuevas fuera de la capa E2E y la correccion minima del shell frontend.
+
+## 2026-06-18 - EPIC 20 - Limpieza tecnica y preparacion para portfolio
+
+- Revisada documentacion requerida antes de modificar: prompt, README raiz, frontend README, task log, decisiones, endpoints MVP, flujo manual, demo flow, estado MVP, despliegue local, guia E2E, `.gitignore`, CI, `backend/pom.xml`, `frontend/package.json` e `infra/docker-compose.yml`.
+- Reestructurado `README.md` como documento principal de portfolio: descripcion, estado, stack, funcionalidades, arquitectura, URLs, arranque Docker, arranque clasico, tests, E2E, demo/screenshots, limitaciones y siguientes fases.
+- Actualizado `frontend/README.md` para alinear comandos PowerShell, `npm.cmd`, Docker, E2E, rutas y endpoints con el README raiz.
+- Corregido `docs/16_MVP_API_ENDPOINTS.md` para indicar que el contrato backend ya esta consumido por el frontend Angular.
+- Actualizado `docs/19_MVP_STATUS.md` para reflejar Docker Compose validado, Playwright implementado y E2E fuera de CI por decision tecnica.
+- Actualizado `docs/20_DEPLOYMENT_LOCAL.md` y `docs/21_E2E_TESTING.md` con alternativas `npm.cmd` para Windows PowerShell.
+- Creado `docs/22_PORTFOLIO_REVIEW.md` con resumen de producto, problema, alcance, decisiones, arquitectura, seguridad, base de datos, testing, Docker, CI, valor tecnico y preguntas/respuestas de entrevista.
+- Creada carpeta `docs/assets/screenshots/` con `.gitkeep` para capturas reales futuras.
+- Revisado `.gitignore` y reforzado para `infra/.env`, reportes Playwright, `test-results/`, `playwright-report/` y temporales.
+- Revisado `.github/workflows/ci.yml`; se mantiene CI actual sin Playwright.
+- Revisado `backend/pom.xml`, `frontend/package.json` e `infra/docker-compose.yml`; no requieren cambios de version ni estructura.
+- Revisadas inconsistencias documentales: se elimino la mencion obsoleta a Docker no validado/no disponible y se sustituyo por el estado actual.
+- Revision de secretos: no se detectan tokens reales, claves privadas, emails personales ni `.env` reales versionados; `infra/.env` existe localmente pero no esta versionado y `infra/.env.example` contiene valores locales de ejemplo.
+- Ejecutado `cd backend && .\mvnw.cmd clean verify` con permisos autorizados.
+- Resultado backend: build correcto; 161 tests correctos, 0 fallos, 0 errores, 0 saltados.
+- Ejecutado `cd frontend && npm.cmd ci`.
+- Resultado `npm ci`: correcto; npm informa 7 vulnerabilidades dev/transitivas y deprecacion de `@angular/animations`; no se actualizan dependencias en esta fase documental.
+- Ejecutado `cd frontend && npm.cmd test -- --watch=false`.
+- Resultado frontend tests: 31 archivos y 60 tests correctos.
+- Ejecutado `cd frontend && npm.cmd run build`.
+- Resultado frontend build: correcto.
+- Ejecutado `cd infra && docker compose up --build -d`; backend y frontend responden `200` en `/api/health` y `/`.
+- Ejecutado `cd frontend && npm.cmd run e2e`.
+- Resultado Playwright headless: 3 tests correctos.
+- Ejecutado `cd infra && docker compose down` para parar contenedores sin borrar volumen.
+- No se implementan funcionalidades nuevas de producto, endpoints, pagos, chat, marketplace, OAuth, 2FA, IA, uploads ni despliegue cloud.

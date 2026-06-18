@@ -224,6 +224,15 @@
 - Decision: dejar `App` como host de `router-outlet` y mantener `MainLayoutComponent` solo como layout de rutas.
 - Motivo: evita renderizar dos barras/layouts al mismo tiempo y estabiliza la UI real que validan los E2E.
 
+## 2026-06-18 - Portfolio y presentacion GitHub
+
+- Decision: convertir `README.md` en la entrada principal de portfolio del proyecto.
+- Motivo: una persona externa debe entender rapidamente proposito, estado, stack, ejecucion, tests, limitaciones y siguientes pasos sin leer toda la carpeta `docs/`.
+- Decision: preparar `docs/assets/screenshots/` para capturas reales futuras sin versionar imagenes ficticias.
+- Motivo: evita presentar evidencias visuales inventadas y deja una ubicacion estable para material de demo.
+- Decision: mantener Playwright fuera de CI durante la limpieza tecnica.
+- Motivo: esta fase es documental y de presentacion; anadir E2E al pipeline requiere disenar un job con servicios levantados y merece una fase propia.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

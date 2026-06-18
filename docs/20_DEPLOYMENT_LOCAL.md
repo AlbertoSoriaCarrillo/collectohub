@@ -76,6 +76,16 @@ npm run build
 npm start
 ```
 
+Si PowerShell bloquea `npm.ps1`, usa `npm.cmd`:
+
+```powershell
+cd frontend
+npm.cmd ci
+npm.cmd test -- --watch=false
+npm.cmd run build
+npm.cmd start
+```
+
 Abrir:
 
 ```text

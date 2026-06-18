@@ -1,51 +1,96 @@
 # CollectoHub
 
-CollectoHub es el nombre provisional de una plataforma para gestionar colecciones personales, conectar usuarios con tiendas especializadas y evolucionar hacia una red social/marketplace para coleccionistas.
+CollectoHub es un MVP de plataforma para coleccionistas y tiendas especializadas en
+productos frikis: manga, comics, trading cards, figuras, videojuegos,
+merchandising y cultura pop.
 
-## Estado del repositorio
+El proyecto permite gestionar usuarios, tiendas, catalogo maestro, inventario,
+colecciones personales, recomendaciones simples y reservas sin pago. Esta pensado
+como proyecto portfolio/MVP tecnico, no como aplicacion productiva real todavia.
 
-Este repositorio está en fase inicial. La primera etapa no debe intentar construir toda la red social completa, sino validar el núcleo del producto:
+## Estado Del Proyecto
 
-1. Usuarios y autenticación.
-2. Tiendas y propietarios de tienda.
-3. Catálogo maestro de productos.
-4. Inventario de tiendas.
-5. Colecciones personales.
-6. Reservas sin pago.
-7. Recomendaciones básicas entre productos buscados y stock disponible.
+- MVP funcional de backend y frontend.
+- Docker Compose local con PostgreSQL, backend y frontend validado.
+- Tests backend, tests frontend y E2E Playwright implementados.
+- CI en GitHub Actions para documentacion, backend, frontend unit tests y build.
+- E2E fuera de CI por decision tecnica para evitar un pipeline mas lento y fragil.
 
-## Stack objetivo
+## Stack Tecnologico
 
-- Backend: Java 25, Spring Boot 4.x, Spring Security, JWT + refresh token, Spring Data JPA, PostgreSQL, Liquibase, Maven.
-- Frontend: Angular, TypeScript, Angular Material, PWA y diseño responsive.
-- Calidad: JUnit, Mockito, Testcontainers, SonarQube, GitHub Actions.
-- Infraestructura local: Docker Compose.
+| Area | Tecnologias |
+| --- | --- |
+| Backend | Java 25, Spring Boot 4.1.x, Spring Security, Spring Data JPA |
+| Seguridad | JWT, refresh token basico, roles globales e internos de tienda |
+| Base de datos | PostgreSQL, Liquibase |
+| Frontend | Angular 21, TypeScript, Angular Material, SCSS |
+| Infra local | Docker Compose, nginx para frontend Docker |
+| Testing | JUnit, Mockito, Testcontainers, Vitest/Angular Test, Playwright |
+| CI | GitHub Actions |
 
-## Ejecucion local
+## Funcionalidades Implementadas
 
-Hay dos formas soportadas para levantar el MVP en local:
+- Registro y login con email/password.
+- Roles globales `USER`, `SHOP_OWNER`, `ADMIN` y `CONTENT_CREATOR`.
+- Asignacion automatica de `SHOP_OWNER` al crear la primera tienda.
+- Tiendas con propietario y miembros internos.
+- Catalogo maestro de productos reutilizable.
+- Inventario de tienda con productos visibles/publicos.
+- Colecciones personales con items `OWNED`, `WANTED`, `MISSING`, etc.
+- Recomendaciones basicas entre colecciones y stock disponible.
+- Reservas sin pago y gestion basica por usuario/tienda.
+- Swagger/OpenAPI en `http://localhost:8080/swagger-ui.html`.
+- Tests automatizados backend, frontend y E2E locales.
 
-- Opcion 1: ejecucion clasica con PostgreSQL local, backend con Maven Wrapper y frontend con npm.
-- Opcion 2: ejecucion empaquetada con Docker Compose.
+## Arquitectura Resumida
 
-### Requisitos comunes
+El backend es un monolito modular Spring Boot. Cada area funcional vive en su
+modulo de paquete: `auth`, `users`, `shops`, `catalog`, `inventory`,
+`collections`, `recommendations`, `reservations`, `shared` y `config`.
 
-- Git.
-- Java 25 para la opcion clasica de backend.
-- Node.js 24.x y npm 11.x para la opcion clasica de frontend.
-- Docker Desktop o Docker Engine con Docker Compose para la opcion Docker.
+La base de datos es unica y PostgreSQL. El aislamiento entre tiendas y usuarios
+se resuelve con reglas de dominio, roles internos de tienda y comprobaciones de
+pertenencia en servicios backend. Las migraciones se gestionan con Liquibase.
 
-La guia paso a paso esta en `docs/20_DEPLOYMENT_LOCAL.md`.
+El frontend es una SPA Angular standalone con Angular Material. Consume la API
+real del backend, usa guards para rutas protegidas e interceptor HTTP para JWT.
 
-### Opcion 1 - Backend clasico
+## URLs Locales
 
-Requisitos:
+| Servicio | URL |
+| --- | --- |
+| Frontend | `http://localhost:4200` |
+| Backend | `http://localhost:8080` |
+| Swagger | `http://localhost:8080/swagger-ui.html` |
+| PostgreSQL | `localhost:5432` |
 
-- Java 25.
-- PostgreSQL local con la base de datos `collectohub`.
-- Usuario `collectohub` y password `collectohub_local_password`.
+## Arranque Con Docker Compose
 
-Comandos:
+Requisitos: Docker Desktop o Docker Engine con Docker Compose.
+
+```powershell
+Copy-Item infra\.env.example infra\.env
+cd infra
+docker compose up --build
+```
+
+Parar servicios:
+
+```powershell
+cd infra
+docker compose down
+```
+
+Limpiar tambien el volumen de PostgreSQL:
+
+```powershell
+cd infra
+docker compose down -v
+```
+
+## Arranque Clasico
+
+Backend:
 
 ```powershell
 cd backend
@@ -53,17 +98,7 @@ cd backend
 .\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=local"
 ```
 
-El backend escucha en `http://localhost:8080` y expone `GET /api/health`.
-
-### Opcion 1 - Frontend clasico
-
-Requisitos:
-
-- Node.js 24.x.
-- npm 11.x.
-- Backend local en `http://localhost:8080`.
-
-Comandos:
+Frontend:
 
 ```powershell
 cd frontend
@@ -73,9 +108,35 @@ npm run build
 npm start
 ```
 
-El frontend escucha en `http://localhost:4200` y consume la API local del backend.
+Si PowerShell bloquea `npm.ps1`, usa `npm.cmd`:
 
-Tests E2E locales con Playwright:
+```powershell
+cd frontend
+npm.cmd ci
+npm.cmd test -- --watch=false
+npm.cmd run build
+npm.cmd start
+```
+
+## Tests
+
+Backend:
+
+```powershell
+cd backend
+.\mvnw.cmd clean verify
+```
+
+Frontend:
+
+```powershell
+cd frontend
+npm ci
+npm test -- --watch=false
+npm run build
+```
+
+E2E Playwright, con backend y frontend ya levantados:
 
 ```powershell
 cd frontend
@@ -83,60 +144,72 @@ npm run e2e:install
 npm run e2e
 ```
 
-Los E2E asumen que backend y frontend ya estan levantados. La guia completa esta
-en `docs/21_E2E_TESTING.md`.
-
-### Opcion 2 - Docker Compose
-
-Crear el fichero local de variables:
+Modo headed o UI:
 
 ```powershell
-Copy-Item infra\.env.example infra\.env
+cd frontend
+npm run e2e:headed
+npm run e2e:ui
 ```
 
-Levantar el MVP:
+## Demo / Screenshots
 
-```powershell
-cd infra
-docker compose up --build
+No hay capturas reales versionadas todavia. Las futuras imagenes de portfolio se
+pueden guardar en:
+
+```text
+docs/assets/screenshots/
 ```
 
-Servicios:
+Capturas recomendadas:
 
-- PostgreSQL: `localhost:5432`
-- Backend: `http://localhost:8080`
-- Swagger UI: `http://localhost:8080/swagger-ui.html`
-- Frontend: `http://localhost:4200`
+| Vista | Captura sugerida |
+| --- | --- |
+| Login | Formulario de acceso |
+| Dashboard | Estado autenticado |
+| Mis tiendas | Listado y tienda creada |
+| Catalogo | Busqueda y producto maestro |
+| Inventario | Gestion de producto de tienda |
+| Colecciones | Coleccion con item `MISSING` |
+| Recomendaciones | Coincidencia producto/coleccion |
+| Reservas | Listado y detalle de reserva |
+| Swagger | OpenAPI con JWT |
+| Playwright E2E | Ejecucion `3 passed` |
 
-Comandos utiles:
-
-```powershell
-cd infra
-docker compose ps
-docker compose logs -f backend
-docker compose down
-docker compose down -v
-```
-
-Limitacion conocida: el frontend Angular se compila con `apiBaseUrl` apuntando a
-`http://localhost:8080`. En Docker local esto funciona desde el navegador del
-host y el backend permite CORS para `localhost:4200`.
-
-## Validacion y demo
+## Documentacion Principal
 
 - Endpoints MVP: `docs/16_MVP_API_ENDPOINTS.md`.
 - Flujo manual por API: `docs/17_MANUAL_TESTING_FLOW.md`.
-- Flujo de demo desde la UI: `docs/18_DEMO_FLOW.md`.
-- Estado MVP, limitaciones y pasos siguientes: `docs/19_MVP_STATUS.md`.
-- Despliegue local y empaquetado: `docs/20_DEPLOYMENT_LOCAL.md`.
-- Tests E2E Playwright: `docs/21_E2E_TESTING.md`.
+- Demo desde UI: `docs/18_DEMO_FLOW.md`.
+- Estado MVP: `docs/19_MVP_STATUS.md`.
+- Despliegue local: `docs/20_DEPLOYMENT_LOCAL.md`.
+- E2E Playwright: `docs/21_E2E_TESTING.md`.
+- Revision portfolio/entrevista: `docs/22_PORTFOLIO_REVIEW.md`.
 
-## Orden de desarrollo
+## Limitaciones Actuales
 
-El desarrollo debe empezar por el backend. Después se desarrollará el frontend Angular consumiendo la API real.
+- No hay pagos ni bloqueo transaccional de stock.
+- Las reservas no caducan mediante job automatico.
+- No hay chat, feed social ni marketplace avanzado.
+- No hay OAuth, 2FA, email ni notificaciones.
+- No hay subida real de imagenes o archivos.
+- La sesion frontend usa `localStorage`, aceptado solo como simplificacion MVP.
+- Los E2E requieren entorno local levantado y no se ejecutan en CI.
+- La configuracion Docker local no equivale a despliegue productivo.
 
-La documentación principal para Codex está en la carpeta `docs/` y en `PROMPT_FOR_CODEX.md`.
+## Proximas Fases Posibles
+
+- Ejecutar E2E en CI con un job separado y estable.
+- Revisar vulnerabilidades npm transitivas y estrategia de actualizacion.
+- Endurecer seguridad para produccion: cookies/refresh, CSRF segun estrategia,
+  secretos gestionados y rotacion.
+- Gestion real de imagenes y almacenamiento externo.
+- Pagos y reservas con bloqueo de stock.
+- Panel administrativo global.
+- Internacionalizacion avanzada y PWA completa.
 
 ## Nota
 
-El nombre CollectoHub es provisional y no representa necesariamente el nombre comercial definitivo.
+CollectoHub es un MVP/portfolio. El objetivo actual es demostrar arquitectura,
+criterio tecnico y un flujo de producto completo en local, no operar una
+plataforma productiva real.
