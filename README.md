@@ -21,6 +21,53 @@ Este repositorio está en fase inicial. La primera etapa no debe intentar constr
 - Calidad: JUnit, Mockito, Testcontainers, SonarQube, GitHub Actions.
 - Infraestructura local: Docker Compose.
 
+## Ejecucion local
+
+### Backend
+
+Requisitos:
+
+- Java 25.
+- PostgreSQL local con la base de datos `collectohub`.
+- Usuario `collectohub` y password `collectohub_local_password`.
+
+Comandos:
+
+```powershell
+cd backend
+.\mvnw.cmd clean verify
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=local"
+```
+
+El backend escucha en `http://localhost:8080` y expone `GET /api/health`.
+
+### Frontend
+
+Requisitos:
+
+- Node.js 24.x.
+- npm 11.x.
+- Backend local en `http://localhost:8080`.
+
+Comandos:
+
+```powershell
+cd frontend
+npm ci
+npm test -- --watch=false
+npm run build
+npm start
+```
+
+El frontend escucha en `http://localhost:4200` y consume la API local del backend.
+
+## Validacion y demo
+
+- Endpoints MVP: `docs/16_MVP_API_ENDPOINTS.md`.
+- Flujo manual por API: `docs/17_MANUAL_TESTING_FLOW.md`.
+- Flujo de demo desde la UI: `docs/18_DEMO_FLOW.md`.
+- Estado MVP, limitaciones y pasos siguientes: `docs/19_MVP_STATUS.md`.
+
 ## Orden de desarrollo
 
 El desarrollo debe empezar por el backend. Después se desarrollará el frontend Angular consumiendo la API real.

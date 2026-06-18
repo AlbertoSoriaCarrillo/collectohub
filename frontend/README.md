@@ -53,6 +53,20 @@ cd backend
 .\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=local"
 ```
 
+## Demo local
+
+Con backend y frontend levantados, abre:
+
+```text
+http://localhost:4200
+```
+
+El flujo recomendado para una demo completa esta en:
+
+```text
+../docs/18_DEMO_FLOW.md
+```
+
 ## Comandos
 
 ```bash

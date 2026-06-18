@@ -373,3 +373,25 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Ejecutado `npm run build` con permisos autorizados.
 - Resultado: tests correctos con 31 archivos y 60 tests; build correcto.
 - Observacion: `npm ci` mantiene 5 vulnerabilidades totales en dependencias de desarrollo/transitivas y deprecacion de `@angular/animations`; no se cambian versiones en esta fase.
+
+## 2026-06-18 - EPIC 17 - Validacion integral MVP y preparacion de demo
+
+- Revisada documentacion requerida antes de modificar documentacion: prompt, README raiz, frontend README, specs de producto/arquitectura/API/seguridad/testing, task log, decisiones, endpoints MVP y flujo manual.
+- Revisado `.github/workflows/ci.yml`: mantiene backend con Java 25, `chmod +x mvnw`, `./mvnw clean verify`, y frontend con Node 24, `npm ci`, `npm test -- --watch=false` y `npm run build`.
+- Ejecutado `.\mvnw.cmd clean verify` en backend con permisos autorizados tras bloqueo de red del sandbox.
+- Resultado backend: build correcto; 161 tests totales, 159 correctos y 2 saltados por falta de Docker/Testcontainers.
+- Ejecutado `npm ci` en frontend con permisos autorizados.
+- Ejecutado `npm test -- --watch=false` en frontend con permisos autorizados.
+- Resultado frontend tests: 31 archivos de test y 60 tests correctos.
+- Ejecutado `npm run build` en frontend con permisos autorizados.
+- Resultado frontend build: correcto.
+- Validado arranque backend local con `.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=local"` y `GET /api/health` correcto.
+- Validado arranque frontend local con `npm start`; Angular compila y responde `200 OK` en `http://127.0.0.1:4200/`.
+- Ejecutado smoke test por API del flujo MVP completo contra backend local: registro, login, creacion de tienda, relogin con `SHOP_OWNER`, producto maestro, inventario visible, coleccion con item `MISSING`, recomendaciones, reserva completada y reserva cancelada.
+- Revisado que no hay `.env` reales versionados; solo existe `infra/.env.example`.
+- Revisado que la UI no contiene `console.log` de tokens y que el README frontend documenta el uso temporal de `localStorage`.
+- Creado `docs/18_DEMO_FLOW.md` con pasos de demo desde la UI y datos de ejemplo locales.
+- Creado `docs/19_MVP_STATUS.md` con estado implementado, no implementado, limitaciones, decisiones vigentes, comandos, CI y siguientes pasos.
+- Actualizado `README.md` con instrucciones de ejecucion local, validacion y enlaces de demo.
+- Actualizado `frontend/README.md` con enlace al flujo de demo local.
+- No se modifica logica de negocio ni se amplia el alcance MVP en esta fase.
