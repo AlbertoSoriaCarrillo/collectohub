@@ -17,6 +17,7 @@ Incluido:
 - Sidebar desktop, bottom navigation movil, contenido central y panel derecho.
 - Tarjetas, chips, tokens visuales, estados vacios y formularios consistentes.
 - Mantenimiento de rutas, endpoints, modelos y `data-testid`.
+- Compatibilidad con i18n frontend ES/EN posterior al rediseño.
 
 Fuera de alcance:
 
@@ -64,6 +65,8 @@ Se mantienen los `data-testid` existentes para Playwright:
   `register-display-name`, `register-submit`.
 - Flujos MVP: ids de tiendas, catalogo, inventario, colecciones,
   recomendaciones y reservas ya usados por `frontend/e2e`.
+- Los campos traducibles nuevos o migrados usan `data-testid` para evitar que
+  Playwright dependa de labels visibles en ES/EN.
 
 ## Validacion recomendada
 

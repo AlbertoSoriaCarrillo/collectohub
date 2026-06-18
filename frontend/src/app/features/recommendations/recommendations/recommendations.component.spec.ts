@@ -97,7 +97,7 @@ describe('RecommendationsComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('One Piece 1');
     expect(compiled.textContent).toContain('Manga Shop');
-    expect(compiled.textContent).toContain('Faltantes');
+    expect(compiled.textContent).toMatch(/Faltantes|Missing/);
     expect(compiled.textContent).toContain('MANGA_COMIC');
   });
 
@@ -120,8 +120,8 @@ describe('RecommendationsComponent', () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain(
-      'No hay items buscados o faltantes'
+    expect((fixture.nativeElement as HTMLElement).textContent).toMatch(
+      /No hay items buscados o faltantes|No wanted or missing items/
     );
   });
 

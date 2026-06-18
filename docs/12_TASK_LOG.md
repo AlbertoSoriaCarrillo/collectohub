@@ -507,3 +507,28 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Ejecutado `cd frontend && npm.cmd run build` mediante prefijo autorizado: correcto; build Angular generado en `frontend/dist/collectohub-frontend`.
 - E2E Playwright y Docker Compose no se ejecutan en esta sesion porque requieren permisos elevados no disponibles tras el limite del revisor automatico.
 - No se modifica backend, base de datos, endpoints, modelos, logica de negocio, pagos, chat, feed social, marketplace, OAuth, 2FA, uploads ni IA.
+
+## 2026-06-18 - EPIC 22 - Internacionalizacion frontend ES/EN
+
+- Revisada documentacion requerida antes de modificar: prompt, README raiz, frontend README, task log, decisiones, estado MVP, portfolio review y guia UI/UX.
+- Implementada capa i18n ligera propia en `frontend/src/app/core/i18n/` sin anadir librerias externas.
+- Creados diccionarios `es` y `en` por dominios: common, actions, layout, auth, dashboard, shops, catalog, inventory, collections, recommendations, reservations, validation, errors y enums.
+- Implementado `LanguageService` con idioma actual, cambio en caliente, persistencia en `localStorage`, deteccion inicial de navegador ingles, fallback seguro a `es` e interpolacion `{{name}}`.
+- Implementado pipe standalone `translate` y selector standalone `LanguageSelectorComponent`.
+- Anadido selector de idioma al layout principal, login y registro.
+- Sincronizado `preferredInterfaceLanguage` del registro con el idioma activo.
+- Migrados textos visibles de layout, auth, dashboard, tiendas, catalogo, inventario, colecciones, recomendaciones y reservas a claves de traduccion.
+- Traducidas representaciones visibles de roles, roles de tienda, visibilidad/estado de colecciones, estado comercial, condicion fisica, estado de reservas, estado de tienda y estado de producto maestro.
+- Conservados sin traducir datos dinamicos de backend/usuario: emails, nombres, descripciones, notas, mensajes, IDs, precios, monedas, fechas y codigos tecnicos cuando son datos.
+- Adaptado `ErrorMessageService` para errores genericos HTTP traducidos manteniendo mensajes especificos del backend.
+- Anadidos tests unitarios para `LanguageService` y `TranslatePipe`.
+- Actualizados tests existentes que dependian de textos visibles para tolerar ES/EN o validar por href/dato estable.
+- Anadidos `data-testid` a campos traducibles usados por E2E.
+- Actualizados helpers Playwright para no depender de labels traducibles.
+- Anadido E2E `04-i18n.spec.ts` para cambio de idioma en login y persistencia tras recarga.
+- Creado `docs/24_I18N_FRONTEND.md` con arquitectura, fallback, enums, errores, testing y textos hardcodeados restantes.
+- Actualizados `frontend/README.md`, `docs/13_DECISIONS.md`, `docs/19_MVP_STATUS.md`, `docs/22_PORTFOLIO_REVIEW.md` y `docs/23_UI_UX_REDESIGN.md`.
+- Ejecutado `cd frontend && npm.cmd test -- --watch=false` dentro del sandbox: no completa por bloqueo de permisos del entorno (`Cannot read directory "../../..": Acceso denegado`) durante resolucion de Angular.
+- Ejecutado `cd frontend && npm.cmd test -- --watch=false` con permisos elevados: correcto; 33 archivos de test y 69 tests correctos.
+- Ejecutado `cd frontend && npm.cmd run build` con permisos elevados: correcto; Angular genera `frontend/dist/collectohub-frontend` y avisa de budget inicial excedido en 15.47 kB.
+- No se modifica backend, base de datos, endpoints, modelos, pagos, chat, feed social, marketplace, OAuth, 2FA, uploads ni IA.

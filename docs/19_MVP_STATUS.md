@@ -19,6 +19,7 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 11. Tests E2E locales basicos con Playwright.
 12. CI con jobs de documentacion, backend y frontend.
 13. Rediseño UI/UX frontend con layout social responsive.
+14. Internacionalizacion frontend ligera ES/EN.
 
 ## Implementado backend
 
@@ -48,6 +49,7 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 - Tests E2E Playwright en `frontend/e2e` para smoke, auth/dashboard y flujo MVP principal.
 - Sistema visual dark-soft con variables SCSS, sidebar desktop, bottom nav movil, panel contextual derecho, estados vacios y tarjetas consistentes.
 - Login, registro, dashboard y pantallas principales de negocio redisenadas sin cambiar endpoints ni flujos MVP.
+- Internacionalizacion ligera ES/EN con selector, persistencia local, fallback, interpolacion y enums visibles traducidos.
 
 ## No implementado en MVP
 
@@ -64,7 +66,7 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 - Jobs automaticos de expiracion de reservas.
 - Roles globales avanzados y panel global de administracion.
 - PWA completa/offline avanzado.
-- Internacionalizacion avanzada.
+- Internacionalizacion avanzada, pluralizacion compleja o traducciones servidas desde backend.
 
 ## Limitaciones conocidas
 
@@ -86,6 +88,7 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 - Docker Compose local levanta PostgreSQL, backend y frontend; no implica despliegue cloud.
 - Playwright E2E se ubica en `frontend/e2e` y usa Chromium en esta primera fase.
 - El rediseño UI/UX mantiene Angular Material + SCSS, sin introducir Tailwind ni nuevas librerias de UI.
+- La internacionalizacion frontend usa una capa propia ligera en Angular, sin librerias externas.
 - `SHOP_OWNER` global es acumulable con `USER`.
 - El rol interno `OWNER` de `shop_members` controla permisos dentro de una tienda concreta.
 - El rol global `SHOP_OWNER` permite capacidades de gestion de tiendas/plataforma.
@@ -181,6 +184,19 @@ presentacion para demo/portfolio:
 
 Guia completa: `docs/23_UI_UX_REDESIGN.md`.
 
+## Internacionalizacion frontend
+
+La fase i18n mantiene el alcance funcional del MVP:
+
+- Idiomas `es` y `en`.
+- Selector en layout, login y registro.
+- Persistencia en `localStorage`.
+- `preferredInterfaceLanguage` del registro sincronizado con el idioma activo.
+- Enums visibles traducidos sin cambiar valores de backend.
+- Datos dinamicos de backend y usuario conservados tal cual.
+
+Guia completa: `docs/24_I18N_FRONTEND.md`.
+
 ## Estado CI
 
 El workflow local `.github/workflows/ci.yml` define:
@@ -199,6 +215,9 @@ La revision de este archivo no encontro necesidad de cambios en esta fase.
 - Frontend: `npm test -- --watch=false` correcto.
 - Frontend: `npm run build` correcto.
 - Frontend UI/UX: rediseño social responsive aplicado sin cambios de API ni backend.
+- Frontend i18n: capa ES/EN aplicada sin cambios de API ni backend.
+- Frontend i18n tests: `npm.cmd test -- --watch=false` correcto; 33 archivos de test y 69 tests correctos.
+- Frontend i18n build: `npm.cmd run build` correcto; se mantiene aviso de budget inicial excedido en 15.47 kB.
 - Backend local: arranque con perfil `local` y health check correcto.
 - Frontend local: `npm start` compila y responde `200 OK` en `http://127.0.0.1:4200/`.
 - Smoke test por API del flujo MVP completo correcto: registro, login, tienda, relogin con `SHOP_OWNER`, producto maestro, inventario, coleccion, recomendacion, reserva completada y reserva cancelada.

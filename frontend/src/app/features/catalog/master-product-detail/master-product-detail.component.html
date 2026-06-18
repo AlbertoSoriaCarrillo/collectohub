@@ -1,11 +1,11 @@
 <section class="product-detail-page">
   <header class="page-header">
     <div>
-      <p class="eyebrow">Catalogo maestro</p>
-      <h1>{{ product()?.name || 'Producto' }}</h1>
-      <p>Ficha base reutilizable por tiendas, inventario y colecciones.</p>
+      <p class="eyebrow">{{ 'catalog.eyebrow' | translate }}</p>
+      <h1>{{ product()?.name || ('common.product' | translate) }}</h1>
+      <p>{{ 'catalog.productDetailDescription' | translate }}</p>
     </div>
-    <a mat-button routerLink="/catalog">Volver al catalogo</a>
+    <a mat-button routerLink="/catalog">{{ 'actions.backToCatalog' | translate }}</a>
   </header>
 
   @if (errorMessage()) {
@@ -17,18 +17,18 @@
       <mat-card-header>
         <span class="visual-token" aria-hidden="true">{{ item.name.slice(0, 1).toUpperCase() }}</span>
         <mat-card-title>{{ item.name }}</mat-card-title>
-        <mat-card-subtitle>{{ item.franchise || 'Sin franquicia' }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ item.franchise || ('common.noFranchise' | translate) }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
-        <mat-chip-set aria-label="Clasificacion del producto">
+        <mat-chip-set [attr.aria-label]="'catalog.classificationAria' | translate">
           <mat-chip>{{ item.category.name }}</mat-chip>
-          <mat-chip>{{ item.status }}</mat-chip>
+          <mat-chip>{{ 'enums.masterProductStatus.' + item.status | translate }}</mat-chip>
           @if (item.language) {
             <mat-chip>{{ item.language }}</mat-chip>
           }
           @if (item.limitedEdition) {
-            <mat-chip>Edicion limitada</mat-chip>
+            <mat-chip>{{ 'catalog.limitedEdition' | translate }}</mat-chip>
           }
         </mat-chip-set>
 
@@ -38,51 +38,57 @@
 
         <dl>
           <div>
-            <dt>Coleccion</dt>
-            <dd>{{ item.collectionName || 'No informada' }}</dd>
+            <dt>{{ 'common.collection' | translate }}</dt>
+            <dd>{{ item.collectionName || ('common.notReported' | translate) }}</dd>
           </div>
           <div>
-            <dt>Volumen</dt>
-            <dd>{{ item.volumeNumber || 'No informado' }}</dd>
+            <dt>{{ 'common.volume' | translate }}</dt>
+            <dd>{{ item.volumeNumber || ('common.unknown' | translate) }}</dd>
           </div>
           <div>
-            <dt>Editorial</dt>
-            <dd>{{ item.publisher || 'No informada' }}</dd>
+            <dt>{{ 'common.publisher' | translate }}</dt>
+            <dd>{{ item.publisher || ('common.notReported' | translate) }}</dd>
           </div>
           <div>
-            <dt>ISBN</dt>
-            <dd>{{ item.isbn || 'No informado' }}</dd>
+            <dt>{{ 'catalog.isbn' | translate }}</dt>
+            <dd>{{ item.isbn || ('common.unknown' | translate) }}</dd>
           </div>
           <div>
-            <dt>EAN</dt>
-            <dd>{{ item.ean || 'No informado' }}</dd>
+            <dt>{{ 'catalog.ean' | translate }}</dt>
+            <dd>{{ item.ean || ('common.unknown' | translate) }}</dd>
           </div>
           <div>
-            <dt>Lanzamiento</dt>
-            <dd>{{ item.releaseDate || 'No informado' }}</dd>
+            <dt>{{ 'common.releaseDate' | translate }}</dt>
+            <dd>{{ item.releaseDate || ('common.unknown' | translate) }}</dd>
           </div>
           <div>
-            <dt>Paises</dt>
-            <dd>{{ item.publicationCountries.length ? item.publicationCountries.join(', ') : 'No informados' }}</dd>
+            <dt>{{ 'common.countries' | translate }}</dt>
+            <dd>
+              {{
+                item.publicationCountries.length
+                  ? item.publicationCountries.join(', ')
+                  : ('common.notReportedPlural' | translate)
+              }}
+            </dd>
           </div>
           <div>
-            <dt>Unidades limitadas</dt>
-            <dd>{{ item.limitedEditionTotalUnits || 'No informadas' }}</dd>
+            <dt>{{ 'catalog.limitedUnits' | translate }}</dt>
+            <dd>{{ item.limitedEditionTotalUnits || ('common.notReported' | translate) }}</dd>
           </div>
         </dl>
       </mat-card-content>
 
       <mat-card-actions>
-        <button mat-button type="button" disabled>Buscar en tiendas proximamente</button>
-        <a mat-button routerLink="/collections">Anadir a coleccion</a>
+        <button mat-button type="button" disabled>{{ 'catalog.searchInShopsSoon' | translate }}</button>
+        <a mat-button routerLink="/collections">{{ 'catalog.addToCollection' | translate }}</a>
         @if (canManageProduct()) {
-          <button mat-button type="button" disabled>Editar proximamente</button>
+          <button mat-button type="button" disabled>{{ 'catalog.editSoon' | translate }}</button>
         }
       </mat-card-actions>
     </mat-card>
   } @else if (loading()) {
     <mat-card class="detail-card">
-      <mat-card-content>Cargando producto...</mat-card-content>
+      <mat-card-content>{{ 'catalog.loadingProduct' | translate }}</mat-card-content>
     </mat-card>
   }
 </section>

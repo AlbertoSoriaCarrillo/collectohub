@@ -9,6 +9,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { LanguageService } from '../../../core/i18n/language.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ShopProductResponse } from '../../../core/models/inventory.model';
 import { ShopResponse } from '../../../core/models/shop.model';
 import { InventoryService } from '../../../core/services/inventory.service';
@@ -24,7 +26,8 @@ import { ShopService } from '../../../core/services/shop.service';
     MatCardModule,
     MatChipsModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    TranslatePipe
   ],
   templateUrl: './shop-product-detail.component.html',
   styleUrl: './shop-product-detail.component.scss'
@@ -38,6 +41,7 @@ export class ShopProductDetailComponent implements OnInit {
   private readonly reservationService = inject(ReservationService);
   private readonly shopService = inject(ShopService);
   private readonly errorMessageService = inject(ErrorMessageService);
+  private readonly languageService = inject(LanguageService);
 
   readonly product = signal<ShopProductResponse | null>(null);
   readonly shop = signal<ShopResponse | null>(null);
@@ -52,7 +56,7 @@ export class ShopProductDetailComponent implements OnInit {
   ngOnInit(): void {
     const shopProductId = Number(this.route.snapshot.paramMap.get('shopProductId'));
     if (!Number.isFinite(shopProductId) || shopProductId <= 0) {
-      this.errorMessage.set('Producto no encontrado.');
+      this.errorMessage.set(this.languageService.translate('inventory.productNotFound'));
       return;
     }
 
@@ -97,7 +101,7 @@ export class ShopProductDetailComponent implements OnInit {
       .subscribe({
         next: (reservation) => {
           void this.router.navigate(['/reservations', reservation.id], {
-            state: { successMessage: 'Reserva creada correctamente.' }
+            state: { successMessage: this.languageService.translate('inventory.reservationCreated') }
           });
         },
         error: (error) => {

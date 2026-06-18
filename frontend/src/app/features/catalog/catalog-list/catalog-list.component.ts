@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import {
   MasterProductResponse,
   ProductCategoryResponse
@@ -26,7 +27,8 @@ import { CatalogService } from '../../../core/services/catalog.service';
     MatChipsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    TranslatePipe
   ],
   templateUrl: './catalog-list.component.html',
   styleUrl: './catalog-list.component.scss'

@@ -1,25 +1,27 @@
 <section class="auth-page">
   <div class="auth-intro" aria-hidden="true">
     <span class="visual-token">CH</span>
-    <p class="page-eyebrow">CollectoHub</p>
-    <h1>Vuelve a tu red de tiendas, colecciones y reservas.</h1>
+    <p class="page-eyebrow">{{ 'auth.login.introEyebrow' | translate }}</p>
+    <h1>{{ 'auth.login.introTitle' | translate }}</h1>
     <div class="intro-row">
-      <span>Catalogo</span>
-      <span>Inventario</span>
-      <span>Reservas</span>
+      <span>{{ 'auth.login.introCatalog' | translate }}</span>
+      <span>{{ 'auth.login.introInventory' | translate }}</span>
+      <span>{{ 'auth.login.introReservations' | translate }}</span>
     </div>
   </div>
 
   <mat-card class="auth-card">
+    <app-language-selector />
+
     <mat-card-header>
-      <mat-card-title>Login</mat-card-title>
-      <mat-card-subtitle>Accede a tu espacio CollectoHub</mat-card-subtitle>
+      <mat-card-title>{{ 'auth.login.title' | translate }}</mat-card-title>
+      <mat-card-subtitle>{{ 'auth.login.subtitle' | translate }}</mat-card-subtitle>
     </mat-card-header>
 
     <mat-card-content>
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate data-testid="login-form">
         <mat-form-field appearance="outline">
-          <mat-label>Email</mat-label>
+          <mat-label>{{ 'common.email' | translate }}</mat-label>
           <input
             matInput
             type="email"
@@ -28,15 +30,15 @@
             data-testid="login-email"
           />
           @if (form.controls.email.hasError('required') && form.controls.email.touched) {
-            <mat-error>El email es obligatorio.</mat-error>
+            <mat-error>{{ 'validation.requiredEmail' | translate }}</mat-error>
           }
           @if (form.controls.email.hasError('email') && form.controls.email.touched) {
-            <mat-error>Introduce un email valido.</mat-error>
+            <mat-error>{{ 'validation.invalidEmail' | translate }}</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Password</mat-label>
+          <mat-label>{{ 'common.password' | translate }}</mat-label>
           <input
             matInput
             type="password"
@@ -45,7 +47,7 @@
             data-testid="login-password"
           />
           @if (form.controls.password.hasError('required') && form.controls.password.touched) {
-            <mat-error>La password es obligatoria.</mat-error>
+            <mat-error>{{ 'validation.requiredPassword' | translate }}</mat-error>
           }
         </mat-form-field>
 
@@ -60,14 +62,14 @@
           [disabled]="loading()"
           data-testid="login-submit"
         >
-          {{ loading() ? 'Entrando...' : 'Entrar' }}
+          {{ loading() ? ('auth.login.submitting' | translate) : ('auth.login.submit' | translate) }}
         </button>
       </form>
     </mat-card-content>
 
     <mat-card-actions>
-      <span>No tienes cuenta?</span>
-      <a mat-button routerLink="/register">Crear cuenta</a>
+      <span>{{ 'auth.login.noAccount' | translate }}</span>
+      <a mat-button routerLink="/register">{{ 'auth.login.createAccount' | translate }}</a>
     </mat-card-actions>
   </mat-card>
 </section>

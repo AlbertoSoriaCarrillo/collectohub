@@ -61,8 +61,8 @@ describe('MyCollectionsComponent', () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain(
-      'Aun no tienes colecciones'
+    expect((fixture.nativeElement as HTMLElement).textContent).toMatch(
+      /Aun no tienes colecciones|You do not have collections yet/
     );
   });
 

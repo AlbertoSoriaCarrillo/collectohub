@@ -1,23 +1,23 @@
 <section class="form-page">
   <header class="page-header">
     <div>
-      <p class="eyebrow">Tiendas</p>
-      <h1>Crear tienda</h1>
-      <p>Alta inicial para publicar inventario y gestionar reservas del MVP.</p>
+      <p class="eyebrow">{{ 'shops.eyebrow' | translate }}</p>
+      <h1>{{ 'shops.createTitle' | translate }}</h1>
+      <p>{{ 'shops.createDescription' | translate }}</p>
     </div>
-    <a mat-button routerLink="/shops">Mis tiendas</a>
+    <a mat-button routerLink="/shops">{{ 'shops.myTitle' | translate }}</a>
   </header>
 
   <mat-card class="form-card">
     <mat-card-header>
-      <mat-card-title>Crear tienda</mat-card-title>
-      <mat-card-subtitle>Alta inicial de tienda para el MVP</mat-card-subtitle>
+      <mat-card-title>{{ 'shops.createTitle' | translate }}</mat-card-title>
+      <mat-card-subtitle>{{ 'shops.createSubtitle' | translate }}</mat-card-subtitle>
     </mat-card-header>
 
     <mat-card-content>
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate data-testid="create-shop-form">
         <mat-form-field appearance="outline">
-          <mat-label>Nombre</mat-label>
+          <mat-label>{{ 'common.name' | translate }}</mat-label>
           <input
             matInput
             formControlName="name"
@@ -25,53 +25,53 @@
             data-testid="create-shop-name"
           />
           @if (form.controls.name.hasError('required') && form.controls.name.touched) {
-            <mat-error>El nombre es obligatorio.</mat-error>
+            <mat-error>{{ 'validation.requiredName' | translate }}</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Descripcion</mat-label>
+          <mat-label>{{ 'common.description' | translate }}</mat-label>
           <textarea matInput rows="4" formControlName="description"></textarea>
         </mat-form-field>
 
         <div class="form-grid">
           <mat-form-field appearance="outline">
-            <mat-label>Email de contacto</mat-label>
-            <input matInput type="email" formControlName="contactEmail" />
+            <mat-label>{{ 'shops.contactEmail' | translate }}</mat-label>
+            <input matInput type="email" formControlName="contactEmail" data-testid="create-shop-contact-email" />
             @if (form.controls.contactEmail.hasError('email') && form.controls.contactEmail.touched) {
-              <mat-error>Email no valido.</mat-error>
+              <mat-error>{{ 'validation.invalidContactEmail' | translate }}</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Telefono</mat-label>
+            <mat-label>{{ 'common.phone' | translate }}</mat-label>
             <input matInput formControlName="contactPhone" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Pais</mat-label>
-            <input matInput maxlength="2" formControlName="country" />
+            <mat-label>{{ 'common.country' | translate }}</mat-label>
+            <input matInput maxlength="2" formControlName="country" data-testid="create-shop-country" />
             @if (form.controls.country.hasError('pattern') && form.controls.country.touched) {
-              <mat-error>Usa codigo ISO de 2 letras.</mat-error>
+              <mat-error>{{ 'validation.countryIso' | translate }}</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Moneda</mat-label>
+            <mat-label>{{ 'common.currency' | translate }}</mat-label>
             <input matInput maxlength="3" formControlName="currency" />
             @if (form.controls.currency.hasError('pattern') && form.controls.currency.touched) {
-              <mat-error>Usa codigo ISO de 3 letras.</mat-error>
+              <mat-error>{{ 'validation.currencyIso' | translate }}</mat-error>
             }
           </mat-form-field>
         </div>
 
         <mat-form-field appearance="outline">
-          <mat-label>Horas de reserva por defecto</mat-label>
+          <mat-label>{{ 'shops.defaultReservationHours' | translate }}</mat-label>
           <input matInput type="number" min="1" formControlName="defaultReservationExpirationHours" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Logo URL</mat-label>
+          <mat-label>{{ 'shops.logoUrl' | translate }}</mat-label>
           <input matInput type="url" formControlName="logoUrl" />
         </mat-form-field>
 
@@ -90,9 +90,9 @@
             [disabled]="loading()"
             data-testid="create-shop-submit"
           >
-            {{ loading() ? 'Creando...' : 'Crear tienda' }}
+            {{ loading() ? ('actions.creating' | translate) : ('shops.create' | translate) }}
           </button>
-          <a mat-button routerLink="/shops">Cancelar</a>
+          <a mat-button routerLink="/shops">{{ 'actions.cancel' | translate }}</a>
         </div>
       </form>
     </mat-card-content>

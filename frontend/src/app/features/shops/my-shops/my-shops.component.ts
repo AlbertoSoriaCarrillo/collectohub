@@ -5,12 +5,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ShopResponse } from '../../../core/models/shop.model';
 import { ShopService } from '../../../core/services/shop.service';
 
 @Component({
   selector: 'app-my-shops',
-  imports: [RouterLink, MatButtonModule, MatCardModule, MatChipsModule],
+  imports: [RouterLink, MatButtonModule, MatCardModule, MatChipsModule, TranslatePipe],
   templateUrl: './my-shops.component.html',
   styleUrl: './my-shops.component.scss'
 })

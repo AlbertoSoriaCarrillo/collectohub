@@ -64,6 +64,6 @@ describe('MasterProductCreateComponent', () => {
     component.submit();
 
     expect(createMasterProduct).not.toHaveBeenCalled();
-    expect(component.errorMessage()).toContain('No tienes permisos');
+    expect(component.errorMessage()).toMatch(/No tienes permisos|You do not have permission/);
   });
 });

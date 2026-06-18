@@ -144,7 +144,11 @@ describe('ShopProductDetailComponent', () => {
       userMessage: 'Please reserve it.'
     });
     expect(navigateSpy).toHaveBeenCalledWith(['/reservations', 21], {
-      state: { successMessage: 'Reserva creada correctamente.' }
+      state: {
+        successMessage: expect.stringMatching(
+          /Reserva creada correctamente\.|Reservation created successfully\./
+        )
+      }
     });
   });
 });

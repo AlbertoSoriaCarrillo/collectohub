@@ -244,6 +244,17 @@
 - Decision: usar iconografia de Angular Material Icons solo en el layout principal.
 - Motivo: aporta lectura visual a la navegacion sin obligar a redisenar cada componente ni cambiar la logica funcional.
 
+## 2026-06-18 - Internacionalizacion frontend ES/EN
+
+- Decision: implementar una capa i18n ligera propia para Angular en `frontend/src/app/core/i18n/`, sin anadir librerias externas.
+- Motivo: el MVP solo necesita ES/EN, textos estaticos, cambio en caliente, persistencia local, fallback e interpolacion simple; una dependencia completa anadiria complejidad innecesaria.
+- Decision: persistir el idioma activo en `localStorage` con la clave `collectohub.language`.
+- Motivo: mantiene la preferencia entre recargas sin modificar backend ni contratos de usuario.
+- Decision: si no hay idioma guardado, usar `en` solo cuando el navegador este en ingles; si el valor guardado es invalido, volver a `es`.
+- Motivo: respeta el idioma por defecto del producto y evita que valores corruptos en almacenamiento local generen estados no soportados.
+- Decision: traducir solo representaciones visibles de enums y textos de UI, no datos dinamicos de backend/usuario.
+- Motivo: nombres, emails, descripciones, mensajes, IDs, precios y codigos tecnicos son datos de dominio y no deben alterarse en la capa visual.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

@@ -5,6 +5,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { LanguageService } from '../../../core/i18n/language.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ShopProductResponse } from '../../../core/models/inventory.model';
 import { ShopResponse } from '../../../core/models/shop.model';
 import { InventoryService } from '../../../core/services/inventory.service';
@@ -12,7 +14,7 @@ import { ShopService } from '../../../core/services/shop.service';
 
 @Component({
   selector: 'app-shop-inventory',
-  imports: [RouterLink, MatButtonModule, MatCardModule, MatChipsModule],
+  imports: [RouterLink, MatButtonModule, MatCardModule, MatChipsModule, TranslatePipe],
   templateUrl: './shop-inventory.component.html',
   styleUrl: './shop-inventory.component.scss'
 })
@@ -21,6 +23,7 @@ export class ShopInventoryComponent implements OnInit {
   private readonly inventoryService = inject(InventoryService);
   private readonly shopService = inject(ShopService);
   private readonly errorMessageService = inject(ErrorMessageService);
+  private readonly languageService = inject(LanguageService);
 
   readonly shop = signal<ShopResponse | null>(null);
   readonly products = signal<ShopProductResponse[]>([]);
@@ -32,7 +35,7 @@ export class ShopInventoryComponent implements OnInit {
   ngOnInit(): void {
     const shopId = Number(this.route.snapshot.paramMap.get('shopId'));
     if (!Number.isFinite(shopId) || shopId <= 0) {
-      this.errorMessage.set('Tienda no encontrada.');
+      this.errorMessage.set(this.languageService.translate('shops.notFound'));
       return;
     }
 

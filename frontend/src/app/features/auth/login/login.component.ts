@@ -8,6 +8,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { LanguageSelectorComponent } from '../../../core/i18n/language-selector.component';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +19,9 @@ import { ErrorMessageService } from '../../../core/http/error-message.service';
     MatButtonModule,
     MatCardModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    LanguageSelectorComponent,
+    TranslatePipe
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'

@@ -83,6 +83,6 @@ describe('ReservationDetailComponent', () => {
     expect(compiled.textContent).toContain('One Piece 1');
     expect(compiled.textContent).toContain('Akihabara Store');
     expect(compiled.textContent).toContain('Please reserve it.');
-    expect(compiled.textContent).toContain('Cancelar reserva');
+    expect(compiled.textContent).toMatch(/Cancelar reserva|Cancel reservation/);
   });
 });

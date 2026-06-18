@@ -1,39 +1,39 @@
 <section class="product-create-page">
   <header class="page-header">
     <div>
-      <p class="eyebrow">Catalogo maestro</p>
-      <h1>Crear producto</h1>
-      <p>Define una referencia base para reutilizarla en tiendas y colecciones.</p>
+      <p class="eyebrow">{{ 'catalog.eyebrow' | translate }}</p>
+      <h1>{{ 'catalog.createTitle' | translate }}</h1>
+      <p>{{ 'catalog.createDescription' | translate }}</p>
     </div>
-    <a mat-button routerLink="/catalog">Volver al catalogo</a>
+    <a mat-button routerLink="/catalog">{{ 'actions.backToCatalog' | translate }}</a>
   </header>
 
   @if (!canCreateProduct()) {
     <mat-card class="permission-card">
       <mat-card-content>
-        <h2>No tienes permisos para crear productos maestros</h2>
-        <p>Necesitas rol global SHOP_OWNER o ADMIN.</p>
+        <h2>{{ 'catalog.noPermissionTitle' | translate }}</h2>
+        <p>{{ 'catalog.noPermissionDescription' | translate }}</p>
       </mat-card-content>
     </mat-card>
   } @else {
     <mat-card class="form-card">
       <mat-card-header>
-        <mat-card-title>Datos del producto</mat-card-title>
-        <mat-card-subtitle>Campos de identificacion, edicion y atributos flexibles.</mat-card-subtitle>
+        <mat-card-title>{{ 'catalog.formTitle' | translate }}</mat-card-title>
+        <mat-card-subtitle>{{ 'catalog.formSubtitle' | translate }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <form [formGroup]="form" (ngSubmit)="submit()" novalidate data-testid="create-master-product-form">
           <div class="form-grid">
             <mat-form-field appearance="outline">
-              <mat-label>Nombre</mat-label>
+              <mat-label>{{ 'common.name' | translate }}</mat-label>
               <input matInput formControlName="name" data-testid="create-master-product-name" />
               @if (form.controls.name.hasError('required') && form.controls.name.touched) {
-                <mat-error>El nombre es obligatorio.</mat-error>
+                <mat-error>{{ 'validation.requiredName' | translate }}</mat-error>
               }
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Categoria</mat-label>
+              <mat-label>{{ 'common.category' | translate }}</mat-label>
               <mat-select formControlName="categoryCode" data-testid="create-master-product-category">
                 @for (category of categories(); track category.code) {
                   <mat-option [value]="category.code">{{ category.name }}</mat-option>
@@ -42,87 +42,89 @@
               @if (
                 form.controls.categoryCode.hasError('required') && form.controls.categoryCode.touched
               ) {
-                <mat-error>La categoria es obligatoria.</mat-error>
+                <mat-error>{{ 'validation.requiredCategory' | translate }}</mat-error>
               }
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Franquicia</mat-label>
-              <input matInput formControlName="franchise" />
+              <mat-label>{{ 'common.franchise' | translate }}</mat-label>
+              <input matInput formControlName="franchise" data-testid="create-master-product-franchise" />
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Coleccion</mat-label>
-              <input matInput formControlName="collectionName" />
+              <mat-label>{{ 'common.collection' | translate }}</mat-label>
+              <input matInput formControlName="collectionName" data-testid="create-master-product-collection" />
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Volumen</mat-label>
-              <input matInput formControlName="volumeNumber" />
+              <mat-label>{{ 'common.volume' | translate }}</mat-label>
+              <input matInput formControlName="volumeNumber" data-testid="create-master-product-volume" />
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Editorial</mat-label>
+              <mat-label>{{ 'common.publisher' | translate }}</mat-label>
               <input matInput formControlName="publisher" />
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>ISBN</mat-label>
+              <mat-label>{{ 'catalog.isbn' | translate }}</mat-label>
               <input matInput formControlName="isbn" />
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>EAN</mat-label>
+              <mat-label>{{ 'catalog.ean' | translate }}</mat-label>
               <input matInput formControlName="ean" />
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Idioma</mat-label>
-              <input matInput formControlName="language" maxlength="8" />
+              <mat-label>{{ 'common.language' | translate }}</mat-label>
+              <input matInput formControlName="language" maxlength="8" data-testid="create-master-product-language" />
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Paises de publicacion</mat-label>
-              <input matInput formControlName="publicationCountries" />
+              <mat-label>{{ 'common.countries' | translate }}</mat-label>
+              <input matInput formControlName="publicationCountries" data-testid="create-master-product-countries" />
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Fecha lanzamiento</mat-label>
+              <mat-label>{{ 'common.releaseDate' | translate }}</mat-label>
               <input matInput type="date" formControlName="releaseDate" />
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Inicio edicion</mat-label>
+              <mat-label>{{ 'catalog.editionStart' | translate }}</mat-label>
               <input matInput type="date" formControlName="editionStartDate" />
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Fin edicion</mat-label>
+              <mat-label>{{ 'catalog.editionEnd' | translate }}</mat-label>
               <input matInput type="date" formControlName="editionEndDate" />
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Unidades limitadas</mat-label>
+              <mat-label>{{ 'catalog.limitedUnits' | translate }}</mat-label>
               <input matInput type="number" formControlName="limitedEditionTotalUnits" min="1" />
             </mat-form-field>
 
             <mat-form-field class="wide" appearance="outline">
-              <mat-label>URL portada</mat-label>
+              <mat-label>{{ 'catalog.coverUrl' | translate }}</mat-label>
               <input matInput type="url" formControlName="coverImageUrl" />
             </mat-form-field>
 
             <mat-form-field class="wide" appearance="outline">
-              <mat-label>Descripcion</mat-label>
+              <mat-label>{{ 'common.description' | translate }}</mat-label>
               <textarea matInput rows="4" formControlName="description"></textarea>
             </mat-form-field>
 
             <mat-form-field class="wide" appearance="outline">
-              <mat-label>Atributos JSON</mat-label>
+              <mat-label>{{ 'catalog.attributesJson' | translate }}</mat-label>
               <textarea matInput rows="5" formControlName="attributesJson"></textarea>
             </mat-form-field>
           </div>
 
-          <mat-checkbox formControlName="limitedEdition">Edicion limitada</mat-checkbox>
+          <mat-checkbox formControlName="limitedEdition">
+            {{ 'catalog.limitedEdition' | translate }}
+          </mat-checkbox>
 
           @if (errorMessage()) {
             <p class="form-error" role="alert">{{ errorMessage() }}</p>
@@ -136,9 +138,13 @@
               [disabled]="loading()"
               data-testid="create-master-product-submit"
             >
-              {{ loading() ? 'Creando...' : 'Crear producto' }}
+              {{
+                loading()
+                  ? ('actions.creating' | translate)
+                  : ('catalog.createSubmit' | translate)
+              }}
             </button>
-            <a mat-button routerLink="/catalog">Cancelar</a>
+            <a mat-button routerLink="/catalog">{{ 'actions.cancel' | translate }}</a>
           </div>
         </form>
       </mat-card-content>

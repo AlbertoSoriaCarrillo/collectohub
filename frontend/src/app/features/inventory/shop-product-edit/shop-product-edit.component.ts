@@ -9,6 +9,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { LanguageService } from '../../../core/i18n/language.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import {
   PHYSICAL_CONDITIONS,
   SHOP_PRODUCT_COMMERCIAL_STATUSES,
@@ -27,7 +29,8 @@ import { InventoryService } from '../../../core/services/inventory.service';
     MatCheckboxModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    TranslatePipe
   ],
   templateUrl: './shop-product-edit.component.html',
   styleUrl: './shop-product-edit.component.scss'
@@ -38,6 +41,7 @@ export class ShopProductEditComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly inventoryService = inject(InventoryService);
   private readonly errorMessageService = inject(ErrorMessageService);
+  private readonly languageService = inject(LanguageService);
 
   readonly statuses = SHOP_PRODUCT_COMMERCIAL_STATUSES;
   readonly conditions = PHYSICAL_CONDITIONS;
@@ -68,7 +72,7 @@ export class ShopProductEditComponent implements OnInit {
       !Number.isFinite(shopProductId) ||
       shopProductId <= 0
     ) {
-      this.errorMessage.set('Producto de inventario no encontrado.');
+      this.errorMessage.set(this.languageService.translate('inventory.notFound'));
       return;
     }
 
@@ -81,7 +85,7 @@ export class ShopProductEditComponent implements OnInit {
     const shopId = this.shopId();
     const shopProductId = this.shopProductId();
     if (!shopId || !shopProductId) {
-      this.errorMessage.set('Producto de inventario no encontrado.');
+      this.errorMessage.set(this.languageService.translate('inventory.notFound'));
       return;
     }
 
@@ -113,7 +117,7 @@ export class ShopProductEditComponent implements OnInit {
             (candidate) => candidate.id === shopProductId && candidate.shopId === shopId
           );
           if (!product) {
-            this.errorMessage.set('Producto de inventario no encontrado.');
+            this.errorMessage.set(this.languageService.translate('inventory.notFound'));
             return;
           }
           this.product.set(product);

@@ -1,30 +1,30 @@
 <section class="collections-page">
   <header class="page-header">
     <div>
-      <p class="eyebrow">Colecciones</p>
-      <h1>Mis colecciones</h1>
-      <p>Gestiona lo que tienes, buscas y quieres completar.</p>
+      <p class="eyebrow">{{ 'collections.eyebrow' | translate }}</p>
+      <h1>{{ 'collections.myTitle' | translate }}</h1>
+      <p>{{ 'collections.myDescription' | translate }}</p>
     </div>
-    <a mat-flat-button color="primary" routerLink="/collections/new">Crear coleccion</a>
+    <a mat-flat-button color="primary" routerLink="/collections/new">{{ 'collections.create' | translate }}</a>
   </header>
 
   <mat-card class="filters-card">
     <mat-card-content>
       <form class="filters-grid" [formGroup]="filters" (ngSubmit)="loadCollections()" novalidate>
         <mat-form-field appearance="outline">
-          <mat-label>Visibilidad</mat-label>
+          <mat-label>{{ 'collections.visibility' | translate }}</mat-label>
           <mat-select formControlName="visibility">
-            <mat-option value="">Todas</mat-option>
+            <mat-option value="">{{ 'common.all' | translate }}</mat-option>
             @for (visibility of visibilities; track visibility) {
-              <mat-option [value]="visibility">{{ visibility }}</mat-option>
+              <mat-option [value]="visibility">{{ 'enums.collectionVisibility.' + visibility | translate }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Categoria</mat-label>
+          <mat-label>{{ 'common.category' | translate }}</mat-label>
           <mat-select formControlName="categoryCode">
-            <mat-option value="">Todas</mat-option>
+            <mat-option value="">{{ 'common.all' | translate }}</mat-option>
             @for (category of categories(); track category.code) {
               <mat-option [value]="category.code">{{ category.name }}</mat-option>
             }
@@ -33,9 +33,9 @@
 
         <div class="filter-actions">
           <button mat-flat-button type="submit" [disabled]="loading()">
-            {{ loading() ? 'Filtrando...' : 'Filtrar' }}
+            {{ loading() ? ('actions.filtering' | translate) : ('actions.filter' | translate) }}
           </button>
-          <button mat-button type="button" (click)="resetFilters()">Limpiar</button>
+          <button mat-button type="button" (click)="resetFilters()">{{ 'actions.clear' | translate }}</button>
         </div>
       </form>
     </mat-card-content>
@@ -46,16 +46,16 @@
   }
 
   @if (loading()) {
-    <p class="status-text">Cargando colecciones...</p>
+    <p class="status-text">{{ 'collections.loading' | translate }}</p>
   }
 
   @if (!loading() && !errorMessage() && collections().length === 0) {
     <mat-card class="empty-card">
       <mat-card-content>
         <span class="empty-icon" aria-hidden="true">K</span>
-        <h2>Aun no tienes colecciones</h2>
-        <p>Crea tu primera coleccion para registrar productos que tienes, buscas o te faltan.</p>
-        <a mat-stroked-button routerLink="/collections/new">Crear coleccion</a>
+        <h2>{{ 'collections.emptyTitle' | translate }}</h2>
+        <p>{{ 'collections.emptyDescription' | translate }}</p>
+        <a mat-stroked-button routerLink="/collections/new">{{ 'collections.create' | translate }}</a>
       </mat-card-content>
     </mat-card>
   }
@@ -67,19 +67,19 @@
           <mat-card-header>
             <span class="visual-token" aria-hidden="true">{{ collection.name.slice(0, 1).toUpperCase() }}</span>
             <mat-card-title>{{ collection.name }}</mat-card-title>
-            <mat-card-subtitle>{{ collection.categoryName || 'Sin categoria' }}</mat-card-subtitle>
+            <mat-card-subtitle>{{ collection.categoryName || ('common.noCategory' | translate) }}</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <p>{{ collection.description || 'Sin descripcion.' }}</p>
-            <mat-chip-set aria-label="Datos de coleccion">
-              <mat-chip>{{ collection.visibility }}</mat-chip>
-              <mat-chip>{{ collection.items.length }} items</mat-chip>
+            <p>{{ collection.description || ('common.noDescription' | translate) }}</p>
+            <mat-chip-set [attr.aria-label]="'collections.dataAria' | translate">
+              <mat-chip>{{ 'enums.collectionVisibility.' + collection.visibility | translate }}</mat-chip>
+              <mat-chip>{{ 'collections.noItems' | translate: { count: collection.items.length } }}</mat-chip>
             </mat-chip-set>
           </mat-card-content>
           <mat-card-actions>
-            <a mat-button [routerLink]="['/collections', collection.id]">Ver detalle</a>
-            <a mat-button [routerLink]="['/collections', collection.id, 'edit']">Editar</a>
-            <button mat-button type="button" (click)="deleteCollection(collection)">Eliminar</button>
+            <a mat-button [routerLink]="['/collections', collection.id]">{{ 'actions.viewDetail' | translate }}</a>
+            <a mat-button [routerLink]="['/collections', collection.id, 'edit']">{{ 'actions.edit' | translate }}</a>
+            <button mat-button type="button" (click)="deleteCollection(collection)">{{ 'actions.delete' | translate }}</button>
           </mat-card-actions>
         </mat-card>
       }

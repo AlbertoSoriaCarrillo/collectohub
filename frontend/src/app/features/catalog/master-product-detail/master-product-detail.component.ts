@@ -5,12 +5,14 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { LanguageService } from '../../../core/i18n/language.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { MasterProductResponse } from '../../../core/models/catalog.model';
 import { CatalogService } from '../../../core/services/catalog.service';
 
 @Component({
   selector: 'app-master-product-detail',
-  imports: [RouterLink, MatButtonModule, MatCardModule, MatChipsModule],
+  imports: [RouterLink, MatButtonModule, MatCardModule, MatChipsModule, TranslatePipe],
   templateUrl: './master-product-detail.component.html',
   styleUrl: './master-product-detail.component.scss'
 })
@@ -19,6 +21,7 @@ export class MasterProductDetailComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly catalogService = inject(CatalogService);
   private readonly errorMessageService = inject(ErrorMessageService);
+  private readonly languageService = inject(LanguageService);
 
   readonly product = signal<MasterProductResponse | null>(null);
   readonly loading = signal(false);
@@ -27,7 +30,7 @@ export class MasterProductDetailComponent implements OnInit {
   ngOnInit(): void {
     const productId = Number(this.route.snapshot.paramMap.get('id'));
     if (!Number.isFinite(productId) || productId <= 0) {
-      this.errorMessage.set('Producto no valido.');
+      this.errorMessage.set(this.languageService.translate('catalog.notValid'));
       return;
     }
 

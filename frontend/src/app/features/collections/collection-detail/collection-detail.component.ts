@@ -6,12 +6,14 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { LanguageService } from '../../../core/i18n/language.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { CollectionItemResponse, CollectionResponse } from '../../../core/models/collection.model';
 import { CollectionService } from '../../../core/services/collection.service';
 
 @Component({
   selector: 'app-collection-detail',
-  imports: [RouterLink, MatButtonModule, MatCardModule, MatChipsModule],
+  imports: [RouterLink, MatButtonModule, MatCardModule, MatChipsModule, TranslatePipe],
   templateUrl: './collection-detail.component.html',
   styleUrl: './collection-detail.component.scss'
 })
@@ -20,6 +22,7 @@ export class CollectionDetailComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly collectionService = inject(CollectionService);
   private readonly errorMessageService = inject(ErrorMessageService);
+  private readonly languageService = inject(LanguageService);
 
   readonly collection = signal<CollectionResponse | null>(null);
   readonly items = signal<CollectionItemResponse[]>([]);
@@ -31,7 +34,7 @@ export class CollectionDetailComponent implements OnInit {
   ngOnInit(): void {
     const collectionId = Number(this.route.snapshot.paramMap.get('collectionId'));
     if (!Number.isFinite(collectionId) || collectionId <= 0) {
-      this.errorMessage.set('Coleccion no encontrada.');
+      this.errorMessage.set(this.languageService.translate('collections.collectionNotFound'));
       return;
     }
 
@@ -40,7 +43,14 @@ export class CollectionDetailComponent implements OnInit {
 
   deleteItem(item: CollectionItemResponse): void {
     const collection = this.collection();
-    if (!collection || !window.confirm(`Eliminar "${item.masterProductName}" de la coleccion?`)) {
+    if (
+      !collection ||
+      !window.confirm(
+        this.languageService.translate('collections.itemDeleteConfirm', {
+          name: item.masterProductName
+        })
+      )
+    ) {
       return;
     }
 

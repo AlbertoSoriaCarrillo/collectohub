@@ -1,25 +1,25 @@
 <section class="inventory-form-page">
   <header class="page-header">
     <div>
-      <p class="eyebrow">Inventario</p>
-      <h1>Anadir producto</h1>
-      <p>Busca un producto maestro y publica su disponibilidad en la tienda.</p>
+      <p class="eyebrow">{{ 'inventory.eyebrow' | translate }}</p>
+      <h1>{{ 'inventory.addProduct' | translate }}</h1>
+      <p>{{ 'inventory.createDescription' | translate }}</p>
     </div>
 
     @if (shopId(); as id) {
-      <a mat-button [routerLink]="['/shops', id, 'inventory']">Volver al inventario</a>
+      <a mat-button [routerLink]="['/shops', id, 'inventory']">{{ 'actions.backToInventory' | translate }}</a>
     }
   </header>
 
   <mat-card class="form-card">
     <mat-card-header>
-      <mat-card-title>Nuevo producto de tienda</mat-card-title>
-      <mat-card-subtitle>Precio, stock, estado comercial y condicion fisica.</mat-card-subtitle>
+      <mat-card-title>{{ 'inventory.createTitle' | translate }}</mat-card-title>
+      <mat-card-subtitle>{{ 'inventory.createSubtitle' | translate }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <form class="search-form" [formGroup]="productSearch" (ngSubmit)="searchProducts()" novalidate>
         <mat-form-field appearance="outline">
-          <mat-label>Buscar producto maestro</mat-label>
+          <mat-label>{{ 'inventory.masterProductSearch' | translate }}</mat-label>
           <input
             matInput
             type="search"
@@ -34,14 +34,14 @@
           [disabled]="searching()"
           data-testid="shop-product-search-submit"
         >
-          {{ searching() ? 'Buscando...' : 'Buscar' }}
+          {{ searching() ? ('actions.searching' | translate) : ('actions.search' | translate) }}
         </button>
       </form>
 
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
         <div class="form-grid">
           <mat-form-field class="wide" appearance="outline">
-            <mat-label>Producto maestro</mat-label>
+            <mat-label>{{ 'inventory.masterProduct' | translate }}</mat-label>
             <mat-select formControlName="masterProductId" data-testid="shop-product-master-product">
               @for (product of masterProducts(); track product.id) {
                 <mat-option [value]="product.id">
@@ -53,75 +53,75 @@
               form.controls.masterProductId.hasError('required') &&
               form.controls.masterProductId.touched
             ) {
-              <mat-error>Selecciona un producto maestro.</mat-error>
+              <mat-error>{{ 'validation.requiredMasterProduct' | translate }}</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Precio</mat-label>
-            <input matInput type="number" min="0" step="0.01" formControlName="priceAmount" />
+            <mat-label>{{ 'common.price' | translate }}</mat-label>
+            <input matInput type="number" min="0" step="0.01" formControlName="priceAmount" data-testid="shop-product-price" />
             @if (form.controls.priceAmount.touched && form.controls.priceAmount.invalid) {
-              <mat-error>Indica un precio valido.</mat-error>
+              <mat-error>{{ 'validation.validPrice' | translate }}</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Moneda</mat-label>
+            <mat-label>{{ 'common.currency' | translate }}</mat-label>
             <input matInput maxlength="3" formControlName="currency" />
             @if (form.controls.currency.touched && form.controls.currency.invalid) {
-              <mat-error>Usa codigo ISO de 3 letras.</mat-error>
+              <mat-error>{{ 'validation.currencyIso' | translate }}</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Stock</mat-label>
-            <input matInput type="number" min="0" formControlName="stockQuantity" />
+            <mat-label>{{ 'common.stock' | translate }}</mat-label>
+            <input matInput type="number" min="0" formControlName="stockQuantity" data-testid="shop-product-stock" />
             @if (form.controls.stockQuantity.touched && form.controls.stockQuantity.invalid) {
-              <mat-error>Indica stock cero o superior.</mat-error>
+              <mat-error>{{ 'validation.validStock' | translate }}</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Estado comercial</mat-label>
+            <mat-label>{{ 'inventory.commercialStatus' | translate }}</mat-label>
             <mat-select formControlName="commercialStatus">
               @for (status of statuses; track status) {
-                <mat-option [value]="status">{{ status }}</mat-option>
+                <mat-option [value]="status">{{ 'enums.commercialStatus.' + status | translate }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Condicion fisica</mat-label>
-            <mat-select formControlName="physicalCondition">
+            <mat-label>{{ 'inventory.physicalCondition' | translate }}</mat-label>
+            <mat-select formControlName="physicalCondition" data-testid="shop-product-physical-condition">
               @for (condition of conditions; track condition) {
-                <mat-option [value]="condition">{{ condition }}</mat-option>
+                <mat-option [value]="condition">{{ 'enums.physicalCondition.' + condition | translate }}</mat-option>
               }
             </mat-select>
             @if (
               form.controls.physicalCondition.hasError('required') &&
               form.controls.physicalCondition.touched
             ) {
-              <mat-error>Selecciona la condicion fisica.</mat-error>
+              <mat-error>{{ 'validation.requiredPhysicalCondition' | translate }}</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Unidad</mat-label>
+            <mat-label>{{ 'common.unit' | translate }}</mat-label>
             <input matInput formControlName="unitNumber" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Total unidades limitadas</mat-label>
+            <mat-label>{{ 'inventory.limitedUnitsTotal' | translate }}</mat-label>
             <input matInput type="number" min="1" formControlName="totalLimitedUnits" />
           </mat-form-field>
 
           <mat-form-field class="wide" appearance="outline">
-            <mat-label>Notas</mat-label>
+            <mat-label>{{ 'common.notes' | translate }}</mat-label>
             <textarea matInput rows="4" formControlName="notes"></textarea>
           </mat-form-field>
         </div>
 
-        <mat-checkbox formControlName="visible">Visible en la tienda</mat-checkbox>
+        <mat-checkbox formControlName="visible">{{ 'inventory.visibleInShop' | translate }}</mat-checkbox>
 
         @if (errorMessage()) {
           <p class="form-error" role="alert">{{ errorMessage() }}</p>
@@ -135,10 +135,10 @@
             [disabled]="loading()"
             data-testid="create-shop-product-submit"
           >
-            {{ loading() ? 'Creando...' : 'Crear producto' }}
+            {{ loading() ? ('actions.creating' | translate) : ('inventory.createSubmit' | translate) }}
           </button>
           @if (shopId(); as id) {
-            <a mat-button [routerLink]="['/shops', id, 'inventory']">Cancelar</a>
+            <a mat-button [routerLink]="['/shops', id, 'inventory']">{{ 'actions.cancel' | translate }}</a>
           }
         </div>
       </form>

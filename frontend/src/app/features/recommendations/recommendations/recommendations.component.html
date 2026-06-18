@@ -1,36 +1,36 @@
 <section class="recommendations-page">
   <header class="page-header">
     <div>
-      <p class="eyebrow">Recomendaciones</p>
-      <h1>Coincidencias para tus colecciones</h1>
-      <p>Productos disponibles que encajan con items marcados como buscados o faltantes.</p>
+      <p class="eyebrow">{{ 'recommendations.eyebrow' | translate }}</p>
+      <h1>{{ 'recommendations.title' | translate }}</h1>
+      <p>{{ 'recommendations.description' | translate }}</p>
     </div>
-    <a mat-button routerLink="/collections">Mis colecciones</a>
+    <a mat-button routerLink="/collections">{{ 'collections.myTitle' | translate }}</a>
   </header>
 
   @if (summary(); as currentSummary) {
-    <div class="summary-grid" aria-label="Resumen de recomendaciones">
+    <div class="summary-grid" [attr.aria-label]="'recommendations.summaryAria' | translate">
       <mat-card class="summary-card">
         <mat-card-content>
-          <span>Faltantes</span>
+          <span>{{ 'recommendations.missing' | translate }}</span>
           <strong>{{ currentSummary.missingCollectionItems }}</strong>
         </mat-card-content>
       </mat-card>
       <mat-card class="summary-card">
         <mat-card-content>
-          <span>Buscados</span>
+          <span>{{ 'recommendations.wanted' | translate }}</span>
           <strong>{{ currentSummary.wantedCollectionItems }}</strong>
         </mat-card-content>
       </mat-card>
       <mat-card class="summary-card">
         <mat-card-content>
-          <span>Recomendados</span>
+          <span>{{ 'recommendations.recommended' | translate }}</span>
           <strong>{{ currentSummary.recommendedProducts }}</strong>
         </mat-card-content>
       </mat-card>
       <mat-card class="summary-card">
         <mat-card-content>
-          <span>Tiendas</span>
+          <span>{{ 'recommendations.shops' | translate }}</span>
           <strong>{{ currentSummary.matchedShops }}</strong>
         </mat-card-content>
       </mat-card>
@@ -39,8 +39,8 @@
     @if (currentSummary.matchedCategoryCodes.length > 0) {
       <mat-card class="category-card">
         <mat-card-content>
-          <span>Categorias con coincidencias</span>
-          <mat-chip-set aria-label="Categorias con coincidencias">
+          <span>{{ 'recommendations.categoriesWithMatches' | translate }}</span>
+          <mat-chip-set [attr.aria-label]="'recommendations.categoriesAria' | translate">
             @for (categoryCode of currentSummary.matchedCategoryCodes; track categoryCode) {
               <mat-chip>{{ categoryCode }}</mat-chip>
             }
@@ -54,9 +54,9 @@
     <mat-card-content>
       <form class="filters-grid" [formGroup]="filters" (ngSubmit)="loadRecommendations()" novalidate>
         <mat-form-field appearance="outline">
-          <mat-label>Categoria</mat-label>
+          <mat-label>{{ 'common.category' | translate }}</mat-label>
           <mat-select formControlName="categoryCode">
-            <mat-option value="">Todas</mat-option>
+            <mat-option value="">{{ 'common.all' | translate }}</mat-option>
             @for (category of categories(); track category.code) {
               <mat-option [value]="category.code">{{ category.name }}</mat-option>
             }
@@ -64,35 +64,35 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Precio maximo</mat-label>
+          <mat-label>{{ 'recommendations.maxPrice' | translate }}</mat-label>
           <input matInput type="number" min="0" step="0.01" formControlName="maxPrice" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Moneda</mat-label>
+          <mat-label>{{ 'common.currency' | translate }}</mat-label>
           <input matInput maxlength="3" formControlName="currency" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Condicion</mat-label>
+          <mat-label>{{ 'recommendations.condition' | translate }}</mat-label>
           <mat-select formControlName="physicalCondition">
-            <mat-option value="">Todas</mat-option>
+            <mat-option value="">{{ 'common.all' | translate }}</mat-option>
             @for (condition of physicalConditions; track condition) {
-              <mat-option [value]="condition">{{ condition }}</mat-option>
+              <mat-option [value]="condition">{{ 'enums.physicalCondition.' + condition | translate }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>ID tienda</mat-label>
+          <mat-label>{{ 'recommendations.shopId' | translate }}</mat-label>
           <input matInput type="number" min="1" step="1" formControlName="shopId" />
         </mat-form-field>
 
         <div class="filter-actions">
           <button mat-flat-button color="primary" type="submit" [disabled]="loading()">
-            {{ loading() ? 'Buscando...' : 'Filtrar' }}
+            {{ loading() ? ('actions.searching' | translate) : ('actions.filter' | translate) }}
           </button>
-          <button mat-button type="button" (click)="resetFilters()">Limpiar</button>
+          <button mat-button type="button" (click)="resetFilters()">{{ 'actions.clear' | translate }}</button>
         </div>
       </form>
     </mat-card-content>
@@ -103,7 +103,7 @@
   }
 
   @if (loading()) {
-    <p class="status-text">Cargando recomendaciones...</p>
+    <p class="status-text">{{ 'recommendations.loading' | translate }}</p>
   }
 
   @if (!loading() && !errorMessage() && recommendations().length === 0) {
@@ -111,17 +111,17 @@
       <mat-card class="empty-card">
         <mat-card-content>
           <span class="empty-icon" aria-hidden="true">R</span>
-          <h2>No hay coincidencias disponibles</h2>
-          <p>Ajusta los filtros o revisa mas tarde cuando haya productos disponibles en tiendas.</p>
+          <h2>{{ 'recommendations.noMatchesTitle' | translate }}</h2>
+          <p>{{ 'recommendations.noMatchesDescription' | translate }}</p>
         </mat-card-content>
       </mat-card>
     } @else {
       <mat-card class="empty-card">
         <mat-card-content>
           <span class="empty-icon" aria-hidden="true">W</span>
-          <h2>No hay items buscados o faltantes</h2>
-          <p>Marca items de tus colecciones como MISSING o WANTED para recibir recomendaciones.</p>
-          <a mat-stroked-button routerLink="/collections">Ver colecciones</a>
+          <h2>{{ 'recommendations.noNeedsTitle' | translate }}</h2>
+          <p>{{ 'recommendations.noNeedsDescription' | translate }}</p>
+          <a mat-stroked-button routerLink="/collections">{{ 'actions.viewCollections' | translate }}</a>
         </mat-card-content>
       </mat-card>
     }
@@ -138,28 +138,28 @@
           </mat-card-header>
 
           <mat-card-content>
-            <mat-chip-set aria-label="Datos de recomendacion">
-              <mat-chip>{{ recommendation.matchedCollectionItemStatus }}</mat-chip>
-              <mat-chip>{{ recommendation.physicalCondition }}</mat-chip>
-              <mat-chip>{{ recommendation.stockQuantity }} en stock</mat-chip>
+            <mat-chip-set [attr.aria-label]="'recommendations.dataAria' | translate">
+              <mat-chip>{{ 'enums.collectionStatus.' + recommendation.matchedCollectionItemStatus | translate }}</mat-chip>
+              <mat-chip>{{ 'enums.physicalCondition.' + recommendation.physicalCondition | translate }}</mat-chip>
+              <mat-chip>{{ 'inventory.stockCount' | translate: { count: recommendation.stockQuantity } }}</mat-chip>
             </mat-chip-set>
 
             <dl>
               <div>
-                <dt>Precio</dt>
+                <dt>{{ 'common.price' | translate }}</dt>
                 <dd>{{ priceLabel(recommendation) }}</dd>
               </div>
               <div>
-                <dt>Coleccion</dt>
+                <dt>{{ 'common.collection' | translate }}</dt>
                 <dd>{{ recommendation.matchedCollectionName }}</dd>
               </div>
               <div>
-                <dt>Franquicia</dt>
-                <dd>{{ recommendation.franchise || 'No informada' }}</dd>
+                <dt>{{ 'common.franchise' | translate }}</dt>
+                <dd>{{ recommendation.franchise || ('common.notReported' | translate) }}</dd>
               </div>
               <div>
-                <dt>Linea</dt>
-                <dd>{{ recommendation.collectionName || 'No informada' }}</dd>
+                <dt>{{ 'recommendations.reasonLine' | translate }}</dt>
+                <dd>{{ recommendation.collectionName || ('common.notReported' | translate) }}</dd>
               </div>
             </dl>
 
@@ -168,18 +168,18 @@
 
           <mat-card-actions>
             <a mat-button [routerLink]="['/shop-products', recommendation.shopProductId]">
-              Ver producto
+              {{ 'actions.viewProduct' | translate }}
             </a>
             <a mat-button [routerLink]="['/catalog', recommendation.masterProductId]">
-              Catalogo
+              {{ 'layout.nav.catalog' | translate }}
             </a>
-            <a mat-button [routerLink]="['/shops', recommendation.shopId]">Tienda</a>
+            <a mat-button [routerLink]="['/shops', recommendation.shopId]">{{ 'common.shop' | translate }}</a>
             <a
               mat-flat-button
               [routerLink]="['/shop-products', recommendation.shopProductId]"
               data-testid="recommendation-reserve-link"
             >
-              Reservar
+              {{ 'recommendations.reserve' | translate }}
             </a>
           </mat-card-actions>
         </mat-card>

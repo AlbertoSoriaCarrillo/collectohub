@@ -1,18 +1,18 @@
 <section class="shop-product-page">
   <header class="page-header">
     <div>
-      <p class="eyebrow">Producto de tienda</p>
-      <h1>{{ product()?.masterProductName || 'Producto' }}</h1>
-      <p>Detalle publico de disponibilidad, precio y reserva.</p>
+      <p class="eyebrow">{{ 'inventory.publicProductEyebrow' | translate }}</p>
+      <h1>{{ product()?.masterProductName || ('inventory.publicProductTitle' | translate) }}</h1>
+      <p>{{ 'inventory.publicProductDescription' | translate }}</p>
     </div>
 
     @if (shop(); as shopDetail) {
-      <a mat-button [routerLink]="['/shops', shopDetail.id]">Ver tienda</a>
+      <a mat-button [routerLink]="['/shops', shopDetail.id]">{{ 'actions.viewShop' | translate }}</a>
     }
   </header>
 
   @if (loading()) {
-    <p class="status-text">Cargando producto...</p>
+    <p class="status-text">{{ 'inventory.loadingProduct' | translate }}</p>
   }
 
   @if (errorMessage()) {
@@ -25,41 +25,41 @@
         <span class="visual-token" aria-hidden="true">{{ item.masterProductName.slice(0, 1).toUpperCase() }}</span>
         <mat-card-title>{{ item.masterProductName }}</mat-card-title>
         <mat-card-subtitle>
-          {{ item.masterProductFranchise || 'Sin franquicia' }}
+          {{ item.masterProductFranchise || ('common.noFranchise' | translate) }}
         </mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
-        <mat-chip-set aria-label="Estado publico del producto">
-          <mat-chip>{{ item.commercialStatus }}</mat-chip>
-          <mat-chip>{{ item.physicalCondition }}</mat-chip>
-          <mat-chip>{{ item.stockQuantity }} en stock</mat-chip>
+        <mat-chip-set [attr.aria-label]="'inventory.publicStatusAria' | translate">
+          <mat-chip>{{ 'enums.commercialStatus.' + item.commercialStatus | translate }}</mat-chip>
+          <mat-chip>{{ 'enums.physicalCondition.' + item.physicalCondition | translate }}</mat-chip>
+          <mat-chip>{{ 'inventory.stockCount' | translate: { count: item.stockQuantity } }}</mat-chip>
         </mat-chip-set>
 
         <dl>
           <div>
-            <dt>Tienda</dt>
-            <dd>{{ shop()?.name || ('Tienda #' + item.shopId) }}</dd>
+            <dt>{{ 'common.shop' | translate }}</dt>
+            <dd>{{ shop()?.name || ('reservations.shopId' | translate) + ' #' + item.shopId }}</dd>
           </div>
           <div>
-            <dt>Precio</dt>
+            <dt>{{ 'common.price' | translate }}</dt>
             <dd>{{ priceLabel(item) }}</dd>
           </div>
           <div>
-            <dt>Categoria</dt>
+            <dt>{{ 'common.category' | translate }}</dt>
             <dd>{{ item.masterProductCategoryCode }}</dd>
           </div>
           <div>
-            <dt>Coleccion</dt>
-            <dd>{{ item.masterProductCollectionName || 'No informada' }}</dd>
+            <dt>{{ 'common.collection' | translate }}</dt>
+            <dd>{{ item.masterProductCollectionName || ('common.notReported' | translate) }}</dd>
           </div>
           <div>
-            <dt>Volumen</dt>
-            <dd>{{ item.masterProductVolumeNumber || 'No informado' }}</dd>
+            <dt>{{ 'common.volume' | translate }}</dt>
+            <dd>{{ item.masterProductVolumeNumber || ('common.notReported' | translate) }}</dd>
           </div>
           <div>
-            <dt>Unidad limitada</dt>
-            <dd>{{ item.unitNumber || 'No informada' }}</dd>
+            <dt>{{ 'inventory.limitedUnit' | translate }}</dt>
+            <dd>{{ item.unitNumber || ('common.notReported' | translate) }}</dd>
           </div>
         </dl>
 
@@ -68,9 +68,9 @@
         }
 
         <section class="reservation-panel">
-          <h2>Reserva</h2>
+          <h2>{{ 'inventory.reserveTitle' | translate }}</h2>
           @if (!isAuthenticated()) {
-            <a mat-flat-button routerLink="/login">Inicia sesion para reservar</a>
+            <a mat-flat-button routerLink="/login">{{ 'inventory.loginToReserve' | translate }}</a>
           } @else {
             <form
               class="reservation-form"
@@ -79,15 +79,15 @@
               novalidate
             >
               <mat-form-field appearance="outline">
-                <mat-label>Cantidad</mat-label>
+                <mat-label>{{ 'inventory.quantity' | translate }}</mat-label>
                 <input matInput type="number" min="1" step="1" formControlName="quantity" />
                 @if (reservationForm.controls.quantity.hasError('min')) {
-                  <mat-error>La cantidad debe ser mayor que 0.</mat-error>
+                  <mat-error>{{ 'validation.validQuantity' | translate }}</mat-error>
                 }
               </mat-form-field>
 
               <mat-form-field appearance="outline">
-                <mat-label>Mensaje para la tienda</mat-label>
+                <mat-label>{{ 'inventory.messageToShop' | translate }}</mat-label>
                 <textarea matInput rows="3" maxlength="1000" formControlName="userMessage"></textarea>
               </mat-form-field>
 
@@ -98,7 +98,7 @@
                 [disabled]="creatingReservation()"
                 data-testid="create-reservation-submit"
               >
-                {{ creatingReservation() ? 'Reservando...' : 'Reservar' }}
+                {{ creatingReservation() ? ('inventory.reserving' | translate) : ('inventory.reserve' | translate) }}
               </button>
             </form>
           }
@@ -106,7 +106,7 @@
       </mat-card-content>
 
       <mat-card-actions>
-        <a mat-button [routerLink]="['/catalog', item.masterProductId]">Ver producto maestro</a>
+        <a mat-button [routerLink]="['/catalog', item.masterProductId]">{{ 'inventory.viewMasterProduct' | translate }}</a>
       </mat-card-actions>
     </mat-card>
   }

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -9,6 +9,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { LanguageSelectorComponent } from '../../../core/i18n/language-selector.component';
+import { LanguageService } from '../../../core/i18n/language.service';
+import type { SupportedLanguage } from '../../../core/i18n/language.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 @Component({
   selector: 'app-register',
@@ -19,7 +23,9 @@ import { ErrorMessageService } from '../../../core/http/error-message.service';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    LanguageSelectorComponent,
+    TranslatePipe
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
@@ -28,6 +34,7 @@ export class RegisterComponent {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly authService = inject(AuthService);
   private readonly errorMessageService = inject(ErrorMessageService);
+  private readonly languageService = inject(LanguageService);
   private readonly router = inject(Router);
 
   readonly loading = signal(false);
@@ -36,8 +43,26 @@ export class RegisterComponent {
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(8)]],
     displayName: ['', [Validators.required, Validators.maxLength(120)]],
-    preferredInterfaceLanguage: this.fb.control<'es' | 'en'>('es', [Validators.required])
+    preferredInterfaceLanguage: this.fb.control<SupportedLanguage>(
+      this.languageService.currentLanguage(),
+      [Validators.required]
+    )
   });
+
+  constructor() {
+    effect(() => {
+      const currentLanguage = this.languageService.currentLanguage();
+      if (this.form.controls.preferredInterfaceLanguage.value !== currentLanguage) {
+        this.form.controls.preferredInterfaceLanguage.setValue(currentLanguage, { emitEvent: false });
+      }
+    });
+  }
+
+  changeLanguage(language: string): void {
+    if (language === 'es' || language === 'en') {
+      this.languageService.setLanguage(language);
+    }
+  }
 
   submit(): void {
     if (this.form.invalid) {

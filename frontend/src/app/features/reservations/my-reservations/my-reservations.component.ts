@@ -9,6 +9,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { LanguageService } from '../../../core/i18n/language.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import {
   RESERVATION_STATUSES,
   ReservationResponse,
@@ -28,7 +30,8 @@ import { ReservationService } from '../../../core/services/reservation.service';
     MatChipsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    TranslatePipe
   ],
   templateUrl: './my-reservations.component.html',
   styleUrl: './my-reservations.component.scss'
@@ -37,6 +40,7 @@ export class MyReservationsComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly reservationService = inject(ReservationService);
   private readonly errorMessageService = inject(ErrorMessageService);
+  private readonly languageService = inject(LanguageService);
 
   readonly statuses = RESERVATION_STATUSES;
   readonly reservations = signal<ReservationResponse[]>([]);
@@ -73,7 +77,10 @@ export class MyReservationsComponent implements OnInit {
   }
 
   cancelReservation(reservation: ReservationResponse): void {
-    if (!this.canCancel(reservation) || !window.confirm('Cancelar esta reserva?')) {
+    if (
+      !this.canCancel(reservation) ||
+      !window.confirm(this.languageService.translate('reservations.cancelConfirm'))
+    ) {
       return;
     }
 
@@ -89,7 +96,7 @@ export class MyReservationsComponent implements OnInit {
   }
 
   formatDate(value: string | null): string {
-    return value ? new Date(value).toLocaleString() : 'No informada';
+    return value ? new Date(value).toLocaleString() : this.languageService.translate('common.notReported');
   }
 
   private toFilters(): ReservationSearchFilters {

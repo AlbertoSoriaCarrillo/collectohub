@@ -85,7 +85,7 @@ describe('ShopInventoryComponent', () => {
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('aun no tiene inventario');
+    expect(compiled.textContent).toMatch(/aun no tiene inventario|does not have inventory yet/);
   });
 
   it('renders internal inventory products', async () => {

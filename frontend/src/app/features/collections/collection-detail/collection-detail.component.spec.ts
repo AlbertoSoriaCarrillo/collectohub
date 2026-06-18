@@ -80,6 +80,6 @@ describe('CollectionDetailComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Manga pendientes');
     expect(compiled.textContent).toContain('One Piece 1');
-    expect(compiled.textContent).toContain('MISSING');
+    expect(compiled.textContent).toMatch(/Faltante|Missing/);
   });
 });

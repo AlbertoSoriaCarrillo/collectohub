@@ -66,8 +66,8 @@ describe('ShopReservationsComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('One Piece 1');
     expect(compiled.textContent).toContain('Ada Collectora');
-    expect(compiled.textContent).toContain('Aceptar');
-    expect(compiled.textContent).toContain('Rechazar');
+    expect(compiled.textContent).toMatch(/Aceptar|Accept/);
+    expect(compiled.textContent).toMatch(/Rechazar|Reject/);
   });
 
   it('only exposes actions for valid statuses', () => {

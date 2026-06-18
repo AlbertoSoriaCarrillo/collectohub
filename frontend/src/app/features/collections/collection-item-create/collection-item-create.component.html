@@ -1,11 +1,11 @@
 <section class="item-form-page">
   <header class="page-header">
     <div>
-      <p class="eyebrow">Colecciones</p>
-      <h1>Anadir item</h1>
+      <p class="eyebrow">{{ 'collections.eyebrow' | translate }}</p>
+      <h1>{{ 'collections.itemCreateTitle' | translate }}</h1>
     </div>
     @if (collectionId(); as id) {
-      <a mat-button [routerLink]="['/collections', id]">Volver a la coleccion</a>
+      <a mat-button [routerLink]="['/collections', id]">{{ 'collections.backToCollection' | translate }}</a>
     }
   </header>
 
@@ -13,7 +13,7 @@
     <mat-card-content>
       <form class="search-form" [formGroup]="productSearch" (ngSubmit)="searchProducts()" novalidate>
         <mat-form-field appearance="outline">
-          <mat-label>Buscar producto maestro</mat-label>
+          <mat-label>{{ 'inventory.masterProductSearch' | translate }}</mat-label>
           <input
             matInput
             type="search"
@@ -27,14 +27,14 @@
           [disabled]="searching()"
           data-testid="collection-item-search-submit"
         >
-          {{ searching() ? 'Buscando...' : 'Buscar' }}
+          {{ searching() ? ('actions.searching' | translate) : ('actions.search' | translate) }}
         </button>
       </form>
 
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
         <div class="form-grid">
           <mat-form-field class="wide" appearance="outline">
-            <mat-label>Producto maestro</mat-label>
+            <mat-label>{{ 'inventory.masterProduct' | translate }}</mat-label>
             <mat-select formControlName="masterProductId" data-testid="collection-item-master-product">
               @for (product of products(); track product.id) {
                 <mat-option [value]="product.id">
@@ -46,52 +46,52 @@
               form.controls.masterProductId.hasError('required') &&
               form.controls.masterProductId.touched
             ) {
-              <mat-error>Selecciona un producto maestro.</mat-error>
+              <mat-error>{{ 'validation.requiredMasterProduct' | translate }}</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Estado</mat-label>
+            <mat-label>{{ 'collections.itemStatus' | translate }}</mat-label>
             <mat-select formControlName="collectionStatus" data-testid="collection-item-status">
               @for (status of statuses; track status) {
-                <mat-option [value]="status">{{ status }}</mat-option>
+                <mat-option [value]="status">{{ 'enums.collectionStatus.' + status | translate }}</mat-option>
               }
             </mat-select>
             @if (
               form.controls.collectionStatus.hasError('required') &&
               form.controls.collectionStatus.touched
             ) {
-              <mat-error>Selecciona el estado.</mat-error>
+              <mat-error>{{ 'collections.selectStatus' | translate }}</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Condicion fisica</mat-label>
+            <mat-label>{{ 'inventory.physicalCondition' | translate }}</mat-label>
             <mat-select formControlName="physicalCondition">
-              <mat-option value="">Sin condicion</mat-option>
+              <mat-option value="">{{ 'collections.noCondition' | translate }}</mat-option>
               @for (condition of conditions; track condition) {
-                <mat-option [value]="condition">{{ condition }}</mat-option>
+                <mat-option [value]="condition">{{ 'enums.physicalCondition.' + condition | translate }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Unidad</mat-label>
+            <mat-label>{{ 'common.unit' | translate }}</mat-label>
             <input matInput formControlName="unitNumber" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Total unidades limitadas</mat-label>
+            <mat-label>{{ 'collections.limitedUnitsTotal' | translate }}</mat-label>
             <input matInput type="number" min="1" formControlName="totalLimitedUnits" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Fecha adquisicion</mat-label>
+            <mat-label>{{ 'collections.acquiredDate' | translate }}</mat-label>
             <input matInput type="date" formControlName="acquiredAt" />
           </mat-form-field>
 
           <mat-form-field class="wide" appearance="outline">
-            <mat-label>Notas</mat-label>
+            <mat-label>{{ 'common.notes' | translate }}</mat-label>
             <textarea matInput rows="4" formControlName="notes"></textarea>
           </mat-form-field>
         </div>
@@ -108,10 +108,10 @@
             [disabled]="loading()"
             data-testid="add-collection-item-submit"
           >
-            {{ loading() ? 'Anadiendo...' : 'Anadir item' }}
+            {{ loading() ? ('collections.addingItem' | translate) : ('collections.addItem' | translate) }}
           </button>
           @if (collectionId(); as id) {
-            <a mat-button [routerLink]="['/collections', id]">Cancelar</a>
+            <a mat-button [routerLink]="['/collections', id]">{{ 'actions.cancel' | translate }}</a>
           }
         </div>
       </form>

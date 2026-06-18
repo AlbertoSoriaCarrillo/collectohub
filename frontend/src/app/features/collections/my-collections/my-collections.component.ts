@@ -8,6 +8,8 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { LanguageService } from '../../../core/i18n/language.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import {
   COLLECTION_VISIBILITIES,
   CollectionSearchFilters,
@@ -26,7 +28,8 @@ import { CollectionService } from '../../../core/services/collection.service';
     MatCardModule,
     MatChipsModule,
     MatFormFieldModule,
-    MatSelectModule
+    MatSelectModule,
+    TranslatePipe
   ],
   templateUrl: './my-collections.component.html',
   styleUrl: './my-collections.component.scss'
@@ -36,6 +39,7 @@ export class MyCollectionsComponent implements OnInit {
   private readonly collectionService = inject(CollectionService);
   private readonly catalogService = inject(CatalogService);
   private readonly errorMessageService = inject(ErrorMessageService);
+  private readonly languageService = inject(LanguageService);
 
   readonly visibilities = COLLECTION_VISIBILITIES;
   readonly categories = signal<ProductCategoryResponse[]>([]);
@@ -70,7 +74,13 @@ export class MyCollectionsComponent implements OnInit {
   }
 
   deleteCollection(collection: CollectionResponse): void {
-    if (!window.confirm(`Eliminar la coleccion "${collection.name}"?`)) {
+    if (
+      !window.confirm(
+        this.languageService.translate('collections.collectionDeleteConfirm', {
+          name: collection.name
+        })
+      )
+    ) {
       return;
     }
 

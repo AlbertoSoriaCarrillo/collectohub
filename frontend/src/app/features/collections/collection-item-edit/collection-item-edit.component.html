@@ -1,16 +1,16 @@
 <section class="item-form-page">
   <header class="page-header">
     <div>
-      <p class="eyebrow">Colecciones</p>
-      <h1>Editar item</h1>
+      <p class="eyebrow">{{ 'collections.eyebrow' | translate }}</p>
+      <h1>{{ 'collections.itemEditTitle' | translate }}</h1>
     </div>
     @if (collectionId(); as id) {
-      <a mat-button [routerLink]="['/collections', id]">Volver a la coleccion</a>
+      <a mat-button [routerLink]="['/collections', id]">{{ 'collections.backToCollection' | translate }}</a>
     }
   </header>
 
   @if (loading()) {
-    <p class="status-text">Cargando item...</p>
+    <p class="status-text">{{ 'collections.loadingItems' | translate }}</p>
   }
 
   @if (errorMessage()) {
@@ -30,57 +30,57 @@
         <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
           <div class="form-grid">
             <mat-form-field appearance="outline">
-              <mat-label>Estado</mat-label>
+              <mat-label>{{ 'collections.itemStatus' | translate }}</mat-label>
               <mat-select formControlName="collectionStatus">
                 @for (status of statuses; track status) {
-                  <mat-option [value]="status">{{ status }}</mat-option>
+                  <mat-option [value]="status">{{ 'enums.collectionStatus.' + status | translate }}</mat-option>
                 }
               </mat-select>
               @if (
                 form.controls.collectionStatus.hasError('required') &&
                 form.controls.collectionStatus.touched
               ) {
-                <mat-error>Selecciona el estado.</mat-error>
+                <mat-error>{{ 'collections.selectStatus' | translate }}</mat-error>
               }
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Condicion fisica</mat-label>
+              <mat-label>{{ 'inventory.physicalCondition' | translate }}</mat-label>
               <mat-select formControlName="physicalCondition">
-                <mat-option value="">Sin condicion</mat-option>
+                <mat-option value="">{{ 'collections.noCondition' | translate }}</mat-option>
                 @for (condition of conditions; track condition) {
-                  <mat-option [value]="condition">{{ condition }}</mat-option>
+                  <mat-option [value]="condition">{{ 'enums.physicalCondition.' + condition | translate }}</mat-option>
                 }
               </mat-select>
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Unidad</mat-label>
+              <mat-label>{{ 'common.unit' | translate }}</mat-label>
               <input matInput formControlName="unitNumber" />
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Total unidades limitadas</mat-label>
+              <mat-label>{{ 'collections.limitedUnitsTotal' | translate }}</mat-label>
               <input matInput type="number" min="1" formControlName="totalLimitedUnits" />
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Fecha adquisicion</mat-label>
+              <mat-label>{{ 'collections.acquiredDate' | translate }}</mat-label>
               <input matInput type="date" formControlName="acquiredAt" />
             </mat-form-field>
 
             <mat-form-field class="wide" appearance="outline">
-              <mat-label>Notas</mat-label>
+              <mat-label>{{ 'common.notes' | translate }}</mat-label>
               <textarea matInput rows="4" formControlName="notes"></textarea>
             </mat-form-field>
           </div>
 
           <div class="form-actions">
             <button mat-flat-button color="primary" type="submit" [disabled]="saving()">
-              {{ saving() ? 'Guardando...' : 'Guardar cambios' }}
+              {{ saving() ? ('actions.saving' | translate) : ('actions.saveChanges' | translate) }}
             </button>
             @if (collectionId(); as id) {
-              <a mat-button [routerLink]="['/collections', id]">Cancelar</a>
+              <a mat-button [routerLink]="['/collections', id]">{{ 'actions.cancel' | translate }}</a>
             }
           </div>
         </form>

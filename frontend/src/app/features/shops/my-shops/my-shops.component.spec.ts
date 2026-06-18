@@ -29,6 +29,6 @@ describe('MyShopsComponent', () => {
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Aun no tienes tiendas');
+    expect(compiled.textContent).toMatch(/Aun no tienes tiendas|You do not have shops yet/);
   });
 });

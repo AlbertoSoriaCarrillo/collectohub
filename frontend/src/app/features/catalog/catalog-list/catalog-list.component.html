@@ -1,13 +1,15 @@
 <section class="catalog-page">
   <header class="page-header">
     <div>
-      <p class="eyebrow">Catalogo maestro</p>
-      <h1>Productos base</h1>
-      <p>Busca referencias reutilizables para tiendas, inventario y colecciones.</p>
+      <p class="eyebrow">{{ 'catalog.eyebrow' | translate }}</p>
+      <h1>{{ 'catalog.listTitle' | translate }}</h1>
+      <p>{{ 'catalog.listDescription' | translate }}</p>
     </div>
 
     @if (canCreateProduct()) {
-      <a mat-flat-button color="primary" routerLink="/catalog/new">Crear producto</a>
+      <a mat-flat-button color="primary" routerLink="/catalog/new">
+        {{ 'catalog.createProduct' | translate }}
+      </a>
     }
   </header>
 
@@ -15,9 +17,9 @@
     <mat-card-content>
       <form class="filters-grid" [formGroup]="form" (ngSubmit)="search()" novalidate>
         <mat-form-field appearance="outline">
-          <mat-label>Categoria</mat-label>
+          <mat-label>{{ 'common.category' | translate }}</mat-label>
           <mat-select formControlName="categoryCode">
-            <mat-option value="">Todas</mat-option>
+            <mat-option value="">{{ 'common.all' | translate }}</mat-option>
             @for (category of categories(); track category.code) {
               <mat-option [value]="category.code">{{ category.name }}</mat-option>
             }
@@ -25,38 +27,40 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Nombre</mat-label>
+          <mat-label>{{ 'common.name' | translate }}</mat-label>
           <input matInput type="search" formControlName="name" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Franquicia</mat-label>
+          <mat-label>{{ 'common.franchise' | translate }}</mat-label>
           <input matInput type="search" formControlName="franchise" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Coleccion</mat-label>
+          <mat-label>{{ 'common.collection' | translate }}</mat-label>
           <input matInput type="search" formControlName="collectionName" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Idioma</mat-label>
+          <mat-label>{{ 'common.language' | translate }}</mat-label>
           <input matInput formControlName="language" maxlength="8" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Estado</mat-label>
+          <mat-label>{{ 'common.status' | translate }}</mat-label>
           <mat-select formControlName="status">
-            <mat-option value="ACTIVE">Activo</mat-option>
-            <mat-option value="">Todos</mat-option>
+            <mat-option value="ACTIVE">{{ 'enums.masterProductStatus.ACTIVE' | translate }}</mat-option>
+            <mat-option value="">{{ 'common.all' | translate }}</mat-option>
           </mat-select>
         </mat-form-field>
 
         <div class="filter-actions">
           <button mat-flat-button color="primary" type="submit" [disabled]="loading()">
-            {{ loading() ? 'Buscando...' : 'Buscar' }}
+            {{ loading() ? ('actions.searching' | translate) : ('actions.search' | translate) }}
           </button>
-          <button mat-button type="button" (click)="resetFilters()">Limpiar</button>
+          <button mat-button type="button" (click)="resetFilters()">
+            {{ 'actions.clear' | translate }}
+          </button>
         </div>
       </form>
     </mat-card-content>
@@ -74,33 +78,35 @@
             <span class="visual-token" aria-hidden="true">{{ product.name.slice(0, 1).toUpperCase() }}</span>
             <mat-card-title>{{ product.name }}</mat-card-title>
             <mat-card-subtitle>
-              {{ product.franchise || 'Sin franquicia' }}
+              {{ product.franchise || ('common.noFranchise' | translate) }}
             </mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <mat-chip-set aria-label="Datos de producto">
+            <mat-chip-set [attr.aria-label]="'catalog.formTitle' | translate">
               <mat-chip>{{ product.category.name }}</mat-chip>
               @if (product.language) {
                 <mat-chip>{{ product.language }}</mat-chip>
               }
               @if (product.volumeNumber) {
-                <mat-chip>Vol. {{ product.volumeNumber }}</mat-chip>
+                <mat-chip>{{ 'catalog.volumeShort' | translate }} {{ product.volumeNumber }}</mat-chip>
               }
             </mat-chip-set>
 
             <dl>
               <div>
-                <dt>Coleccion</dt>
-                <dd>{{ product.collectionName || 'No informada' }}</dd>
+                <dt>{{ 'common.collection' | translate }}</dt>
+                <dd>{{ product.collectionName || ('common.notReported' | translate) }}</dd>
               </div>
               <div>
-                <dt>ISBN / EAN</dt>
-                <dd>{{ product.isbn || product.ean || 'No informado' }}</dd>
+                <dt>{{ 'catalog.isbnEan' | translate }}</dt>
+                <dd>{{ product.isbn || product.ean || ('common.unknown' | translate) }}</dd>
               </div>
             </dl>
           </mat-card-content>
           <mat-card-actions>
-            <a mat-button [routerLink]="['/catalog', product.id]">Ver detalle</a>
+            <a mat-button [routerLink]="['/catalog', product.id]">
+              {{ 'actions.viewDetail' | translate }}
+            </a>
           </mat-card-actions>
         </mat-card>
       }
@@ -109,8 +115,8 @@
     <mat-card class="empty-card">
       <mat-card-content>
         <span class="empty-icon" aria-hidden="true">C</span>
-        <h2>No hay productos con esos filtros</h2>
-        <p>Ajusta la busqueda o crea un producto maestro si tienes permisos.</p>
+        <h2>{{ 'catalog.emptyTitle' | translate }}</h2>
+        <p>{{ 'catalog.emptyDescription' | translate }}</p>
       </mat-card-content>
     </mat-card>
   }

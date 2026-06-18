@@ -11,6 +11,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { LanguageService } from '../../../core/i18n/language.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import {
   CreateMasterProductRequest,
   ProductCategoryResponse
@@ -27,7 +29,8 @@ import { CatalogService } from '../../../core/services/catalog.service';
     MatCheckboxModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    TranslatePipe
   ],
   templateUrl: './master-product-create.component.html',
   styleUrl: './master-product-create.component.scss'
@@ -37,6 +40,7 @@ export class MasterProductCreateComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly catalogService = inject(CatalogService);
   private readonly errorMessageService = inject(ErrorMessageService);
+  private readonly languageService = inject(LanguageService);
   private readonly router = inject(Router);
 
   readonly categories = signal<ProductCategoryResponse[]>([]);
@@ -76,7 +80,7 @@ export class MasterProductCreateComponent implements OnInit {
 
   submit(): void {
     if (!this.canCreateProduct()) {
-      this.errorMessage.set('No tienes permisos para crear productos maestros.');
+      this.errorMessage.set(this.languageService.translate('catalog.noPermissionError'));
       return;
     }
 
@@ -141,10 +145,10 @@ export class MasterProductCreateComponent implements OnInit {
       if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
         return parsed as Record<string, unknown>;
       }
-      this.errorMessage.set('Los atributos deben ser un objeto JSON.');
+      this.errorMessage.set(this.languageService.translate('catalog.attributesObjectError'));
       return null;
     } catch {
-      this.errorMessage.set('Los atributos deben contener JSON valido.');
+      this.errorMessage.set(this.languageService.translate('catalog.attributesJsonError'));
       return null;
     }
   }
@@ -163,7 +167,7 @@ export class MasterProductCreateComponent implements OnInit {
 
   private toErrorMessage(error: unknown): string {
     if (error instanceof HttpErrorResponse && error.status === 409) {
-      return 'Ya existe un producto maestro con esos datos.';
+      return this.languageService.translate('catalog.duplicateProduct');
     }
 
     return this.errorMessageService.toMessage(error);

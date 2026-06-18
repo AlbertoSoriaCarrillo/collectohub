@@ -9,6 +9,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { LanguageService } from '../../../core/i18n/language.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import {
   RESERVATION_STATUSES,
   ReservationResponse,
@@ -19,7 +21,7 @@ import { ReservationService } from '../../../core/services/reservation.service';
 
 interface ReservationAction {
   status: ReservationStatus;
-  label: string;
+  labelKey: string;
 }
 
 @Component({
@@ -32,7 +34,8 @@ interface ReservationAction {
     MatChipsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    TranslatePipe
   ],
   templateUrl: './shop-reservations.component.html',
   styleUrl: './shop-reservations.component.scss'
@@ -42,6 +45,7 @@ export class ShopReservationsComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly reservationService = inject(ReservationService);
   private readonly errorMessageService = inject(ErrorMessageService);
+  private readonly languageService = inject(LanguageService);
 
   readonly statuses = RESERVATION_STATUSES;
   readonly shopId = signal<number | null>(null);
@@ -60,7 +64,7 @@ export class ShopReservationsComponent implements OnInit {
   ngOnInit(): void {
     const shopId = Number(this.route.snapshot.paramMap.get('shopId'));
     if (!Number.isFinite(shopId) || shopId <= 0) {
-      this.errorMessage.set('Tienda no encontrada.');
+      this.errorMessage.set(this.languageService.translate('shops.notFound'));
       return;
     }
 
@@ -94,13 +98,13 @@ export class ShopReservationsComponent implements OnInit {
     switch (reservation.status) {
       case 'PENDING':
         return [
-          { status: 'ACCEPTED', label: 'Aceptar' },
-          { status: 'REJECTED', label: 'Rechazar' }
+          { status: 'ACCEPTED', labelKey: 'reservations.accept' },
+          { status: 'REJECTED', labelKey: 'reservations.reject' }
         ];
       case 'ACCEPTED':
         return [
-          { status: 'COMPLETED', label: 'Completar' },
-          { status: 'CANCELLED', label: 'Cancelar' }
+          { status: 'COMPLETED', labelKey: 'reservations.complete' },
+          { status: 'CANCELLED', labelKey: 'reservations.cancel' }
         ];
       default:
         return [];
@@ -109,7 +113,14 @@ export class ShopReservationsComponent implements OnInit {
 
   updateStatus(reservation: ReservationResponse, action: ReservationAction): void {
     const shopId = this.shopId();
-    if (!shopId || !window.confirm(`Cambiar reserva a ${action.status}?`)) {
+    if (
+      !shopId ||
+      !window.confirm(
+        this.languageService.translate('reservations.updateConfirm', {
+          status: this.languageService.translate(`enums.reservationStatus.${action.status}`)
+        })
+      )
+    ) {
       return;
     }
 
@@ -133,7 +144,7 @@ export class ShopReservationsComponent implements OnInit {
   }
 
   formatDate(value: string | null): string {
-    return value ? new Date(value).toLocaleString() : 'No informada';
+    return value ? new Date(value).toLocaleString() : this.languageService.translate('common.notReported');
   }
 
   private toFilters(): ShopReservationSearchFilters {

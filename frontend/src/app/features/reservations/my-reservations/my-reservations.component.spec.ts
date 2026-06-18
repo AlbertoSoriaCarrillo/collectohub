@@ -62,8 +62,8 @@ describe('MyReservationsComponent', () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain(
-      'Aun no tienes reservas.'
+    expect((fixture.nativeElement as HTMLElement).textContent).toMatch(
+      /Aun no tienes reservas\.|You do not have reservations yet\./
     );
   });
 
@@ -78,7 +78,7 @@ describe('MyReservationsComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('One Piece 1');
     expect(compiled.textContent).toContain('Akihabara Store');
-    expect(compiled.textContent).toContain('PENDING');
-    expect(compiled.textContent).toContain('Cancelar');
+    expect(compiled.textContent).toMatch(/Pendiente|Pending/);
+    expect(compiled.textContent).toMatch(/Cancelar|Cancel/);
   });
 });

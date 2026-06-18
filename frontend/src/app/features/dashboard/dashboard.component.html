@@ -1,13 +1,13 @@
 <section class="dashboard" data-testid="dashboard">
   <header class="dashboard-hero">
     <div>
-      <p class="page-eyebrow">Dashboard</p>
+      <p class="page-eyebrow">{{ 'dashboard.title' | translate }}</p>
       @if (user(); as currentUser) {
-        <h1>Hola, {{ currentUser.displayName }}</h1>
+        <h1>{{ 'dashboard.greeting' | translate: { name: currentUser.displayName } }}</h1>
       } @else {
-        <h1>Dashboard</h1>
+        <h1>{{ 'dashboard.title' | translate }}</h1>
       }
-      <p>Gestion rapida de tiendas, catalogo, colecciones, recomendaciones y reservas.</p>
+      <p>{{ 'dashboard.intro' | translate }}</p>
     </div>
 
     @if (user(); as currentUser) {
@@ -19,7 +19,7 @@
   </header>
 
   @if (loading()) {
-    <p class="status-text">Cargando usuario...</p>
+    <p class="status-text">{{ 'dashboard.loading' | translate }}</p>
   }
 
   @if (errorMessage()) {
@@ -29,52 +29,56 @@
   @if (user(); as currentUser) {
     <mat-card class="profile-card">
       <mat-card-header>
-        <mat-card-title>Sesion autenticada</mat-card-title>
-        <mat-card-subtitle>Perfil activo para esta sesion</mat-card-subtitle>
+        <mat-card-title>{{ 'dashboard.authenticatedSession' | translate }}</mat-card-title>
+        <mat-card-subtitle>{{ 'dashboard.activeProfile' | translate }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
         <div class="profile-grid">
           <div>
-            <span>Nombre</span>
+            <span>{{ 'dashboard.displayName' | translate }}</span>
             <strong>{{ currentUser.displayName }}</strong>
           </div>
           <div>
-            <span>Email</span>
+            <span>{{ 'common.email' | translate }}</span>
             <strong>{{ currentUser.email }}</strong>
           </div>
           <div>
-            <span>Idioma</span>
+            <span>{{ 'common.language' | translate }}</span>
             <strong>{{ currentUser.preferredInterfaceLanguage }}</strong>
           </div>
         </div>
 
-        <mat-chip-set aria-label="Roles del usuario">
+        <mat-chip-set [attr.aria-label]="'dashboard.rolesAria' | translate">
           @for (role of currentUser.roles; track role) {
-            <mat-chip>{{ role }}</mat-chip>
+            <mat-chip>{{ ('enums.roles.' + role) | translate }}</mat-chip>
           }
         </mat-chip-set>
       </mat-card-content>
 
       <mat-card-actions>
-        <button mat-stroked-button type="button" (click)="logout()">Logout</button>
+        <button mat-stroked-button type="button" (click)="logout()">
+          {{ 'actions.logout' | translate }}
+        </button>
       </mat-card-actions>
     </mat-card>
   }
 
   <div class="section-grid">
-    @for (section of sections; track section.title) {
+    @for (section of sections; track section.titleKey) {
       <mat-card class="section-card" [class.section-card-link]="section.route">
         <mat-card-header>
-          <span class="visual-token" aria-hidden="true">{{ section.title.slice(0, 1) }}</span>
-          <mat-card-title>{{ section.title }}</mat-card-title>
-          <mat-card-subtitle>{{ section.description }}</mat-card-subtitle>
+          <span class="visual-token" aria-hidden="true">
+            {{ (section.titleKey | translate).slice(0, 1) }}
+          </span>
+          <mat-card-title>{{ section.titleKey | translate }}</mat-card-title>
+          <mat-card-subtitle>{{ section.descriptionKey | translate }}</mat-card-subtitle>
         </mat-card-header>
         <mat-card-actions>
           @if (section.route; as route) {
-            <a mat-button [routerLink]="route">Abrir</a>
+            <a mat-button [routerLink]="route">{{ 'actions.open' | translate }}</a>
           } @else {
-            <button mat-button type="button" disabled>Proximamente</button>
+            <button mat-button type="button" disabled>{{ 'actions.upcoming' | translate }}</button>
           }
         </mat-card-actions>
       </mat-card>

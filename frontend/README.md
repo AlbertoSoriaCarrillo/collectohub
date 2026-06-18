@@ -13,6 +13,7 @@ colecciones, recomendaciones y reservas.
 - Formularios reactivos.
 - HTTP Client con interceptor JWT.
 - SCSS.
+- i18n ligero propio ES/EN.
 - Playwright para E2E locales.
 
 ## Requisitos
@@ -178,6 +179,17 @@ datos levantados previamente. Guia completa: `../docs/21_E2E_TESTING.md`.
 - Los `data-testid` de Playwright se mantienen para no fragilizar los E2E.
 
 Guia de la fase: `../docs/23_UI_UX_REDESIGN.md`.
+
+## Internacionalizacion
+
+- Idiomas soportados: `es` y `en`.
+- Selector visible en layout principal, login y registro.
+- Idioma persistido en `localStorage` con la clave `collectohub.language`.
+- Registro sincroniza `preferredInterfaceLanguage` con el idioma activo.
+- Enums visibles se traducen sin cambiar los valores enviados al backend.
+- Los datos dinamicos de usuarios, tiendas, productos, colecciones y API no se traducen.
+
+Guia de la fase: `../docs/24_I18N_FRONTEND.md`.
 
 ## Endpoints Consumidos
 

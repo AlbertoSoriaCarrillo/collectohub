@@ -8,6 +8,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { LanguageService } from '../../../core/i18n/language.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import {
   COLLECTION_ITEM_STATUSES,
   CollectionItemResponse,
@@ -25,7 +27,8 @@ import { CollectionService } from '../../../core/services/collection.service';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    TranslatePipe
   ],
   templateUrl: './collection-item-edit.component.html',
   styleUrl: './collection-item-edit.component.scss'
@@ -36,6 +39,7 @@ export class CollectionItemEditComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly collectionService = inject(CollectionService);
   private readonly errorMessageService = inject(ErrorMessageService);
+  private readonly languageService = inject(LanguageService);
 
   readonly statuses = COLLECTION_ITEM_STATUSES;
   readonly conditions = PHYSICAL_CONDITIONS;
@@ -63,7 +67,7 @@ export class CollectionItemEditComponent implements OnInit {
       !Number.isFinite(itemId) ||
       itemId <= 0
     ) {
-      this.errorMessage.set('Item no encontrado.');
+      this.errorMessage.set(this.languageService.translate('collections.itemNotFound'));
       return;
     }
 
@@ -76,7 +80,7 @@ export class CollectionItemEditComponent implements OnInit {
     const collectionId = this.collectionId();
     const itemId = this.itemId();
     if (!collectionId || !itemId) {
-      this.errorMessage.set('Item no encontrado.');
+      this.errorMessage.set(this.languageService.translate('collections.itemNotFound'));
       return;
     }
 
@@ -105,7 +109,7 @@ export class CollectionItemEditComponent implements OnInit {
         next: (items) => {
           const item = items.find((candidate) => candidate.id === itemId);
           if (!item) {
-            this.errorMessage.set('Item no encontrado.');
+            this.errorMessage.set(this.languageService.translate('collections.itemNotFound'));
             return;
           }
 

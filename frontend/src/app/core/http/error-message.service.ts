@@ -1,15 +1,18 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { LanguageService } from '../i18n/language.service';
 import { ErrorResponse } from '../models/error-response.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ErrorMessageService {
+  private readonly languageService = inject(LanguageService);
+
   toMessage(error: unknown): string {
     if (error instanceof HttpErrorResponse) {
       if (error.status === 0) {
-        return 'No se pudo conectar con el backend local.';
+        return this.languageService.translate('errors.network');
       }
 
       const body = error.error as Partial<ErrorResponse> | null;
@@ -17,21 +20,23 @@ export class ErrorMessageService {
       return detailsMessage || body?.message || this.fallbackByStatus(error.status) || error.message;
     }
 
-    return 'La operacion no se pudo completar.';
+    return this.languageService.translate('errors.generic');
   }
 
   private fallbackByStatus(status: number): string | null {
     switch (status) {
       case 400:
-        return 'Revisa los datos del formulario.';
+        return this.languageService.translate('errors.badRequest');
       case 401:
-        return 'Inicia sesion para continuar.';
+        return this.languageService.translate('errors.unauthorized');
       case 403:
-        return 'No tienes permisos para realizar esta accion.';
+        return this.languageService.translate('errors.forbidden');
       case 404:
-        return 'No se encontro el recurso solicitado.';
+        return this.languageService.translate('errors.notFound');
       case 409:
-        return 'Ya existe un recurso con esos datos.';
+        return this.languageService.translate('errors.conflict');
+      case 500:
+        return this.languageService.translate('errors.server');
       default:
         return null;
     }

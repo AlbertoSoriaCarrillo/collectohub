@@ -6,17 +6,18 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { AuthService } from '../../core/auth/auth.service';
 import { ErrorMessageService } from '../../core/http/error-message.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { UserMeResponse } from '../../core/models/user-me-response.model';
 
 interface DashboardSection {
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   route: string | null;
 }
 
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink, MatButtonModule, MatCardModule, MatChipsModule],
+  imports: [RouterLink, MatButtonModule, MatCardModule, MatChipsModule, TranslatePipe],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -28,16 +29,24 @@ export class DashboardComponent implements OnInit {
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly sections: DashboardSection[] = [
-    { title: 'Mis tiendas', description: 'Gestion de tiendas y miembros.', route: '/shops' },
-    { title: 'Catalogo', description: 'Productos maestros reutilizables.', route: '/catalog' },
-    { title: 'Inventario', description: 'Stock visible y estados comerciales.', route: '/shops' },
-    { title: 'Mis colecciones', description: 'Colecciones privadas y publicas.', route: '/collections' },
+    { titleKey: 'dashboard.sections.shopsTitle', descriptionKey: 'dashboard.sections.shopsDescription', route: '/shops' },
+    { titleKey: 'dashboard.sections.catalogTitle', descriptionKey: 'dashboard.sections.catalogDescription', route: '/catalog' },
+    { titleKey: 'dashboard.sections.inventoryTitle', descriptionKey: 'dashboard.sections.inventoryDescription', route: '/shops' },
     {
-      title: 'Recomendaciones',
-      description: 'Coincidencias con productos buscados.',
+      titleKey: 'dashboard.sections.collectionsTitle',
+      descriptionKey: 'dashboard.sections.collectionsDescription',
+      route: '/collections'
+    },
+    {
+      titleKey: 'dashboard.sections.recommendationsTitle',
+      descriptionKey: 'dashboard.sections.recommendationsDescription',
       route: '/recommendations'
     },
-    { title: 'Reservas', description: 'Solicitudes sin pago del MVP.', route: '/reservations' }
+    {
+      titleKey: 'dashboard.sections.reservationsTitle',
+      descriptionKey: 'dashboard.sections.reservationsDescription',
+      route: '/reservations'
+    }
   ];
 
   ngOnInit(): void {

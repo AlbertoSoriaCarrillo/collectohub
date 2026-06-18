@@ -1,15 +1,15 @@
 <section class="page-shell">
   <header class="page-header">
     <div>
-      <p class="eyebrow">Tiendas</p>
-      <h1>Mis tiendas</h1>
-      <p>Tiendas asociadas a tu usuario autenticado.</p>
+      <p class="eyebrow">{{ 'shops.eyebrow' | translate }}</p>
+      <h1>{{ 'shops.myTitle' | translate }}</h1>
+      <p>{{ 'shops.myDescription' | translate }}</p>
     </div>
-    <a mat-flat-button routerLink="/shops/new">Crear tienda</a>
+    <a mat-flat-button routerLink="/shops/new">{{ 'shops.create' | translate }}</a>
   </header>
 
   @if (loading()) {
-    <p class="status-text">Cargando tiendas...</p>
+    <p class="status-text">{{ 'shops.loading' | translate }}</p>
   }
 
   @if (errorMessage()) {
@@ -20,9 +20,9 @@
     <mat-card class="empty-card">
       <mat-card-content>
         <span class="empty-icon" aria-hidden="true">S</span>
-        <h2>Aun no tienes tiendas</h2>
-        <p>Crea tu primera tienda para empezar a gestionar catalogo e inventario en futuras fases.</p>
-        <a mat-stroked-button routerLink="/shops/new">Crear tienda</a>
+        <h2>{{ 'shops.emptyTitle' | translate }}</h2>
+        <p>{{ 'shops.emptyDescription' | translate }}</p>
+        <a mat-stroked-button routerLink="/shops/new">{{ 'shops.create' | translate }}</a>
       </mat-card-content>
     </mat-card>
   }
@@ -33,19 +33,21 @@
         <mat-card-header>
           <span class="visual-token" aria-hidden="true">{{ shop.name.slice(0, 1).toUpperCase() }}</span>
           <mat-card-title>{{ shop.name }}</mat-card-title>
-          <mat-card-subtitle>{{ shop.country || 'Pais no informado' }} - {{ shop.currency }}</mat-card-subtitle>
+          <mat-card-subtitle>
+            {{ shop.country || ('common.unknown' | translate) }} - {{ shop.currency }}
+          </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-          <p>{{ shop.description || 'Sin descripcion publica.' }}</p>
-          <mat-chip-set aria-label="Datos de tienda">
-            <mat-chip>{{ shop.status }}</mat-chip>
+          <p>{{ shop.description || ('common.noPublicDescription' | translate) }}</p>
+          <mat-chip-set [attr.aria-label]="'shops.permissionsAria' | translate">
+            <mat-chip>{{ ('enums.shopStatus.' + shop.status) | translate }}</mat-chip>
             @if (shop.currentUserMembership) {
-              <mat-chip>{{ shop.currentUserMembership.role }}</mat-chip>
+              <mat-chip>{{ ('enums.shopRoles.' + shop.currentUserMembership.role) | translate }}</mat-chip>
             }
           </mat-chip-set>
         </mat-card-content>
         <mat-card-actions>
-          <a mat-button [routerLink]="['/shops', shop.id]">Ver detalle</a>
+          <a mat-button [routerLink]="['/shops', shop.id]">{{ 'actions.viewDetail' | translate }}</a>
         </mat-card-actions>
       </mat-card>
     }

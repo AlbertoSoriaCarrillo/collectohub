@@ -1,12 +1,12 @@
 <section class="shop-reservations-page">
   <header class="page-header">
     <div>
-      <p class="eyebrow">Tienda</p>
-      <h1>Reservas de tienda</h1>
-      <p>Gestion de solicitudes recibidas para el inventario publicado.</p>
+      <p class="eyebrow">{{ 'common.shop' | translate }}</p>
+      <h1>{{ 'reservations.shopTitle' | translate }}</h1>
+      <p>{{ 'reservations.shopDescription' | translate }}</p>
     </div>
     @if (shopId(); as currentShopId) {
-      <a mat-button [routerLink]="['/shops', currentShopId]">Volver a tienda</a>
+      <a mat-button [routerLink]="['/shops', currentShopId]">{{ 'actions.backToShop' | translate }}</a>
     }
   </header>
 
@@ -14,30 +14,30 @@
     <mat-card-content>
       <form class="filters-grid" [formGroup]="filters" (ngSubmit)="loadReservations()" novalidate>
         <mat-form-field appearance="outline">
-          <mat-label>Estado</mat-label>
+          <mat-label>{{ 'reservations.status' | translate }}</mat-label>
           <mat-select formControlName="status">
-            <mat-option value="">Todos</mat-option>
+            <mat-option value="">{{ 'common.all' | translate }}</mat-option>
             @for (status of statuses; track status) {
-              <mat-option [value]="status">{{ status }}</mat-option>
+              <mat-option [value]="status">{{ 'enums.reservationStatus.' + status | translate }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>ID usuario</mat-label>
+          <mat-label>{{ 'reservations.userId' | translate }}</mat-label>
           <input matInput type="number" min="1" step="1" formControlName="userId" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>ID producto tienda</mat-label>
+          <mat-label>{{ 'reservations.shopProductId' | translate }}</mat-label>
           <input matInput type="number" min="1" step="1" formControlName="shopProductId" />
         </mat-form-field>
 
         <div class="filter-actions">
           <button mat-flat-button color="primary" type="submit" [disabled]="loading()">
-            {{ loading() ? 'Filtrando...' : 'Filtrar' }}
+            {{ loading() ? ('actions.filtering' | translate) : ('actions.filter' | translate) }}
           </button>
-          <button mat-button type="button" (click)="resetFilters()">Limpiar</button>
+          <button mat-button type="button" (click)="resetFilters()">{{ 'actions.clear' | translate }}</button>
         </div>
       </form>
     </mat-card-content>
@@ -47,7 +47,7 @@
     <mat-card-content>
       <form [formGroup]="shopResponseForm">
         <mat-form-field appearance="outline">
-          <mat-label>Respuesta de tienda</mat-label>
+          <mat-label>{{ 'reservations.shopResponse' | translate }}</mat-label>
           <textarea matInput rows="3" maxlength="1000" formControlName="shopResponse"></textarea>
         </mat-form-field>
       </form>
@@ -59,15 +59,15 @@
   }
 
   @if (loading()) {
-    <p class="status-text">Cargando reservas de tienda...</p>
+    <p class="status-text">{{ 'reservations.loadingShop' | translate }}</p>
   }
 
   @if (!loading() && !errorMessage() && reservations().length === 0) {
     <mat-card class="empty-card">
       <mat-card-content>
         <span class="empty-icon" aria-hidden="true">B</span>
-        <h2>Esta tienda aun no tiene reservas.</h2>
-        <p>Las solicitudes de reserva apareceran aqui cuando los usuarios reserven productos.</p>
+        <h2>{{ 'reservations.emptyShopTitle' | translate }}</h2>
+        <p>{{ 'reservations.emptyShopDescription' | translate }}</p>
       </mat-card-content>
     </mat-card>
   }
@@ -83,36 +83,36 @@
           </mat-card-header>
 
           <mat-card-content>
-            <mat-chip-set aria-label="Estado de reserva de tienda">
-              <mat-chip>{{ reservation.status }}</mat-chip>
-              <mat-chip>{{ reservation.quantity }} unidad(es)</mat-chip>
-              <mat-chip>Producto tienda #{{ reservation.shopProductId }}</mat-chip>
+            <mat-chip-set [attr.aria-label]="'reservations.shopDataAria' | translate">
+              <mat-chip>{{ 'enums.reservationStatus.' + reservation.status | translate }}</mat-chip>
+              <mat-chip>{{ 'reservations.quantityUnits' | translate: { quantity: reservation.quantity } }}</mat-chip>
+              <mat-chip>{{ 'reservations.shopProductNumber' | translate: { id: reservation.shopProductId } }}</mat-chip>
             </mat-chip-set>
 
             <dl>
               <div>
-                <dt>Expira</dt>
+                <dt>{{ 'common.expiresAt' | translate }}</dt>
                 <dd>{{ formatDate(reservation.expiresAt) }}</dd>
               </div>
               <div>
-                <dt>Usuario</dt>
-                <dd>{{ reservation.userDisplayName }} (#{{ reservation.userId }})</dd>
+                <dt>{{ 'common.user' | translate }}</dt>
+                <dd>{{ 'reservations.userNumber' | translate: { name: reservation.userDisplayName, id: reservation.userId } }}</dd>
               </div>
             </dl>
 
             @if (reservation.userMessage) {
-              <p class="message-block">Mensaje usuario: {{ reservation.userMessage }}</p>
+              <p class="message-block">{{ 'reservations.userMessage' | translate: { message: reservation.userMessage } }}</p>
             }
             @if (reservation.shopResponse) {
-              <p class="message-block">Respuesta tienda: {{ reservation.shopResponse }}</p>
+              <p class="message-block">{{ 'reservations.shopResponseLine' | translate: { message: reservation.shopResponse } }}</p>
             }
           </mat-card-content>
 
           <mat-card-actions>
-            <a mat-button [routerLink]="['/reservations', reservation.id]">Ver detalle</a>
+            <a mat-button [routerLink]="['/reservations', reservation.id]">{{ 'actions.viewDetail' | translate }}</a>
             @for (action of availableActions(reservation); track action.status) {
               <button mat-button type="button" (click)="updateStatus(reservation, action)">
-                {{ action.label }}
+                {{ action.labelKey | translate }}
               </button>
             }
           </mat-card-actions>

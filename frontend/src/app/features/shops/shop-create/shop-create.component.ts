@@ -7,12 +7,22 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { LanguageService } from '../../../core/i18n/language.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { CreateShopRequest } from '../../../core/models/shop.model';
 import { ShopService } from '../../../core/services/shop.service';
 
 @Component({
   selector: 'app-shop-create',
-  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    MatButtonModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    TranslatePipe
+  ],
   templateUrl: './shop-create.component.html',
   styleUrl: './shop-create.component.scss'
 })
@@ -21,6 +31,7 @@ export class ShopCreateComponent {
   private readonly router = inject(Router);
   private readonly shopService = inject(ShopService);
   private readonly errorMessageService = inject(ErrorMessageService);
+  private readonly languageService = inject(LanguageService);
 
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
@@ -50,8 +61,7 @@ export class ShopCreateComponent {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (shop) => {
-          const message =
-            'Tienda creada. Si es tu primera tienda, vuelve a iniciar sesion para ver SHOP_OWNER en el token.';
+          const message = this.languageService.translate('shops.createdReloginHint');
           this.successMessage.set(message);
           void this.router.navigate(['/shops', shop.id], { state: { successMessage: message } });
         },

@@ -1,6 +1,6 @@
 <section class="reservation-detail-page">
   @if (loading()) {
-    <p class="status-text">Cargando reserva...</p>
+    <p class="status-text">{{ 'reservations.loadingDetail' | translate }}</p>
   }
 
   @if (successMessage()) {
@@ -14,70 +14,70 @@
   @if (reservation(); as detail) {
     <header class="page-header">
       <div>
-        <p class="eyebrow">Reserva</p>
+        <p class="eyebrow">{{ 'reservations.detailEyebrow' | translate }}</p>
         <h1>{{ detail.productName }}</h1>
       </div>
-      <a mat-button routerLink="/reservations">Mis reservas</a>
+      <a mat-button routerLink="/reservations">{{ 'reservations.myTitle' | translate }}</a>
     </header>
 
     <mat-card class="detail-card">
       <mat-card-header>
-        <mat-card-title>{{ detail.status }}</mat-card-title>
+        <mat-card-title>{{ 'enums.reservationStatus.' + detail.status | translate }}</mat-card-title>
         <mat-card-subtitle>{{ detail.shopName }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
-        <mat-chip-set aria-label="Datos de reserva">
-          <mat-chip>{{ detail.quantity }} unidad(es)</mat-chip>
-          <mat-chip>Tienda #{{ detail.shopId }}</mat-chip>
-          <mat-chip>Usuario #{{ detail.userId }}</mat-chip>
+        <mat-chip-set [attr.aria-label]="'reservations.dataAria' | translate">
+          <mat-chip>{{ 'reservations.quantityUnits' | translate: { quantity: detail.quantity } }}</mat-chip>
+          <mat-chip>{{ 'reservations.shopId' | translate }} #{{ detail.shopId }}</mat-chip>
+          <mat-chip>{{ 'reservations.userId' | translate }} #{{ detail.userId }}</mat-chip>
         </mat-chip-set>
 
         <dl>
           <div>
-            <dt>Producto</dt>
+            <dt>{{ 'common.product' | translate }}</dt>
             <dd>{{ detail.productName }}</dd>
           </div>
           <div>
-            <dt>Tienda</dt>
+            <dt>{{ 'common.shop' | translate }}</dt>
             <dd>{{ detail.shopName }}</dd>
           </div>
           <div>
-            <dt>Creada</dt>
+            <dt>{{ 'common.createdAt' | translate }}</dt>
             <dd>{{ formatDate(detail.createdAt) }}</dd>
           </div>
           <div>
-            <dt>Expira</dt>
+            <dt>{{ 'common.expiresAt' | translate }}</dt>
             <dd>{{ formatDate(detail.expiresAt) }}</dd>
           </div>
           <div>
-            <dt>Completada</dt>
+            <dt>{{ 'common.completedAt' | translate }}</dt>
             <dd>{{ formatDate(detail.completedAt) }}</dd>
           </div>
           <div>
-            <dt>Solicitante</dt>
+            <dt>{{ 'reservations.requester' | translate }}</dt>
             <dd>{{ detail.userDisplayName }}</dd>
           </div>
         </dl>
 
         <div class="message-grid">
           <section>
-            <h2>Mensaje del usuario</h2>
-            <p>{{ detail.userMessage || 'Sin mensaje.' }}</p>
+            <h2>{{ 'reservations.userMessageTitle' | translate }}</h2>
+            <p>{{ detail.userMessage || ('reservations.noMessage' | translate) }}</p>
           </section>
           <section>
-            <h2>Respuesta de tienda</h2>
-            <p>{{ detail.shopResponse || 'Sin respuesta.' }}</p>
+            <h2>{{ 'reservations.shopResponseTitle' | translate }}</h2>
+            <p>{{ detail.shopResponse || ('reservations.noResponse' | translate) }}</p>
           </section>
         </div>
       </mat-card-content>
 
       <mat-card-actions>
-        <a mat-button [routerLink]="['/shop-products', detail.shopProductId]">Ver producto</a>
-        <a mat-button [routerLink]="['/shops', detail.shopId]">Ver tienda</a>
+        <a mat-button [routerLink]="['/shop-products', detail.shopProductId]">{{ 'actions.viewProduct' | translate }}</a>
+        <a mat-button [routerLink]="['/shops', detail.shopId]">{{ 'actions.viewShop' | translate }}</a>
         @if (canCancel(detail)) {
           <button mat-flat-button type="button" (click)="cancelReservation(detail)">
-            Cancelar reserva
+            {{ 'reservations.cancelReservation' | translate }}
           </button>
         }
       </mat-card-actions>

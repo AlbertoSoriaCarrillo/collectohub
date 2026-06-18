@@ -1,17 +1,17 @@
 <section class="inventory-form-page">
   <header class="page-header">
     <div>
-      <p class="eyebrow">Inventario</p>
-      <h1>Editar producto</h1>
+      <p class="eyebrow">{{ 'inventory.eyebrow' | translate }}</p>
+      <h1>{{ 'inventory.editTitle' | translate }}</h1>
     </div>
 
     @if (shopId(); as id) {
-      <a mat-button [routerLink]="['/shops', id, 'inventory']">Volver al inventario</a>
+      <a mat-button [routerLink]="['/shops', id, 'inventory']">{{ 'actions.backToInventory' | translate }}</a>
     }
   </header>
 
   @if (loading()) {
-    <p class="status-text">Cargando producto...</p>
+    <p class="status-text">{{ 'inventory.loadingProduct' | translate }}</p>
   }
 
   @if (errorMessage()) {
@@ -22,84 +22,84 @@
     <mat-card class="form-card">
       <mat-card-header>
         <mat-card-title>{{ item.masterProductName }}</mat-card-title>
-        <mat-card-subtitle>{{ item.masterProductFranchise || 'Sin franquicia' }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ item.masterProductFranchise || ('common.noFranchise' | translate) }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
         <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
           <div class="form-grid">
             <mat-form-field appearance="outline">
-              <mat-label>Precio</mat-label>
+              <mat-label>{{ 'common.price' | translate }}</mat-label>
               <input matInput type="number" min="0" step="0.01" formControlName="priceAmount" />
               @if (form.controls.priceAmount.touched && form.controls.priceAmount.invalid) {
-                <mat-error>Indica un precio valido.</mat-error>
+                <mat-error>{{ 'validation.validPrice' | translate }}</mat-error>
               }
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Moneda</mat-label>
+              <mat-label>{{ 'common.currency' | translate }}</mat-label>
               <input matInput maxlength="3" formControlName="currency" />
               @if (form.controls.currency.touched && form.controls.currency.invalid) {
-                <mat-error>Usa codigo ISO de 3 letras.</mat-error>
+                <mat-error>{{ 'validation.currencyIso' | translate }}</mat-error>
               }
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Stock</mat-label>
+              <mat-label>{{ 'common.stock' | translate }}</mat-label>
               <input matInput type="number" min="0" formControlName="stockQuantity" />
               @if (form.controls.stockQuantity.touched && form.controls.stockQuantity.invalid) {
-                <mat-error>Indica stock cero o superior.</mat-error>
+                <mat-error>{{ 'validation.validStock' | translate }}</mat-error>
               }
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Estado comercial</mat-label>
+              <mat-label>{{ 'inventory.commercialStatus' | translate }}</mat-label>
               <mat-select formControlName="commercialStatus">
                 @for (status of statuses; track status) {
-                  <mat-option [value]="status">{{ status }}</mat-option>
+                  <mat-option [value]="status">{{ 'enums.commercialStatus.' + status | translate }}</mat-option>
                 }
               </mat-select>
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Condicion fisica</mat-label>
+              <mat-label>{{ 'inventory.physicalCondition' | translate }}</mat-label>
               <mat-select formControlName="physicalCondition">
                 @for (condition of conditions; track condition) {
-                  <mat-option [value]="condition">{{ condition }}</mat-option>
+                  <mat-option [value]="condition">{{ 'enums.physicalCondition.' + condition | translate }}</mat-option>
                 }
               </mat-select>
               @if (
                 form.controls.physicalCondition.hasError('required') &&
                 form.controls.physicalCondition.touched
               ) {
-                <mat-error>Selecciona la condicion fisica.</mat-error>
+                <mat-error>{{ 'validation.requiredPhysicalCondition' | translate }}</mat-error>
               }
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Unidad</mat-label>
+              <mat-label>{{ 'common.unit' | translate }}</mat-label>
               <input matInput formControlName="unitNumber" />
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Total unidades limitadas</mat-label>
+              <mat-label>{{ 'inventory.limitedUnitsTotal' | translate }}</mat-label>
               <input matInput type="number" min="1" formControlName="totalLimitedUnits" />
             </mat-form-field>
 
             <mat-form-field class="wide" appearance="outline">
-              <mat-label>Notas</mat-label>
+              <mat-label>{{ 'common.notes' | translate }}</mat-label>
               <textarea matInput rows="4" formControlName="notes"></textarea>
             </mat-form-field>
           </div>
 
-          <mat-checkbox formControlName="visible">Visible en la tienda</mat-checkbox>
+          <mat-checkbox formControlName="visible">{{ 'inventory.visibleInShop' | translate }}</mat-checkbox>
 
           <div class="form-actions">
             <button mat-flat-button color="primary" type="submit" [disabled]="saving()">
-              {{ saving() ? 'Guardando...' : 'Guardar cambios' }}
+              {{ saving() ? ('actions.saving' | translate) : ('actions.saveChanges' | translate) }}
             </button>
             @if (shopId(); as id) {
-              <a mat-button [routerLink]="['/shops', id, 'inventory']">Cancelar</a>
+              <a mat-button [routerLink]="['/shops', id, 'inventory']">{{ 'actions.cancel' | translate }}</a>
             }
           </div>
         </form>

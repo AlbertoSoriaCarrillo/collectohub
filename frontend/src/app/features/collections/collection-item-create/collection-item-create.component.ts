@@ -8,6 +8,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { LanguageService } from '../../../core/i18n/language.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { MasterProductResponse } from '../../../core/models/catalog.model';
 import {
   COLLECTION_ITEM_STATUSES,
@@ -26,7 +28,8 @@ import { CollectionService } from '../../../core/services/collection.service';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    TranslatePipe
   ],
   templateUrl: './collection-item-create.component.html',
   styleUrl: './collection-item-create.component.scss'
@@ -38,6 +41,7 @@ export class CollectionItemCreateComponent implements OnInit {
   private readonly catalogService = inject(CatalogService);
   private readonly collectionService = inject(CollectionService);
   private readonly errorMessageService = inject(ErrorMessageService);
+  private readonly languageService = inject(LanguageService);
 
   readonly statuses = COLLECTION_ITEM_STATUSES;
   readonly conditions = PHYSICAL_CONDITIONS;
@@ -62,7 +66,7 @@ export class CollectionItemCreateComponent implements OnInit {
   ngOnInit(): void {
     const collectionId = Number(this.route.snapshot.paramMap.get('collectionId'));
     if (!Number.isFinite(collectionId) || collectionId <= 0) {
-      this.errorMessage.set('Coleccion no encontrada.');
+      this.errorMessage.set(this.languageService.translate('collections.collectionNotFound'));
       return;
     }
 
@@ -87,7 +91,7 @@ export class CollectionItemCreateComponent implements OnInit {
   submit(): void {
     const collectionId = this.collectionId();
     if (!collectionId) {
-      this.errorMessage.set('Coleccion no encontrada.');
+      this.errorMessage.set(this.languageService.translate('collections.collectionNotFound'));
       return;
     }
 

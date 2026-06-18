@@ -1,47 +1,47 @@
 <section class="collection-form-page">
   <header class="page-header">
     <div>
-      <p class="eyebrow">Colecciones</p>
-      <h1>Crear coleccion</h1>
-      <p>Prepara una lista para marcar items propios, buscados o faltantes.</p>
+      <p class="eyebrow">{{ 'collections.eyebrow' | translate }}</p>
+      <h1>{{ 'collections.createTitle' | translate }}</h1>
+      <p>{{ 'collections.createDescription' | translate }}</p>
     </div>
-    <a mat-button routerLink="/collections">Volver a mis colecciones</a>
+    <a mat-button routerLink="/collections">{{ 'actions.backToCollections' | translate }}</a>
   </header>
 
   <mat-card class="form-card">
     <mat-card-header>
-      <mat-card-title>Datos de coleccion</mat-card-title>
-      <mat-card-subtitle>Nombre, visibilidad y categoria inicial.</mat-card-subtitle>
+      <mat-card-title>{{ 'collections.formTitle' | translate }}</mat-card-title>
+      <mat-card-subtitle>{{ 'collections.formSubtitle' | translate }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate data-testid="create-collection-form">
         <mat-form-field appearance="outline">
-          <mat-label>Nombre</mat-label>
+          <mat-label>{{ 'common.name' | translate }}</mat-label>
           <input matInput formControlName="name" data-testid="create-collection-name" />
           @if (form.controls.name.hasError('required') && form.controls.name.touched) {
-            <mat-error>El nombre es obligatorio.</mat-error>
+            <mat-error>{{ 'validation.requiredName' | translate }}</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Descripcion</mat-label>
+          <mat-label>{{ 'common.description' | translate }}</mat-label>
           <textarea matInput rows="4" formControlName="description"></textarea>
         </mat-form-field>
 
         <div class="form-grid">
           <mat-form-field appearance="outline">
-            <mat-label>Visibilidad</mat-label>
+            <mat-label>{{ 'collections.visibility' | translate }}</mat-label>
             <mat-select formControlName="visibility">
               @for (visibility of visibilities; track visibility) {
-                <mat-option [value]="visibility">{{ visibility }}</mat-option>
+                <mat-option [value]="visibility">{{ 'enums.collectionVisibility.' + visibility | translate }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Categoria</mat-label>
-            <mat-select formControlName="categoryCode">
-              <mat-option value="">Sin categoria</mat-option>
+            <mat-label>{{ 'common.category' | translate }}</mat-label>
+            <mat-select formControlName="categoryCode" data-testid="create-collection-category">
+              <mat-option value="">{{ 'common.noCategory' | translate }}</mat-option>
               @for (category of categories(); track category.code) {
                 <mat-option [value]="category.code">{{ category.name }}</mat-option>
               }
@@ -61,9 +61,9 @@
             [disabled]="loading()"
             data-testid="create-collection-submit"
           >
-            {{ loading() ? 'Creando...' : 'Crear coleccion' }}
+            {{ loading() ? ('actions.creating' | translate) : ('collections.createSubmit' | translate) }}
           </button>
-          <a mat-button routerLink="/collections">Cancelar</a>
+          <a mat-button routerLink="/collections">{{ 'actions.cancel' | translate }}</a>
         </div>
       </form>
     </mat-card-content>

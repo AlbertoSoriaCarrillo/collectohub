@@ -6,6 +6,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { LanguageService } from '../../../core/i18n/language.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import {
   ReservationResponse,
   USER_CANCELLABLE_RESERVATION_STATUSES
@@ -14,7 +16,7 @@ import { ReservationService } from '../../../core/services/reservation.service';
 
 @Component({
   selector: 'app-reservation-detail',
-  imports: [RouterLink, MatButtonModule, MatCardModule, MatChipsModule],
+  imports: [RouterLink, MatButtonModule, MatCardModule, MatChipsModule, TranslatePipe],
   templateUrl: './reservation-detail.component.html',
   styleUrl: './reservation-detail.component.scss'
 })
@@ -23,6 +25,7 @@ export class ReservationDetailComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly reservationService = inject(ReservationService);
   private readonly errorMessageService = inject(ErrorMessageService);
+  private readonly languageService = inject(LanguageService);
 
   readonly reservation = signal<ReservationResponse | null>(null);
   readonly currentUserId = signal<number | null>(this.authService.currentUser()?.id ?? null);
@@ -35,7 +38,7 @@ export class ReservationDetailComponent implements OnInit {
 
     const reservationId = Number(this.route.snapshot.paramMap.get('reservationId'));
     if (!Number.isFinite(reservationId) || reservationId <= 0) {
-      this.errorMessage.set('Reserva no encontrada.');
+      this.errorMessage.set(this.languageService.translate('reservations.notFound'));
       return;
     }
 
@@ -57,7 +60,10 @@ export class ReservationDetailComponent implements OnInit {
   }
 
   cancelReservation(reservation: ReservationResponse): void {
-    if (!this.canCancel(reservation) || !window.confirm('Cancelar esta reserva?')) {
+    if (
+      !this.canCancel(reservation) ||
+      !window.confirm(this.languageService.translate('reservations.cancelConfirm'))
+    ) {
       return;
     }
 
@@ -68,7 +74,7 @@ export class ReservationDetailComponent implements OnInit {
   }
 
   formatDate(value: string | null): string {
-    return value ? new Date(value).toLocaleString() : 'No informada';
+    return value ? new Date(value).toLocaleString() : this.languageService.translate('common.notReported');
   }
 
   private loadCurrentUser(): void {

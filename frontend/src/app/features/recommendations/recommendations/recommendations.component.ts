@@ -9,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ProductCategoryResponse } from '../../../core/models/catalog.model';
 import { PHYSICAL_CONDITIONS, PhysicalCondition } from '../../../core/models/inventory.model';
 import {
@@ -29,7 +30,8 @@ import { RecommendationService } from '../../../core/services/recommendation.ser
     MatChipsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    TranslatePipe
   ],
   templateUrl: './recommendations.component.html',
   styleUrl: './recommendations.component.scss'

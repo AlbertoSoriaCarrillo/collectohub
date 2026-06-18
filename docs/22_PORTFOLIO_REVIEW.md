@@ -33,6 +33,7 @@ Incluido:
 - Reservas sin pago.
 - Frontend Angular.
 - Rediseño UI/UX responsive con estilo social propio.
+- Internacionalizacion frontend ligera ES/EN.
 - Docker Compose local.
 - Tests backend, frontend y E2E Playwright.
 
@@ -55,6 +56,7 @@ Fuera de alcance:
 - JWT stateless con refresh token basico.
 - Roles globales para capacidades de plataforma y roles internos para permisos de tienda.
 - Angular standalone con Angular Material para entregar una UI MVP completa.
+- i18n frontend propio para ES/EN sin dependencia externa.
 - Docker Compose para ejecucion local reproducible.
 - Playwright como primera capa E2E local, fuera de CI por ahora.
 
@@ -104,6 +106,10 @@ La capa visual usa SCSS y Angular Material con un layout social propio:
 
 No implementa feed social real, chat ni marketplace avanzado; es un rediseño de
 presentacion sobre las funcionalidades MVP existentes.
+
+La internacionalizacion frontend cubre textos estaticos ES/EN, selector visible,
+persistencia local, fallback e interpolacion simple. Los datos dinamicos de API
+y usuario se muestran sin alterar.
 
 ## 7. Modelo De Seguridad
 
@@ -199,6 +205,7 @@ datos, backend y frontend, lo que puede hacer el pipeline mas lento y fragil.
 - Separacion entre roles globales y permisos por tienda.
 - Frontend SPA consumiendo API real.
 - UI responsive lista para demo con una experiencia mas cercana a producto.
+- Internacionalizacion basica de UI sin tocar backend ni contratos de API.
 - Pruebas a varios niveles: unitarias, integracion, build y E2E.
 - Dockerizacion local de un sistema con tres servicios.
 - Documentacion clara para operar y explicar el proyecto.
@@ -211,6 +218,7 @@ datos, backend y frontend, lo que puede hacer el pipeline mas lento y fragil.
 - Uploads de imagenes.
 - OAuth/2FA.
 - Email y notificaciones.
+- Internacionalizacion avanzada o gestion de traducciones desde backend.
 - Observabilidad avanzada.
 - Despliegue cloud.
 

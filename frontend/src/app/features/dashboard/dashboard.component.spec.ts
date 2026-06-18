@@ -43,7 +43,7 @@ describe('DashboardComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Ada Collectora');
     expect(compiled.textContent).toContain('collector@example.com');
-    expect(compiled.textContent).toContain('SHOP_OWNER');
+    expect(compiled.textContent).toMatch(/Propietario de tienda|Shop owner/);
   });
 
   it('links recommendations from dashboard sections', async () => {
@@ -54,7 +54,7 @@ describe('DashboardComponent', () => {
 
     const recommendationLink = Array.from(
       (fixture.nativeElement as HTMLElement).querySelectorAll('a')
-    ).find((link) => link.textContent?.includes('Abrir') && link.getAttribute('href') === '/recommendations');
+    ).find((link) => link.getAttribute('href') === '/recommendations');
 
     expect(recommendationLink).toBeTruthy();
   });
@@ -67,7 +67,7 @@ describe('DashboardComponent', () => {
 
     const reservationLink = Array.from(
       (fixture.nativeElement as HTMLElement).querySelectorAll('a')
-    ).find((link) => link.textContent?.includes('Abrir') && link.getAttribute('href') === '/reservations');
+    ).find((link) => link.getAttribute('href') === '/reservations');
 
     expect(reservationLink).toBeTruthy();
   });

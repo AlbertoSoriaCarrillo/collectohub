@@ -9,6 +9,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { LanguageService } from '../../../core/i18n/language.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { MasterProductResponse } from '../../../core/models/catalog.model';
 import {
   CreateShopProductRequest,
@@ -28,7 +30,8 @@ import { InventoryService } from '../../../core/services/inventory.service';
     MatCheckboxModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    TranslatePipe
   ],
   templateUrl: './shop-product-create.component.html',
   styleUrl: './shop-product-create.component.scss'
@@ -40,6 +43,7 @@ export class ShopProductCreateComponent implements OnInit {
   private readonly catalogService = inject(CatalogService);
   private readonly inventoryService = inject(InventoryService);
   private readonly errorMessageService = inject(ErrorMessageService);
+  private readonly languageService = inject(LanguageService);
 
   readonly statuses = SHOP_PRODUCT_COMMERCIAL_STATUSES;
   readonly conditions = PHYSICAL_CONDITIONS;
@@ -67,7 +71,7 @@ export class ShopProductCreateComponent implements OnInit {
   ngOnInit(): void {
     const shopId = Number(this.route.snapshot.paramMap.get('shopId'));
     if (!Number.isFinite(shopId) || shopId <= 0) {
-      this.errorMessage.set('Tienda no encontrada.');
+      this.errorMessage.set(this.languageService.translate('shops.notFound'));
       return;
     }
 
@@ -92,7 +96,7 @@ export class ShopProductCreateComponent implements OnInit {
   submit(): void {
     const shopId = this.shopId();
     if (!shopId) {
-      this.errorMessage.set('Tienda no encontrada.');
+      this.errorMessage.set(this.languageService.translate('shops.notFound'));
       return;
     }
 

@@ -1,6 +1,6 @@
 <section class="collection-detail-page">
   @if (loading()) {
-    <p class="status-text">Cargando coleccion...</p>
+    <p class="status-text">{{ 'collections.loadingOne' | translate }}</p>
   }
 
   @if (errorMessage()) {
@@ -10,24 +10,24 @@
   @if (collection(); as collectionDetail) {
     <header class="page-header">
       <div>
-        <p class="eyebrow">Coleccion</p>
+        <p class="eyebrow">{{ 'collections.detailEyebrow' | translate }}</p>
         <h1>{{ collectionDetail.name }}</h1>
-        <p>{{ collectionDetail.description || 'Detalle de coleccion y estado de items.' }}</p>
+        <p>{{ collectionDetail.description || ('collections.detailFallback' | translate) }}</p>
       </div>
-      <a mat-button routerLink="/collections">Mis colecciones</a>
+      <a mat-button routerLink="/collections">{{ 'collections.myTitle' | translate }}</a>
     </header>
 
     <mat-card class="detail-card" data-testid="collection-detail">
       <mat-card-content>
-        <mat-chip-set aria-label="Datos de coleccion">
-          <mat-chip>{{ collectionDetail.visibility }}</mat-chip>
+        <mat-chip-set [attr.aria-label]="'collections.dataAria' | translate">
+          <mat-chip>{{ 'enums.collectionVisibility.' + collectionDetail.visibility | translate }}</mat-chip>
           @if (collectionDetail.categoryName) {
             <mat-chip>{{ collectionDetail.categoryName }}</mat-chip>
           }
-          <mat-chip>{{ items().length }} items</mat-chip>
+          <mat-chip>{{ 'collections.noItems' | translate: { count: items().length } }}</mat-chip>
         </mat-chip-set>
 
-        <p>{{ collectionDetail.description || 'Sin descripcion.' }}</p>
+        <p>{{ collectionDetail.description || ('common.noDescription' | translate) }}</p>
       </mat-card-content>
 
       @if (isOwner()) {
@@ -37,28 +37,28 @@
             [routerLink]="['/collections', collectionDetail.id, 'items', 'new']"
             data-testid="add-collection-item-link"
           >
-            Anadir item
+            {{ 'collections.addItem' | translate }}
           </a>
           <a mat-button [routerLink]="['/collections', collectionDetail.id, 'edit']">
-            Editar coleccion
+            {{ 'collections.editCollection' | translate }}
           </a>
-          <a mat-button routerLink="/recommendations">Ver recomendaciones</a>
+          <a mat-button routerLink="/recommendations">{{ 'actions.viewRecommendations' | translate }}</a>
         </mat-card-actions>
       }
     </mat-card>
 
     @if (itemsLoading()) {
-      <p class="status-text">Cargando items...</p>
+      <p class="status-text">{{ 'collections.loadingItems' | translate }}</p>
     }
 
     @if (!itemsLoading() && items().length === 0) {
       <mat-card class="empty-card">
         <mat-card-content>
           <span class="empty-icon" aria-hidden="true">N</span>
-          <h2>Esta coleccion aun no tiene items</h2>
+          <h2>{{ 'collections.emptyItemsTitle' | translate }}</h2>
           @if (isOwner()) {
             <a mat-stroked-button [routerLink]="['/collections', collectionDetail.id, 'items', 'new']">
-              Anadir item
+              {{ 'collections.addItem' | translate }}
             </a>
           }
         </mat-card-content>
@@ -77,29 +77,29 @@
               </mat-card-subtitle>
             </mat-card-header>
             <mat-card-content>
-              <mat-chip-set aria-label="Datos del item">
-                <mat-chip>{{ item.collectionStatus }}</mat-chip>
+              <mat-chip-set [attr.aria-label]="'collections.itemDataAria' | translate">
+                <mat-chip>{{ 'enums.collectionStatus.' + item.collectionStatus | translate }}</mat-chip>
                 @if (item.physicalCondition) {
-                  <mat-chip>{{ item.physicalCondition }}</mat-chip>
+                  <mat-chip>{{ 'enums.physicalCondition.' + item.physicalCondition | translate }}</mat-chip>
                 }
               </mat-chip-set>
 
               <dl>
                 <div>
-                  <dt>Coleccion</dt>
-                  <dd>{{ item.masterProductCollectionName || 'No informada' }}</dd>
+                  <dt>{{ 'common.collection' | translate }}</dt>
+                  <dd>{{ item.masterProductCollectionName || ('common.notReported' | translate) }}</dd>
                 </div>
                 <div>
-                  <dt>Volumen</dt>
-                  <dd>{{ item.masterProductVolumeNumber || 'No informado' }}</dd>
+                  <dt>{{ 'common.volume' | translate }}</dt>
+                  <dd>{{ item.masterProductVolumeNumber || ('common.notReported' | translate) }}</dd>
                 </div>
                 <div>
-                  <dt>Unidad</dt>
-                  <dd>{{ item.unitNumber || 'No informada' }}</dd>
+                  <dt>{{ 'common.unit' | translate }}</dt>
+                  <dd>{{ item.unitNumber || ('common.notReported' | translate) }}</dd>
                 </div>
                 <div>
-                  <dt>Adquirido</dt>
-                  <dd>{{ item.acquiredAt || 'No informado' }}</dd>
+                  <dt>{{ 'collections.acquiredAt' | translate }}</dt>
+                  <dd>{{ item.acquiredAt || ('common.notReported' | translate) }}</dd>
                 </div>
               </dl>
 
@@ -114,9 +114,9 @@
                   mat-button
                   [routerLink]="['/collections', collectionDetail.id, 'items', item.id, 'edit']"
                 >
-                  Editar
+                  {{ 'actions.edit' | translate }}
                 </a>
-                <button mat-button type="button" (click)="deleteItem(item)">Eliminar</button>
+                <button mat-button type="button" (click)="deleteItem(item)">{{ 'actions.delete' | translate }}</button>
               </mat-card-actions>
             }
           </mat-card>

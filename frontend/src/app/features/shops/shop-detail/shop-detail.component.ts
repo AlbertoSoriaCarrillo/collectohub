@@ -6,6 +6,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { LanguageService } from '../../../core/i18n/language.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ShopProductResponse } from '../../../core/models/inventory.model';
 import { ShopMemberResponse, ShopResponse } from '../../../core/models/shop.model';
 import { InventoryService } from '../../../core/services/inventory.service';
@@ -13,7 +15,7 @@ import { ShopService } from '../../../core/services/shop.service';
 
 @Component({
   selector: 'app-shop-detail',
-  imports: [RouterLink, MatButtonModule, MatCardModule, MatChipsModule],
+  imports: [RouterLink, MatButtonModule, MatCardModule, MatChipsModule, TranslatePipe],
   templateUrl: './shop-detail.component.html',
   styleUrl: './shop-detail.component.scss'
 })
@@ -23,6 +25,7 @@ export class ShopDetailComponent implements OnInit {
   private readonly shopService = inject(ShopService);
   private readonly inventoryService = inject(InventoryService);
   private readonly errorMessageService = inject(ErrorMessageService);
+  private readonly languageService = inject(LanguageService);
 
   readonly shop = signal<ShopResponse | null>(null);
   readonly membership = signal<ShopMemberResponse | null>(null);
@@ -35,7 +38,7 @@ export class ShopDetailComponent implements OnInit {
   ngOnInit(): void {
     const shopId = Number(this.route.snapshot.paramMap.get('id'));
     if (!Number.isFinite(shopId)) {
-      this.errorMessage.set('Tienda no encontrada.');
+      this.errorMessage.set(this.languageService.translate('shops.notFound'));
       return;
     }
 

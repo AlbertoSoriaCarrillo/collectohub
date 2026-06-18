@@ -9,8 +9,8 @@ import { idFromUrl, selectMatOption } from './navigation.e2e-helper';
 export async function createShop(page: Page, shop: E2eShopData): Promise<number> {
   await page.goto('/shops/new');
   await page.getByTestId('create-shop-name').fill(shop.name);
-  await page.getByLabel('Email de contacto').fill(shop.contactEmail);
-  await page.getByLabel('Pais').fill('ES');
+  await page.getByTestId('create-shop-contact-email').fill(shop.contactEmail);
+  await page.getByTestId('create-shop-country').fill('ES');
   await page.getByTestId('create-shop-submit').click();
   await expect(page).toHaveURL(/\/shops\/\d+$/);
   await expect(page.locator('mat-card-title').filter({ hasText: shop.name }).first()).toBeVisible();
@@ -28,13 +28,13 @@ export async function createMasterProduct(
     page.getByTestId('create-master-product-category'),
     /Manga and comic/i
   );
-  await page.getByLabel('Franquicia').fill(product.franchise);
-  await page.getByLabel('Coleccion').fill(product.collectionName);
-  await page.getByLabel('Volumen').fill('1');
+  await page.getByTestId('create-master-product-franchise').fill(product.franchise);
+  await page.getByTestId('create-master-product-collection').fill(product.collectionName);
+  await page.getByTestId('create-master-product-volume').fill('1');
   await page.getByLabel('ISBN').fill(product.isbn);
   await page.getByLabel('EAN').fill(product.ean);
-  await page.getByLabel('Idioma').fill('es');
-  await page.getByLabel('Paises de publicacion').fill('ES');
+  await page.getByTestId('create-master-product-language').fill('es');
+  await page.getByTestId('create-master-product-countries').fill('ES');
   await page.getByTestId('create-master-product-submit').click();
   await expect(page).toHaveURL(/\/catalog\/\d+$/);
   await expect(page.getByRole('heading', { name: product.name })).toBeVisible();
@@ -54,9 +54,13 @@ export async function createShopProduct(
     page.getByTestId('shop-product-master-product'),
     new RegExp(product.name)
   );
-  await page.getByLabel('Precio').fill('12.95');
-  await page.getByLabel('Stock').fill('3');
-  await selectMatOption(page, page.getByRole('combobox', { name: 'Condicion fisica' }), 'NEW');
+  await page.getByTestId('shop-product-price').fill('12.95');
+  await page.getByTestId('shop-product-stock').fill('3');
+  await selectMatOption(
+    page,
+    page.getByTestId('shop-product-physical-condition'),
+    /Nuevo|New/i
+  );
   await page.getByTestId('create-shop-product-submit').click();
   await expect(page).toHaveURL(new RegExp(`/shops/${shopId}/inventory$`));
 
@@ -79,7 +83,7 @@ export async function createCollection(
   await page.getByTestId('create-collection-name').fill(collection.name);
   await selectMatOption(
     page,
-    page.getByRole('combobox', { name: 'Categoria' }),
+    page.getByTestId('create-collection-category'),
     /Manga and comic/i
   );
   await page.getByTestId('create-collection-submit').click();
@@ -101,7 +105,7 @@ export async function addMissingItemToCollection(
     page.getByTestId('collection-item-master-product'),
     new RegExp(product.name)
   );
-  await selectMatOption(page, page.getByTestId('collection-item-status'), 'MISSING');
+  await selectMatOption(page, page.getByTestId('collection-item-status'), /Faltante|Missing/i);
   await page.getByTestId('add-collection-item-submit').click();
   await expect(page).toHaveURL(new RegExp(`/collections/${collectionId}$`));
   await expect(

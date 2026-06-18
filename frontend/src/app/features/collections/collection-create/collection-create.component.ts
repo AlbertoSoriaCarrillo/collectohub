@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import {
   COLLECTION_VISIBILITIES,
   CreateCollectionRequest
@@ -25,7 +26,8 @@ import { CollectionService } from '../../../core/services/collection.service';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    TranslatePipe
   ],
   templateUrl: './collection-create.component.html',
   styleUrl: './collection-create.component.scss'

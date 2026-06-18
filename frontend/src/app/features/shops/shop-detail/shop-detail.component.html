@@ -1,6 +1,6 @@
 <section class="detail-page">
   @if (loading()) {
-    <p class="status-text">Cargando tienda...</p>
+    <p class="status-text">{{ 'shops.loadingOne' | translate }}</p>
   }
 
   @if (successMessage()) {
@@ -14,46 +14,48 @@
   @if (shop(); as shopDetail) {
     <header class="page-header">
       <div>
-        <p class="eyebrow">Tienda</p>
+        <p class="eyebrow">{{ 'shops.eyebrow' | translate }}</p>
         <h1>{{ shopDetail.name }}</h1>
-        <p>{{ shopDetail.description || 'Escaparate publico de tienda.' }}</p>
+        <p>{{ shopDetail.description || ('shops.detailPublicFallback' | translate) }}</p>
       </div>
-      <a mat-button routerLink="/shops">Mis tiendas</a>
+      <a mat-button routerLink="/shops">{{ 'shops.myTitle' | translate }}</a>
     </header>
 
     <mat-card class="detail-card">
       <mat-card-header>
         <span class="visual-token" aria-hidden="true">{{ shopDetail.name.slice(0, 1).toUpperCase() }}</span>
         <mat-card-title>{{ shopDetail.name }}</mat-card-title>
-        <mat-card-subtitle>{{ shopDetail.country || 'Pais no informado' }} - {{ shopDetail.currency }}</mat-card-subtitle>
+        <mat-card-subtitle>
+          {{ shopDetail.country || ('common.unknown' | translate) }} - {{ shopDetail.currency }}
+        </mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
-        <p>{{ shopDetail.description || 'Sin descripcion publica.' }}</p>
+        <p>{{ shopDetail.description || ('common.noPublicDescription' | translate) }}</p>
 
         <dl>
           <div>
-            <dt>Email</dt>
-            <dd>{{ shopDetail.contactEmail || 'No informado' }}</dd>
+            <dt>{{ 'common.email' | translate }}</dt>
+            <dd>{{ shopDetail.contactEmail || ('common.unknown' | translate) }}</dd>
           </div>
           <div>
-            <dt>Telefono</dt>
-            <dd>{{ shopDetail.contactPhone || 'No informado' }}</dd>
+            <dt>{{ 'common.phone' | translate }}</dt>
+            <dd>{{ shopDetail.contactPhone || ('common.unknown' | translate) }}</dd>
           </div>
           <div>
-            <dt>Reservas</dt>
-            <dd>{{ shopDetail.defaultReservationExpirationHours }} horas</dd>
+            <dt>{{ 'layout.nav.reservationsShort' | translate }}</dt>
+            <dd>{{ shopDetail.defaultReservationExpirationHours }} h</dd>
           </div>
           <div>
-            <dt>Estado</dt>
-            <dd>{{ shopDetail.status }}</dd>
+            <dt>{{ 'common.status' | translate }}</dt>
+            <dd>{{ ('enums.shopStatus.' + shopDetail.status) | translate }}</dd>
           </div>
         </dl>
 
-        <mat-chip-set aria-label="Permisos de tienda">
+        <mat-chip-set [attr.aria-label]="'shops.permissionsAria' | translate">
           @if (membership()) {
-            <mat-chip>{{ membership()?.role }}</mat-chip>
+            <mat-chip>{{ ('enums.shopRoles.' + membership()?.role) | translate }}</mat-chip>
           } @else {
-            <mat-chip>Vista publica</mat-chip>
+            <mat-chip>{{ 'shops.publicView' | translate }}</mat-chip>
           }
         </mat-chip-set>
       </mat-card-content>
@@ -64,10 +66,10 @@
             [routerLink]="['/shops', shopDetail.id, 'inventory']"
             data-testid="manage-inventory-link"
           >
-            Gestionar inventario
+            {{ 'shops.manageInventory' | translate }}
           </a>
           <a mat-button [routerLink]="['/shops', shopDetail.id, 'reservations']">
-            Gestionar reservas
+            {{ 'shops.manageReservations' | translate }}
           </a>
         }
       </mat-card-actions>
@@ -75,13 +77,13 @@
 
     <mat-card class="detail-card inventory-card">
       <mat-card-header>
-        <mat-card-title>Inventario publico</mat-card-title>
-        <mat-card-subtitle>Productos visibles y disponibles de esta tienda</mat-card-subtitle>
+        <mat-card-title>{{ 'shops.publicInventoryTitle' | translate }}</mat-card-title>
+        <mat-card-subtitle>{{ 'shops.publicInventorySubtitle' | translate }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
         @if (publicProductsLoading()) {
-          <p class="status-text">Cargando productos...</p>
+          <p class="status-text">{{ 'shops.loadingProducts' | translate }}</p>
         } @else if (publicProducts().length > 0) {
           <div class="public-product-grid">
             @for (product of publicProducts(); track product.id) {
@@ -93,12 +95,12 @@
                 <span class="visual-token" aria-hidden="true">{{ product.masterProductName.slice(0, 1).toUpperCase() }}</span>
                 <strong>{{ product.masterProductName }}</strong>
                 <span>{{ product.masterProductFranchise || product.masterProductCategoryCode }}</span>
-                <span>{{ priceLabel(product) }} - Stock {{ product.stockQuantity }}</span>
+                <span>{{ priceLabel(product) }} - {{ 'inventory.stockCount' | translate: { count: product.stockQuantity } }}</span>
               </a>
             }
           </div>
         } @else {
-          <p class="status-text">Esta tienda aun no tiene productos publicos disponibles.</p>
+          <p class="status-text">{{ 'shops.noPublicProducts' | translate }}</p>
         }
       </mat-card-content>
     </mat-card>
