@@ -1,0 +1,72 @@
+.dashboard {
+  display: grid;
+  gap: 24px;
+  margin: 0 auto;
+  max-width: 1120px;
+}
+
+.profile-card,
+.section-card {
+  border-radius: 8px;
+}
+
+.profile-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 24px 0;
+}
+
+.profile-grid div {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  min-width: 0;
+  padding: 14px;
+}
+
+.profile-grid span {
+  color: #9fb0c1;
+  display: block;
+  font-size: 0.78rem;
+  margin-bottom: 6px;
+}
+
+.profile-grid strong {
+  color: #f7f9fb;
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.dashboard-error {
+  background: rgba(255, 82, 82, 0.12);
+  border: 1px solid rgba(255, 82, 82, 0.38);
+  border-radius: 8px;
+  color: #ffb4ab;
+  margin: 18px 0 0;
+  padding: 12px;
+}
+
+.section-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.section-card {
+  min-height: 128px;
+}
+
+@media (max-width: 900px) {
+  .profile-grid,
+  .section-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .profile-grid,
+  .section-grid {
+    grid-template-columns: 1fr;
+  }
+}

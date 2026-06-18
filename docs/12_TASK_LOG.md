@@ -221,6 +221,34 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Ejecutado `.\mvnw.cmd clean verify` con acceso autorizado.
 - Resultado: build correcto; 161 tests totales, 159 ejecutados correctamente y 2 saltados por no estar Docker instalado.
 
+## 2026-06-18 - EPIC 11 - Frontend Angular base
+
+- Revisada documentacion requerida antes de modificar codigo: prompt, README, specs, seguridad, testing, CI, task log, decisiones, endpoints MVP y flujo manual.
+- Creado proyecto Angular standalone en `frontend` con routing, SCSS, TypeScript y scripts `npm start`, `npm test` y `npm run build`.
+- Verificado que Angular 22.0.2 no puede ejecutarse con Node.js local `24.14.0`; se usa Angular CLI/Angular 21.2.x por compatibilidad con Node 24 local y CI.
+- Instalado Angular Material/CDK 21.2.x y configurado tema oscuro inicial.
+- Creada configuracion local `frontend/src/environments/environment.ts` con `apiBaseUrl = "http://localhost:8080"`.
+- Creados modelos frontend `AuthResponse`, `LoginRequest`, `RegisterRequest`, `UserMeResponse` y `ErrorResponse`.
+- Creado `TokenStorageService` para persistir tokens y datos publicos de usuario en `localStorage`.
+- Creado `AuthService` con `register`, `login`, `logout`, `getMe`, comprobacion de token y roles.
+- Creado `authInterceptor` para anadir `Authorization: Bearer <token>` y limpiar sesion ante `401` fuera de endpoints de auth.
+- Creado `authGuard` para proteger `/dashboard` y redirigir a `/login`.
+- Creado `ErrorMessageService` para convertir `ErrorResponse` del backend en mensajes mostrables.
+- Implementadas rutas `/login`, `/register`, `/dashboard`, `/` y redireccion controlada `**`.
+- Implementado layout principal con toolbar, navegacion basica y estado autenticado/no autenticado.
+- Implementadas pantallas iniciales de login, registro y dashboard conectado a `GET /api/users/me`.
+- Anadidas tarjetas placeholder en dashboard para Mis tiendas, Catalogo, Inventario, Mis colecciones, Recomendaciones y Reservas.
+- Anadidos tests minimos: app arranca, validaciones de login/registro, `AuthService.login`, interceptor Bearer, guard sin/con token y dashboard con servicio mock.
+- Creado `frontend/README.md` con instalacion, arranque, backend local y comandos.
+- Ejecutado `npm run build`.
+- Intentado `npm test -- --watch=false` dentro del sandbox; fallo por bloqueo de lectura de directorios superiores del entorno.
+- Ejecutado `npm test -- --watch=false` con permisos autorizados.
+- Ejecutado `npm ci` para validar la instalacion reproducible usada por CI.
+- Ejecutados de nuevo `npm test -- --watch=false` y `npm run build`.
+- Ejecutado `npm audit --omit=dev`.
+- Resultado: build correcto; tests correctos con 7 archivos y 9 tests; auditoria de dependencias de produccion con 0 vulnerabilidades.
+- Observacion: `npm install`/`npm ci` informan 5 vulnerabilidades totales en dependencias de desarrollo/transitivas y la deprecacion de `@angular/animations`; no afectan a dependencias de produccion segun `npm audit --omit=dev`.
+
 ## 2026-06-17 - EPIC 10 - Endurecimiento y revision backend MVP
 
 - Revisados controladores de `auth`, `users`, `shops`, `catalog`, `inventory`, `collections`, `recommendations` y `reservations`.

@@ -1,0 +1,29 @@
+.auth-page {
+  display: grid;
+  min-height: calc(100dvh - 128px);
+  place-items: center;
+}
+
+.auth-card {
+  border-radius: 8px;
+  width: min(100%, 460px);
+}
+
+form {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.form-error {
+  background: rgba(255, 82, 82, 0.12);
+  border: 1px solid rgba(255, 82, 82, 0.38);
+  border-radius: 8px;
+  color: #ffb4ab;
+  margin: 0;
+  padding: 12px;
+}
+
+button[type='submit'] {
+  min-height: 44px;
+}

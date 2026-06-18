@@ -156,6 +156,13 @@
 - Decision: mantener el JWT como token stateless que no cambia al asignar `SHOP_OWNER` durante la creacion de la primera tienda.
 - Motivo: evita introducir rotacion automatica de token en esta fase; el cliente debe obtener un token nuevo mediante login o futuro refresh para recibir los roles actualizados.
 
+## 2026-06-18 - Frontend Angular base
+
+- Decision: usar Angular CLI/Angular 21.2.x para el frontend inicial, con Angular Material 21.2.x.
+- Motivo: Angular 22.0.2 ya esta publicado, pero requiere Node.js `24.15.0` o superior; el entorno local actual usa Node.js `24.14.0` y Angular 21.2.x es compatible con Node 24 y el CI configurado.
+- Decision: usar `localStorage` para persistir `accessToken`, `refreshToken` y datos publicos del usuario durante el MVP frontend.
+- Motivo: permite mantener la sesion tras recargar la pagina y simplifica la base inicial; no se registran tokens en logs ni se muestran en pantalla. Antes de produccion se revisara la estrategia junto con refresh/logout completo.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.
