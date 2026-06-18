@@ -9,6 +9,32 @@
   border-radius: 8px;
 }
 
+.inventory-card {
+  margin-top: 0;
+}
+
+.public-product-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.public-product {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: inherit;
+  display: grid;
+  gap: 4px;
+  padding: 14px;
+  text-decoration: none;
+}
+
+.public-product span {
+  color: #9fb0c1;
+  font-size: 0.9rem;
+}
+
 .status-text,
 .detail-card p,
 dd {

@@ -30,7 +30,7 @@ export class DashboardComponent implements OnInit {
   readonly sections: DashboardSection[] = [
     { title: 'Mis tiendas', description: 'Gestion de tiendas y miembros.', route: '/shops' },
     { title: 'Catalogo', description: 'Productos maestros reutilizables.', route: '/catalog' },
-    { title: 'Inventario', description: 'Stock visible y estados comerciales.', route: null },
+    { title: 'Inventario', description: 'Stock visible y estados comerciales.', route: '/shops' },
     { title: 'Mis colecciones', description: 'Colecciones privadas y publicas.', route: null },
     { title: 'Recomendaciones', description: 'Coincidencias con productos buscados.', route: null },
     { title: 'Reservas', description: 'Solicitudes sin pago del MVP.', route: null }

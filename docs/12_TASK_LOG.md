@@ -285,3 +285,25 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Ejecutado `npm run build` con permisos autorizados.
 - Resultado: tests correctos con 14 archivos y 20 tests; build correcto.
 - Observacion: `npm ci` informa 5 vulnerabilidades totales en dependencias de desarrollo/transitivas y la deprecacion de `@angular/animations`; no se cambian versiones en esta fase.
+
+## 2026-06-18 - EPIC 13 - Frontend inventario de tienda
+
+- Revisada documentacion requerida antes de modificar codigo: prompt, README, frontend README, specs de producto/arquitectura/API/seguridad/testing, task log, decisiones, endpoints MVP y flujo manual.
+- Creados modelos frontend `ShopProductResponse`, `CreateShopProductRequest`, `UpdateShopProductRequest`, `ShopProductSearchFilters`, `ShopProductCommercialStatus` y `PhysicalCondition`.
+- Creado `InventoryService` con llamadas a `POST /api/shops/{shopId}/products`, `PUT /api/shops/{shopId}/products/{shopProductId}`, `GET /api/shops/{shopId}/products/my`, `GET /api/shops/{shopId}/products` y `GET /api/shop-products/{shopProductId}`.
+- Anadidas rutas `/shops/:shopId/inventory`, `/shops/:shopId/inventory/new`, `/shops/:shopId/inventory/:shopProductId/edit` y `/shop-products/:shopProductId`; protegidas con `authGuard` las rutas internas de tienda.
+- Implementada pantalla interna de inventario de tienda con listado, empty state, precio, stock, estado comercial, condicion fisica, visibilidad, notas y acciones de editar/ver publico.
+- Implementada pantalla para anadir producto al inventario con busqueda de productos maestros mediante `CatalogService.searchMasterProducts`, seleccion de producto y formulario reactivo.
+- Implementada pantalla de edicion de producto de inventario cargando el inventario interno y validando pertenencia por `shopId`.
+- Implementada pantalla publica de producto de tienda con datos del producto, tienda asociada, precio, stock, condicion, estado y placeholder de reserva futura.
+- Integrado inventario en detalle de tienda mostrando productos publicos y boton `Gestionar inventario` para miembros `OWNER` o `MANAGER`.
+- Anadido placeholder `Buscar en tiendas proximamente` en detalle de catalogo.
+- Actualizado dashboard para que la tarjeta Inventario navegue a `/shops` al no existir tienda por defecto en el MVP.
+- Actualizado `frontend/README.md` con rutas, modulo y endpoints de inventario.
+- Anadidos tests de `InventoryService`, rutas protegidas, pantalla de inventario vacia y con productos, alta, edicion y detalle publico de producto de tienda.
+- Ejecutado `npx.cmd tsc -p tsconfig.app.json --noEmit`.
+- Ejecutado `npm ci` con permisos autorizados.
+- Ejecutado `npm test -- --watch=false` con permisos autorizados.
+- Ejecutado `npm run build` con permisos autorizados.
+- Resultado: tests correctos con 19 archivos y 29 tests; build correcto.
+- Observacion: `npm ci` mantiene 5 vulnerabilidades totales en dependencias de desarrollo/transitivas y deprecacion de `@angular/animations`; no se cambian versiones en esta fase.

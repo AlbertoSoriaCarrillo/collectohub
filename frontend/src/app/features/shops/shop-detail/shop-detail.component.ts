@@ -6,7 +6,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { ShopProductResponse } from '../../../core/models/inventory.model';
 import { ShopMemberResponse, ShopResponse } from '../../../core/models/shop.model';
+import { InventoryService } from '../../../core/services/inventory.service';
 import { ShopService } from '../../../core/services/shop.service';
 
 @Component({
@@ -19,10 +21,13 @@ export class ShopDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly authService = inject(AuthService);
   private readonly shopService = inject(ShopService);
+  private readonly inventoryService = inject(InventoryService);
   private readonly errorMessageService = inject(ErrorMessageService);
 
   readonly shop = signal<ShopResponse | null>(null);
   readonly membership = signal<ShopMemberResponse | null>(null);
+  readonly publicProducts = signal<ShopProductResponse[]>([]);
+  readonly publicProductsLoading = signal(false);
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(history.state?.successMessage ?? null);
@@ -41,6 +46,7 @@ export class ShopDetailComponent implements OnInit {
       .subscribe({
         next: (shop) => {
           this.shop.set(shop);
+          this.loadPublicProducts(shop.id);
           this.loadMembership(shop.id);
         },
         error: (error) => this.errorMessage.set(this.errorMessageService.toMessage(error))
@@ -50,6 +56,21 @@ export class ShopDetailComponent implements OnInit {
   canManage(): boolean {
     const role = this.membership()?.role;
     return role === 'OWNER' || role === 'MANAGER';
+  }
+
+  priceLabel(product: ShopProductResponse): string {
+    return `${product.priceAmount} ${product.currency}`;
+  }
+
+  private loadPublicProducts(shopId: number): void {
+    this.publicProductsLoading.set(true);
+    this.inventoryService
+      .getPublicShopProducts(shopId)
+      .pipe(finalize(() => this.publicProductsLoading.set(false)))
+      .subscribe({
+        next: (products) => this.publicProducts.set(products),
+        error: () => this.publicProducts.set([])
+      });
   }
 
   private loadMembership(shopId: number): void {

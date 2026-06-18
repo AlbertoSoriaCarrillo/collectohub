@@ -172,6 +172,15 @@
 - Decision: normalizar `frontend/tsconfig.app.json` a la forma estandar Angular CLI con `files: ["src/main.ts"]` e `include: ["src/**/*.d.ts"]`.
 - Motivo: `tsc -p tsconfig.app.json --noEmit` ya pasaba, pero esta configuracion evita que el proyecto app trate todos los `.ts` como entradas raiz y reduce avisos del editor.
 
+## 2026-06-18 - Frontend inventario de tienda
+
+- Decision: mostrar productos publicos de tienda dentro de `/shops/:id` y reservar `/shop-products/:shopProductId` para el detalle publico de cada producto.
+- Motivo: evita anadir una ruta publica extra de inventario de tienda no solicitada y mantiene el detalle de tienda como punto natural de descubrimiento.
+- Decision: llevar la tarjeta `Inventario` del dashboard a `/shops`.
+- Motivo: en MVP no existe seleccion de tienda por defecto; el usuario debe elegir que tienda gestionar antes de entrar al inventario.
+- Decision: cargar la pantalla de edicion desde `GET /api/shops/{shopId}/products/my` y filtrar por `shopProductId`.
+- Motivo: el contrato MVP no expone un endpoint interno de detalle por `shopId`; la lista interna garantiza permisos de miembro y permite validar pertenencia a la tienda de la ruta.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

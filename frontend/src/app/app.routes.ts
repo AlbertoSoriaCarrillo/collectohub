@@ -43,10 +43,41 @@ export const routes: Routes = [
           )
       },
       {
+        path: 'shops/:shopId/inventory',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/inventory/shop-inventory/shop-inventory.component').then(
+            (m) => m.ShopInventoryComponent
+          )
+      },
+      {
+        path: 'shops/:shopId/inventory/new',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/inventory/shop-product-create/shop-product-create.component').then(
+            (m) => m.ShopProductCreateComponent
+          )
+      },
+      {
+        path: 'shops/:shopId/inventory/:shopProductId/edit',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/inventory/shop-product-edit/shop-product-edit.component').then(
+            (m) => m.ShopProductEditComponent
+          )
+      },
+      {
         path: 'shops/:id',
         loadComponent: () =>
           import('./features/shops/shop-detail/shop-detail.component').then(
             (m) => m.ShopDetailComponent
+          )
+      },
+      {
+        path: 'shop-products/:shopProductId',
+        loadComponent: () =>
+          import('./features/inventory/shop-product-detail/shop-product-detail.component').then(
+            (m) => m.ShopProductDetailComponent
           )
       },
       {

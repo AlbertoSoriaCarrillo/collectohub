@@ -77,6 +77,10 @@ npm run build
 - `/shops` protegida.
 - `/shops/new` protegida.
 - `/shops/:id` publica.
+- `/shops/:shopId/inventory` protegida.
+- `/shops/:shopId/inventory/new` protegida.
+- `/shops/:shopId/inventory/:shopProductId/edit` protegida.
+- `/shop-products/:shopProductId` publica.
 - `/catalog` publica.
 - `/catalog/new` protegida; la pantalla solo permite crear a `SHOP_OWNER` o `ADMIN`.
 - `/catalog/:id` publica.
@@ -88,6 +92,7 @@ npm run build
 - Autenticacion: login, registro, sesion local y dashboard autenticado.
 - Tiendas: listado de tiendas propias, creacion de tienda y detalle publico.
 - Catalogo maestro: listado/busqueda publica, detalle publico y creacion protegida por rol.
+- Inventario de tienda: listado interno, alta, edicion y detalle publico de producto de tienda.
 
 Los servicios frontend usan los endpoints MVP documentados:
 
@@ -98,6 +103,11 @@ Los servicios frontend usan los endpoints MVP documentados:
 - `GET /api/master-products`
 - `POST /api/master-products`
 - `GET /api/master-products/{id}`
+- `GET /api/shops/{shopId}/products/my`
+- `POST /api/shops/{shopId}/products`
+- `PUT /api/shops/{shopId}/products/{shopProductId}`
+- `GET /api/shops/{shopId}/products`
+- `GET /api/shop-products/{shopProductId}`
 
 ## Sesion
 

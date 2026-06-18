@@ -50,9 +50,36 @@
       <mat-card-actions>
         <a mat-button routerLink="/shops">Mis tiendas</a>
         @if (canManage()) {
-          <button mat-button type="button" disabled>Editar proximamente</button>
+          <a mat-flat-button [routerLink]="['/shops', shopDetail.id, 'inventory']">
+            Gestionar inventario
+          </a>
         }
       </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="detail-card inventory-card">
+      <mat-card-header>
+        <mat-card-title>Inventario publico</mat-card-title>
+        <mat-card-subtitle>Productos visibles y disponibles de esta tienda</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        @if (publicProductsLoading()) {
+          <p class="status-text">Cargando productos...</p>
+        } @else if (publicProducts().length > 0) {
+          <div class="public-product-grid">
+            @for (product of publicProducts(); track product.id) {
+              <a class="public-product" [routerLink]="['/shop-products', product.id]">
+                <strong>{{ product.masterProductName }}</strong>
+                <span>{{ product.masterProductFranchise || product.masterProductCategoryCode }}</span>
+                <span>{{ priceLabel(product) }} - Stock {{ product.stockQuantity }}</span>
+              </a>
+            }
+          </div>
+        } @else {
+          <p class="status-text">Esta tienda aun no tiene productos publicos disponibles.</p>
+        }
+      </mat-card-content>
     </mat-card>
   }
 </section>

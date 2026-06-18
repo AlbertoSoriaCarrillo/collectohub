@@ -1,0 +1,89 @@
+<section class="inventory-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Inventario</p>
+      <h1>{{ shop()?.name || 'Inventario de tienda' }}</h1>
+    </div>
+
+    @if (shopId(); as id) {
+      <a mat-flat-button color="primary" [routerLink]="['/shops', id, 'inventory', 'new']">
+        Anadir producto
+      </a>
+    }
+  </header>
+
+  @if (loading() || shopLoading()) {
+    <p class="status-text">Cargando inventario...</p>
+  }
+
+  @if (errorMessage()) {
+    <p class="form-error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (!loading() && !errorMessage() && products().length === 0) {
+    <mat-card class="empty-card">
+      <mat-card-content>
+        <h2>La tienda aun no tiene inventario</h2>
+        <p>Anade productos maestros al stock visible de la tienda.</p>
+        @if (shopId(); as id) {
+          <a mat-stroked-button [routerLink]="['/shops', id, 'inventory', 'new']">
+            Anadir producto al inventario
+          </a>
+        }
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (products().length > 0) {
+    <div class="product-grid">
+      @for (product of products(); track product.id) {
+        <mat-card class="product-card">
+          <mat-card-header>
+            <mat-card-title>{{ product.masterProductName }}</mat-card-title>
+            <mat-card-subtitle>
+              {{ product.masterProductFranchise || 'Sin franquicia' }}
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <mat-chip-set aria-label="Estado del producto">
+              <mat-chip>{{ product.commercialStatus }}</mat-chip>
+              <mat-chip>{{ product.physicalCondition }}</mat-chip>
+              <mat-chip>{{ product.visible ? 'Visible' : 'Oculto' }}</mat-chip>
+            </mat-chip-set>
+
+            <dl>
+              <div>
+                <dt>Precio</dt>
+                <dd>{{ priceLabel(product) }}</dd>
+              </div>
+              <div>
+                <dt>Stock</dt>
+                <dd>{{ product.stockQuantity }}</dd>
+              </div>
+              <div>
+                <dt>Coleccion</dt>
+                <dd>{{ product.masterProductCollectionName || 'No informada' }}</dd>
+              </div>
+              <div>
+                <dt>Unidad</dt>
+                <dd>{{ product.unitNumber || 'No informada' }}</dd>
+              </div>
+            </dl>
+
+            @if (product.notes) {
+              <p class="notes">{{ product.notes }}</p>
+            }
+          </mat-card-content>
+
+          <mat-card-actions>
+            <a mat-button [routerLink]="['/shop-products', product.id]">Ver publico</a>
+            <a mat-button [routerLink]="['/shops', product.shopId, 'inventory', product.id, 'edit']">
+              Editar
+            </a>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  }
+</section>
