@@ -58,4 +58,17 @@ describe('DashboardComponent', () => {
 
     expect(recommendationLink).toBeTruthy();
   });
+
+  it('links reservations from dashboard sections', async () => {
+    const fixture = TestBed.createComponent(DashboardComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const reservationLink = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll('a')
+    ).find((link) => link.textContent?.includes('Abrir') && link.getAttribute('href') === '/reservations');
+
+    expect(reservationLink).toBeTruthy();
+  });
 });

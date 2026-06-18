@@ -195,6 +195,13 @@
 - Decision: no aplicar filtro de moneda por defecto en la pantalla de recomendaciones.
 - Motivo: filtrar inicialmente por `EUR` ocultaria productos recomendables en otras monedas; la moneda se envia solo cuando el usuario la informa.
 
+## 2026-06-18 - Frontend reservas MVP
+
+- Decision: mantener `shopId`, `userId` y `shopProductId` como filtros numericos manuales en las pantallas de reservas.
+- Motivo: los endpoints MVP ya aceptan esos filtros, pero no existen todavia selectores dedicados para usuarios, tiendas o productos de tienda; evita introducir endpoints nuevos.
+- Decision: usar `/reservations/{reservationId}` como detalle comun de reserva y reservar `/shops/{shopId}/reservations` para acciones de gestion de tienda.
+- Motivo: el backend ya aplica permisos de lectura por propietario o gestor de tienda; separar la mutacion de tienda evita mostrar acciones administrativas fuera del panel de tienda.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

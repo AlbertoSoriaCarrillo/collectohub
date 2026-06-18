@@ -1,0 +1,120 @@
+<section class="shop-reservations-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Tienda</p>
+      <h1>Reservas de tienda</h1>
+    </div>
+    @if (shopId(); as currentShopId) {
+      <a mat-button [routerLink]="['/shops', currentShopId]">Volver a tienda</a>
+    }
+  </header>
+
+  <mat-card class="filters-card">
+    <mat-card-content>
+      <form class="filters-grid" [formGroup]="filters" (ngSubmit)="loadReservations()" novalidate>
+        <mat-form-field appearance="outline">
+          <mat-label>Estado</mat-label>
+          <mat-select formControlName="status">
+            <mat-option value="">Todos</mat-option>
+            @for (status of statuses; track status) {
+              <mat-option [value]="status">{{ status }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>ID usuario</mat-label>
+          <input matInput type="number" min="1" step="1" formControlName="userId" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>ID producto tienda</mat-label>
+          <input matInput type="number" min="1" step="1" formControlName="shopProductId" />
+        </mat-form-field>
+
+        <div class="filter-actions">
+          <button mat-flat-button color="primary" type="submit" [disabled]="loading()">
+            {{ loading() ? 'Filtrando...' : 'Filtrar' }}
+          </button>
+          <button mat-button type="button" (click)="resetFilters()">Limpiar</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="response-card">
+    <mat-card-content>
+      <form [formGroup]="shopResponseForm">
+        <mat-form-field appearance="outline">
+          <mat-label>Respuesta de tienda</mat-label>
+          <textarea matInput rows="3" maxlength="1000" formControlName="shopResponse"></textarea>
+        </mat-form-field>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  @if (errorMessage()) {
+    <p class="form-error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="status-text">Cargando reservas de tienda...</p>
+  }
+
+  @if (!loading() && !errorMessage() && reservations().length === 0) {
+    <mat-card class="empty-card">
+      <mat-card-content>
+        <h2>Esta tienda aun no tiene reservas.</h2>
+        <p>Las solicitudes de reserva apareceran aqui cuando los usuarios reserven productos.</p>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (reservations().length > 0) {
+    <div class="reservation-grid">
+      @for (reservation of reservations(); track reservation.id) {
+        <mat-card class="reservation-card">
+          <mat-card-header>
+            <mat-card-title>{{ reservation.productName }}</mat-card-title>
+            <mat-card-subtitle>{{ reservation.userDisplayName }}</mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <mat-chip-set aria-label="Estado de reserva de tienda">
+              <mat-chip>{{ reservation.status }}</mat-chip>
+              <mat-chip>{{ reservation.quantity }} unidad(es)</mat-chip>
+              <mat-chip>Producto tienda #{{ reservation.shopProductId }}</mat-chip>
+            </mat-chip-set>
+
+            <dl>
+              <div>
+                <dt>Expira</dt>
+                <dd>{{ formatDate(reservation.expiresAt) }}</dd>
+              </div>
+              <div>
+                <dt>Usuario</dt>
+                <dd>{{ reservation.userDisplayName }} (#{{ reservation.userId }})</dd>
+              </div>
+            </dl>
+
+            @if (reservation.userMessage) {
+              <p class="message-block">Mensaje usuario: {{ reservation.userMessage }}</p>
+            }
+            @if (reservation.shopResponse) {
+              <p class="message-block">Respuesta tienda: {{ reservation.shopResponse }}</p>
+            }
+          </mat-card-content>
+
+          <mat-card-actions>
+            <a mat-button [routerLink]="['/reservations', reservation.id]">Ver detalle</a>
+            @for (action of availableActions(reservation); track action.status) {
+              <button mat-button type="button" (click)="updateStatus(reservation, action)">
+                {{ action.label }}
+              </button>
+            }
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  }
+</section>

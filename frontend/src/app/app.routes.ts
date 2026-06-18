@@ -67,6 +67,14 @@ export const routes: Routes = [
           )
       },
       {
+        path: 'shops/:shopId/reservations',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/reservations/shop-reservations/shop-reservations.component').then(
+            (m) => m.ShopReservationsComponent
+          )
+      },
+      {
         path: 'shops/:id',
         loadComponent: () =>
           import('./features/shops/shop-detail/shop-detail.component').then(
@@ -133,6 +141,22 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/recommendations/recommendations/recommendations.component').then(
             (m) => m.RecommendationsComponent
+          )
+      },
+      {
+        path: 'reservations',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/reservations/my-reservations/my-reservations.component').then(
+            (m) => m.MyReservationsComponent
+          )
+      },
+      {
+        path: 'reservations/:reservationId',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/reservations/reservation-detail/reservation-detail.component').then(
+            (m) => m.ReservationDetailComponent
           )
       },
       {

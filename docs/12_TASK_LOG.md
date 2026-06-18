@@ -348,3 +348,28 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Reejecutado `npm test -- --watch=false` con permisos autorizados tras `npm ci`.
 - Resultado: tests correctos con 27 archivos y 47 tests; build correcto.
 - Observacion: `npm ci` mantiene 5 vulnerabilidades totales en dependencias de desarrollo/transitivas y deprecacion de `@angular/animations`; no se cambian versiones en esta fase.
+
+## 2026-06-18 - EPIC 16 - Frontend reservas MVP
+
+- Revisada documentacion requerida antes de modificar codigo: prompt, README, frontend README, specs de producto/arquitectura/API/seguridad/testing, task log, decisiones, endpoints MVP y flujo manual.
+- Creados modelos frontend `ReservationResponse`, `CreateReservationRequest`, `UpdateReservationStatusRequest`, `ReservationSearchFilters`, `ShopReservationSearchFilters` y `ReservationStatus`.
+- Creado `ReservationService` con llamadas a `POST /api/reservations`, `GET /api/reservations/my`, `GET /api/reservations/{reservationId}`, `GET /api/shops/{shopId}/reservations`, `PUT /api/shops/{shopId}/reservations/{reservationId}/status` y `PUT /api/reservations/{reservationId}/cancel`.
+- Anadidas rutas protegidas `/reservations`, `/reservations/:reservationId` y `/shops/:shopId/reservations`.
+- Implementada creacion de reservas desde `/shop-products/:shopProductId`, con formulario para usuarios autenticados y enlace a login para usuarios anonimos.
+- Implementada pantalla `Mis reservas` con filtros por estado y `shopId`, listado, empty state, detalle y cancelacion para estados `PENDING` o `ACCEPTED`.
+- Implementada pantalla de detalle de reserva con datos de producto, tienda, usuario, mensajes y fechas; permite cancelar reservas propias en estados validos.
+- Implementada pantalla de reservas de tienda con filtros `status`, `userId` y `shopProductId`, respuesta de tienda y transiciones `PENDING -> ACCEPTED/REJECTED` y `ACCEPTED -> COMPLETED/CANCELLED`.
+- Integrado dashboard para que `Reservas` navegue a `/reservations`.
+- Integrado layout autenticado con enlace `Mis reservas`.
+- Integradas recomendaciones con accion `Reservar` hacia el producto de tienda.
+- Integrado detalle de tienda con accion `Gestionar reservas` para miembros `OWNER` o `MANAGER`.
+- Actualizado `frontend/README.md` con rutas, modulo y endpoints de reservas.
+- Actualizado `docs/13_DECISIONS.md` con decisiones de filtros numericos temporales y detalle comun de reserva.
+- Anadidos tests de `ReservationService`, rutas protegidas, `Mis reservas`, detalle de reserva, reservas de tienda, acciones por estado, creacion de reserva desde producto de tienda y enlace de dashboard.
+- Ejecutado `npx.cmd tsc -p tsconfig.app.json --noEmit`.
+- Ejecutado `npx.cmd tsc -p tsconfig.spec.json --noEmit`.
+- Ejecutado `npm ci` con permisos autorizados.
+- Ejecutado `npm test -- --watch=false` con permisos autorizados.
+- Ejecutado `npm run build` con permisos autorizados.
+- Resultado: tests correctos con 31 archivos y 60 tests; build correcto.
+- Observacion: `npm ci` mantiene 5 vulnerabilidades totales en dependencias de desarrollo/transitivas y deprecacion de `@angular/animations`; no se cambian versiones en esta fase.

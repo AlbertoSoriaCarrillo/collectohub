@@ -170,6 +170,9 @@
               Catalogo
             </a>
             <a mat-button [routerLink]="['/shops', recommendation.shopId]">Tienda</a>
+            <a mat-flat-button [routerLink]="['/shop-products', recommendation.shopProductId]">
+              Reservar
+            </a>
           </mat-card-actions>
         </mat-card>
       }

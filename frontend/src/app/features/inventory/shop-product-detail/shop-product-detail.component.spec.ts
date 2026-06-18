@@ -1,9 +1,12 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 import { of } from 'rxjs';
+import { AuthService } from '../../../core/auth/auth.service';
 import { ShopProductResponse } from '../../../core/models/inventory.model';
 import { InventoryService } from '../../../core/services/inventory.service';
+import { ReservationService } from '../../../core/services/reservation.service';
 import { ShopService } from '../../../core/services/shop.service';
 import { ShopProductDetailComponent } from './shop-product-detail.component';
 
@@ -28,7 +31,33 @@ describe('ShopProductDetailComponent', () => {
     notes: 'Public note'
   };
 
+  let reservationService: {
+    createReservation: ReturnType<typeof vi.fn>;
+  };
+
   beforeEach(async () => {
+    reservationService = {
+      createReservation: vi.fn(() =>
+        of({
+          id: 21,
+          userId: 7,
+          userDisplayName: 'Ada Collectora',
+          shopId: 9,
+          shopName: 'Akihabara Store',
+          shopProductId: 11,
+          masterProductId: 5,
+          productName: 'One Piece 1',
+          quantity: 1,
+          status: 'PENDING',
+          userMessage: 'Please reserve it.',
+          shopResponse: null,
+          expiresAt: '2026-06-20T10:00:00Z',
+          completedAt: null,
+          createdAt: '2026-06-18T10:00:00Z'
+        })
+      )
+    };
+
     await TestBed.configureTestingModule({
       imports: [ShopProductDetailComponent],
       providers: [
@@ -46,6 +75,16 @@ describe('ShopProductDetailComponent', () => {
           provide: InventoryService,
           useValue: {
             getPublicShopProduct: vi.fn(() => of(product))
+          }
+        },
+        {
+          provide: ReservationService,
+          useValue: reservationService
+        },
+        {
+          provide: AuthService,
+          useValue: {
+            isAuthenticated: signal(true)
           }
         },
         {
@@ -82,5 +121,30 @@ describe('ShopProductDetailComponent', () => {
     expect(compiled.textContent).toContain('One Piece 1');
     expect(compiled.textContent).toContain('Akihabara Store');
     expect(compiled.textContent).toContain('12.95 EUR');
+  });
+
+  it('creates a reservation for authenticated user', async () => {
+    const fixture = TestBed.createComponent(ShopProductDetailComponent);
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    fixture.componentInstance.reservationForm.setValue({
+      quantity: 2,
+      userMessage: 'Please reserve it.'
+    });
+    fixture.componentInstance.createReservation(product);
+
+    expect(reservationService.createReservation).toHaveBeenCalledWith({
+      shopProductId: 11,
+      quantity: 2,
+      userMessage: 'Please reserve it.'
+    });
+    expect(navigateSpy).toHaveBeenCalledWith(['/reservations', 21], {
+      state: { successMessage: 'Reserva creada correctamente.' }
+    });
   });
 });

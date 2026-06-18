@@ -1,0 +1,86 @@
+<section class="reservation-detail-page">
+  @if (loading()) {
+    <p class="status-text">Cargando reserva...</p>
+  }
+
+  @if (successMessage()) {
+    <p class="message success" role="status">{{ successMessage() }}</p>
+  }
+
+  @if (errorMessage()) {
+    <p class="message error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (reservation(); as detail) {
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">Reserva</p>
+        <h1>{{ detail.productName }}</h1>
+      </div>
+      <a mat-button routerLink="/reservations">Mis reservas</a>
+    </header>
+
+    <mat-card class="detail-card">
+      <mat-card-header>
+        <mat-card-title>{{ detail.status }}</mat-card-title>
+        <mat-card-subtitle>{{ detail.shopName }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <mat-chip-set aria-label="Datos de reserva">
+          <mat-chip>{{ detail.quantity }} unidad(es)</mat-chip>
+          <mat-chip>Tienda #{{ detail.shopId }}</mat-chip>
+          <mat-chip>Usuario #{{ detail.userId }}</mat-chip>
+        </mat-chip-set>
+
+        <dl>
+          <div>
+            <dt>Producto</dt>
+            <dd>{{ detail.productName }}</dd>
+          </div>
+          <div>
+            <dt>Tienda</dt>
+            <dd>{{ detail.shopName }}</dd>
+          </div>
+          <div>
+            <dt>Creada</dt>
+            <dd>{{ formatDate(detail.createdAt) }}</dd>
+          </div>
+          <div>
+            <dt>Expira</dt>
+            <dd>{{ formatDate(detail.expiresAt) }}</dd>
+          </div>
+          <div>
+            <dt>Completada</dt>
+            <dd>{{ formatDate(detail.completedAt) }}</dd>
+          </div>
+          <div>
+            <dt>Solicitante</dt>
+            <dd>{{ detail.userDisplayName }}</dd>
+          </div>
+        </dl>
+
+        <div class="message-grid">
+          <section>
+            <h2>Mensaje del usuario</h2>
+            <p>{{ detail.userMessage || 'Sin mensaje.' }}</p>
+          </section>
+          <section>
+            <h2>Respuesta de tienda</h2>
+            <p>{{ detail.shopResponse || 'Sin respuesta.' }}</p>
+          </section>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <a mat-button [routerLink]="['/shop-products', detail.shopProductId]">Ver producto</a>
+        <a mat-button [routerLink]="['/shops', detail.shopId]">Ver tienda</a>
+        @if (canCancel(detail)) {
+          <button mat-flat-button type="button" (click)="cancelReservation(detail)">
+            Cancelar reserva
+          </button>
+        }
+      </mat-card-actions>
+    </mat-card>
+  }
+</section>

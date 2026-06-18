@@ -80,6 +80,7 @@ npm run build
 - `/shops/:shopId/inventory` protegida.
 - `/shops/:shopId/inventory/new` protegida.
 - `/shops/:shopId/inventory/:shopProductId/edit` protegida.
+- `/shops/:shopId/reservations` protegida.
 - `/shop-products/:shopProductId` publica.
 - `/collections` protegida.
 - `/collections/new` protegida.
@@ -88,6 +89,8 @@ npm run build
 - `/collections/:collectionId/items/new` protegida.
 - `/collections/:collectionId/items/:itemId/edit` protegida.
 - `/recommendations` protegida.
+- `/reservations` protegida.
+- `/reservations/:reservationId` protegida.
 - `/catalog` publica.
 - `/catalog/new` protegida; la pantalla solo permite crear a `SHOP_OWNER` o `ADMIN`.
 - `/catalog/:id` publica.
@@ -102,6 +105,7 @@ npm run build
 - Inventario de tienda: listado interno, alta, edicion y detalle publico de producto de tienda.
 - Colecciones personales: listado propio, creacion, detalle, edicion, borrado e items de coleccion.
 - Recomendaciones: resumen, filtros y listado de productos de tienda que coinciden con items `MISSING` o `WANTED`.
+- Reservas: creacion desde producto de tienda, listado propio, detalle y gestion de reservas de tienda.
 
 Los servicios frontend usan los endpoints MVP documentados:
 
@@ -128,6 +132,12 @@ Los servicios frontend usan los endpoints MVP documentados:
 - `DELETE /api/collections/{collectionId}/items/{itemId}`
 - `GET /api/recommendations/my`
 - `GET /api/recommendations/my/summary`
+- `POST /api/reservations`
+- `GET /api/reservations/my`
+- `GET /api/reservations/{reservationId}`
+- `GET /api/shops/{shopId}/reservations`
+- `PUT /api/shops/{shopId}/reservations/{reservationId}/status`
+- `PUT /api/reservations/{reservationId}/cancel`
 
 ## Sesion
 

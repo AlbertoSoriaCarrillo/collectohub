@@ -1,4 +1,4 @@
-.shop-product-page {
+.reservation-detail-page {
   display: grid;
   gap: 24px;
 }
@@ -25,23 +25,42 @@ p {
   margin: 0;
 }
 
-.status-text {
-  color: #9fb0c1;
-}
-
 .detail-card {
   border-radius: 8px;
 }
 
 .detail-card mat-card-content {
   display: grid;
-  gap: 20px;
+  gap: 18px;
+}
+
+.status-text,
+.message-grid p {
+  color: #9fb0c1;
+}
+
+.message {
+  border-radius: 8px;
+  margin: 0;
+  padding: 12px;
+}
+
+.message.success {
+  background: rgba(45, 212, 191, 0.1);
+  border: 1px solid rgba(45, 212, 191, 0.36);
+  color: #9ff2e5;
+}
+
+.message.error {
+  background: rgba(255, 82, 82, 0.12);
+  border: 1px solid rgba(255, 82, 82, 0.38);
+  color: #ffb4ab;
 }
 
 dl {
   display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   margin: 0;
 }
 
@@ -51,38 +70,20 @@ dt {
 }
 
 dd {
-  margin: 4px 0 0;
+  margin: 2px 0 0;
 }
 
-.notes {
-  color: #d7def5;
-  line-height: 1.5;
+.message-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
-.reservation-panel {
+.message-grid section {
   border: 1px solid var(--ch-border);
   border-radius: 8px;
   display: grid;
-  gap: 16px;
-  padding: 16px;
-}
-
-.reservation-form {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: minmax(120px, 180px) minmax(220px, 1fr) auto;
-}
-
-.reservation-form button {
-  align-self: start;
-}
-
-.form-error {
-  background: rgba(255, 82, 82, 0.12);
-  border: 1px solid rgba(255, 82, 82, 0.38);
-  border-radius: 8px;
-  color: #ffb4ab;
-  margin: 0;
+  gap: 8px;
   padding: 12px;
 }
 
@@ -92,7 +93,7 @@ dd {
     flex-direction: column;
   }
 
-  .reservation-form {
+  dl {
     grid-template-columns: 1fr;
   }
 }

@@ -27,6 +27,9 @@ describe('app routes', () => {
     );
     const collectionDetail = children.find((route) => route.path === 'collections/:collectionId');
     const recommendations = children.find((route) => route.path === 'recommendations');
+    const reservations = children.find((route) => route.path === 'reservations');
+    const reservationDetail = children.find((route) => route.path === 'reservations/:reservationId');
+    const shopReservations = children.find((route) => route.path === 'shops/:shopId/reservations');
 
     expect(shops?.canActivate).toContain(authGuard);
     expect(newShop?.canActivate).toContain(authGuard);
@@ -42,5 +45,8 @@ describe('app routes', () => {
     expect(editCollectionItem?.canActivate).toContain(authGuard);
     expect(collectionDetail?.canActivate).toBeUndefined();
     expect(recommendations?.canActivate).toContain(authGuard);
+    expect(reservations?.canActivate).toContain(authGuard);
+    expect(reservationDetail?.canActivate).toContain(authGuard);
+    expect(shopReservations?.canActivate).toContain(authGuard);
   });
 });

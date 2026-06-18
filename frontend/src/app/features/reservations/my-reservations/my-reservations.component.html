@@ -1,0 +1,102 @@
+<section class="reservations-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Reservas</p>
+      <h1>Mis reservas</h1>
+    </div>
+    <a mat-button routerLink="/recommendations">Ver recomendaciones</a>
+  </header>
+
+  <mat-card class="filters-card">
+    <mat-card-content>
+      <form class="filters-grid" [formGroup]="filters" (ngSubmit)="loadReservations()" novalidate>
+        <mat-form-field appearance="outline">
+          <mat-label>Estado</mat-label>
+          <mat-select formControlName="status">
+            <mat-option value="">Todos</mat-option>
+            @for (status of statuses; track status) {
+              <mat-option [value]="status">{{ status }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>ID tienda</mat-label>
+          <input matInput type="number" min="1" step="1" formControlName="shopId" />
+        </mat-form-field>
+
+        <div class="filter-actions">
+          <button mat-flat-button color="primary" type="submit" [disabled]="loading()">
+            {{ loading() ? 'Filtrando...' : 'Filtrar' }}
+          </button>
+          <button mat-button type="button" (click)="resetFilters()">Limpiar</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  @if (errorMessage()) {
+    <p class="form-error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="status-text">Cargando reservas...</p>
+  }
+
+  @if (!loading() && !errorMessage() && reservations().length === 0) {
+    <mat-card class="empty-card">
+      <mat-card-content>
+        <h2>Aun no tienes reservas.</h2>
+        <p>Cuando reserves un producto de tienda, aparecera aqui.</p>
+        <a mat-stroked-button routerLink="/recommendations">Buscar productos</a>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (reservations().length > 0) {
+    <div class="reservation-grid">
+      @for (reservation of reservations(); track reservation.id) {
+        <mat-card class="reservation-card">
+          <mat-card-header>
+            <mat-card-title>{{ reservation.productName }}</mat-card-title>
+            <mat-card-subtitle>{{ reservation.shopName }}</mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <mat-chip-set aria-label="Estado de reserva">
+              <mat-chip>{{ reservation.status }}</mat-chip>
+              <mat-chip>{{ reservation.quantity }} unidad(es)</mat-chip>
+            </mat-chip-set>
+
+            <dl>
+              <div>
+                <dt>Expira</dt>
+                <dd>{{ formatDate(reservation.expiresAt) }}</dd>
+              </div>
+              <div>
+                <dt>Creada</dt>
+                <dd>{{ formatDate(reservation.createdAt) }}</dd>
+              </div>
+            </dl>
+
+            @if (reservation.userMessage) {
+              <p class="message-block">Tu mensaje: {{ reservation.userMessage }}</p>
+            }
+            @if (reservation.shopResponse) {
+              <p class="message-block">Respuesta tienda: {{ reservation.shopResponse }}</p>
+            }
+          </mat-card-content>
+
+          <mat-card-actions>
+            <a mat-button [routerLink]="['/reservations', reservation.id]">Ver detalle</a>
+            @if (canCancel(reservation)) {
+              <button mat-button type="button" (click)="cancelReservation(reservation)">
+                Cancelar
+              </button>
+            }
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  }
+</section>

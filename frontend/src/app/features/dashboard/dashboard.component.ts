@@ -37,7 +37,7 @@ export class DashboardComponent implements OnInit {
       description: 'Coincidencias con productos buscados.',
       route: '/recommendations'
     },
-    { title: 'Reservas', description: 'Solicitudes sin pago del MVP.', route: null }
+    { title: 'Reservas', description: 'Solicitudes sin pago del MVP.', route: '/reservations' }
   ];
 
   ngOnInit(): void {
