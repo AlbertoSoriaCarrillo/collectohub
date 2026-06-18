@@ -12,6 +12,7 @@
       <div>
         <p class="eyebrow">Coleccion</p>
         <h1>{{ collectionDetail.name }}</h1>
+        <p>{{ collectionDetail.description || 'Detalle de coleccion y estado de items.' }}</p>
       </div>
       <a mat-button routerLink="/collections">Mis colecciones</a>
     </header>
@@ -53,6 +54,7 @@
     @if (!itemsLoading() && items().length === 0) {
       <mat-card class="empty-card">
         <mat-card-content>
+          <span class="empty-icon" aria-hidden="true">N</span>
           <h2>Esta coleccion aun no tiene items</h2>
           @if (isOwner()) {
             <a mat-stroked-button [routerLink]="['/collections', collectionDetail.id, 'items', 'new']">
@@ -68,6 +70,7 @@
         @for (item of items(); track item.id) {
           <mat-card class="item-card" data-testid="collection-item-card">
             <mat-card-header>
+              <span class="visual-token" aria-hidden="true">{{ item.masterProductName.slice(0, 1).toUpperCase() }}</span>
               <mat-card-title>{{ item.masterProductName }}</mat-card-title>
               <mat-card-subtitle>
                 {{ item.masterProductFranchise || item.masterProductCategoryCode }}

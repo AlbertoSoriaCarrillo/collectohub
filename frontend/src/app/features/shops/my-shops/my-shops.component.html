@@ -1,6 +1,7 @@
 <section class="page-shell">
   <header class="page-header">
     <div>
+      <p class="eyebrow">Tiendas</p>
       <h1>Mis tiendas</h1>
       <p>Tiendas asociadas a tu usuario autenticado.</p>
     </div>
@@ -18,6 +19,7 @@
   @if (!loading() && !errorMessage() && shops().length === 0) {
     <mat-card class="empty-card">
       <mat-card-content>
+        <span class="empty-icon" aria-hidden="true">S</span>
         <h2>Aun no tienes tiendas</h2>
         <p>Crea tu primera tienda para empezar a gestionar catalogo e inventario en futuras fases.</p>
         <a mat-stroked-button routerLink="/shops/new">Crear tienda</a>
@@ -29,6 +31,7 @@
     @for (shop of shops(); track shop.id) {
       <mat-card class="shop-card" data-testid="shop-card">
         <mat-card-header>
+          <span class="visual-token" aria-hidden="true">{{ shop.name.slice(0, 1).toUpperCase() }}</span>
           <mat-card-title>{{ shop.name }}</mat-card-title>
           <mat-card-subtitle>{{ shop.country || 'Pais no informado' }} - {{ shop.currency }}</mat-card-subtitle>
         </mat-card-header>

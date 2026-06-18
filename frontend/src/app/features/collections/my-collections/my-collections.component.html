@@ -3,6 +3,7 @@
     <div>
       <p class="eyebrow">Colecciones</p>
       <h1>Mis colecciones</h1>
+      <p>Gestiona lo que tienes, buscas y quieres completar.</p>
     </div>
     <a mat-flat-button color="primary" routerLink="/collections/new">Crear coleccion</a>
   </header>
@@ -51,6 +52,7 @@
   @if (!loading() && !errorMessage() && collections().length === 0) {
     <mat-card class="empty-card">
       <mat-card-content>
+        <span class="empty-icon" aria-hidden="true">K</span>
         <h2>Aun no tienes colecciones</h2>
         <p>Crea tu primera coleccion para registrar productos que tienes, buscas o te faltan.</p>
         <a mat-stroked-button routerLink="/collections/new">Crear coleccion</a>
@@ -63,6 +65,7 @@
       @for (collection of collections(); track collection.id) {
         <mat-card class="collection-card">
           <mat-card-header>
+            <span class="visual-token" aria-hidden="true">{{ collection.name.slice(0, 1).toUpperCase() }}</span>
             <mat-card-title>{{ collection.name }}</mat-card-title>
             <mat-card-subtitle>{{ collection.categoryName || 'Sin categoria' }}</mat-card-subtitle>
           </mat-card-header>

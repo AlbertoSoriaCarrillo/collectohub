@@ -3,6 +3,7 @@
     <div>
       <p class="eyebrow">Reservas</p>
       <h1>Mis reservas</h1>
+      <p>Seguimiento de solicitudes y estados de reserva del MVP.</p>
     </div>
     <a mat-button routerLink="/recommendations">Ver recomendaciones</a>
   </header>
@@ -46,6 +47,7 @@
   @if (!loading() && !errorMessage() && reservations().length === 0) {
     <mat-card class="empty-card">
       <mat-card-content>
+        <span class="empty-icon" aria-hidden="true">Q</span>
         <h2>Aun no tienes reservas.</h2>
         <p>Cuando reserves un producto de tienda, aparecera aqui.</p>
         <a mat-stroked-button routerLink="/recommendations">Buscar productos</a>
@@ -58,6 +60,7 @@
       @for (reservation of reservations(); track reservation.id) {
         <mat-card class="reservation-card" data-testid="reservation-card">
           <mat-card-header>
+            <span class="visual-token" aria-hidden="true">{{ reservation.productName.slice(0, 1).toUpperCase() }}</span>
             <mat-card-title>{{ reservation.productName }}</mat-card-title>
             <mat-card-subtitle>{{ reservation.shopName }}</mat-card-subtitle>
           </mat-card-header>

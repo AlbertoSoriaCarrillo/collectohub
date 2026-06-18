@@ -3,6 +3,7 @@
     <div>
       <p class="eyebrow">Recomendaciones</p>
       <h1>Coincidencias para tus colecciones</h1>
+      <p>Productos disponibles que encajan con items marcados como buscados o faltantes.</p>
     </div>
     <a mat-button routerLink="/collections">Mis colecciones</a>
   </header>
@@ -109,6 +110,7 @@
     @if (hasCollectionNeeds()) {
       <mat-card class="empty-card">
         <mat-card-content>
+          <span class="empty-icon" aria-hidden="true">R</span>
           <h2>No hay coincidencias disponibles</h2>
           <p>Ajusta los filtros o revisa mas tarde cuando haya productos disponibles en tiendas.</p>
         </mat-card-content>
@@ -116,6 +118,7 @@
     } @else {
       <mat-card class="empty-card">
         <mat-card-content>
+          <span class="empty-icon" aria-hidden="true">W</span>
           <h2>No hay items buscados o faltantes</h2>
           <p>Marca items de tus colecciones como MISSING o WANTED para recibir recomendaciones.</p>
           <a mat-stroked-button routerLink="/collections">Ver colecciones</a>
@@ -129,6 +132,7 @@
       @for (recommendation of recommendations(); track recommendation.shopProductId) {
         <mat-card class="recommendation-card" data-testid="recommendation-card">
           <mat-card-header>
+            <span class="visual-token" aria-hidden="true">{{ recommendation.productName.slice(0, 1).toUpperCase() }}</span>
             <mat-card-title>{{ recommendation.productName }}</mat-card-title>
             <mat-card-subtitle>{{ recommendation.shopName }}</mat-card-subtitle>
           </mat-card-header>

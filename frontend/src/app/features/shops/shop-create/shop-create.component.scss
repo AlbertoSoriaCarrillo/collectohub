@@ -1,6 +1,11 @@
 .form-page {
+  gap: 24px;
   display: grid;
   place-items: start center;
+}
+
+.page-header {
+  width: min(100%, 760px);
 }
 
 .form-card {

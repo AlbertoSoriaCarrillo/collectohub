@@ -169,6 +169,16 @@ datos levantados previamente. Guia completa: `../docs/21_E2E_TESTING.md`.
 - Recomendaciones: resumen, filtros y listado de productos de tienda que coinciden con items `MISSING` o `WANTED`.
 - Reservas: creacion desde producto de tienda, listado propio, detalle y gestion de reservas de tienda.
 
+## UI/UX MVP
+
+- Layout tipo producto social con sidebar desktop, navegacion inferior movil y panel contextual derecho.
+- Sistema visual dark-soft con variables SCSS, tarjetas de radio maximo 8px, chips, badges, tokens visuales y estados vacios.
+- Login, registro y dashboard redisenados como primeras pantallas de producto, manteniendo formularios reactivos y guards.
+- Listados y formularios MVP usan una jerarquia visual comun para tiendas, catalogo, inventario, colecciones, recomendaciones y reservas.
+- Los `data-testid` de Playwright se mantienen para no fragilizar los E2E.
+
+Guia de la fase: `../docs/23_UI_UX_REDESIGN.md`.
+
 ## Endpoints Consumidos
 
 Los servicios frontend usan los endpoints MVP documentados en

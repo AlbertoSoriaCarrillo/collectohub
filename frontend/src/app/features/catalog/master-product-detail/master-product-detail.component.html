@@ -3,6 +3,7 @@
     <div>
       <p class="eyebrow">Catalogo maestro</p>
       <h1>{{ product()?.name || 'Producto' }}</h1>
+      <p>Ficha base reutilizable por tiendas, inventario y colecciones.</p>
     </div>
     <a mat-button routerLink="/catalog">Volver al catalogo</a>
   </header>
@@ -14,6 +15,7 @@
   @if (product(); as item) {
     <mat-card class="detail-card">
       <mat-card-header>
+        <span class="visual-token" aria-hidden="true">{{ item.name.slice(0, 1).toUpperCase() }}</span>
         <mat-card-title>{{ item.name }}</mat-card-title>
         <mat-card-subtitle>{{ item.franchise || 'Sin franquicia' }}</mat-card-subtitle>
       </mat-card-header>

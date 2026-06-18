@@ -3,6 +3,7 @@
     <div>
       <p class="eyebrow">Inventario</p>
       <h1>{{ shop()?.name || 'Inventario de tienda' }}</h1>
+      <p>Stock visible, estado comercial y disponibilidad publica.</p>
     </div>
 
     @if (shopId(); as id) {
@@ -23,6 +24,7 @@
   @if (!loading() && !errorMessage() && products().length === 0) {
     <mat-card class="empty-card">
       <mat-card-content>
+        <span class="empty-icon" aria-hidden="true">I</span>
         <h2>La tienda aun no tiene inventario</h2>
         <p>Anade productos maestros al stock visible de la tienda.</p>
         @if (shopId(); as id) {
@@ -39,6 +41,7 @@
       @for (product of products(); track product.id) {
         <mat-card class="product-card">
           <mat-card-header>
+            <span class="visual-token" aria-hidden="true">{{ product.masterProductName.slice(0, 1).toUpperCase() }}</span>
             <mat-card-title>{{ product.masterProductName }}</mat-card-title>
             <mat-card-subtitle>
               {{ product.masterProductFranchise || 'Sin franquicia' }}

@@ -1,20 +1,39 @@
 <section class="dashboard" data-testid="dashboard">
-  <mat-card class="profile-card">
-    <mat-card-header>
-      <mat-card-title>Dashboard</mat-card-title>
-      <mat-card-subtitle>Sesion autenticada</mat-card-subtitle>
-    </mat-card-header>
-
-    <mat-card-content>
-      @if (loading()) {
-        <p>Cargando usuario...</p>
-      }
-
-      @if (errorMessage()) {
-        <p class="dashboard-error" role="alert">{{ errorMessage() }}</p>
-      }
-
+  <header class="dashboard-hero">
+    <div>
+      <p class="page-eyebrow">Dashboard</p>
       @if (user(); as currentUser) {
+        <h1>Hola, {{ currentUser.displayName }}</h1>
+      } @else {
+        <h1>Dashboard</h1>
+      }
+      <p>Gestion rapida de tiendas, catalogo, colecciones, recomendaciones y reservas.</p>
+    </div>
+
+    @if (user(); as currentUser) {
+      <div class="hero-user">
+        <span class="avatar-token">{{ currentUser.displayName.slice(0, 1).toUpperCase() }}</span>
+        <span>{{ currentUser.email }}</span>
+      </div>
+    }
+  </header>
+
+  @if (loading()) {
+    <p class="status-text">Cargando usuario...</p>
+  }
+
+  @if (errorMessage()) {
+    <p class="dashboard-error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (user(); as currentUser) {
+    <mat-card class="profile-card">
+      <mat-card-header>
+        <mat-card-title>Sesion autenticada</mat-card-title>
+        <mat-card-subtitle>Perfil activo para esta sesion</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
         <div class="profile-grid">
           <div>
             <span>Nombre</span>
@@ -35,18 +54,19 @@
             <mat-chip>{{ role }}</mat-chip>
           }
         </mat-chip-set>
-      }
-    </mat-card-content>
+      </mat-card-content>
 
-    <mat-card-actions>
-      <button mat-stroked-button type="button" (click)="logout()">Logout</button>
-    </mat-card-actions>
-  </mat-card>
+      <mat-card-actions>
+        <button mat-stroked-button type="button" (click)="logout()">Logout</button>
+      </mat-card-actions>
+    </mat-card>
+  }
 
   <div class="section-grid">
     @for (section of sections; track section.title) {
       <mat-card class="section-card" [class.section-card-link]="section.route">
         <mat-card-header>
+          <span class="visual-token" aria-hidden="true">{{ section.title.slice(0, 1) }}</span>
           <mat-card-title>{{ section.title }}</mat-card-title>
           <mat-card-subtitle>{{ section.description }}</mat-card-subtitle>
         </mat-card-header>

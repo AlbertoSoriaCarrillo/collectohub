@@ -1,12 +1,46 @@
 .auth-page {
+  align-items: center;
   display: grid;
-  min-height: calc(100dvh - 128px);
-  place-items: center;
+  gap: 22px;
+  grid-template-columns: minmax(240px, 0.9fr) minmax(320px, 460px);
+  margin: 0 auto;
+  max-width: 1000px;
+  min-height: calc(100dvh - 56px);
+}
+
+.auth-intro {
+  background: linear-gradient(180deg, rgba(29, 40, 53, 0.76), rgba(18, 25, 35, 0.48));
+  border: 1px solid var(--ch-border);
+  border-radius: var(--ch-radius);
+  display: grid;
+  gap: 14px;
+  padding: 24px;
+}
+
+.auth-intro h1 {
+  font-size: clamp(2rem, 4vw, 3.1rem);
+  line-height: 1.04;
+  margin: 0;
+}
+
+.intro-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.intro-row span {
+  border: 1px solid var(--ch-border-strong);
+  border-radius: 999px;
+  color: var(--ch-text-soft);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 7px 10px;
 }
 
 .auth-card {
-  border-radius: 8px;
-  width: min(100%, 460px);
+  width: 100%;
 }
 
 form {
@@ -15,15 +49,25 @@ form {
   margin-top: 24px;
 }
 
-.form-error {
-  background: rgba(255, 82, 82, 0.12);
-  border: 1px solid rgba(255, 82, 82, 0.38);
-  border-radius: 8px;
-  color: #ffb4ab;
-  margin: 0;
-  padding: 12px;
+button[type='submit'] {
+  min-height: 46px;
 }
 
-button[type='submit'] {
-  min-height: 44px;
+mat-card-actions {
+  align-items: center;
+  color: var(--ch-muted);
+  display: flex;
+  gap: 8px;
+  padding-inline: 16px;
+}
+
+@media (max-width: 860px) {
+  .auth-page {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .auth-intro {
+    padding: 18px;
+  }
 }

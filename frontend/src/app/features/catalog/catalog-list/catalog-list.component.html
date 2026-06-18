@@ -3,6 +3,7 @@
     <div>
       <p class="eyebrow">Catalogo maestro</p>
       <h1>Productos base</h1>
+      <p>Busca referencias reutilizables para tiendas, inventario y colecciones.</p>
     </div>
 
     @if (canCreateProduct()) {
@@ -70,6 +71,7 @@
       @for (product of products(); track product.id) {
         <mat-card class="product-card" data-testid="master-product-card">
           <mat-card-header>
+            <span class="visual-token" aria-hidden="true">{{ product.name.slice(0, 1).toUpperCase() }}</span>
             <mat-card-title>{{ product.name }}</mat-card-title>
             <mat-card-subtitle>
               {{ product.franchise || 'Sin franquicia' }}
@@ -106,6 +108,7 @@
   } @else if (!loading()) {
     <mat-card class="empty-card">
       <mat-card-content>
+        <span class="empty-icon" aria-hidden="true">C</span>
         <h2>No hay productos con esos filtros</h2>
         <p>Ajusta la busqueda o crea un producto maestro si tienes permisos.</p>
       </mat-card-content>

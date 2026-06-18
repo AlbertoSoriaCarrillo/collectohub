@@ -12,8 +12,18 @@
   }
 
   @if (shop(); as shopDetail) {
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">Tienda</p>
+        <h1>{{ shopDetail.name }}</h1>
+        <p>{{ shopDetail.description || 'Escaparate publico de tienda.' }}</p>
+      </div>
+      <a mat-button routerLink="/shops">Mis tiendas</a>
+    </header>
+
     <mat-card class="detail-card">
       <mat-card-header>
+        <span class="visual-token" aria-hidden="true">{{ shopDetail.name.slice(0, 1).toUpperCase() }}</span>
         <mat-card-title>{{ shopDetail.name }}</mat-card-title>
         <mat-card-subtitle>{{ shopDetail.country || 'Pais no informado' }} - {{ shopDetail.currency }}</mat-card-subtitle>
       </mat-card-header>
@@ -48,7 +58,6 @@
         </mat-chip-set>
       </mat-card-content>
       <mat-card-actions>
-        <a mat-button routerLink="/shops">Mis tiendas</a>
         @if (canManage()) {
           <a
             mat-flat-button
@@ -81,6 +90,7 @@
                 [routerLink]="['/shop-products', product.id]"
                 data-testid="public-shop-product-link"
               >
+                <span class="visual-token" aria-hidden="true">{{ product.masterProductName.slice(0, 1).toUpperCase() }}</span>
                 <strong>{{ product.masterProductName }}</strong>
                 <span>{{ product.masterProductFranchise || product.masterProductCategoryCode }}</span>
                 <span>{{ priceLabel(product) }} - Stock {{ product.stockQuantity }}</span>

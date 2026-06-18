@@ -1,42 +1,101 @@
-<mat-toolbar class="app-toolbar" data-testid="app-toolbar">
-  <a class="brand" routerLink="/dashboard" data-testid="app-brand">CollectoHub</a>
+<div class="social-shell" data-testid="app-toolbar">
+  <aside class="app-sidebar" aria-label="Navegacion principal">
+    <a class="brand" routerLink="/dashboard">
+      <span class="brand-mark">CH</span>
+      <span class="brand-copy">
+        <strong data-testid="app-brand">CollectoHub</strong>
+        <small>MVP social coleccionista</small>
+      </span>
+    </a>
 
-  <nav class="nav-links" aria-label="Navegacion principal">
-    <a mat-button routerLink="/catalog" routerLinkActive="active-link">Catalogo</a>
+    <nav class="sidebar-nav">
+      @for (item of publicNavItems; track item.route) {
+        <a mat-button [routerLink]="item.route" routerLinkActive="active-link">
+          <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+
+      @if (authService.isAuthenticated()) {
+        @for (item of privateNavItems; track item.route) {
+          <a mat-button [routerLink]="item.route" routerLinkActive="active-link">
+            <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+            <span>{{ item.label }}</span>
+          </a>
+        }
+      }
+    </nav>
+
+    <div class="sidebar-cta">
+      @if (authService.isAuthenticated()) {
+        <a mat-flat-button routerLink="/shops/new">
+          <mat-icon aria-hidden="true">add_business</mat-icon>
+          <span>Nueva tienda</span>
+        </a>
+      } @else {
+        <a mat-button routerLink="/login" routerLinkActive="active-link" data-testid="login-link">
+          Login
+        </a>
+        <a
+          mat-flat-button
+          routerLink="/register"
+          routerLinkActive="active-link"
+          data-testid="register-link"
+        >
+          Registro
+        </a>
+      }
+    </div>
+
     @if (authService.isAuthenticated()) {
-      <a mat-button routerLink="/dashboard" routerLinkActive="active-link">Dashboard</a>
-      <a mat-button routerLink="/shops" routerLinkActive="active-link">Mis tiendas</a>
-      <a mat-button routerLink="/recommendations" routerLinkActive="active-link">
-        Recomendaciones
-      </a>
-      <a mat-button routerLink="/reservations" routerLinkActive="active-link">Mis reservas</a>
+      <div class="session-card" aria-label="Sesion activa">
+        <span class="avatar-token">{{ userInitials() }}</span>
+        <span class="session-label" data-testid="session-label">
+          {{ authService.currentUser()?.displayName || 'Sesion activa' }}
+        </span>
+        <button mat-stroked-button type="button" (click)="logout()" data-testid="logout-button">
+          Logout
+        </button>
+      </div>
     }
-  </nav>
+  </aside>
 
-  <span class="toolbar-spacer"></span>
+  <main class="app-content">
+    <router-outlet />
+  </main>
+
+  <aside class="right-panel" aria-label="Resumen CollectoHub">
+    <mat-card class="pulse-card">
+      <mat-card-content>
+        <span class="card-kicker">Estado MVP</span>
+        <h2>Plataforma operativa</h2>
+        <p>Catalogo, tiendas, inventario, colecciones, recomendaciones y reservas conectados.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="quick-card">
+      <mat-card-content>
+        <span class="card-kicker">Accesos</span>
+        <a routerLink="/catalog">Explorar catalogo</a>
+        @if (authService.isAuthenticated()) {
+          <a routerLink="/collections">Ver colecciones</a>
+          <a routerLink="/recommendations">Coincidencias</a>
+        } @else {
+          <a routerLink="/register">Crear cuenta</a>
+          <a routerLink="/login">Entrar</a>
+        }
+      </mat-card-content>
+    </mat-card>
+  </aside>
 
   @if (authService.isAuthenticated()) {
-    <span class="session-label" data-testid="session-label">
-      {{ authService.currentUser()?.displayName || 'Sesion activa' }}
-    </span>
-    <button mat-stroked-button type="button" (click)="logout()" data-testid="logout-button">
-      Logout
-    </button>
-  } @else {
-    <a mat-button routerLink="/login" routerLinkActive="active-link" data-testid="login-link">
-      Login
-    </a>
-    <a
-      mat-flat-button
-      routerLink="/register"
-      routerLinkActive="active-link"
-      data-testid="register-link"
-    >
-      Registro
-    </a>
+    <nav class="bottom-nav" aria-label="Navegacion movil">
+      @for (item of mobileNavItems; track item.route) {
+        <a [routerLink]="item.route" routerLinkActive="active-link">
+          <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
   }
-</mat-toolbar>
-
-<main class="app-content">
-  <router-outlet />
-</main>
+</div>

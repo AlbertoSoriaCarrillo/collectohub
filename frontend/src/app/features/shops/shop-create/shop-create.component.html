@@ -1,4 +1,13 @@
 <section class="form-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Tiendas</p>
+      <h1>Crear tienda</h1>
+      <p>Alta inicial para publicar inventario y gestionar reservas del MVP.</p>
+    </div>
+    <a mat-button routerLink="/shops">Mis tiendas</a>
+  </header>
+
   <mat-card class="form-card">
     <mat-card-header>
       <mat-card-title>Crear tienda</mat-card-title>
@@ -76,6 +85,7 @@
         <div class="actions">
           <button
             mat-flat-button
+            color="primary"
             type="submit"
             [disabled]="loading()"
             data-testid="create-shop-submit"

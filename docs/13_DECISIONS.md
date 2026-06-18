@@ -233,6 +233,17 @@
 - Decision: mantener Playwright fuera de CI durante la limpieza tecnica.
 - Motivo: esta fase es documental y de presentacion; anadir E2E al pipeline requiere disenar un job con servicios levantados y merece una fase propia.
 
+## 2026-06-18 - Rediseño UI/UX social MVP
+
+- Decision: mantener Angular Material + SCSS y no introducir Tailwind ni otra libreria de UI.
+- Motivo: respeta el stack ya documentado, evita churn de dependencias y permite mejorar la experiencia con el sistema existente.
+- Decision: aplicar un layout social propio con sidebar desktop, bottom navigation movil, contenido central y panel contextual derecho.
+- Motivo: acerca el producto a una experiencia social/marketplace reconocible sin copiar marcas ni ampliar funcionalidades fuera del MVP.
+- Decision: mantener todos los `data-testid` existentes en componentes y flujos E2E.
+- Motivo: el rediseño debe ser visual y de experiencia, no una ruptura de automatizacion ni de contratos de prueba.
+- Decision: usar iconografia de Angular Material Icons solo en el layout principal.
+- Motivo: aporta lectura visual a la navegacion sin obligar a redisenar cada componente ni cambiar la logica funcional.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

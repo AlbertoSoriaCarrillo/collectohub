@@ -32,6 +32,7 @@ Incluido:
 - Recomendaciones basicas.
 - Reservas sin pago.
 - Frontend Angular.
+- Rediseño UI/UX responsive con estilo social propio.
 - Docker Compose local.
 - Tests backend, frontend y E2E Playwright.
 
@@ -92,6 +93,17 @@ UI para:
 
 La sesion MVP se guarda en `localStorage`. Un interceptor HTTP anade el Bearer
 token y los guards bloquean rutas protegidas.
+
+La capa visual usa SCSS y Angular Material con un layout social propio:
+
+- Sidebar desktop.
+- Bottom navigation movil.
+- Contenido central orientado a cards.
+- Panel contextual derecho.
+- Estados vacios, tokens visuales, chips y formularios consistentes.
+
+No implementa feed social real, chat ni marketplace avanzado; es un rediseño de
+presentacion sobre las funcionalidades MVP existentes.
 
 ## 7. Modelo De Seguridad
 
@@ -186,6 +198,7 @@ datos, backend y frontend, lo que puede hacer el pipeline mas lento y fragil.
 - Migraciones SQL versionadas.
 - Separacion entre roles globales y permisos por tienda.
 - Frontend SPA consumiendo API real.
+- UI responsive lista para demo con una experiencia mas cercana a producto.
 - Pruebas a varios niveles: unitarias, integracion, build y E2E.
 - Dockerizacion local de un sistema con tres servicios.
 - Documentacion clara para operar y explicar el proyecto.

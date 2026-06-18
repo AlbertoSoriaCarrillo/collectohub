@@ -3,6 +3,7 @@
     <div>
       <p class="eyebrow">Producto de tienda</p>
       <h1>{{ product()?.masterProductName || 'Producto' }}</h1>
+      <p>Detalle publico de disponibilidad, precio y reserva.</p>
     </div>
 
     @if (shop(); as shopDetail) {
@@ -21,6 +22,7 @@
   @if (product(); as item) {
     <mat-card class="detail-card" data-testid="shop-product-detail">
       <mat-card-header>
+        <span class="visual-token" aria-hidden="true">{{ item.masterProductName.slice(0, 1).toUpperCase() }}</span>
         <mat-card-title>{{ item.masterProductName }}</mat-card-title>
         <mat-card-subtitle>
           {{ item.masterProductFranchise || 'Sin franquicia' }}

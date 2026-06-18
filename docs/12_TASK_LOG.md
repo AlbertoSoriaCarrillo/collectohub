@@ -486,3 +486,24 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Resultado Playwright headless: 3 tests correctos.
 - Ejecutado `cd infra && docker compose down` para parar contenedores sin borrar volumen.
 - No se implementan funcionalidades nuevas de producto, endpoints, pagos, chat, marketplace, OAuth, 2FA, IA, uploads ni despliegue cloud.
+
+## 2026-06-18 - EPIC 21 - Rediseño UI/UX social estilo CollectoHub
+
+- Revisada documentacion requerida antes de modificar codigo: prompt, README raiz, frontend README, estado MVP, guia E2E, portfolio review, task log y decisiones.
+- Revisada estructura Angular, rutas, layout principal, auth, dashboard, pantallas de tiendas, catalogo, inventario, colecciones, recomendaciones, reservas y helpers E2E.
+- Redisenado `MainLayoutComponent` con shell de producto social: sidebar desktop, panel contextual derecho, cabecera compacta movil y bottom navigation movil.
+- Mantenidos `data-testid` existentes para E2E: `app-toolbar`, `app-brand`, `login-link`, `register-link`, `session-label`, `logout-button`, formularios y cards MVP.
+- Ampliado sistema visual global en `frontend/src/styles.scss` con variables SCSS dark-soft, tarjetas, chips, botones, formularios, grids, empty states, tokens visuales, estados y responsive.
+- Redisenadas pantallas de login y registro con panel introductorio y tarjetas de formulario sin cambiar flujos ni validaciones.
+- Redisenado dashboard con hero autenticado, perfil, roles y tarjetas de accion manteniendo rutas MVP.
+- Mejoradas plantillas de tiendas, catalogo, inventario, colecciones, recomendaciones y reservas con cabeceras, tokens visuales, estados vacios y jerarquia de cards.
+- Mejoradas pantallas de creacion de tienda, producto maestro, coleccion e inventario con cabeceras y formularios consistentes.
+- Anadido uso de Angular Material Icons mediante `MatIconModule` en layout y hoja de estilos de iconos Material en `index.html`.
+- Actualizado `frontend/README.md` con seccion UI/UX MVP.
+- Creado `docs/23_UI_UX_REDESIGN.md` con alcance, principios visuales, componentes redisenados, responsive y validacion esperada.
+- Actualizados `docs/13_DECISIONS.md`, `docs/19_MVP_STATUS.md` y `docs/22_PORTFOLIO_REVIEW.md` para reflejar el rediseño.
+- Ejecutado `cd frontend && npm.cmd ci`: correcto; se mantiene aviso de deprecacion de `@angular/animations`.
+- Ejecutado `cd frontend && npm.cmd test -- --watch=false` dentro del sandbox: no completa por bloqueo de permisos del entorno (`Cannot read directory "../../..": Acceso denegado`) durante resolucion de Angular. El intento con permisos elevados no pudo aprobarse por limite de uso del revisor automatico.
+- Ejecutado `cd frontend && npm.cmd run build` mediante prefijo autorizado: correcto; build Angular generado en `frontend/dist/collectohub-frontend`.
+- E2E Playwright y Docker Compose no se ejecutan en esta sesion porque requieren permisos elevados no disponibles tras el limite del revisor automatico.
+- No se modifica backend, base de datos, endpoints, modelos, logica de negocio, pagos, chat, feed social, marketplace, OAuth, 2FA, uploads ni IA.

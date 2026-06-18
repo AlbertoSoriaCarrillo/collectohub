@@ -3,11 +3,16 @@
     <div>
       <p class="eyebrow">Colecciones</p>
       <h1>Crear coleccion</h1>
+      <p>Prepara una lista para marcar items propios, buscados o faltantes.</p>
     </div>
     <a mat-button routerLink="/collections">Volver a mis colecciones</a>
   </header>
 
   <mat-card class="form-card">
+    <mat-card-header>
+      <mat-card-title>Datos de coleccion</mat-card-title>
+      <mat-card-subtitle>Nombre, visibilidad y categoria inicial.</mat-card-subtitle>
+    </mat-card-header>
     <mat-card-content>
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate data-testid="create-collection-form">
         <mat-form-field appearance="outline">
