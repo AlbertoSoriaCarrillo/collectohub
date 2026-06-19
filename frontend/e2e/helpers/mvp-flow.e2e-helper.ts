@@ -59,7 +59,7 @@ export async function createShopProduct(
   await selectMatOption(
     page,
     page.getByTestId('shop-product-physical-condition'),
-    /Nuevo|New/i
+    /^(Nuevo|New)$/i
   );
   await page.getByTestId('create-shop-product-submit').click();
   await expect(page).toHaveURL(new RegExp(`/shops/${shopId}/inventory$`));

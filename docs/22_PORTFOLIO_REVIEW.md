@@ -34,6 +34,7 @@ Incluido:
 - Frontend Angular.
 - Rediseño UI/UX responsive con estilo social propio.
 - Internacionalizacion frontend ligera ES/EN.
+- Generador local de datos demo por API para capturas y portfolio.
 - Docker Compose local.
 - Tests backend, frontend y E2E Playwright.
 
@@ -209,6 +210,7 @@ datos, backend y frontend, lo que puede hacer el pipeline mas lento y fragil.
 - Pruebas a varios niveles: unitarias, integracion, build y E2E.
 - Dockerizacion local de un sistema con tres servicios.
 - Documentacion clara para operar y explicar el proyecto.
+- Preparacion reproducible de datos demo sin SQL directo ni endpoints especiales.
 
 ## 13. Que No Esta Implementado Aun
 

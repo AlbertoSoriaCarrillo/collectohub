@@ -214,6 +214,19 @@ Si el usuario crea su primera tienda, el backend le asigna `SHOP_OWNER` en base
 de datos. El JWT actual no cambia; el usuario debe volver a iniciar sesion o usar
 un futuro refresh token para ver los roles actualizados.
 
+## Datos De Demo Local
+
+Desde la raiz del repositorio, con backend y base de datos levantados:
+
+```powershell
+.\scripts\demo\create-demo-data.ps1 `
+  -ApiBaseUrl "http://localhost:8080" `
+  -Suffix "demo001"
+```
+
+El script genera datos por API real para capturas y demo visual. Guia completa:
+`../docs/25_DEMO_DATA.md`.
+
 ## Demo
 
 Flujo recomendado desde UI:

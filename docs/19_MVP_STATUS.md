@@ -20,6 +20,7 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 12. CI con jobs de documentacion, backend y frontend.
 13. Rediseño UI/UX frontend con layout social responsive.
 14. Internacionalizacion frontend ligera ES/EN.
+15. Script local de datos de demo por API para capturas y portfolio.
 
 ## Implementado backend
 
@@ -128,8 +129,9 @@ http://localhost:4200
 ## Como ejecutar la demo
 
 1. Levantar backend y frontend.
-2. Seguir `docs/18_DEMO_FLOW.md` para la demo desde UI.
-3. Usar `docs/17_MANUAL_TESTING_FLOW.md` si se quiere repetir el flujo por API con PowerShell.
+2. Opcionalmente generar datos con `docs/25_DEMO_DATA.md`.
+3. Seguir `docs/18_DEMO_FLOW.md` para la demo desde UI.
+4. Usar `docs/17_MANUAL_TESTING_FLOW.md` si se quiere repetir el flujo por API con PowerShell.
 
 ## Como ejecutar Docker Compose
 
@@ -221,6 +223,7 @@ La revision de este archivo no encontro necesidad de cambios en esta fase.
 - Backend local: arranque con perfil `local` y health check correcto.
 - Frontend local: `npm start` compila y responde `200 OK` en `http://127.0.0.1:4200/`.
 - Smoke test por API del flujo MVP completo correcto: registro, login, tienda, relogin con `SHOP_OWNER`, producto maestro, inventario, coleccion, recomendacion, reserva completada y reserva cancelada.
+- Script de datos demo preparado en `scripts/demo/create-demo-data.ps1`, usando solo endpoints MVP existentes y guardando resumen local ignorado por Git.
 - Docker Compose: validado localmente con PostgreSQL, backend y frontend.
 - Playwright headless: `npm run e2e` correcto con smoke, auth/dashboard y flujo MVP principal.
 - Playwright headed: `npm run e2e:headed` correcto.

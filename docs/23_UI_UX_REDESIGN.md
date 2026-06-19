@@ -90,6 +90,14 @@ docker compose down
 
 ## Capturas recomendadas
 
+Antes de capturar, puedes poblar datos locales con:
+
+```powershell
+.\scripts\demo\create-demo-data.ps1 -ApiBaseUrl "http://localhost:8080"
+```
+
+Guia completa: `docs/25_DEMO_DATA.md`.
+
 Guardar capturas reales en `docs/assets/screenshots/`:
 
 - Dashboard desktop.

@@ -152,6 +152,27 @@ npm run e2e:headed
 npm run e2e:ui
 ```
 
+## Datos de demo local
+
+Con backend y base de datos levantados, puedes generar usuarios, tienda,
+catalogo, inventario, coleccion, recomendaciones y una reserva de demo usando la
+API real:
+
+```powershell
+.\scripts\demo\create-demo-data.ps1 `
+  -ApiBaseUrl "http://localhost:8080" `
+  -Suffix "demo001"
+```
+
+Si omites `-Suffix`, el script genera uno automaticamente. Guia completa:
+`docs/25_DEMO_DATA.md`.
+
+Si PowerShell bloquea scripts locales:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\demo\create-demo-data.ps1
+```
+
 ## Demo / Screenshots
 
 No hay capturas reales versionadas todavia. Las futuras imagenes de portfolio se
@@ -185,6 +206,7 @@ Capturas recomendadas:
 - Despliegue local: `docs/20_DEPLOYMENT_LOCAL.md`.
 - E2E Playwright: `docs/21_E2E_TESTING.md`.
 - Revision portfolio/entrevista: `docs/22_PORTFOLIO_REVIEW.md`.
+- Datos de demo local: `docs/25_DEMO_DATA.md`.
 
 ## Limitaciones Actuales
 

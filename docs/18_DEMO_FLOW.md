@@ -40,6 +40,22 @@ cd infra
 docker compose up --build
 ```
 
+## 1.1. Generar datos de demo por API
+
+Si quieres preparar rapidamente capturas o una demo visual, puedes crear datos
+locales usando la API real:
+
+```powershell
+.\scripts\demo\create-demo-data.ps1 `
+  -ApiBaseUrl "http://localhost:8080" `
+  -Suffix "demo001"
+```
+
+El script crea usuario tienda, tienda, productos maestros, inventario, usuario
+coleccionista, coleccion, items para recomendaciones y una reserva. Al terminar
+imprime los usuarios, password local y URLs utiles. Guia completa:
+`docs/25_DEMO_DATA.md`.
+
 ## 2. Datos sugeridos
 
 Usa un sufijo distinto en cada demo para evitar duplicados:

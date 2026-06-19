@@ -532,3 +532,32 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Ejecutado `cd frontend && npm.cmd test -- --watch=false` con permisos elevados: correcto; 33 archivos de test y 69 tests correctos.
 - Ejecutado `cd frontend && npm.cmd run build` con permisos elevados: correcto; Angular genera `frontend/dist/collectohub-frontend` y avisa de budget inicial excedido en 15.47 kB.
 - No se modifica backend, base de datos, endpoints, modelos, pagos, chat, feed social, marketplace, OAuth, 2FA, uploads ni IA.
+
+## 2026-06-19 - EPIC 23 - Datos de demo y preparacion para capturas/portfolio
+
+- Revisada documentacion requerida antes de modificar: prompt, README raiz, frontend README, task log, decisiones, flujo manual, demo flow, estado MVP, despliegue local, guia E2E, portfolio review, guia UI/UX, guia i18n, endpoints MVP, changelogs Liquibase, Docker Compose, `.env.example` y helpers E2E.
+- Creada carpeta `scripts/demo/`.
+- Creado `scripts/demo/create-demo-data.ps1` para generar datos locales usando solo la API existente con `Invoke-RestMethod`.
+- El script registra usuario tienda y usuario coleccionista, crea tienda, reloguea al shop owner para refrescar `SHOP_OWNER`, crea productos maestros, inventario, coleccion, items, recomendaciones y reserva.
+- Anadido parametro `-Suffix` opcional con generacion automatica de sufijo unico si no se informa.
+- Anadido parametro `-ApiBaseUrl` y soporte opcional de `-FrontendBaseUrl` para imprimir URLs utiles.
+- Anadido resumen local `scripts/demo/.last-demo-data.json` con sufijo, usuarios, IDs y URLs, ignorado por Git.
+- Actualizado `.gitignore` para no versionar `.last-demo-data.json`.
+- Creado `docs/25_DEMO_DATA.md` con requisitos, ejecucion, datos generados, URLs, limpieza manual de Docker y limitaciones.
+- Actualizados `README.md`, `frontend/README.md`, `docs/18_DEMO_FLOW.md`, `docs/19_MVP_STATUS.md`, `docs/22_PORTFOLIO_REVIEW.md` y `docs/23_UI_UX_REDESIGN.md`.
+- Actualizado `docs/13_DECISIONS.md` con la decision de usar script de demo por API y no SQL directo ni endpoints especiales.
+- Ejecutado parser PowerShell sobre `scripts/demo/create-demo-data.ps1`: correcto.
+- Ejecutado `cd infra && docker compose up --build -d`: correcto; backend, PostgreSQL y frontend levantados. El build frontend Docker mantiene el aviso conocido de budget inicial excedido en 15.47 kB.
+- Validado `GET http://localhost:8080/api/health`: `UP`.
+- Ejecutado `.\scripts\demo\create-demo-data.ps1 -ApiBaseUrl "http://localhost:8080" -Suffix "demo-20260619-test"`: bloqueado por ExecutionPolicy local de PowerShell.
+- Ejecutado `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\demo\create-demo-data.ps1 -ApiBaseUrl "http://localhost:8080" -Suffix "demo-20260619-test"`: correcto; creados usuarios demo, tienda, productos maestros, inventario, coleccion, items, recomendacion y reserva.
+- Actualizado `docs/25_DEMO_DATA.md` y `README.md` con alternativa `-ExecutionPolicy Bypass` para entornos Windows que bloquean scripts locales.
+- Ejecutado `cd frontend && npm.cmd ci`: correcto; se mantienen 7 vulnerabilidades dev/transitivas y aviso de deprecacion de `@angular/animations`.
+- Ejecutado `cd frontend && npm.cmd test -- --watch=false`: correcto; 33 archivos de test y 69 tests correctos.
+- Ejecutado `cd frontend && npm.cmd run build`: correcto; se mantiene aviso de budget inicial excedido en 15.47 kB.
+- Ejecutado `cd backend && .\mvnw.cmd clean verify`: correcto; 161 tests correctos, 0 fallos, 0 errores, 0 saltados.
+- Ejecutado `cd frontend && npm.cmd run e2e`: primer intento fallo por selectores estrictos duplicados tras UI/i18n (`email` visible dos veces, `New` coincidiendo con `Like new` y selector de idioma duplicado).
+- Ajustados solo tests/helpers E2E para acotar selectores sin cambiar logica de producto.
+- Reejecutado `cd frontend && npm.cmd run e2e`: correcto; 4 tests Playwright correctos.
+- Ejecutado `cd infra && docker compose down` para parar contenedores sin borrar volumen de PostgreSQL.
+- No se modifican backend, endpoints, modelos, frontend de producto, base de datos, pagos, chat, feed social, marketplace, OAuth, 2FA, uploads ni IA.

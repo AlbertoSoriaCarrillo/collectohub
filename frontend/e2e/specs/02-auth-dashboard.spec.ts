@@ -6,11 +6,11 @@ test('registers a user, reaches dashboard, logs out and logs in again', async ({
   const data = createScenarioData();
 
   await registerUser(page, data.user);
-  await expect(page.getByText(data.user.email)).toBeVisible();
+  await expect(page.getByTestId('dashboard').getByText(data.user.email).first()).toBeVisible();
 
   await logoutIfVisible(page);
   await loginUser(page, data.user);
 
   await page.goto('/shops');
-  await expect(page.getByRole('heading', { name: 'Mis tiendas' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Mis tiendas|My shops/i })).toBeVisible();
 });

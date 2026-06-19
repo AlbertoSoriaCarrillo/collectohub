@@ -255,6 +255,15 @@
 - Decision: traducir solo representaciones visibles de enums y textos de UI, no datos dinamicos de backend/usuario.
 - Motivo: nombres, emails, descripciones, mensajes, IDs, precios y codigos tecnicos son datos de dominio y no deben alterarse en la capa visual.
 
+## 2026-06-19 - Datos de demo locales
+
+- Decision: crear `scripts/demo/create-demo-data.ps1` como generador local de datos demo usando solo endpoints API existentes.
+- Motivo: permite preparar capturas y demos repetibles sin introducir SQL directo, endpoints de seed/reset ni cambios de reglas de negocio.
+- Decision: guardar el resumen de la ultima ejecucion en `scripts/demo/.last-demo-data.json` e ignorarlo en Git.
+- Motivo: los IDs y usuarios generados ayudan a navegar la demo local, pero son datos desechables del entorno de cada persona.
+- Decision: usar sufijos unicos en emails, productos e IDs externos de demo.
+- Motivo: evita conflictos con las restricciones de unicidad y la deteccion de duplicados del catalogo maestro al repetir demos.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

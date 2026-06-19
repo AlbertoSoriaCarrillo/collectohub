@@ -58,3 +58,6 @@ frontend/playwright-report/
 # Temporary files
 *.tmp
 *.swp
+
+# Local demo data
+scripts/demo/.last-demo-data.json
