@@ -264,6 +264,17 @@
 - Decision: usar sufijos unicos en emails, productos e IDs externos de demo.
 - Motivo: evita conflictos con las restricciones de unicidad y la deteccion de duplicados del catalogo maestro al repetir demos.
 
+## 2026-06-23 - Reenfoque producto libros/comics/manga
+
+- Decision: reenfocar el recorrido principal visible de CollectoHub a red social/catalogo para gestionar colecciones de libros, comics y manga.
+- Motivo: el MVP se entiende mejor como experiencia de coleccionista centrada en catalogo, colecciones, buscados y perfil.
+- Decision: conservar backend, modelos, migraciones y rutas existentes de tiendas, inventario y reservas como base tecnica/futura.
+- Motivo: no se debe borrar trabajo funcional ya validado ni cambiar contratos backend fuera del alcance.
+- Decision: ocultar tiendas, inventario y reservas de la navegacion principal, home, dashboard y CTAs primarios del frontend.
+- Motivo: evita que el usuario perciba el producto como marketplace/reservas en esta fase.
+- Decision: redirigir `/dashboard` a `/home` y `/recommendations` a `/wanted`.
+- Motivo: mantiene compatibilidad de rutas sin promocionar el flujo antiguo.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

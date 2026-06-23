@@ -2,15 +2,17 @@ import { expect, test } from '@playwright/test';
 import { loginUser, logoutIfVisible, registerUser } from '../helpers/auth.e2e-helper';
 import { createScenarioData } from '../helpers/test-data';
 
-test('registers a user, reaches dashboard, logs out and logs in again', async ({ page }) => {
+test('registers a collector, reaches collections, opens profile and logs in again', async ({ page }) => {
   const data = createScenarioData();
 
   await registerUser(page, data.user);
-  await expect(page.getByTestId('dashboard').getByText(data.user.email).first()).toBeVisible();
+  await page.goto('/profile');
+  await expect(page.getByTestId('profile-page')).toBeVisible();
+  await expect(page.getByText(data.user.email).first()).toBeVisible();
 
   await logoutIfVisible(page);
   await loginUser(page, data.user);
 
-  await page.goto('/shops');
-  await expect(page.getByRole('heading', { name: /Mis tiendas|My shops/i })).toBeVisible();
+  await page.goto('/wanted');
+  await expect(page.getByRole('heading', { name: /Buscados|Wanted/i })).toBeVisible();
 });

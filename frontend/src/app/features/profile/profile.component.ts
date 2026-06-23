@@ -9,47 +9,19 @@ import { ErrorMessageService } from '../../core/http/error-message.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { UserMeResponse } from '../../core/models/user-me-response.model';
 
-interface DashboardSection {
-  titleKey: string;
-  descriptionKey: string;
-  route: string | null;
-}
-
 @Component({
-  selector: 'app-dashboard',
+  selector: 'app-profile',
   imports: [RouterLink, MatButtonModule, MatCardModule, MatChipsModule, TranslatePipe],
-  templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss'
+  templateUrl: './profile.component.html',
+  styleUrl: './profile.component.scss'
 })
-export class DashboardComponent implements OnInit {
+export class ProfileComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly errorMessageService = inject(ErrorMessageService);
 
   readonly user = signal<UserMeResponse | null>(this.authService.currentUser());
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
-  readonly sections: DashboardSection[] = [
-    {
-      titleKey: 'dashboard.sections.catalogTitle',
-      descriptionKey: 'dashboard.sections.catalogDescription',
-      route: '/catalog'
-    },
-    {
-      titleKey: 'dashboard.sections.collectionsTitle',
-      descriptionKey: 'dashboard.sections.collectionsDescription',
-      route: '/collections'
-    },
-    {
-      titleKey: 'dashboard.sections.recommendationsTitle',
-      descriptionKey: 'dashboard.sections.recommendationsDescription',
-      route: '/wanted'
-    },
-    {
-      titleKey: 'dashboard.sections.profileTitle',
-      descriptionKey: 'dashboard.sections.profileDescription',
-      route: '/profile'
-    }
-  ];
 
   ngOnInit(): void {
     this.loading.set(true);
@@ -60,9 +32,5 @@ export class DashboardComponent implements OnInit {
         next: (user) => this.user.set(user),
         error: (error) => this.errorMessage.set(this.errorMessageService.toMessage(error))
       });
-  }
-
-  logout(): void {
-    this.authService.logout();
   }
 }

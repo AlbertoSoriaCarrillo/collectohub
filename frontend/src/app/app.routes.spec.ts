@@ -2,9 +2,25 @@ import { routes } from './app.routes';
 import { authGuard } from './core/guards/auth.guard';
 
 describe('app routes', () => {
-  it('protects private shop, catalog and inventory routes', () => {
+  it('redirects legacy entry points to the collection-focused MVP shell', () => {
     const children = routes[0].children ?? [];
 
+    const root = children.find((route) => route.path === '');
+    const dashboard = children.find((route) => route.path === 'dashboard');
+    const recommendations = children.find((route) => route.path === 'recommendations');
+    const wildcard = children.find((route) => route.path === '**');
+
+    expect(root?.redirectTo).toBe('home');
+    expect(dashboard?.redirectTo).toBe('home');
+    expect(recommendations?.redirectTo).toBe('wanted');
+    expect(wildcard?.redirectTo).toBe('home');
+  });
+
+  it('protects private MVP and legacy routes while leaving public discovery open', () => {
+    const children = routes[0].children ?? [];
+
+    const home = children.find((route) => route.path === 'home');
+    const catalog = children.find((route) => route.path === 'catalog');
     const shops = children.find((route) => route.path === 'shops');
     const newShop = children.find((route) => route.path === 'shops/new');
     const newProduct = children.find((route) => route.path === 'catalog/new');
@@ -26,11 +42,14 @@ describe('app routes', () => {
       (route) => route.path === 'collections/:collectionId/items/:itemId/edit'
     );
     const collectionDetail = children.find((route) => route.path === 'collections/:collectionId');
-    const recommendations = children.find((route) => route.path === 'recommendations');
+    const wanted = children.find((route) => route.path === 'wanted');
+    const profile = children.find((route) => route.path === 'profile');
     const reservations = children.find((route) => route.path === 'reservations');
     const reservationDetail = children.find((route) => route.path === 'reservations/:reservationId');
     const shopReservations = children.find((route) => route.path === 'shops/:shopId/reservations');
 
+    expect(home?.canActivate).toBeUndefined();
+    expect(catalog?.canActivate).toBeUndefined();
     expect(shops?.canActivate).toContain(authGuard);
     expect(newShop?.canActivate).toContain(authGuard);
     expect(newProduct?.canActivate).toContain(authGuard);
@@ -44,7 +63,8 @@ describe('app routes', () => {
     expect(newCollectionItem?.canActivate).toContain(authGuard);
     expect(editCollectionItem?.canActivate).toContain(authGuard);
     expect(collectionDetail?.canActivate).toBeUndefined();
-    expect(recommendations?.canActivate).toContain(authGuard);
+    expect(wanted?.canActivate).toContain(authGuard);
+    expect(profile?.canActivate).toContain(authGuard);
     expect(reservations?.canActivate).toContain(authGuard);
     expect(reservationDetail?.canActivate).toContain(authGuard);
     expect(shopReservations?.canActivate).toContain(authGuard);

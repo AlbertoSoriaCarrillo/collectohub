@@ -1,6 +1,6 @@
 # Frontend i18n ES/EN
 
-Fecha: 2026-06-18.
+Fecha: 2026-06-23.
 
 ## Objetivo
 
@@ -51,6 +51,7 @@ Los diccionarios estan agrupados por:
 - `actions`
 - `layout`
 - `language`
+- `home`
 - `auth`
 - `dashboard`
 - `shops`
@@ -58,6 +59,7 @@ Los diccionarios estan agrupados por:
 - `inventory`
 - `collections`
 - `recommendations`
+- `profile`
 - `reservations`
 - `validation`
 - `errors`
@@ -91,6 +93,10 @@ El selector se muestra en:
 - `MainLayoutComponent`.
 - Login.
 - Registro.
+
+El reenfoque de producto del 2026-06-23 anade textos principales para Home,
+Buscados y Perfil, y mantiene las claves de tiendas/inventario/reservas para
+rutas legacy/futuras.
 
 En registro, el campo `preferredInterfaceLanguage` se sincroniza con el idioma
 activo para que la preferencia enviada al backend coincida con la seleccion del

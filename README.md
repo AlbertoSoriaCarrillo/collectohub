@@ -1,12 +1,13 @@
 # CollectoHub
 
-CollectoHub es un MVP de plataforma para coleccionistas y tiendas especializadas en
-productos frikis: manga, comics, trading cards, figuras, videojuegos,
-merchandising y cultura pop.
+CollectoHub es un MVP de red social/catalogo para gestionar colecciones de
+libros, comics y manga.
 
-El proyecto permite gestionar usuarios, tiendas, catalogo maestro, inventario,
-colecciones personales, recomendaciones simples y reservas sin pago. Esta pensado
-como proyecto portfolio/MVP tecnico, no como aplicacion productiva real todavia.
+El foco actual de producto esta en ayudar a una persona coleccionista a explorar
+un catalogo, crear colecciones personales, marcar lo que tiene o busca y revisar
+su perfil. El backend conserva los modulos de tiendas, inventario y reservas ya
+implementados, pero el frontend principal los deja como rutas legacy/futuras para
+mantener el MVP centrado y coherente.
 
 ## Estado Del Proyecto
 
@@ -30,15 +31,14 @@ como proyecto portfolio/MVP tecnico, no como aplicacion productiva real todavia.
 
 ## Funcionalidades Implementadas
 
+- Home publica orientada a coleccionistas.
 - Registro y login con email/password.
-- Roles globales `USER`, `SHOP_OWNER`, `ADMIN` y `CONTENT_CREATOR`.
-- Asignacion automatica de `SHOP_OWNER` al crear la primera tienda.
-- Tiendas con propietario y miembros internos.
-- Catalogo maestro de productos reutilizable.
-- Inventario de tienda con productos visibles/publicos.
+- Perfil autenticado con datos basicos de usuario.
+- Catalogo maestro publico de obras reutilizables.
 - Colecciones personales con items `OWNED`, `WANTED`, `MISSING`, etc.
-- Recomendaciones basicas entre colecciones y stock disponible.
-- Reservas sin pago y gestion basica por usuario/tienda.
+- Vista `Buscados` para revisar elementos deseados o faltantes.
+- i18n frontend ES/EN y layout responsive.
+- Backend con tiendas, inventario y reservas conservados como base tecnica/futura.
 - Swagger/OpenAPI en `http://localhost:8080/swagger-ui.html`.
 - Tests automatizados backend, frontend y E2E locales.
 
@@ -54,6 +54,9 @@ pertenencia en servicios backend. Las migraciones se gestionan con Liquibase.
 
 El frontend es una SPA Angular standalone con Angular Material. Consume la API
 real del backend, usa guards para rutas protegidas e interceptor HTTP para JWT.
+La navegacion principal actual prioriza `Home`, `Catalogo`, `Colecciones`,
+`Buscados` y `Perfil`; las rutas de tiendas/inventario/reservas siguen
+disponibles manualmente para no romper el trabajo tecnico previo.
 
 ## URLs Locales
 
@@ -154,9 +157,10 @@ npm run e2e:ui
 
 ## Datos de demo local
 
-Con backend y base de datos levantados, puedes generar usuarios, tienda,
-catalogo, inventario, coleccion, recomendaciones y una reserva de demo usando la
-API real:
+Con backend y base de datos levantados, puedes generar datos locales de demo
+usando la API real. El script sigue creando tambien datos legacy de tienda,
+inventario y reserva, pero las URLs principales impresas priorizan Home,
+Catalogo, Colecciones, Buscados y Perfil:
 
 ```powershell
 .\scripts\demo\create-demo-data.ps1 `
@@ -186,16 +190,14 @@ Capturas recomendadas:
 
 | Vista | Captura sugerida |
 | --- | --- |
+| Home | Propuesta de valor coleccionista |
 | Login | Formulario de acceso |
-| Dashboard | Estado autenticado |
-| Mis tiendas | Listado y tienda creada |
-| Catalogo | Busqueda y producto maestro |
-| Inventario | Gestion de producto de tienda |
-| Colecciones | Coleccion con item `MISSING` |
-| Recomendaciones | Coincidencia producto/coleccion |
-| Reservas | Listado y detalle de reserva |
+| Catalogo | Busqueda y ficha de obra |
+| Colecciones | Biblioteca personal y detalle |
+| Buscados | Elementos `WANTED`/`MISSING` |
+| Perfil | Datos basicos y roles |
 | Swagger | OpenAPI con JWT |
-| Playwright E2E | Ejecucion `3 passed` |
+| Playwright E2E | Ejecucion local correcta |
 
 ## Documentacion Principal
 
@@ -206,12 +208,15 @@ Capturas recomendadas:
 - Despliegue local: `docs/20_DEPLOYMENT_LOCAL.md`.
 - E2E Playwright: `docs/21_E2E_TESTING.md`.
 - Revision portfolio/entrevista: `docs/22_PORTFOLIO_REVIEW.md`.
+- Reenfoque producto libros/comics/manga: `docs/26_PRODUCT_REFOCUS_BOOKS.md`.
 - Datos de demo local: `docs/25_DEMO_DATA.md`.
 
 ## Limitaciones Actuales
 
 - No hay pagos ni bloqueo transaccional de stock.
 - Las reservas no caducan mediante job automatico.
+- Las tiendas, inventario y reservas estan implementadas en backend/UI legacy,
+  pero no forman parte del recorrido principal actual.
 - No hay chat, feed social ni marketplace avanzado.
 - No hay OAuth, 2FA, email ni notificaciones.
 - No hay subida real de imagenes o archivos.

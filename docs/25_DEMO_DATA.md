@@ -1,7 +1,8 @@
 # CollectoHub demo data
 
 Esta guia explica como generar datos locales de demo para preparar capturas,
-portfolio y pruebas manuales rapidas del MVP.
+portfolio y pruebas manuales rapidas del MVP. El recorrido principal actual es
+Home, Catalogo, Colecciones, Buscados y Perfil.
 
 El script usa exclusivamente la API publica/protegida existente. No ejecuta SQL
 directo, no crea endpoints de seed/reset y no modifica reglas de negocio.
@@ -70,7 +71,8 @@ defecto:
 
 ## Datos creados
 
-El script crea:
+El script crea datos para el recorrido principal y conserva datos legacy/futuros
+de tienda, inventario y reserva para validar el backend:
 
 - Usuario tienda:
   - email: `demo.shop.<suffix>@collectohub.local`
@@ -103,17 +105,23 @@ no cambia.
 
 ## URLs utiles
 
-Al terminar, el script imprime enlaces como:
+Al terminar, el script imprime primero enlaces principales como:
 
+- `http://localhost:4200/home`
 - `http://localhost:4200/login`
-- `http://localhost:4200/dashboard`
-- `http://localhost:4200/shops/{shopId}`
-- `http://localhost:4200/shops/{shopId}/inventory`
 - `http://localhost:4200/catalog`
 - `http://localhost:4200/collections`
 - `http://localhost:4200/collections/{collectionId}`
-- `http://localhost:4200/recommendations`
+- `http://localhost:4200/wanted`
+- `http://localhost:4200/profile`
+
+Tambien imprime URLs legacy/futuras:
+
+- `http://localhost:4200/shops/{shopId}`
+- `http://localhost:4200/shops/{shopId}/inventory`
+- `http://localhost:4200/shop-products/{shopProductId}`
 - `http://localhost:4200/reservations`
+- `http://localhost:4200/reservations/{reservationId}`
 - `http://localhost:4200/shops/{shopId}/reservations`
 
 ## Fichero local generado

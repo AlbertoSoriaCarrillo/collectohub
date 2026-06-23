@@ -1,13 +1,8 @@
 <section class="auth-page">
   <div class="auth-intro" aria-hidden="true">
-    <span class="visual-token">+</span>
+    <span class="visual-token">CH</span>
     <p class="page-eyebrow">{{ 'auth.register.introEyebrow' | translate }}</p>
     <h1>{{ 'auth.register.introTitle' | translate }}</h1>
-    <div class="intro-row">
-      <span>{{ 'auth.register.introUser' | translate }}</span>
-      <span>{{ 'auth.register.introShops' | translate }}</span>
-      <span>{{ 'auth.register.introCollections' | translate }}</span>
-    </div>
   </div>
 
   <mat-card class="auth-card">
@@ -51,6 +46,29 @@
           }
           @if (form.controls.password.hasError('minlength') && form.controls.password.touched) {
             <mat-error>{{ 'validation.minPassword' | translate }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'auth.register.confirmPassword' | translate }}</mat-label>
+          <input
+            matInput
+            type="password"
+            autocomplete="new-password"
+            formControlName="confirmPassword"
+            data-testid="register-confirm-password"
+          />
+          @if (
+            form.controls.confirmPassword.hasError('required') &&
+            form.controls.confirmPassword.touched
+          ) {
+            <mat-error>{{ 'validation.requiredConfirmPassword' | translate }}</mat-error>
+          }
+          @if (
+            form.controls.confirmPassword.hasError('passwordMismatch') &&
+            form.controls.confirmPassword.touched
+          ) {
+            <mat-error>{{ 'validation.passwordMismatch' | translate }}</mat-error>
           }
         </mat-form-field>
 

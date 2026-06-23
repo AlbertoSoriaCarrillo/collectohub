@@ -1,0 +1,65 @@
+<section class="profile-page" data-testid="profile-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">{{ 'profile.eyebrow' | translate }}</p>
+      <h1>{{ 'profile.title' | translate }}</h1>
+      <p>{{ 'profile.description' | translate }}</p>
+    </div>
+    <a mat-button routerLink="/collections">{{ 'actions.backToCollections' | translate }}</a>
+  </header>
+
+  @if (loading()) {
+    <p class="status-text">{{ 'profile.loading' | translate }}</p>
+  }
+
+  @if (errorMessage()) {
+    <p class="form-error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (user(); as currentUser) {
+    <mat-card class="profile-card">
+      <mat-card-header>
+        <span class="avatar-token" aria-hidden="true">
+          {{ currentUser.displayName.slice(0, 1).toUpperCase() }}
+        </span>
+        <mat-card-title>{{ currentUser.displayName }}</mat-card-title>
+        <mat-card-subtitle>{{ currentUser.email }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <dl class="profile-grid">
+          <div>
+            <dt>{{ 'profile.displayName' | translate }}</dt>
+            <dd>{{ currentUser.displayName }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'common.email' | translate }}</dt>
+            <dd>{{ currentUser.email }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'common.language' | translate }}</dt>
+            <dd>{{ currentUser.preferredInterfaceLanguage }}</dd>
+          </div>
+        </dl>
+
+        <mat-chip-set [attr.aria-label]="'profile.rolesAria' | translate">
+          @for (role of currentUser.roles; track role) {
+            <mat-chip>{{ ('enums.roles.' + role) | translate }}</mat-chip>
+          }
+        </mat-chip-set>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <mat-card class="future-card">
+    <mat-card-header>
+      <mat-card-title>{{ 'profile.futureTitle' | translate }}</mat-card-title>
+      <mat-card-subtitle>{{ 'profile.futureDescription' | translate }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-actions>
+      <button mat-button type="button" disabled>{{ 'profile.futureEditProfile' | translate }}</button>
+      <button mat-button type="button" disabled>{{ 'profile.futurePassword' | translate }}</button>
+      <button mat-button type="button" disabled>{{ 'profile.futureAvatar' | translate }}</button>
+    </mat-card-actions>
+  </mat-card>
+</section>

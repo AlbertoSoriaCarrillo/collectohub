@@ -1,11 +1,10 @@
 .social-shell {
   display: grid;
-  grid-template-columns: 248px minmax(0, 1fr) 304px;
+  grid-template-columns: 248px minmax(0, 1fr);
   min-height: 100dvh;
 }
 
-.app-sidebar,
-.right-panel {
+.app-sidebar {
   align-self: start;
   position: sticky;
   top: 0;
@@ -110,6 +109,7 @@
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-decoration: none;
   white-space: nowrap;
 }
 
@@ -118,57 +118,8 @@
   padding: 28px 24px 40px;
 }
 
-.right-panel {
-  border-left: 1px solid var(--ch-border);
-  display: grid;
-  gap: 14px;
-  height: 100dvh;
-  padding: 20px 16px;
-}
-
-.pulse-card h2 {
-  font-size: 1.2rem;
-  line-height: 1.15;
-  margin: 8px 0;
-}
-
-.pulse-card p {
-  color: var(--ch-muted);
-  line-height: 1.5;
-  margin: 0;
-}
-
-.quick-card mat-card-content {
-  display: grid;
-  gap: 10px;
-}
-
-.quick-card a {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--ch-border);
-  border-radius: var(--ch-radius-sm);
-  color: var(--ch-text-soft);
-  padding: 10px 12px;
-  text-decoration: none;
-}
-
-.quick-card a:hover {
-  border-color: rgba(103, 213, 200, 0.36);
-  color: var(--ch-primary);
-}
-
 .bottom-nav {
   display: none;
-}
-
-@media (max-width: 1180px) {
-  .social-shell {
-    grid-template-columns: 230px minmax(0, 1fr);
-  }
-
-  .right-panel {
-    display: none;
-  }
 }
 
 @media (max-width: 760px) {
@@ -244,7 +195,7 @@
     bottom: 0;
     display: grid;
     gap: 2px;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     left: 0;
     padding: 8px 8px 10px;
     position: fixed;
@@ -257,7 +208,7 @@
     border-radius: var(--ch-radius-sm);
     color: var(--ch-muted);
     display: grid;
-    font-size: 0.68rem;
+    font-size: 0.62rem;
     gap: 2px;
     justify-items: center;
     min-width: 0;

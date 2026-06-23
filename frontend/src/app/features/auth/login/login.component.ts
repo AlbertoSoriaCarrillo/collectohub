@@ -58,7 +58,7 @@ export class LoginComponent {
       )
       .subscribe({
         next: () => {
-          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/dashboard';
+          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/collections';
           void this.router.navigateByUrl(returnUrl);
         },
         error: (error) => this.errorMessage.set(this.errorMessageService.toMessage(error))

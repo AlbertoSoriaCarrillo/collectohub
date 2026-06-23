@@ -561,3 +561,29 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Reejecutado `cd frontend && npm.cmd run e2e`: correcto; 4 tests Playwright correctos.
 - Ejecutado `cd infra && docker compose down` para parar contenedores sin borrar volumen de PostgreSQL.
 - No se modifican backend, endpoints, modelos, frontend de producto, base de datos, pagos, chat, feed social, marketplace, OAuth, 2FA, uploads ni IA.
+
+## 2026-06-23 - EPIC 24 - Reenfoque producto a colecciones de libros/comics/manga
+
+- Revisada la documentacion y frontend indicados en el prompt de la fase: prompt, README raiz, frontend README, task log, decisiones, endpoints, estado MVP, demo flow, portfolio, UI/UX, i18n, demo data, rutas Angular, layout, auth, catalogo, colecciones, recomendaciones/buscados, perfil y E2E.
+- Reenfocado el recorrido principal de frontend a Home, Catalogo, Colecciones, Buscados y Perfil.
+- Creado `HomeComponent` como primera pantalla publica.
+- Creado `ProfileComponent` protegido con datos seguros de `GET /api/users/me` y acciones futuras deshabilitadas para editar perfil, password y avatar.
+- Actualizadas rutas Angular: `/` y `/dashboard` redirigen a `/home`; `/wanted` carga la pantalla de buscados; `/recommendations` redirige a `/wanted`; `**` redirige a `/home`.
+- Ocultadas tiendas, inventario y reservas de la navegacion principal, home y CTAs primarios sin borrar rutas legacy/futuras ni backend.
+- Ajustados login y registro para copy de coleccionista, confirmacion de password y redireccion a `/collections`.
+- Ajustadas pantallas de catalogo, colecciones y buscados para lenguaje de obras/biblioteca y para eliminar el filtro manual `shopId` de buscados.
+- Actualizados enlaces internos visibles de colecciones/reservas legacy para apuntar a `/wanted` en lugar de `/recommendations`.
+- Actualizados diccionarios ES/EN con dominios Home y Perfil, copy de biblioteca/obras/buscados y limpieza de claves de layout antiguas no usadas.
+- Saneado `DashboardComponent` aunque la ruta ya redirige, evitando CTAs primarios a tiendas/reservas en ese componente huerfano.
+- Actualizados tests unitarios de rutas, registro, dashboard, buscados, Home y Perfil.
+- Actualizados E2E para validar el flujo principal de coleccionista: home, auth, colecciones, catalogo, buscados, perfil e i18n.
+- Actualizado `scripts/demo/create-demo-data.ps1` para imprimir primero URLs principales (`home`, `login`, `catalog`, `collections`, `collectionDetail`, `wanted`, `profile`) y etiquetar URLs de tienda/reserva como legacy.
+- Creado `docs/26_PRODUCT_REFOCUS_BOOKS.md` con contexto, decision de producto, conclusiones por rol, rutas principales, rutas legacy/futuras, demo recomendada y fuera de alcance.
+- Actualizados `README.md`, `frontend/README.md`, `docs/18_DEMO_FLOW.md`, `docs/19_MVP_STATUS.md`, `docs/22_PORTFOLIO_REVIEW.md`, `docs/23_UI_UX_REDESIGN.md`, `docs/24_I18N_FRONTEND.md`, `docs/25_DEMO_DATA.md` y `docs/13_DECISIONS.md`.
+- Ejecutado `cd frontend && npm.cmd ci`: correcto; se mantienen 7 vulnerabilidades dev/transitivas y aviso de deprecacion de `@angular/animations`.
+- Ejecutado `cd frontend && npm.cmd test -- --watch=false`: correcto; 35 archivos de test y 73 tests correctos.
+- Ejecutado `cd frontend && npm.cmd run build`: correcto; se mantiene aviso de budget inicial excedido, ahora por 8.29 kB.
+- Ejecutado parser PowerShell sobre `scripts/demo/create-demo-data.ps1`: correcto.
+- Intentado `cd infra && docker compose up --build -d`: bloqueado porque Docker Desktop/daemon no esta iniciado (`dockerDesktopLinuxEngine` no disponible).
+- No se ejecutan E2E en esta sesion por Docker no disponible; los tests quedan preparados para ejecutarse cuando Docker Desktop este iniciado.
+- No se modifica backend, base de datos, endpoints, pagos, chat, marketplace, OAuth, 2FA, uploads ni app movil.

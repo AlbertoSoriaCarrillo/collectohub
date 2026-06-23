@@ -480,19 +480,19 @@ $reservation = Invoke-CollectoHubApi -Method "POST" -Path "/api/reservations" -B
 $reservationId = $reservation.id
 
 $urls = [ordered]@{
-    frontend = $FrontendBaseUrl
+    home = "$FrontendBaseUrl/home"
     login = "$FrontendBaseUrl/login"
-    dashboard = "$FrontendBaseUrl/dashboard"
-    shopDetail = "$FrontendBaseUrl/shops/$shopId"
-    shopInventory = "$FrontendBaseUrl/shops/$shopId/inventory"
-    shopProductDetail = "$FrontendBaseUrl/shop-products/$($shopProductIds["dragonQuest"])"
     catalog = "$FrontendBaseUrl/catalog"
     collections = "$FrontendBaseUrl/collections"
     collectionDetail = "$FrontendBaseUrl/collections/$collectionId"
-    recommendations = "$FrontendBaseUrl/recommendations"
-    reservations = "$FrontendBaseUrl/reservations"
-    reservationDetail = "$FrontendBaseUrl/reservations/$reservationId"
-    shopReservations = "$FrontendBaseUrl/shops/$shopId/reservations"
+    wanted = "$FrontendBaseUrl/wanted"
+    profile = "$FrontendBaseUrl/profile"
+    legacyShopDetail = "$FrontendBaseUrl/shops/$shopId"
+    legacyShopInventory = "$FrontendBaseUrl/shops/$shopId/inventory"
+    legacyShopProductDetail = "$FrontendBaseUrl/shop-products/$($shopProductIds["dragonQuest"])"
+    legacyReservations = "$FrontendBaseUrl/reservations"
+    legacyReservationDetail = "$FrontendBaseUrl/reservations/$reservationId"
+    legacyShopReservations = "$FrontendBaseUrl/shops/$shopId/reservations"
 }
 
 $summary = [ordered]@{

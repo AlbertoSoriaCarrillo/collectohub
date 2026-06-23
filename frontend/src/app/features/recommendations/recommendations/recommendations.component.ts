@@ -52,8 +52,7 @@ export class RecommendationsComponent implements OnInit {
     categoryCode: [''],
     maxPrice: [null as number | null],
     currency: [''],
-    physicalCondition: [''],
-    shopId: [null as number | null]
+    physicalCondition: ['']
   });
 
   ngOnInit(): void {
@@ -85,8 +84,7 @@ export class RecommendationsComponent implements OnInit {
       categoryCode: '',
       maxPrice: null,
       currency: '',
-      physicalCondition: '',
-      shopId: null
+      physicalCondition: ''
     });
     this.loadRecommendations();
   }
@@ -116,7 +114,7 @@ export class RecommendationsComponent implements OnInit {
       physicalCondition: value.physicalCondition
         ? (value.physicalCondition as PhysicalCondition)
         : null,
-      shopId: this.positiveNumberOrNull(value.shopId)
+      shopId: null
     };
   }
 

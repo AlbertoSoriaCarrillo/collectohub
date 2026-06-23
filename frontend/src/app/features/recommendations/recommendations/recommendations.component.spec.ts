@@ -96,8 +96,8 @@ describe('RecommendationsComponent', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('One Piece 1');
-    expect(compiled.textContent).toContain('Manga Shop');
-    expect(compiled.textContent).toMatch(/Faltantes|Missing/);
+    expect(compiled.textContent).toContain('Manga pendientes');
+    expect(compiled.textContent).toMatch(/Me falta|Missing/);
     expect(compiled.textContent).toContain('MANGA_COMIC');
   });
 
@@ -121,7 +121,7 @@ describe('RecommendationsComponent', () => {
     fixture.detectChanges();
 
     expect((fixture.nativeElement as HTMLElement).textContent).toMatch(
-      /No hay items buscados o faltantes|No wanted or missing items/
+      /No hay elementos buscados o faltantes|No wanted or missing items/
     );
   });
 
@@ -135,8 +135,7 @@ describe('RecommendationsComponent', () => {
       categoryCode: 'MANGA_COMIC',
       maxPrice: 20,
       currency: 'EUR',
-      physicalCondition: 'NEW',
-      shopId: 4
+      physicalCondition: 'NEW'
     });
     component.loadRecommendations();
 
@@ -145,14 +144,14 @@ describe('RecommendationsComponent', () => {
       maxPrice: 20,
       currency: 'EUR',
       physicalCondition: 'NEW',
-      shopId: 4
+      shopId: null
     });
     expect(recommendationService.getMyRecommendationSummary).toHaveBeenLastCalledWith({
       categoryCode: 'MANGA_COMIC',
       maxPrice: 20,
       currency: 'EUR',
       physicalCondition: 'NEW',
-      shopId: 4
+      shopId: null
     });
   });
 });

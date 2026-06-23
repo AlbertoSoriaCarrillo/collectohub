@@ -75,17 +75,21 @@
       @for (product of products(); track product.id) {
         <mat-card class="product-card" data-testid="master-product-card">
           <mat-card-header>
-            <span class="visual-token" aria-hidden="true">{{ product.name.slice(0, 1).toUpperCase() }}</span>
             <mat-card-title>{{ product.name }}</mat-card-title>
             <mat-card-subtitle>
-              {{ product.franchise || ('common.noFranchise' | translate) }}
+              {{ product.category.name }}
             </mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
             <mat-chip-set [attr.aria-label]="'catalog.formTitle' | translate">
-              <mat-chip>{{ product.category.name }}</mat-chip>
+              @if (product.publisher) {
+                <mat-chip>{{ product.publisher }}</mat-chip>
+              }
               @if (product.language) {
                 <mat-chip>{{ product.language }}</mat-chip>
+              }
+              @if (product.releaseDate) {
+                <mat-chip>{{ product.releaseDate }}</mat-chip>
               }
               @if (product.volumeNumber) {
                 <mat-chip>{{ 'catalog.volumeShort' | translate }} {{ product.volumeNumber }}</mat-chip>
@@ -94,7 +98,7 @@
 
             <dl>
               <div>
-                <dt>{{ 'common.collection' | translate }}</dt>
+                <dt>{{ 'catalog.editorialLine' | translate }}</dt>
                 <dd>{{ product.collectionName || ('common.notReported' | translate) }}</dd>
               </div>
               <div>
@@ -105,7 +109,7 @@
           </mat-card-content>
           <mat-card-actions>
             <a mat-button [routerLink]="['/catalog', product.id]">
-              {{ 'actions.viewDetail' | translate }}
+              {{ 'catalog.viewRecord' | translate }}
             </a>
           </mat-card-actions>
         </mat-card>

@@ -5,7 +5,7 @@
       <h1>{{ 'reservations.myTitle' | translate }}</h1>
       <p>{{ 'reservations.myDescription' | translate }}</p>
     </div>
-    <a mat-button routerLink="/recommendations">{{ 'actions.viewRecommendations' | translate }}</a>
+    <a mat-button routerLink="/wanted">{{ 'actions.viewRecommendations' | translate }}</a>
   </header>
 
   <mat-card class="filters-card">
@@ -50,7 +50,7 @@
         <span class="empty-icon" aria-hidden="true">Q</span>
         <h2>{{ 'reservations.emptyTitle' | translate }}</h2>
         <p>{{ 'reservations.emptyDescription' | translate }}</p>
-        <a mat-stroked-button routerLink="/recommendations">{{ 'reservations.searchProducts' | translate }}</a>
+        <a mat-stroked-button routerLink="/wanted">{{ 'reservations.searchProducts' | translate }}</a>
       </mat-card-content>
     </mat-card>
   }

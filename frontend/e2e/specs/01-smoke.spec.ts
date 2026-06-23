@@ -9,5 +9,8 @@ test('loads the frontend shell and public navigation', async ({ page, request })
   await page.goto('/');
   await expectAppLoaded(page);
   await waitForNoAngularError(page);
+  await expect(page).toHaveURL(/\/home$/);
+  await expect(page.getByTestId('home-page')).toBeVisible();
   await expect(page.getByTestId('login-link').or(page.getByTestId('session-label'))).toBeVisible();
+  await expect(page.getByRole('link', { name: /catalogo|catalog/i }).first()).toBeVisible();
 });

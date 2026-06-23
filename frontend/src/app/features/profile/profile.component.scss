@@ -1,0 +1,47 @@
+.profile-page {
+  display: grid;
+  gap: 20px;
+}
+
+.profile-card mat-card-header {
+  align-items: center;
+}
+
+.profile-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0 0 18px;
+}
+
+.profile-grid div {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--ch-border);
+  border-radius: var(--ch-radius-sm);
+  padding: 12px;
+}
+
+.profile-grid dt {
+  color: var(--ch-muted);
+  font-size: 0.76rem;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.profile-grid dd {
+  font-weight: 700;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.future-card mat-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 760px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}

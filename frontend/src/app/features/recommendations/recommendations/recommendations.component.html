@@ -24,14 +24,8 @@
       </mat-card>
       <mat-card class="summary-card">
         <mat-card-content>
-          <span>{{ 'recommendations.recommended' | translate }}</span>
+          <span>{{ 'recommendations.matches' | translate }}</span>
           <strong>{{ currentSummary.recommendedProducts }}</strong>
-        </mat-card-content>
-      </mat-card>
-      <mat-card class="summary-card">
-        <mat-card-content>
-          <span>{{ 'recommendations.shops' | translate }}</span>
-          <strong>{{ currentSummary.matchedShops }}</strong>
         </mat-card-content>
       </mat-card>
     </div>
@@ -83,11 +77,6 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'recommendations.shopId' | translate }}</mat-label>
-          <input matInput type="number" min="1" step="1" formControlName="shopId" />
-        </mat-form-field>
-
         <div class="filter-actions">
           <button mat-flat-button color="primary" type="submit" [disabled]="loading()">
             {{ loading() ? ('actions.searching' | translate) : ('actions.filter' | translate) }}
@@ -132,16 +121,14 @@
       @for (recommendation of recommendations(); track recommendation.shopProductId) {
         <mat-card class="recommendation-card" data-testid="recommendation-card">
           <mat-card-header>
-            <span class="visual-token" aria-hidden="true">{{ recommendation.productName.slice(0, 1).toUpperCase() }}</span>
             <mat-card-title>{{ recommendation.productName }}</mat-card-title>
-            <mat-card-subtitle>{{ recommendation.shopName }}</mat-card-subtitle>
+            <mat-card-subtitle>{{ recommendation.matchedCollectionName }}</mat-card-subtitle>
           </mat-card-header>
 
           <mat-card-content>
             <mat-chip-set [attr.aria-label]="'recommendations.dataAria' | translate">
               <mat-chip>{{ 'enums.collectionStatus.' + recommendation.matchedCollectionItemStatus | translate }}</mat-chip>
               <mat-chip>{{ 'enums.physicalCondition.' + recommendation.physicalCondition | translate }}</mat-chip>
-              <mat-chip>{{ 'inventory.stockCount' | translate: { count: recommendation.stockQuantity } }}</mat-chip>
             </mat-chip-set>
 
             <dl>
@@ -167,19 +154,11 @@
           </mat-card-content>
 
           <mat-card-actions>
-            <a mat-button [routerLink]="['/shop-products', recommendation.shopProductId]">
-              {{ 'actions.viewProduct' | translate }}
-            </a>
             <a mat-button [routerLink]="['/catalog', recommendation.masterProductId]">
-              {{ 'layout.nav.catalog' | translate }}
+              {{ 'catalog.viewRecord' | translate }}
             </a>
-            <a mat-button [routerLink]="['/shops', recommendation.shopId]">{{ 'common.shop' | translate }}</a>
-            <a
-              mat-flat-button
-              [routerLink]="['/shop-products', recommendation.shopProductId]"
-              data-testid="recommendation-reserve-link"
-            >
-              {{ 'recommendations.reserve' | translate }}
+            <a mat-button [routerLink]="['/shop-products', recommendation.shopProductId]">
+              {{ 'recommendations.viewAvailability' | translate }}
             </a>
           </mat-card-actions>
         </mat-card>

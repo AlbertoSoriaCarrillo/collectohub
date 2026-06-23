@@ -5,12 +5,12 @@ test.describe('frontend i18n', () => {
     await page.goto('/login');
 
     await page.getByRole('main').getByTestId('language-en').click();
-    await expect(page.getByText('Access your CollectoHub space')).toBeVisible();
+    await expect(page.getByText('Return to your books, comics and manga collections.').first()).toBeVisible();
 
     await page.reload();
-    await expect(page.getByText('Access your CollectoHub space')).toBeVisible();
+    await expect(page.getByText('Return to your books, comics and manga collections.').first()).toBeVisible();
 
     await page.getByRole('main').getByTestId('language-es').click();
-    await expect(page.getByText('Accede a tu espacio CollectoHub')).toBeVisible();
+    await expect(page.getByText(/Vuelve a tus colecciones de libros/i).first()).toBeVisible();
   });
 });

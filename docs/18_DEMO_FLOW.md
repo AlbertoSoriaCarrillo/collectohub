@@ -1,8 +1,9 @@
 # CollectoHub MVP demo flow
 
 Esta guia prepara una demo local del MVP usando la UI Angular contra el backend
-Spring Boot local. Los datos son ejemplos desechables para entorno local, no
-secretos reales.
+Spring Boot local. El recorrido principal actual presenta CollectoHub como red
+social/catalogo para gestionar colecciones de libros, comics y manga. Los datos
+son ejemplos desechables para entorno local, no secretos reales.
 
 ## 1. Arrancar el entorno
 
@@ -52,8 +53,9 @@ locales usando la API real:
 ```
 
 El script crea usuario tienda, tienda, productos maestros, inventario, usuario
-coleccionista, coleccion, items para recomendaciones y una reserva. Al terminar
-imprime los usuarios, password local y URLs utiles. Guia completa:
+coleccionista, coleccion, items para recomendaciones y una reserva. Esos datos
+legacy siguen ayudando a probar backend, pero las URLs principales impresas
+priorizan Home, Catalogo, Colecciones, Buscados y Perfil. Guia completa:
 `docs/25_DEMO_DATA.md`.
 
 ## 2. Datos sugeridos
@@ -65,136 +67,99 @@ Sufijo: 20260618-demo
 Email usuario: demo-20260618-demo@collectohub.local
 Password local: Password123!
 Nombre usuario: Demo Collector
-Tienda: Demo Akihabara Store
-Email tienda: shop-20260618-demo@collectohub.local
 Producto maestro: Demo Manga Volume 1
 Franquicia: Demo Franchise
 Coleccion: Demo Missing Manga
-Precio inventario: 12.95 EUR
-Stock: 3
-Condicion: NEW
-Estado comercial: AVAILABLE
 ```
 
-## 3. Registro y login
+## 3. Home publica
+
+1. Entrar en `/home` o en `/`.
+2. Revisar el posicionamiento: colecciones, catalogo, estados de item y buscados.
+3. Entrar en `Catalogo` desde la navegacion publica.
+
+Resultado esperado:
+
+- La primera pantalla no promociona tiendas, inventario ni reservas.
+- El catalogo es publico.
+
+## 4. Registro y login
 
 1. Entrar en `/register`.
-2. Registrar el usuario con el email y password de demo.
-3. Confirmar que se abre la sesion y aparece el dashboard.
+2. Registrar el usuario con email, password, confirmacion de password y nombre visible.
+3. Confirmar que se abre la sesion y aparece `Tu biblioteca`.
 4. Cerrar sesion y volver a entrar por `/login` para verificar login normal.
 
 Resultado esperado:
 
 - El usuario entra con rol global `USER`.
 - No se muestran tokens ni hashes en pantalla.
+- El formulario esta en ES/EN y valida confirmacion de password.
 
-## 4. Crear tienda
+## 5. Catalogo publico
 
-1. Ir a `Mis tiendas`.
-2. Entrar en `Nueva tienda`.
-3. Crear la tienda con nombre, email, pais `ES`, moneda `EUR` y reserva por defecto de 48 horas.
-4. Volver a `Mis tiendas` y abrir el detalle publico de la tienda.
-
-Resultado esperado:
-
-- La tienda queda asociada al usuario.
-- El usuario es miembro interno `OWNER`.
-- El backend asigna el rol global `SHOP_OWNER`.
-
-Nota: el JWT actual no cambia al crear la tienda. Cierra sesion y vuelve a entrar
-antes de crear productos maestros para que la UI vea `SHOP_OWNER`.
-
-## 5. Crear producto maestro
-
-1. Cerrar sesion y volver a iniciar sesion.
-2. Ir a `Catalogo`.
-3. Entrar en `Nuevo producto`.
-4. Crear un producto con categoria `MANGA_COMIC`, nombre, franquicia, coleccion, volumen, idioma `es`, ISBN/EAN unicos, paises de publicacion `ES` y atributos JSON opcionales como `{"format":"paperback"}`.
-5. Buscarlo desde el listado publico del catalogo.
+1. Ir a `Catalogo`.
+2. Buscar por nombre, franquicia o categoria si hay datos cargados.
+3. Abrir la ficha de una obra.
 
 Resultado esperado:
 
-- El producto aparece en `GET /api/master-products`.
-- Un usuario sin `SHOP_OWNER` o `ADMIN` no puede crear productos maestros.
+- El catalogo se lee como fichas de obras/libros/comics/manga.
+- El detalle no usa lenguaje de inventario ni reserva como CTA principal.
 
-## 6. Anadir inventario de tienda
+## 6. Crear coleccion
 
-1. Ir a `Mis tiendas`.
-2. Abrir la tienda creada.
-3. Entrar en `Gestionar inventario`.
-4. Anadir producto al inventario seleccionando el producto maestro de demo.
-5. Informar precio `12.95`, moneda `EUR`, stock `3`, estado `AVAILABLE`, condicion `NEW` y visible.
-6. Abrir el detalle publico del producto de tienda.
-
-Resultado esperado:
-
-- El producto aparece en el inventario interno.
-- El producto visible aparece en la tienda publica y en su detalle publico.
-
-## 7. Crear coleccion e item buscado
-
-1. Ir a `Mis colecciones`.
+1. Ir a `Colecciones`.
 2. Crear una coleccion privada de categoria `MANGA_COMIC`.
 3. Abrir la coleccion.
-4. Anadir un item usando el mismo producto maestro.
-5. Marcar el item como `MISSING`.
+4. Si hay productos maestros de demo, anadir un item y marcarlo como `OWNED`, `WANTED` o `MISSING`.
 
 Resultado esperado:
 
 - La coleccion aparece solo para el propietario si es privada.
-- El item `MISSING` queda listo para recomendaciones.
+- Los estados se entienden como `Lo tengo`, `Lo quiero`, `Me falta`.
 
-Para una segunda pasada se puede repetir con estado `WANTED`.
+## 7. Revisar buscados
 
-## 8. Ver recomendaciones
-
-1. Ir a `Recomendaciones`.
-2. Filtrar por categoria `MANGA_COMIC` y moneda `EUR` si se desea.
-3. Abrir el producto de tienda recomendado.
+1. Ir a `Buscados` (`/wanted`).
+2. Revisar resumen de `Me falta`, `Lo quiero` y coincidencias.
+3. Filtrar por categoria, precio, moneda o condicion si hay datos.
 
 Resultado esperado:
 
-- Aparece el producto visible y disponible de la tienda porque coincide con un item propio `MISSING` o `WANTED`.
+- La pantalla funciona como lista de intereses/faltantes del coleccionista.
+- No se pide introducir `shopId` en el recorrido principal.
 
-## 9. Crear reserva
+## 8. Revisar perfil
 
-1. Desde el detalle publico del producto de tienda, crear una reserva de cantidad `1`.
-2. Ir a `Mis reservas`.
-3. Abrir el detalle de la reserva.
-
-Resultado esperado:
-
-- La reserva queda en estado `PENDING`.
-- El detalle muestra producto, tienda, cantidad y fechas principales.
-
-## 10. Gestionar reserva como tienda
-
-1. Ir a `Mis tiendas`.
-2. Abrir la tienda.
-3. Entrar en `Gestionar reservas`.
-4. Aceptar la reserva.
-5. Completar la reserva.
+1. Ir a `Perfil`.
+2. Confirmar email, nombre visible, idioma preferido y roles.
+3. Verificar que editar perfil, cambiar password y cambiar avatar aparecen como acciones futuras deshabilitadas.
 
 Resultado esperado:
 
-- La reserva pasa por `PENDING -> ACCEPTED -> COMPLETED`.
+- El perfil muestra datos seguros y no expone tokens.
+- No hay upload de avatar ni gestion avanzada de cuenta en esta fase.
 
-## 11. Probar cancelacion valida
-
-Para probar cancelacion, crea una segunda reserva y usa una de estas rutas:
-
-- Cancelar como usuario desde `Mis reservas` mientras esta `PENDING`.
-- Aceptarla como tienda y cancelarla como usuario mientras esta `ACCEPTED`.
-
-Resultado esperado:
-
-- La reserva pasa a `CANCELLED`.
-- No se permite cancelar una reserva ya `COMPLETED`.
-
-## 12. Comprobaciones rapidas
+## 9. Comprobaciones rapidas
 
 - `GET /api/health` sigue siendo publico.
-- El catalogo y detalle de tienda son publicos.
+- `/`, `/dashboard` y rutas desconocidas redirigen a `/home`.
+- `/recommendations` redirige a `/wanted`.
 - Las rutas privadas redirigen o bloquean si no hay sesion.
 - La UI no muestra `passwordHash`, hashes de refresh token ni valores secretos.
-- Tras crear tienda, el usuario debe reloguear para ver `SHOP_OWNER`.
+- La navegacion principal no promociona tiendas, inventario ni reservas.
+
+## 10. Apéndice legacy/futuro
+
+El backend y varias pantallas legacy siguen existiendo para preservar el trabajo
+tecnico ya implementado:
+
+- `/shops`
+- `/shops/{shopId}`
+- `/shops/{shopId}/inventory`
+- `/shop-products/{shopProductId}`
+- `/reservations`
+- `/shops/{shopId}/reservations`
+
+Estas rutas no forman parte de la demo principal del nuevo enfoque de producto.

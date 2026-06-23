@@ -1,5 +1,11 @@
 import { Component, effect, inject, signal } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators
+} from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,6 +19,33 @@ import { LanguageSelectorComponent } from '../../../core/i18n/language-selector.
 import { LanguageService } from '../../../core/i18n/language.service';
 import type { SupportedLanguage } from '../../../core/i18n/language.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+
+function passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {
+  const password = control.get('password')?.value;
+  const confirmPasswordControl = control.get('confirmPassword');
+  const confirmPassword = confirmPasswordControl?.value;
+
+  if (!confirmPasswordControl) {
+    return null;
+  }
+
+  const currentErrors = confirmPasswordControl.errors ?? {};
+
+  if (password && confirmPassword && password !== confirmPassword) {
+    confirmPasswordControl.setErrors({ ...currentErrors, passwordMismatch: true });
+    return { passwordMismatch: true };
+  }
+
+  if (currentErrors['passwordMismatch']) {
+    const remainingErrors = { ...currentErrors };
+    delete remainingErrors['passwordMismatch'];
+    confirmPasswordControl.setErrors(
+      Object.keys(remainingErrors).length > 0 ? remainingErrors : null
+    );
+  }
+
+  return null;
+}
 
 @Component({
   selector: 'app-register',
@@ -39,15 +72,19 @@ export class RegisterComponent {
 
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
-  readonly form = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(8)]],
-    displayName: ['', [Validators.required, Validators.maxLength(120)]],
-    preferredInterfaceLanguage: this.fb.control<SupportedLanguage>(
-      this.languageService.currentLanguage(),
-      [Validators.required]
-    )
-  });
+  readonly form = this.fb.group(
+    {
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
+      confirmPassword: ['', [Validators.required]],
+      displayName: ['', [Validators.required, Validators.maxLength(120)]],
+      preferredInterfaceLanguage: this.fb.control<SupportedLanguage>(
+        this.languageService.currentLanguage(),
+        [Validators.required]
+      )
+    },
+    { validators: passwordsMatchValidator }
+  );
 
   constructor() {
     effect(() => {
@@ -72,16 +109,23 @@ export class RegisterComponent {
 
     this.loading.set(true);
     this.errorMessage.set(null);
+    const value = this.form.getRawValue();
     this.authService
-      .register(this.form.getRawValue())
+      .register({
+        email: value.email,
+        password: value.password,
+        displayName: value.displayName,
+        preferredInterfaceLanguage: value.preferredInterfaceLanguage
+      })
       .pipe(
         finalize(() => {
           this.loading.set(false);
           this.form.controls.password.reset('');
+          this.form.controls.confirmPassword.reset('');
         })
       )
       .subscribe({
-        next: () => void this.router.navigateByUrl('/dashboard'),
+        next: () => void this.router.navigateByUrl('/collections'),
         error: (error) => this.errorMessage.set(this.errorMessageService.toMessage(error))
       });
   }

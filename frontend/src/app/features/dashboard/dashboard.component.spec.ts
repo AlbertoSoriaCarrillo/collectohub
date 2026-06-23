@@ -46,7 +46,7 @@ describe('DashboardComponent', () => {
     expect(compiled.textContent).toMatch(/Propietario de tienda|Shop owner/);
   });
 
-  it('links recommendations from dashboard sections', async () => {
+  it('links wanted items from dashboard sections', async () => {
     const fixture = TestBed.createComponent(DashboardComponent);
     fixture.detectChanges();
     await fixture.whenStable();
@@ -54,21 +54,21 @@ describe('DashboardComponent', () => {
 
     const recommendationLink = Array.from(
       (fixture.nativeElement as HTMLElement).querySelectorAll('a')
-    ).find((link) => link.getAttribute('href') === '/recommendations');
+    ).find((link) => link.getAttribute('href') === '/wanted');
 
     expect(recommendationLink).toBeTruthy();
   });
 
-  it('links reservations from dashboard sections', async () => {
+  it('links profile from dashboard sections', async () => {
     const fixture = TestBed.createComponent(DashboardComponent);
     fixture.detectChanges();
     await fixture.whenStable();
     fixture.detectChanges();
 
-    const reservationLink = Array.from(
+    const profileLink = Array.from(
       (fixture.nativeElement as HTMLElement).querySelectorAll('a')
-    ).find((link) => link.getAttribute('href') === '/reservations');
+    ).find((link) => link.getAttribute('href') === '/profile');
 
-    expect(reservationLink).toBeTruthy();
+    expect(profileLink).toBeTruthy();
   });
 });

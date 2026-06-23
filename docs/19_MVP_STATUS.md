@@ -1,8 +1,26 @@
 # CollectoHub MVP status
 
-Fecha de revision: 2026-06-18.
+Fecha de revision: 2026-06-23.
 
 ## Estado general
+
+## Reenfoque 2026-06-23
+
+El MVP tecnico de backend y frontend esta implementado. El foco visible de
+producto pasa a ser una red social/catalogo para gestionar colecciones de
+libros, comics y manga.
+
+Recorrido principal actual:
+
+1. Home publica.
+2. Registro y login con JWT.
+3. Catalogo maestro publico.
+4. Colecciones personales e items.
+5. Buscados por items `MISSING` o `WANTED`.
+6. Perfil basico.
+
+Tiendas, inventario y reservas permanecen implementados y operativos como base
+tecnica/futura, pero quedan fuera de la navegacion principal del frontend.
 
 El MVP funcional de backend y frontend esta implementado para el flujo base:
 
@@ -40,16 +58,17 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 
 - Angular 21 con Angular Material.
 - Login, registro, guard de rutas e interceptor JWT.
-- Dashboard autenticado.
-- Modulos UI para tiendas, catalogo, inventario, colecciones, recomendaciones y reservas.
+- Home publica y perfil basico.
+- Modulos UI principales para catalogo, colecciones y buscados.
+- Rutas legacy/futuras para tiendas, inventario y reservas conservadas por URL manual.
 - Persistencia MVP de sesion en `localStorage`.
 - Mensajes de error normalizados para errores HTTP comunes.
 - Tests de servicios, guards, rutas y pantallas principales.
 - Build de produccion con `npm run build`.
 - Dockerfile multi-stage con build Node.js y nginx para servir estaticos.
-- Tests E2E Playwright en `frontend/e2e` para smoke, auth/dashboard y flujo MVP principal.
-- Sistema visual dark-soft con variables SCSS, sidebar desktop, bottom nav movil, panel contextual derecho, estados vacios y tarjetas consistentes.
-- Login, registro, dashboard y pantallas principales de negocio redisenadas sin cambiar endpoints ni flujos MVP.
+- Tests E2E Playwright en `frontend/e2e` para smoke, auth, i18n y flujo MVP principal.
+- Sistema visual dark-soft con variables SCSS, sidebar desktop, bottom nav movil, estados vacios y tarjetas consistentes.
+- Login, registro, home y pantallas principales de coleccionista redisenadas sin cambiar endpoints backend.
 - Internacionalizacion ligera ES/EN con selector, persistencia local, fallback, interpolacion y enums visibles traducidos.
 
 ## No implementado en MVP
@@ -68,11 +87,13 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 - Roles globales avanzados y panel global de administracion.
 - PWA completa/offline avanzado.
 - Internacionalizacion avanzada, pluralizacion compleja o traducciones servidas desde backend.
+- Edicion real de perfil, cambio de password, avatar/upload.
 
 ## Limitaciones conocidas
 
 - Tras crear la primera tienda, el backend actualiza roles en base de datos, pero el JWT existente no cambia. El usuario debe volver a iniciar sesion para que la UI vea `SHOP_OWNER`.
 - Las reservas no reducen stock automaticamente y no caducan por job automatico.
+- Tiendas, inventario y reservas estan implementadas, pero en el frontend actual son rutas legacy/futuras fuera de la navegacion principal.
 - La sesion frontend usa `localStorage`, aceptado solo como simplificacion MVP.
 - Algunos filtros frontend MVP son numericos/manuales, como `shopId`, `userId` o `shopProductId`.
 - No hay subida real de imagenes; los productos y colecciones se gestionan sin archivos.
@@ -93,7 +114,9 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 - `SHOP_OWNER` global es acumulable con `USER`.
 - El rol interno `OWNER` de `shop_members` controla permisos dentro de una tienda concreta.
 - El rol global `SHOP_OWNER` permite capacidades de gestion de tiendas/plataforma.
-- Recomendaciones MVP se calculan contra items propios `MISSING` o `WANTED` y productos visibles/disponibles de tienda.
+- La ruta publica principal es `/home`; `/dashboard` redirige a `/home`.
+- La ruta visible de buscados es `/wanted`; `/recommendations` redirige a `/wanted`.
+- Recomendaciones/buscados MVP se calculan contra items propios `MISSING` o `WANTED` y productos visibles/disponibles de tienda cuando existen datos legacy.
 - Reservas MVP no incluyen pago ni bloqueo transaccional de stock.
 
 ## Como ejecutar backend
@@ -178,10 +201,9 @@ presentacion para demo/portfolio:
 
 - Sidebar desktop con navegacion principal, sesion y CTA.
 - Bottom navigation movil para rutas principales autenticadas.
-- Panel derecho contextual en escritorio con estado MVP y accesos rapidos.
 - Login y registro con panel introductorio y formularios Material.
-- Dashboard con hero, perfil, roles y tarjetas de accion.
-- Listados y formularios de tiendas, catalogo, inventario, colecciones, recomendaciones y reservas con tarjetas, tokens visuales y estados vacios.
+- Home, catalogo, colecciones, buscados y perfil como recorrido principal.
+- Listados y formularios de catalogo, colecciones y buscados con tarjetas y estados vacios.
 - `data-testid` conservados para Playwright.
 
 Guia completa: `docs/23_UI_UX_REDESIGN.md`.
@@ -225,7 +247,7 @@ La revision de este archivo no encontro necesidad de cambios en esta fase.
 - Smoke test por API del flujo MVP completo correcto: registro, login, tienda, relogin con `SHOP_OWNER`, producto maestro, inventario, coleccion, recomendacion, reserva completada y reserva cancelada.
 - Script de datos demo preparado en `scripts/demo/create-demo-data.ps1`, usando solo endpoints MVP existentes y guardando resumen local ignorado por Git.
 - Docker Compose: validado localmente con PostgreSQL, backend y frontend.
-- Playwright headless: `npm run e2e` correcto con smoke, auth/dashboard y flujo MVP principal.
+- Playwright headless: `npm run e2e` correcto con smoke, auth/colecciones, i18n y flujo MVP principal.
 - Playwright headed: `npm run e2e:headed` correcto.
 
 ## Siguientes pasos recomendados

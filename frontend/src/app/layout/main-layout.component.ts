@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../core/auth/auth.service';
 import { LanguageSelectorComponent } from '../core/i18n/language-selector.component';
@@ -20,7 +19,6 @@ interface NavItem {
     RouterLink,
     RouterLinkActive,
     MatButtonModule,
-    MatCardModule,
     MatIconModule,
     LanguageSelectorComponent,
     TranslatePipe
@@ -31,20 +29,19 @@ interface NavItem {
 export class MainLayoutComponent {
   readonly authService = inject(AuthService);
   readonly publicNavItems: NavItem[] = [
+    { labelKey: 'layout.nav.home', route: '/home', icon: 'home' },
     { labelKey: 'layout.nav.catalog', route: '/catalog', icon: 'travel_explore' }
   ];
   readonly privateNavItems: NavItem[] = [
-    { labelKey: 'layout.nav.dashboard', route: '/dashboard', icon: 'space_dashboard' },
-    { labelKey: 'layout.nav.shops', route: '/shops', icon: 'storefront' },
     { labelKey: 'layout.nav.collections', route: '/collections', icon: 'collections_bookmark' },
-    { labelKey: 'layout.nav.recommendations', route: '/recommendations', icon: 'auto_awesome' },
-    { labelKey: 'layout.nav.reservations', route: '/reservations', icon: 'event_available' }
+    { labelKey: 'layout.nav.wanted', route: '/wanted', icon: 'bookmark_search' }
   ];
   readonly mobileNavItems: NavItem[] = [
-    { labelKey: 'layout.nav.home', route: '/dashboard', icon: 'home' },
+    { labelKey: 'layout.nav.home', route: '/home', icon: 'home' },
     { labelKey: 'layout.nav.catalog', route: '/catalog', icon: 'travel_explore' },
-    { labelKey: 'layout.nav.shopsShort', route: '/shops', icon: 'storefront' },
-    { labelKey: 'layout.nav.reservationsShort', route: '/reservations', icon: 'event_available' }
+    { labelKey: 'layout.nav.collectionsShort', route: '/collections', icon: 'collections_bookmark' },
+    { labelKey: 'layout.nav.wanted', route: '/wanted', icon: 'bookmark_search' },
+    { labelKey: 'layout.nav.profile', route: '/profile', icon: 'person' }
   ];
 
   userInitials(): string {

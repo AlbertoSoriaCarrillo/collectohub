@@ -65,7 +65,6 @@
       @for (collection of collections(); track collection.id) {
         <mat-card class="collection-card">
           <mat-card-header>
-            <span class="visual-token" aria-hidden="true">{{ collection.name.slice(0, 1).toUpperCase() }}</span>
             <mat-card-title>{{ collection.name }}</mat-card-title>
             <mat-card-subtitle>{{ collection.categoryName || ('common.noCategory' | translate) }}</mat-card-subtitle>
           </mat-card-header>

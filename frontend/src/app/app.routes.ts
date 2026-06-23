@@ -10,7 +10,12 @@ export const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'dashboard'
+        redirectTo: 'home'
+      },
+      {
+        path: 'home',
+        loadComponent: () =>
+          import('./features/home/home.component').then((m) => m.HomeComponent)
       },
       {
         path: 'login',
@@ -24,9 +29,8 @@ export const routes: Routes = [
       },
       {
         path: 'dashboard',
-        canActivate: [authGuard],
-        loadComponent: () =>
-          import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent)
+        pathMatch: 'full',
+        redirectTo: 'home'
       },
       {
         path: 'shops',
@@ -136,12 +140,23 @@ export const routes: Routes = [
           )
       },
       {
-        path: 'recommendations',
+        path: 'wanted',
         canActivate: [authGuard],
         loadComponent: () =>
           import('./features/recommendations/recommendations/recommendations.component').then(
             (m) => m.RecommendationsComponent
           )
+      },
+      {
+        path: 'recommendations',
+        pathMatch: 'full',
+        redirectTo: 'wanted'
+      },
+      {
+        path: 'profile',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/profile/profile.component').then((m) => m.ProfileComponent)
       },
       {
         path: 'reservations',
@@ -183,7 +198,7 @@ export const routes: Routes = [
       },
       {
         path: '**',
-        redirectTo: 'dashboard'
+        redirectTo: 'home'
       }
     ]
   }

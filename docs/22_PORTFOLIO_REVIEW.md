@@ -5,19 +5,20 @@ LinkedIn o una entrevista tecnica.
 
 ## 1. Resumen Del Producto
 
-CollectoHub es un MVP para coleccionistas y tiendas especializadas. Permite que
-un usuario registre sus colecciones, que una tienda publique inventario y que la
-plataforma recomiende productos disponibles cuando coinciden con items buscados.
+CollectoHub es un MVP para coleccionistas de libros, comics y manga. Permite que
+un usuario explore un catalogo, registre sus colecciones personales, marque lo
+que tiene o busca y revise sus elementos pendientes desde una vista de buscados.
 
-El MVP cubre un flujo completo: registro, login, tienda, catalogo, inventario,
-coleccion, recomendacion y reserva sin pago.
+El backend conserva modulos de tiendas, inventario y reservas como base tecnica
+para fases futuras, pero el recorrido principal de portfolio queda centrado en
+catalogo, colecciones, buscados y perfil.
 
 ## 2. Problema Que Resuelve
 
-Los coleccionistas suelen tener listas dispersas de productos que poseen o
-buscan. Las tiendas, por su parte, tienen stock que no siempre conecta con esa
-demanda. CollectoHub valida una idea simple: cruzar colecciones personales con
-inventario visible de tiendas para facilitar reservas.
+Los coleccionistas suelen tener listas dispersas de libros, comics y manga que
+poseen, desean o les faltan. CollectoHub valida una idea simple: centralizar el
+catalogo y la biblioteca personal para convertir esas listas en una experiencia
+clara, consultable y preparada para futuras capas sociales.
 
 ## 3. Alcance Del MVP
 
@@ -25,12 +26,16 @@ Incluido:
 
 - Autenticacion email/password con JWT.
 - Usuarios con roles acumulables.
-- Tiendas con miembros internos.
-- Catalogo maestro de productos.
-- Inventario de tienda.
+- Home publica de producto.
+- Perfil basico autenticado.
+- Catalogo maestro de obras.
 - Colecciones personales.
-- Recomendaciones basicas.
-- Reservas sin pago.
+- Buscados por items `MISSING` o `WANTED`.
+- Backend de tiendas, inventario y reservas conservado como base futura.
+- Rutas legacy/futuras de tiendas con miembros internos.
+- Rutas legacy/futuras de inventario de tienda.
+- Calculo backend de recomendaciones simple.
+- Reservas sin pago conservadas como modulo futuro.
 - Frontend Angular.
 - Rediseño UI/UX responsive con estilo social propio.
 - Internacionalizacion frontend ligera ES/EN.
@@ -43,6 +48,7 @@ Fuera de alcance:
 - Pagos.
 - Chat.
 - Feed social.
+- Tiendas, inventario y reservas como recorrido principal visible.
 - Marketplace avanzado.
 - OAuth y 2FA.
 - Uploads reales de imagenes.
@@ -82,17 +88,18 @@ servicios de aplicacion y Spring Security protege endpoints por JWT/authority.
 
 ## 6. Arquitectura Frontend
 
-El frontend usa Angular 21, Angular Material y rutas standalone. Tiene modulos de
-UI para:
+El frontend usa Angular 21, Angular Material y rutas standalone. El recorrido
+principal tiene modulos de UI para:
 
 - Auth.
-- Dashboard.
-- Tiendas.
+- Home.
 - Catalogo.
-- Inventario.
 - Colecciones.
-- Recomendaciones.
-- Reservas.
+- Buscados.
+- Perfil.
+
+Tambien conserva rutas legacy/futuras de tiendas, inventario y reservas por URL
+manual para no romper el backend ni los flujos ya implementados.
 
 La sesion MVP se guarda en `localStorage`. Un interceptor HTTP anade el Bearer
 token y los guards bloquean rutas protegidas.
@@ -102,7 +109,6 @@ La capa visual usa SCSS y Angular Material con un layout social propio:
 - Sidebar desktop.
 - Bottom navigation movil.
 - Contenido central orientado a cards.
-- Panel contextual derecho.
 - Estados vacios, tokens visuales, chips y formularios consistentes.
 
 No implementa feed social real, chat ni marketplace avanzado; es un rediseño de
@@ -167,8 +173,8 @@ E2E:
 
 - Playwright en `frontend/e2e`.
 - Smoke de frontend y health backend.
-- Registro/login/dashboard.
-- Flujo MVP principal completo.
+- Registro/login/colecciones/perfil.
+- Flujo MVP principal centrado en biblioteca.
 
 ## 10. Docker Y Despliegue Local
 
@@ -228,11 +234,11 @@ datos, backend y frontend, lo que puede hacer el pipeline mas lento y fragil.
 
 Una explicacion breve:
 
-> CollectoHub es un MVP full-stack para coleccionistas y tiendas. Construye un
-> flujo completo desde registro hasta reserva, con backend Spring Boot, frontend
-> Angular, PostgreSQL/Liquibase, seguridad JWT, Docker Compose y tests E2E. Lo
-> enfoque como monolito modular para mantener el dominio claro y evitar
-> complejidad prematura.
+> CollectoHub es un MVP full-stack para coleccionistas de libros, comics y
+> manga. Construye un flujo completo desde registro hasta gestion de biblioteca
+> personal, con backend Spring Boot, frontend Angular, PostgreSQL/Liquibase,
+> seguridad JWT, Docker Compose y tests E2E. Lo enfoque como monolito modular
+> para mantener el dominio claro y evitar complejidad prematura.
 
 Puntos a destacar:
 

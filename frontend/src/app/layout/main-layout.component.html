@@ -1,6 +1,6 @@
 <div class="social-shell" data-testid="app-toolbar">
   <aside class="app-sidebar" [attr.aria-label]="'layout.mainNavigation' | translate">
-    <a class="brand" routerLink="/dashboard">
+    <a class="brand" routerLink="/home">
       <span class="brand-mark">CH</span>
       <span class="brand-copy">
         <strong data-testid="app-brand">{{ 'common.appName' | translate }}</strong>
@@ -27,12 +27,7 @@
     </nav>
 
     <div class="sidebar-cta">
-      @if (authService.isAuthenticated()) {
-        <a mat-flat-button routerLink="/shops/new">
-          <mat-icon aria-hidden="true">add_business</mat-icon>
-          <span>{{ 'layout.newShop' | translate }}</span>
-        </a>
-      } @else {
+      @if (!authService.isAuthenticated()) {
         <a mat-button routerLink="/login" routerLinkActive="active-link" data-testid="login-link">
           {{ 'actions.login' | translate }}
         </a>
@@ -52,9 +47,12 @@
     @if (authService.isAuthenticated()) {
       <div class="session-card" [attr.aria-label]="'layout.sessionActive' | translate">
         <span class="avatar-token">{{ userInitials() }}</span>
-        <span class="session-label" data-testid="session-label">
-          {{ authService.currentUser()?.displayName || ('layout.sessionActive' | translate) }}
-        </span>
+        <a class="session-label" routerLink="/profile" data-testid="session-label">
+          {{ authService.currentUser()?.displayName || ('layout.nav.profile' | translate) }}
+        </a>
+        <a mat-stroked-button routerLink="/profile">
+          {{ 'layout.nav.profile' | translate }}
+        </a>
         <button mat-stroked-button type="button" (click)="logout()" data-testid="logout-button">
           {{ 'actions.logout' | translate }}
         </button>
@@ -65,30 +63,6 @@
   <main class="app-content">
     <router-outlet />
   </main>
-
-  <aside class="right-panel" [attr.aria-label]="'layout.summaryAria' | translate">
-    <mat-card class="pulse-card">
-      <mat-card-content>
-        <span class="card-kicker">{{ 'layout.mvpStatus' | translate }}</span>
-        <h2>{{ 'layout.platformReady' | translate }}</h2>
-        <p>{{ 'layout.platformReadyDescription' | translate }}</p>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="quick-card">
-      <mat-card-content>
-        <span class="card-kicker">{{ 'layout.quickLinks' | translate }}</span>
-        <a routerLink="/catalog">{{ 'layout.exploreCatalog' | translate }}</a>
-        @if (authService.isAuthenticated()) {
-          <a routerLink="/collections">{{ 'actions.viewCollections' | translate }}</a>
-          <a routerLink="/recommendations">{{ 'layout.matches' | translate }}</a>
-        } @else {
-          <a routerLink="/register">{{ 'layout.createAccount' | translate }}</a>
-          <a routerLink="/login">{{ 'actions.enter' | translate }}</a>
-        }
-      </mat-card-content>
-    </mat-card>
-  </aside>
 
   @if (authService.isAuthenticated()) {
     <nav class="bottom-nav" [attr.aria-label]="'layout.mobileNavigation' | translate">

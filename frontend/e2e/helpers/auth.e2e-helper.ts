@@ -7,10 +7,11 @@ export async function registerUser(page: Page, user: E2eUserData): Promise<void>
   await expectAppLoaded(page);
   await page.getByTestId('register-email').fill(user.email);
   await page.getByTestId('register-password').fill(user.password);
+  await page.getByTestId('register-confirm-password').fill(user.password);
   await page.getByTestId('register-display-name').fill(user.displayName);
   await page.getByTestId('register-submit').click();
-  await expect(page).toHaveURL(/\/dashboard$/);
-  await expect(page.getByTestId('dashboard')).toBeVisible();
+  await expect(page).toHaveURL(/\/collections$/);
+  await expect(page.getByRole('heading', { name: /biblioteca|library/i })).toBeVisible();
   await expect(page.getByTestId('session-label')).toContainText(user.displayName);
 }
 
@@ -20,8 +21,8 @@ export async function loginUser(page: Page, user: E2eUserData): Promise<void> {
   await page.getByTestId('login-email').fill(user.email);
   await page.getByTestId('login-password').fill(user.password);
   await page.getByTestId('login-submit').click();
-  await expect(page).toHaveURL(/\/dashboard$/);
-  await expect(page.getByTestId('dashboard')).toBeVisible();
+  await expect(page).toHaveURL(/\/collections$/);
+  await expect(page.getByRole('heading', { name: /biblioteca|library/i })).toBeVisible();
   await expect(page.getByTestId('session-label')).toContainText(user.displayName);
 }
 

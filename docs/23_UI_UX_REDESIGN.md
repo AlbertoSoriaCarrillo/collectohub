@@ -1,20 +1,20 @@
 # CollectoHub UI/UX redesign
 
-Fecha: 2026-06-18.
+Fecha: 2026-06-23.
 
 ## Objetivo
 
 Mejorar la presentacion del frontend MVP para que CollectoHub se perciba como
-un producto social/marketplace moderno, sin ampliar el alcance funcional ni
-copiar marcas existentes.
+una red social/catalogo para coleccionistas de libros, comics y manga, sin
+ampliar backend ni copiar marcas existentes.
 
 ## Alcance
 
 Incluido:
 
-- Rediseño visual de layout, auth, dashboard y pantallas principales del MVP.
+- Rediseño visual de layout, auth, home y pantallas principales del MVP de coleccionista.
 - Sistema dark-soft basado en variables SCSS.
-- Sidebar desktop, bottom navigation movil, contenido central y panel derecho.
+- Sidebar desktop, bottom navigation movil y contenido central.
 - Tarjetas, chips, tokens visuales, estados vacios y formularios consistentes.
 - Mantenimiento de rutas, endpoints, modelos y `data-testid`.
 - Compatibilidad con i18n frontend ES/EN posterior al rediseño.
@@ -44,15 +44,16 @@ Fuera de alcance:
 
 ## Componentes redisenados
 
-- `MainLayoutComponent`: shell social con sidebar, right panel y bottom nav.
+- `MainLayoutComponent`: shell social con sidebar, sesion, selector de idioma y bottom nav.
+- `HomeComponent`: primera pantalla publica del producto.
 - Login y registro: panel introductorio + tarjeta de formulario.
-- Dashboard: hero autenticado, perfil, roles y accesos MVP.
+- Perfil: datos basicos y acciones futuras deshabilitadas.
 - Tiendas: listado, creacion y detalle publico.
 - Catalogo: filtros, cards, detalle y creacion.
 - Inventario: listado, creacion y detalle publico.
 - Colecciones: listado, creacion, detalle e items.
-- Recomendaciones: resumen, filtros, cards y estados vacios.
-- Reservas: listado propio, gestion de tienda y detalle.
+- Buscados: resumen, filtros, cards y estados vacios.
+- Tiendas, inventario y reservas: conservadas como rutas legacy/futuras.
 
 ## Compatibilidad E2E
 
@@ -63,8 +64,8 @@ Se mantienen los `data-testid` existentes para Playwright:
 - Auth: `login-form`, `login-email`, `login-password`, `login-submit`,
   `register-form`, `register-email`, `register-password`,
   `register-display-name`, `register-submit`.
-- Flujos MVP: ids de tiendas, catalogo, inventario, colecciones,
-  recomendaciones y reservas ya usados por `frontend/e2e`.
+- Flujos MVP: ids de home, perfil, catalogo, colecciones y buscados usados por
+  `frontend/e2e`, manteniendo ids legacy donde ya existian.
 - Los campos traducibles nuevos o migrados usan `data-testid` para evitar que
   Playwright dependa de labels visibles en ES/EN.
 
@@ -100,10 +101,10 @@ Guia completa: `docs/25_DEMO_DATA.md`.
 
 Guardar capturas reales en `docs/assets/screenshots/`:
 
-- Dashboard desktop.
+- Home desktop.
 - Catalogo desktop.
-- Detalle de tienda con inventario publico.
-- Recomendaciones.
-- Reservas.
+- Colecciones.
+- Buscados.
+- Perfil.
 - Login o registro.
 - Vista movil con bottom navigation.
