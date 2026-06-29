@@ -1,8 +1,13 @@
 # CollectoHub Frontend
 
-SPA Angular del MVP de CollectoHub. Consume el backend real en
-`http://localhost:8080` y presenta el producto como una red social/catalogo para
-gestionar colecciones de libros, comics y manga.
+SPA Angular del MVP 1 de CollectoHub. Consume el backend real en
+`http://localhost:8080` y presenta el foco actual: gestionar colecciones de
+libros, comics y manga usando un catalogo comun.
+
+La vision completa de CollectoHub conecta progresivamente coleccionistas,
+catalogo, tiendas y creadores de contenido. Social completo, matching comercial,
+marketplace y monetizacion pertenecen a fases posteriores; no son capacidades
+listas en este frontend.
 
 La navegacion principal se centra en Home, Catalogo, Colecciones, Buscados y
 Perfil. El acceso de registro no se muestra como CTA global: se llega a
@@ -243,3 +248,10 @@ Flujo recomendado desde UI:
 ```text
 ../docs/18_DEMO_FLOW.md
 ```
+
+## Vision Y Alcance
+
+- Vision completa: `../docs/00_PRODUCT_VISION.md`.
+- Roadmap por fases: `../docs/01_ROADMAP.md`.
+- Limites del MVP 1: `../docs/02_MVP1_SCOPE.md`.
+- Dominios y estado real: `../docs/03_PRODUCT_DOMAINS.md`.

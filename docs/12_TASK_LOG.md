@@ -612,3 +612,42 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Validado `GET http://localhost:8080/api/health`: primer intento durante calentamiento con conexion cerrada; segundo intento correcto con `UP`.
 - Intentado ejecutar `cd frontend && npm.cmd run e2e`: no se ejecuta porque la solicitud de permisos elevados para Playwright fue rechazada por limite de uso del entorno. La suite queda actualizada y preparada para ejecutarse cuando haya permisos disponibles.
 - No se modifica backend, base de datos, endpoints, modelos, pagos, chat, marketplace, OAuth, 2FA, uploads ni app movil.
+
+## 2026-06-29 - EPIC 27 - Vision completa, dominios y roadmap
+
+- Revisados prompt, README raiz, README frontend, task log, decisiones,
+  endpoints MVP, demo, estado MVP, portfolio, UI/UX, i18n, datos demo y
+  reenfoque de producto.
+- Revisados los modulos backend `auth`, `users`, `catalog`, `collections`,
+  `recommendations`, `shops`, `inventory` y `reservations`, junto con los
+  controladores y contratos existentes.
+- Revisadas las rutas frontend actuales para separar recorrido principal y
+  rutas legacy/futuras.
+- Creado `docs/00_PRODUCT_VISION.md` con la vision completa y los pilares de
+  coleccionistas, catalogo, tiendas y comunidad/creadores.
+- Creado `docs/01_ROADMAP.md` con seis fases desde nucleo coleccionista hasta
+  creadores y comunidades.
+- Creado `docs/02_MVP1_SCOPE.md` con limites explicitos de MVP 1.
+- Creado `docs/03_PRODUCT_DOMAINS.md` con dominios y estado implementado,
+  parcial o futuro.
+- Creado `docs/04_CATALOG_CONCEPT_MODEL.md` con la cadena franquicia,
+  coleccion de catalogo, item de catalogo, coleccion personal e item personal.
+- Creado `docs/05_USER_SHOP_MATCHING.md` con el estado actual y la evolucion
+  futura de matching oferta/demanda.
+- Creado `docs/06_SOCIAL_AND_CREATORS.md` con la separacion entre social basico
+  y herramientas posteriores para creadores.
+- Actualizados README, estado MVP, portfolio y documento de reenfoque para
+  distinguir foco actual y vision larga.
+- Marcado `docs/10_ROADMAP.md` como roadmap tecnico historico y
+  `docs/01_ROADMAP.md` como fuente vigente del roadmap estrategico de producto.
+- Actualizada la decision estrategica de desarrollar la vision amplia por fases
+  sin convertir MVP 1 en un marketplace.
+- No se modifica codigo funcional, backend, frontend, rutas, base de datos,
+  migraciones, endpoints, tests ni dependencias.
+- Ejecutado `git status`: solo aparecen README y documentos de EPIC 27.
+- Ejecutado `git diff --check`: correcto; solo avisos locales LF/CRLF de Git en
+  Windows, sin errores de whitespace.
+- Validada la presencia de la documentacion minima exigida por CI y de los siete
+  documentos estrategicos nuevos.
+- No se ejecutan suites backend/frontend al ser una EPIC exclusivamente
+  documental sin cambios de codigo, configuracion ni contratos.

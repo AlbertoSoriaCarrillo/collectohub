@@ -1,5 +1,13 @@
 # Roadmap
 
+Estado: roadmap tecnico original del repositorio. Describe el orden en que se
+construyo la base full-stack y se conserva como referencia historica.
+
+El roadmap estrategico de producto vigente es `docs/01_ROADMAP.md`. El alcance
+actual se define en `docs/02_MVP1_SCOPE.md`. Que tiendas, inventario o reservas
+aparezcan aqui como backend/frontend implementado no significa que formen parte
+del recorrido principal de MVP 1 ni que exista un marketplace operativo.
+
 ## Fase 0 - Preparación
 
 - Crear repositorio.

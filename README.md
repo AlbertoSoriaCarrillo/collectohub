@@ -1,13 +1,26 @@
 # CollectoHub
 
-CollectoHub es un MVP de red social/catalogo para gestionar colecciones de
-libros, comics y manga.
+CollectoHub es una plataforma en evolucion para coleccionistas, tiendas y
+creadores de contenido, apoyada en un catalogo comun de objetos coleccionables.
 
-El foco actual de producto esta en ayudar a una persona coleccionista a explorar
-un catalogo, crear colecciones personales, marcar lo que tiene o busca y revisar
-su perfil. El backend conserva los modulos de tiendas, inventario y reservas ya
-implementados, pero el frontend principal los deja como rutas legacy/futuras para
-mantener el MVP centrado y coherente.
+## Foco Actual
+
+**MVP 1: gestion de colecciones personales usando un catalogo comun.**
+
+El recorrido visible ayuda a una persona coleccionista a explorar libros,
+comics y manga, crear colecciones, marcar lo que tiene o busca y revisar sus
+faltantes. Tiendas, inventario y reservas se conservan como base tecnica y rutas
+legacy/futuras, fuera del flujo principal.
+
+## Vision A Largo Plazo
+
+**Plataforma para coleccionistas, tiendas y creadores de contenido, con catalogo
+comun, matching oferta/demanda y funciones sociales.**
+
+La vision larga incluye una biblioteca/wiki de objetos coleccionables, social,
+matching con stock de tiendas, comercio y herramientas para creadores. Estas
+capacidades se desarrollan por fases y no deben interpretarse como un
+marketplace, pagos o tiendas ya listos para usuario final.
 
 ## Estado Del Proyecto
 
@@ -201,6 +214,13 @@ Capturas recomendadas:
 
 ## Documentacion Principal
 
+- Vision completa: `docs/00_PRODUCT_VISION.md`.
+- Roadmap por fases: `docs/01_ROADMAP.md`.
+- Alcance MVP 1: `docs/02_MVP1_SCOPE.md`.
+- Dominios de producto: `docs/03_PRODUCT_DOMAINS.md`.
+- Modelo conceptual de catalogo: `docs/04_CATALOG_CONCEPT_MODEL.md`.
+- Matching usuario-tienda: `docs/05_USER_SHOP_MATCHING.md`.
+- Social y creadores: `docs/06_SOCIAL_AND_CREATORS.md`.
 - Endpoints MVP: `docs/16_MVP_API_ENDPOINTS.md`.
 - Flujo manual por API: `docs/17_MANUAL_TESTING_FLOW.md`.
 - Demo desde UI: `docs/18_DEMO_FLOW.md`.
@@ -227,17 +247,22 @@ Capturas recomendadas:
 
 ## Proximas Fases Posibles
 
+- Consolidar el catalogo editorial con franquicias, colecciones de catalogo,
+  items, autores, editoriales, relaciones e imagenes.
+- Validar despues social basico y, en fases separadas, matching con tiendas,
+  comercio real y herramientas para creadores.
 - Ejecutar E2E en CI con un job separado y estable.
 - Revisar vulnerabilidades npm transitivas y estrategia de actualizacion.
 - Endurecer seguridad para produccion: cookies/refresh, CSRF segun estrategia,
   secretos gestionados y rotacion.
 - Gestion real de imagenes y almacenamiento externo.
-- Pagos y reservas con bloqueo de stock.
 - Panel administrativo global.
 - Internacionalizacion avanzada y PWA completa.
 
+El orden estrategico completo se mantiene en `docs/01_ROADMAP.md`.
+
 ## Nota
 
-CollectoHub es un MVP/portfolio. El objetivo actual es demostrar arquitectura,
-criterio tecnico y un flujo de producto completo en local, no operar una
-plataforma productiva real.
+La entrega actual de CollectoHub es un MVP/portfolio. Su objetivo es demostrar
+arquitectura, criterio tecnico y un flujo de producto completo en local, no
+operar todavia la plataforma productiva descrita en la vision larga.

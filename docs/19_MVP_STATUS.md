@@ -1,14 +1,29 @@
 # CollectoHub MVP status
 
-Fecha de revision: 2026-06-23.
+Fecha de revision: 2026-06-29.
 
 ## Estado general
+
+Este estado corresponde a **MVP 1 - Nucleo coleccionista**, no al producto
+final. La vision completa conecta coleccionistas, catalogo comun, tiendas y
+creadores, con matching, social y comercio desarrollados por fases.
+
+| Dominio | Estado actual |
+| --- | --- |
+| Identity & Access | Implementado para MVP |
+| Catalog Knowledge Base | Parcial; catalogo maestro generico |
+| User Collections | Implementado para MVP 1 |
+| Social | Futuro |
+| Shops & Inventory | Base tecnica parcial, fuera del foco visible |
+| Matching | Recomendaciones simples parciales |
+| Commerce | Reservas sin pago; resto futuro |
+| Content Creators | Futuro |
 
 ## Reenfoque 2026-06-23
 
 El MVP tecnico de backend y frontend esta implementado. El foco visible de
-producto pasa a ser una red social/catalogo para gestionar colecciones de
-libros, comics y manga.
+producto pasa a ser la gestion de colecciones de libros, comics y manga usando
+un catalogo comun.
 
 Recorrido principal actual:
 
@@ -90,6 +105,11 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 - PWA completa/offline avanzado.
 - Internacionalizacion avanzada, pluralizacion compleja o traducciones servidas desde backend.
 - Edicion real de perfil, cambio de password, avatar/upload.
+- Franquicias, colecciones editoriales, autores, editoriales y relaciones de
+  catalogo como entidades de dominio.
+- Perfiles publicos, follows, posts, comentarios, likes, resenas y moderacion.
+- Pedidos, carrito, pagos, facturas, envios, devoluciones y almacen comercial.
+- Herramientas funcionales para creadores, comunidades, eventos o monetizacion.
 
 ## Limitaciones conocidas
 
@@ -217,7 +237,7 @@ Guia completa: `docs/23_UI_UX_REDESIGN.md`.
 La fase i18n mantiene el alcance funcional del MVP:
 
 - Idiomas `es` y `en`.
-- Selector en layout, login y registro.
+- Selector unico en el header global.
 - Persistencia en `localStorage`.
 - `preferredInterfaceLanguage` del registro sincronizado con el idioma activo.
 - Enums visibles traducidos sin cambiar valores de backend.
@@ -256,9 +276,17 @@ La revision de este archivo no encontro necesidad de cambios en esta fase.
 
 ## Siguientes pasos recomendados
 
+La siguiente ampliacion funcional recomendada es **MVP 2 - Catalogo editorial
+solido**. No se recomienda activar social, matching comercial o pagos antes de
+definir y validar ese modelo comun.
+
 1. Preparar capturas reales para `docs/assets/screenshots/` y enlazarlas desde el README.
 2. Revisar el rediseño visual en desktop y movil real, anadir capturas a `docs/assets/screenshots/`.
 3. Revisar vulnerabilidades npm transitivas y compatibilidad de versiones Angular/Node antes de compartir el entorno.
 4. Valorar un job E2E opcional/separado en CI cuando Docker Compose en Actions sea estable.
 5. Endurecer seguridad antes de produccion: gestion de secretos, estrategia de refresh/logout, cookies o almacenamiento revisado y cabeceras.
 6. Definir la siguiente fase funcional sin ampliar accidentalmente pagos, chat, marketplace u OAuth.
+
+Vision, alcance y roadmap: `docs/00_PRODUCT_VISION.md`,
+`docs/01_ROADMAP.md`, `docs/02_MVP1_SCOPE.md` y
+`docs/03_PRODUCT_DOMAINS.md`.

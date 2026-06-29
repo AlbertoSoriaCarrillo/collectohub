@@ -281,6 +281,25 @@
 - Decision: usar un avatar/menu Material para Perfil y Cerrar sesion sin implementar subida real de avatar.
 - Motivo: prepara el patron de usuario autenticado sin ampliar backend ni perfil.
 
+## 2026-06-29 - Vision completa y desarrollo por fases
+
+- Decision: mantener una vision de producto amplia con coleccionistas,
+  catalogo, tiendas y creadores, pero desarrollar por fases empezando por el
+  nucleo coleccionista/catalogo.
+- Motivo: la vision completa es ambiciosa y requiere separar validacion de
+  usuario, catalogo, social, tiendas, matching y comercio para evitar un MVP
+  inabarcable.
+- Decision: considerar libros, comics y manga como el alcance editorial inicial
+  de MVP 1, no como el limite definitivo del catalogo.
+- Motivo: permite validar la experiencia con un dominio comprensible y ampliar
+  despues a audiovisual, cartas, merchandising, figuras, videojuegos, consolas
+  y otras ramas sin desordenar el foco actual.
+- Decision: clasificar tiendas, inventario, recomendaciones y reservas actuales
+  como base tecnica parcial para fases posteriores, no como marketplace o
+  comercio listo para usuario final.
+- Motivo: conserva el trabajo validado sin prometer matching, pedidos, pagos,
+  almacen ni operacion comercial que todavia no existen.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

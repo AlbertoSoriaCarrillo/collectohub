@@ -4,10 +4,14 @@ Fecha: 2026-06-23.
 
 ## 1. Contexto
 
-CollectoHub habia evolucionado hasta un MVP tecnico con backend completo para
-auth, usuarios, tiendas, catalogo, inventario, colecciones, recomendaciones y
-reservas. El nuevo foco de producto visible es mas concreto: una red
-social/catalogo para gestionar colecciones de libros, comics y manga.
+CollectoHub habia evolucionado hasta un MVP tecnico con backend para auth,
+usuarios, tiendas, catalogo, inventario, colecciones, recomendaciones y
+reservas. El nuevo foco visible es mas concreto: gestionar colecciones de
+libros, comics y manga usando un catalogo comun.
+
+Este reenfoque define el MVP 1, no la vision final. La vision completa sigue
+siendo una plataforma para coleccionistas, catalogo, tiendas y creadores de
+contenido, desarrollada por fases.
 
 ## 2. Decision de producto
 
@@ -30,6 +34,8 @@ home, dashboard y CTAs primarios.
 - El valor inmediato esta en saber que tengo, que quiero y que me falta.
 - `SHOP_OWNER`, tiendas e inventario son capacidades futuras, no el gancho de
   la demo principal.
+- El foco en libros, comics y manga valida primero el nucleo coleccionista; no
+  elimina futuras ramas como cartas, figuras, videojuegos o audiovisual.
 
 ## 4. Conclusiones UX/UI
 
@@ -115,3 +121,14 @@ priorizar el recorrido anterior.
 - Uploads.
 - App movil.
 - Cambios de base de datos o backend para este reenfoque.
+
+## 12. Relacion con la vision completa
+
+- `docs/00_PRODUCT_VISION.md`: producto final y cuatro pilares.
+- `docs/01_ROADMAP.md`: secuencia MVP 1 a MVP 6.
+- `docs/02_MVP1_SCOPE.md`: limites del foco coleccionista actual.
+- `docs/03_PRODUCT_DOMAINS.md`: estado implementado, parcial y futuro.
+
+Tiendas, inventario, reservas, social y creadores no se descartan. Se mantienen
+fuera del foco actual para evitar que MVP 1 se convierta en un producto
+inabarcable.

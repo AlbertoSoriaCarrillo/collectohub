@@ -5,13 +5,18 @@ LinkedIn o una entrevista tecnica.
 
 ## 1. Resumen Del Producto
 
-CollectoHub es un MVP para coleccionistas de libros, comics y manga. Permite que
-un usuario explore un catalogo, registre sus colecciones personales, marque lo
-que tiene o busca y revise sus elementos pendientes desde una vista de buscados.
+CollectoHub es una plataforma en evolucion para coleccionistas, tiendas y
+creadores, apoyada en un catalogo comun. Su MVP 1 permite que un usuario explore
+libros, comics y manga, registre colecciones personales, marque lo que tiene o
+busca y revise sus elementos pendientes desde una vista de buscados.
 
 El backend conserva modulos de tiendas, inventario y reservas como base tecnica
 para fases futuras, pero el recorrido principal de portfolio queda centrado en
 catalogo, colecciones, buscados y perfil.
+
+La vision larga incorpora catalogo editorial, social, matching oferta/demanda,
+comercio y herramientas para creadores por fases. El portfolio no presenta esas
+capacidades como producto final disponible.
 
 ## 2. Problema Que Resuelve
 
@@ -234,11 +239,12 @@ datos, backend y frontend, lo que puede hacer el pipeline mas lento y fragil.
 
 Una explicacion breve:
 
-> CollectoHub es un MVP full-stack para coleccionistas de libros, comics y
-> manga. Construye un flujo completo desde registro hasta gestion de biblioteca
-> personal, con backend Spring Boot, frontend Angular, PostgreSQL/Liquibase,
-> seguridad JWT, Docker Compose y tests E2E. Lo enfoque como monolito modular
-> para mantener el dominio claro y evitar complejidad prematura.
+> CollectoHub es una plataforma para conectar coleccionistas, catalogo, tiendas
+> y creadores. Su MVP 1 valida primero la gestion de bibliotecas personales de
+> libros, comics y manga sobre un catalogo comun, con backend Spring Boot,
+> frontend Angular, PostgreSQL/Liquibase, seguridad JWT, Docker Compose y tests.
+> La desarrolle como monolito modular y separe el roadmap por dominios para no
+> convertir la vision amplia en un MVP inabarcable.
 
 Puntos a destacar:
 
