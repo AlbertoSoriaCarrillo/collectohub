@@ -13,7 +13,7 @@
 | Dominio | Responsabilidad | Estado |
 | --- | --- | --- |
 | Identity & Access | Usuarios, login, roles y permisos | Implementado |
-| Catalog Knowledge Base | Conocimiento comun de objetos coleccionables | Parcial |
+| Catalog Knowledge Base | Conocimiento comun de objetos coleccionables | Parcial; MVP 2 en diseno tecnico |
 | User Collections | Colecciones e items personales | Implementado para MVP 1 |
 | Social | Perfiles publicos, posts, follows y actividad | Futuro |
 | Shops & Inventory | Tiendas, miembros, stock, precios y disponibilidad | Parcial |
@@ -37,6 +37,12 @@ editoriales, tipos de objeto y relaciones.
 Estado parcial: existen categorias y `master_products`, con busqueda y detalle,
 pero franquicia y coleccion son atributos planos. No hay entidades editoriales
 para autores, editoriales, ramas de franquicia o relaciones entre obras.
+
+EPIC 30 define el siguiente paso sin implementarlo: publishers, franchises,
+series, items y editions como modelo nuevo, enlazado a `master_products` por un
+puente de compatibilidad. Creators se incorpora despues de estabilizar el
+nucleo; relaciones avanzadas se difieren hasta validar casos reales. Diseno:
+`docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
 
 ## 3. User Collections
 

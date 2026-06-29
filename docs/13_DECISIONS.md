@@ -331,6 +331,30 @@
 - Motivo: evita presentar tiendas, inventario y reservas conservados como si
   formaran parte de la experiencia principal actual.
 
+## 2026-06-29 - Estrategia de catalogo editorial MVP 2
+
+- Decision: construir el catalogo editorial mediante publishers, franchises,
+  series, items y editions nuevos, manteniendo `master_products` como fachada de
+  compatibilidad durante la transicion.
+- Motivo: `master_products` mezcla obra y edicion, pero sus IDs sostienen
+  colecciones, inventario, recomendaciones, reservas y frontend; una sustitucion
+  directa tendria un riesgo transversal innecesario.
+- Decision: usar una tabla puente `master_product_catalog_links` con item
+  obligatorio, edicion opcional y estado de verificacion, en lugar de anadir
+  multiples FKs opcionales a `master_products`.
+- Motivo: permite backfill idempotente, reconciliacion auditada y adopcion por
+  dominios sin afirmar automaticamente que textos legacy son identidades
+  editoriales correctas.
+- Decision: permitir que una coleccion futura apunte a item y opcionalmente a
+  edicion; el inventario futuro debe apuntar a una edicion concreta.
+- Motivo: una persona puede buscar una obra sin conocer la edicion, mientras una
+  tienda vende una publicacion fisica identificable.
+- Decision: restringir inicialmente las escrituras de la API editorial nueva a
+  `ADMIN`; conservar los permisos actuales de `/api/master-products` por
+  compatibilidad.
+- Motivo: la calidad del catalogo comun requiere revision antes de abrir
+  contribuciones de tiendas o usuarios.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

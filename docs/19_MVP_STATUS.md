@@ -8,10 +8,13 @@ Este estado corresponde a **MVP 1 - Nucleo coleccionista**, no al producto
 final. La vision completa conecta coleccionistas, catalogo comun, tiendas y
 creadores, con matching, social y comercio desarrollados por fases.
 
+MVP 1 permanece cerrado y estable. MVP 2 ha comenzado en fase de diseno tecnico
+con EPIC 30; no existen aun tablas, endpoints ni pantallas editoriales nuevas.
+
 | Dominio | Estado actual |
 | --- | --- |
 | Identity & Access | Implementado para MVP |
-| Catalog Knowledge Base | Parcial; catalogo maestro generico |
+| Catalog Knowledge Base | Parcial; MVP 2 editorial disenado, no implementado |
 | User Collections | Implementado para MVP 1 |
 | Social | Futuro |
 | Shops & Inventory | Base tecnica parcial, fuera del foco visible |
@@ -312,9 +315,10 @@ La referencia tecnica descargable de EPIC 29 queda versionada en
 relaciones pantalla-backend. Los estados distinguen recorrido MVP 1, base
 legacy/futura, infraestructura y redirecciones sin alterar codigo funcional.
 
-La siguiente ampliacion funcional recomendada es **MVP 2 - Catalogo editorial
-solido**. No se recomienda activar social, matching comercial o pagos antes de
-definir y validar ese modelo comun.
+La siguiente tarea recomendada es **EPIC 31 - Fundamentos editoriales**:
+publishers, franchises y series mediante migraciones aditivas. El diseno y la
+compatibilidad con `master_products` estan definidos en
+`docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
 
 1. Preparar capturas reales para `docs/assets/screenshots/` y enlazarlas desde el README.
 2. Revisar el rediseño visual en desktop y movil real, anadir capturas a `docs/assets/screenshots/`.

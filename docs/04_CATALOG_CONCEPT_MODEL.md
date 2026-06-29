@@ -3,8 +3,8 @@
 ## Cadena conceptual
 
 ```text
-Franquicia -> Coleccion de catalogo -> Item de catalogo
-           -> Coleccion personal -> Item personal
+Franquicia -> Serie de catalogo -> Item de catalogo -> Edicion
+                                -> Coleccion personal -> Item personal
 ```
 
 La cadena separa conocimiento compartido de datos personales. Una franquicia y
@@ -18,15 +18,23 @@ persona con uno de esos items.
 Universo o propiedad intelectual que agrupa distintas ramas y medios. Ejemplos:
 `Harry Potter` o `Trigun`.
 
-### Coleccion de catalogo
+### Serie de catalogo
 
 Serie, linea editorial o rama ordenada dentro de una franquicia. No pertenece a
 un usuario. Puede representar libros, manga, peliculas, cartas o videojuegos.
+Una obra independiente puede usar una serie de un unico item para mantener una
+navegacion uniforme.
 
 ### Item de catalogo
 
-Objeto identificable dentro de una coleccion de catalogo: volumen, edicion,
-pelicula, carta, figura o videojuego. Contiene metadatos comunes y reutilizables.
+Objeto identificable dentro de una serie de catalogo: libro, volumen, numero,
+pelicula, carta, figura o videojuego. Contiene metadatos comunes y reutilizables
+sin mezclar una publicacion comercial concreta.
+
+### Edicion de catalogo
+
+Publicacion concreta de un item con publisher, idioma, formato, fecha e
+identificadores como ISBN/EAN. Un item puede tener cero o varias ediciones.
 
 ### Coleccion personal
 
@@ -84,10 +92,10 @@ El modelo actual dispone de `product_categories`, `master_products`,
 - `franchise` y `collection_name` son atributos planos, no entidades propias.
 - `collections` y `collection_items` ya representan la parte personal.
 
-MVP 2 debe evolucionar la parte comun con franquicias, colecciones editoriales,
-autores, editoriales y relaciones, conservando una migracion clara desde los
-productos maestros existentes. Este documento define conceptos, no una
-migracion ni un esquema fisico.
+MVP 2 debe evolucionar la parte comun con franquicias, series, items, ediciones,
+publishers y creators, conservando una migracion clara desde los productos
+maestros existentes. El diseno fisico, puente de compatibilidad y plan por
+sub-EPICs estan en `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
 
 ## Reglas conceptuales
 
@@ -95,7 +103,7 @@ migracion ni un esquema fisico.
 - Un item personal debe referenciar una ficha comun siempre que exista.
 - El inventario de tienda debe referenciar el item de catalogo, no convertirse
   en la fuente maestra de conocimiento.
-- Distintas ediciones pueden requerir items de catalogo distintos aunque
-  pertenezcan a la misma obra conceptual.
+- Distintas ediciones pertenecen al mismo item de catalogo y conservan identidad
+  propia para publisher, idioma, formato e identificadores comerciales.
 - Las imagenes oficiales y las imagenes personales tienen propiedad y reglas
   diferentes.

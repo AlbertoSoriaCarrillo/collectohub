@@ -5,12 +5,13 @@ creadores de contenido, apoyada en un catalogo comun de objetos coleccionables.
 
 ## Foco Actual
 
-**MVP 1: gestion de colecciones personales usando un catalogo comun.**
+**MVP 2: diseno e implementacion gradual de un catalogo editorial solido.**
 
-El recorrido visible ayuda a una persona coleccionista a explorar libros,
-comics y manga, crear colecciones, marcar lo que tiene o busca y revisar sus
-faltantes. Tiendas, inventario y reservas se conservan como base tecnica y rutas
-legacy/futuras, fuera del flujo principal.
+El recorrido visible de MVP 1 permanece estable: explorar libros, comics y
+manga, crear colecciones, marcar lo que se tiene o busca y revisar faltantes.
+MVP 2 esta en fase de diseno tecnico para separar franquicias, series, items y
+ediciones sin romper `master_products` ni ese recorrido. Tiendas, inventario y
+reservas siguen como base tecnica legacy/futura.
 
 ## Vision A Largo Plazo
 
@@ -26,6 +27,8 @@ marketplace, pagos o tiendas ya listos para usuario final.
 
 - MVP 1 cerrado como base tecnica/producto el 2026-06-29; checklist completo en
   `docs/07_MVP1_ACCEPTANCE_CHECKLIST.md`.
+- MVP 2 iniciado con el diseno tecnico editorial de
+  `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`; aun no hay tablas ni API nuevas.
 - MVP funcional de backend y frontend.
 - Docker Compose local con PostgreSQL, backend y frontend validado.
 - Tests backend, tests frontend y E2E Playwright implementados.
@@ -225,6 +228,7 @@ Capturas recomendadas:
 - Social y creadores: `docs/06_SOCIAL_AND_CREATORS.md`.
 - Checklist de cierre MVP 1: `docs/07_MVP1_ACCEPTANCE_CHECKLIST.md`.
 - Backlog posterior: `docs/08_NEXT_BACKLOG.md`.
+- Diseno tecnico MVP 2: `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
 - Endpoints MVP: `docs/16_MVP_API_ENDPOINTS.md`.
 - Flujo manual por API: `docs/17_MANUAL_TESTING_FLOW.md`.
 - Demo desde UI: `docs/18_DEMO_FLOW.md`.
@@ -257,8 +261,8 @@ formatos Markdown, Mermaid y CSV descargables.
 
 ## Proximas Fases Posibles
 
-- Consolidar el catalogo editorial con franquicias, colecciones de catalogo,
-  items, autores, editoriales, relaciones e imagenes.
+- Ejecutar las sub-EPICs de MVP 2 empezando por publishers, franquicias y series,
+  con migraciones aditivas y compatibilidad con `master_products`.
 - Validar despues social basico y, en fases separadas, matching con tiendas,
   comercio real y herramientas para creadores.
 - Ejecutar E2E en CI con un job separado y estable.

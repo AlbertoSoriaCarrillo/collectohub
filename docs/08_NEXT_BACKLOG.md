@@ -24,18 +24,21 @@ Pulido recomendado para portfolio, no bloqueante del MVP:
 
 ## MVP 2 - Catalogo editorial
 
-- franquicias;
-- colecciones de catalogo;
-- items de catalogo y ediciones;
-- editoriales y marcas;
-- autores y creadores de obra;
-- relaciones entre obras, adaptaciones y ramas;
-- imagenes/portadas con propiedad definida;
-- plan de migracion compatible desde `master_products`;
-- filtros editoriales avanzados.
+EPIC 30 completa el diseno tecnico y recomienda modelo nuevo con puente de
+compatibilidad. No hay implementacion todavia. Orden propuesto:
 
-Primera tarea: aprobar modelo de dominio, constraints y estrategia de migracion
-antes de modificar base de datos.
+1. EPIC 31: publishers, franchises y series.
+2. EPIC 32: items y editions.
+3. EPIC 33: puente con `master_products`, backfill y reconciliacion.
+4. EPIC 34: API editorial y fachada legacy.
+5. EPIC 35: frontend editorial.
+6. EPIC 36: referencias editoriales en colecciones.
+7. EPIC 37: inventario y matching por item/edicion.
+8. EPIC 38: creators y relaciones priorizadas.
+
+Creators pertenece a MVP 2, pero despues del nucleo. Relaciones entre obras se
+implementan solo con casos de uso validados. Fuente de diseno:
+`docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
 
 ## MVP 3 - Social basico
 

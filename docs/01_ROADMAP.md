@@ -45,17 +45,22 @@ completo, monetizacion, pedidos ni almacen.
 Incluye:
 
 - franquicias;
-- colecciones de catalogo;
-- items de catalogo;
+- series de catalogo;
+- items y ediciones de catalogo;
 - editoriales;
 - autores y creadores;
-- relaciones entre obras;
+- relaciones entre obras cuando existan casos validados;
 - tipos de objeto;
-- primeras imagenes o portadas;
+- URLs de portada compatibles; uploads reales quedan fuera de esta fase inicial;
 - filtros avanzados.
 
 La migracion desde `master_products` debe preservar compatibilidad y distinguir
 claramente catalogo, coleccion personal e inventario.
+
+**Estado actual:** diseno tecnico completado en EPIC 30, sin implementacion de
+tablas ni endpoints. La estrategia aprobada propone un modelo nuevo con puente
+de compatibilidad y ocho sub-EPICs descritas en
+`docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
 
 ## MVP 3 - Social basico
 

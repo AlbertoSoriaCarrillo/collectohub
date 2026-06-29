@@ -734,3 +734,37 @@ Siguiente paso: crear el backend en la carpeta backend.
   de configuracion, contratos, dependencias ni tests.
 - No se modifica backend, frontend funcional, base de datos, migraciones,
   endpoints, rutas, componentes, seguridad, tests ni dependencias.
+
+## 2026-06-29 - EPIC 30 - Diseno tecnico del catalogo editorial MVP 2
+
+- Revisados vision, roadmap, alcance, dominios, modelo conceptual, matching,
+  social, checklist, backlog, decisiones, API, estado, portfolio, reenfoque y
+  documentacion exportable.
+- Auditados changelogs Liquibase y modulos backend `catalog`, `collections`,
+  `recommendations` e `inventory`, junto con DTOs, entidades, repositorios y
+  consumidores frontend.
+- Confirmado que `master_products` mezcla identidad de item y edicion, y que su
+  ID aparece como contrato transversal en 25 archivos backend y 36 frontend.
+- Creado `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md` con conclusiones de producto,
+  dominio, backend, frontend, datos/migracion y QA.
+- Recomendado un modelo nuevo de publishers, franchises, series, items y
+  editions con `master_product_catalog_links` como puente compatible y auditado.
+- Definido item obligatorio y edicion opcional para colecciones futuras; el
+  inventario debe converger a una edicion concreta.
+- Disenados endpoints `/api/catalog/**`, rutas frontend futuras, permisos,
+  estrategia de backfill, riesgos, criterios de salida y EPICs 31 a 38.
+- Creators se difiere hasta estabilizar el nucleo editorial; relaciones entre
+  obras requieren casos validados. No se implementan en EPIC 30.
+- Actualizados README, roadmap, dominios, modelo conceptual, backlog, decisiones
+  y estado MVP para reflejar que MVP 2 esta disenado pero no implementado.
+- Validado el documento principal: 20 secciones numeradas, seis conclusiones por
+  perspectiva, nueve entidades candidatas analizadas, 24 operaciones API
+  futuras y seis rutas frontend propuestas.
+- Comprobados los enlaces locales, la secuencia EPIC 31-38, los terminos
+  obligatorios y la ausencia de whitespace final.
+- Ejecutados `git status` y `git diff --check`: solo cambian README y
+  documentacion; no hay errores de whitespace aparte de avisos locales LF/CRLF.
+- No se ejecutan suites backend/frontend porque no hay cambios funcionales ni de
+  configuracion.
+- No se modifica codigo, frontend funcional, base de datos, Liquibase,
+  endpoints, rutas, tests, demo data ni documentacion exportable.
