@@ -81,6 +81,7 @@ export const es: TranslationDictionary = {
     mobileNavigation: 'Navegacion movil',
     sessionActive: 'Sesion activa',
     summaryAria: 'Resumen CollectoHub',
+    userMenu: 'Menu de usuario',
     nav: {
       home: 'Inicio',
       catalog: 'Catalogo',
@@ -109,7 +110,7 @@ export const es: TranslationDictionary = {
     subtitle:
       'Crea colecciones personales, marca lo que tienes, lo que buscas y lo que te falta, y explora un catálogo pensado para construir tu biblioteca.',
     primaryCta: 'Explorar catálogo',
-    secondaryCtaAnonymous: 'Crear cuenta',
+    secondaryCtaAnonymous: 'Iniciar sesión',
     secondaryCtaAuthenticated: 'Mis colecciones',
     features: {
       catalogTitle: 'Explora el catálogo',
@@ -129,7 +130,7 @@ export const es: TranslationDictionary = {
       introCatalog: 'Catalogo',
       introInventory: 'Inventario',
       introReservations: 'Reservas',
-      title: 'Inicia sesión',
+      title: 'Iniciar sesión',
       subtitle: 'Vuelve a tus colecciones de libros, cómics y manga.',
       submit: 'Iniciar sesión',
       submitting: 'Entrando...',
@@ -142,12 +143,12 @@ export const es: TranslationDictionary = {
       introUser: 'Usuario',
       introShops: 'Tiendas',
       introCollections: 'Colecciones',
-      title: 'Crea tu cuenta',
+      title: 'Crear cuenta',
       subtitle: 'Empieza a organizar tus libros, cómics y manga.',
       submit: 'Crear cuenta',
       submitting: 'Creando...',
       displayName: 'Nombre visible',
-      confirmPassword: 'Repite la contraseña',
+      confirmPassword: 'Repetir contraseña',
       alreadyHaveAccount: '¿Ya tienes cuenta?',
       haveAccountLink: 'Iniciar sesión'
     }

@@ -71,9 +71,9 @@ export const en: TranslationDictionary = {
     viewShop: 'View shop',
     viewCollections: 'View collections',
     viewRecommendations: 'View wanted',
-    logout: 'Logout',
-    login: 'Login',
-    register: 'Register',
+    logout: 'Log out',
+    login: 'Sign in',
+    register: 'Create account',
     enter: 'Sign in'
   },
   layout: {
@@ -81,6 +81,7 @@ export const en: TranslationDictionary = {
     mobileNavigation: 'Mobile navigation',
     sessionActive: 'Active session',
     summaryAria: 'CollectoHub summary',
+    userMenu: 'User menu',
     nav: {
       home: 'Home',
       catalog: 'Catalog',
@@ -109,7 +110,7 @@ export const en: TranslationDictionary = {
     subtitle:
       'Create personal collections, mark what you own, want and miss, and explore a catalog built for your library.',
     primaryCta: 'Explore catalog',
-    secondaryCtaAnonymous: 'Create account',
+    secondaryCtaAnonymous: 'Sign in',
     secondaryCtaAuthenticated: 'My collections',
     features: {
       catalogTitle: 'Explore the catalog',
@@ -142,7 +143,7 @@ export const en: TranslationDictionary = {
       introUser: 'User',
       introShops: 'Shops',
       introCollections: 'Collections',
-      title: 'Create your account',
+      title: 'Create account',
       subtitle: 'Start organizing your books, comics and manga.',
       submit: 'Create account',
       submitting: 'Creating...',

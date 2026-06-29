@@ -1,6 +1,6 @@
 <div class="social-shell" data-testid="app-toolbar">
-  <aside class="app-sidebar" [attr.aria-label]="'layout.mainNavigation' | translate">
-    <a class="brand" routerLink="/home">
+  <header class="app-header">
+    <a class="brand" routerLink="/home" data-testid="app-brand-link">
       <span class="brand-mark">CH</span>
       <span class="brand-copy">
         <strong data-testid="app-brand">{{ 'common.appName' | translate }}</strong>
@@ -8,7 +8,7 @@
       </span>
     </a>
 
-    <nav class="sidebar-nav">
+    <nav class="header-nav" [attr.aria-label]="'layout.mainNavigation' | translate">
       @for (item of publicNavItems; track item.route) {
         <a mat-button [routerLink]="item.route" routerLinkActive="active-link">
           <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
@@ -26,38 +26,67 @@
       }
     </nav>
 
-    <div class="sidebar-cta">
+    <div class="header-actions">
+      <app-language-selector />
+
       @if (!authService.isAuthenticated()) {
-        <a mat-button routerLink="/login" routerLinkActive="active-link" data-testid="login-link">
-          {{ 'actions.login' | translate }}
-        </a>
         <a
           mat-flat-button
-          routerLink="/register"
+          routerLink="/login"
           routerLinkActive="active-link"
-          data-testid="register-link"
+          data-testid="login-header-link"
         >
-          {{ 'actions.register' | translate }}
+          {{ 'actions.login' | translate }}
         </a>
+      } @else {
+        <button
+          mat-icon-button
+          type="button"
+          class="user-menu-trigger"
+          [matMenuTriggerFor]="userMenu"
+          data-testid="user-menu-button"
+          [attr.aria-label]="'layout.userMenu' | translate"
+        >
+          <span class="avatar-token" aria-hidden="true">{{ userInitials() }}</span>
+        </button>
+
+        <mat-menu #userMenu="matMenu">
+          <a mat-menu-item routerLink="/profile" data-testid="user-menu-profile">
+            <mat-icon aria-hidden="true">person</mat-icon>
+            <span>{{ 'layout.nav.profile' | translate }}</span>
+          </a>
+          <button
+            mat-menu-item
+            type="button"
+            (click)="logout()"
+            data-testid="user-menu-logout"
+          >
+            <mat-icon aria-hidden="true">logout</mat-icon>
+            <span>{{ 'actions.logout' | translate }}</span>
+          </button>
+        </mat-menu>
       }
     </div>
+  </header>
 
-    <app-language-selector />
+  <aside class="app-sidebar" [attr.aria-label]="'layout.mainNavigation' | translate">
+    <nav class="sidebar-nav">
+      @for (item of publicNavItems; track item.route) {
+        <a mat-button [routerLink]="item.route" routerLinkActive="active-link">
+          <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+          <span>{{ item.labelKey | translate }}</span>
+        </a>
+      }
 
-    @if (authService.isAuthenticated()) {
-      <div class="session-card" [attr.aria-label]="'layout.sessionActive' | translate">
-        <span class="avatar-token">{{ userInitials() }}</span>
-        <a class="session-label" routerLink="/profile" data-testid="session-label">
-          {{ authService.currentUser()?.displayName || ('layout.nav.profile' | translate) }}
-        </a>
-        <a mat-stroked-button routerLink="/profile">
-          {{ 'layout.nav.profile' | translate }}
-        </a>
-        <button mat-stroked-button type="button" (click)="logout()" data-testid="logout-button">
-          {{ 'actions.logout' | translate }}
-        </button>
-      </div>
-    }
+      @if (authService.isAuthenticated()) {
+        @for (item of privateNavItems; track item.route) {
+          <a mat-button [routerLink]="item.route" routerLinkActive="active-link">
+            <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+            <span>{{ item.labelKey | translate }}</span>
+          </a>
+        }
+      }
+    </nav>
   </aside>
 
   <main class="app-content">

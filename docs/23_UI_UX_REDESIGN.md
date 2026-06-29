@@ -14,7 +14,7 @@ Incluido:
 
 - Rediseño visual de layout, auth, home y pantallas principales del MVP de coleccionista.
 - Sistema dark-soft basado en variables SCSS.
-- Sidebar desktop, bottom navigation movil y contenido central.
+- Header global, sidebar desktop solo de navegacion, bottom navigation movil y contenido central.
 - Tarjetas, chips, tokens visuales, estados vacios y formularios consistentes.
 - Mantenimiento de rutas, endpoints, modelos y `data-testid`.
 - Compatibilidad con i18n frontend ES/EN posterior al rediseño.
@@ -44,9 +44,9 @@ Fuera de alcance:
 
 ## Componentes redisenados
 
-- `MainLayoutComponent`: shell social con sidebar, sesion, selector de idioma y bottom nav.
+- `MainLayoutComponent`: shell social con header global, sidebar limpia, selector unico de idioma, avatar/menu de usuario y bottom nav.
 - `HomeComponent`: primera pantalla publica del producto.
-- Login y registro: panel introductorio + tarjeta de formulario.
+- Login y registro: tarjetas centradas, limpias y sin selector de idioma interno.
 - Perfil: datos basicos y acciones futuras deshabilitadas.
 - Tiendas: listado, creacion y detalle publico.
 - Catalogo: filtros, cards, detalle y creacion.
@@ -59,8 +59,8 @@ Fuera de alcance:
 
 Se mantienen los `data-testid` existentes para Playwright:
 
-- Layout y sesion: `app-toolbar`, `app-brand`, `login-link`, `register-link`,
-  `session-label`, `logout-button`.
+- Layout y sesion: `app-toolbar`, `app-brand`, `login-header-link`,
+  `language-selector`, `user-menu-button`, `user-menu-profile` y `user-menu-logout`.
 - Auth: `login-form`, `login-email`, `login-password`, `login-submit`,
   `register-form`, `register-email`, `register-password`,
   `register-display-name`, `register-submit`.

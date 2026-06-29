@@ -1,46 +1,19 @@
 .auth-page {
   align-items: center;
   display: grid;
-  gap: 22px;
-  grid-template-columns: minmax(240px, 0.9fr) minmax(320px, 440px);
+  justify-items: center;
   margin: 0 auto;
-  max-width: 980px;
-  min-height: calc(100dvh - 56px);
-}
-
-.auth-intro {
-  background: linear-gradient(180deg, rgba(29, 40, 53, 0.76), rgba(18, 25, 35, 0.48));
-  border: 1px solid var(--ch-border);
-  border-radius: var(--ch-radius);
-  display: grid;
-  gap: 14px;
-  padding: 24px;
-}
-
-.auth-intro h1 {
-  font-size: clamp(2rem, 4vw, 3.1rem);
-  line-height: 1.04;
-  margin: 0;
-}
-
-.intro-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.intro-row span {
-  border: 1px solid var(--ch-border-strong);
-  border-radius: 999px;
-  color: var(--ch-text-soft);
-  font-size: 0.82rem;
-  font-weight: 700;
-  padding: 7px 10px;
+  max-width: var(--ch-content-max);
+  min-height: calc(100dvh - 144px);
+  padding: 24px 0;
 }
 
 .auth-card {
-  width: 100%;
+  width: min(100%, 440px);
+}
+
+mat-card-header {
+  padding-bottom: 0;
 }
 
 form {
@@ -57,17 +30,15 @@ mat-card-actions {
   align-items: center;
   color: var(--ch-muted);
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
+  justify-content: center;
   padding-inline: 16px;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 760px) {
   .auth-page {
-    grid-template-columns: 1fr;
-    min-height: auto;
-  }
-
-  .auth-intro {
-    padding: 18px;
+    min-height: calc(100dvh - 120px);
+    padding: 8px 0 20px;
   }
 }

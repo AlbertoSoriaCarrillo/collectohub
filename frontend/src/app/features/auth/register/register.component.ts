@@ -15,7 +15,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
-import { LanguageSelectorComponent } from '../../../core/i18n/language-selector.component';
 import { LanguageService } from '../../../core/i18n/language.service';
 import type { SupportedLanguage } from '../../../core/i18n/language.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
@@ -57,7 +56,6 @@ function passwordsMatchValidator(control: AbstractControl): ValidationErrors | n
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    LanguageSelectorComponent,
     TranslatePipe
   ],
   templateUrl: './register.component.html',

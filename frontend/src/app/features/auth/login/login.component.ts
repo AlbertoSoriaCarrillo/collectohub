@@ -8,7 +8,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
-import { LanguageSelectorComponent } from '../../../core/i18n/language-selector.component';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 @Component({
@@ -20,7 +19,6 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    LanguageSelectorComponent,
     TranslatePipe
   ],
   templateUrl: './login.component.html',

@@ -4,13 +4,15 @@ test.describe('frontend i18n', () => {
   test('switches language on login and persists the selection', async ({ page }) => {
     await page.goto('/login');
 
-    await page.getByRole('main').getByTestId('language-en').click();
+    await page.getByTestId('language-selector').click();
+    await page.getByTestId('language-en').click();
     await expect(page.getByText('Return to your books, comics and manga collections.').first()).toBeVisible();
 
     await page.reload();
     await expect(page.getByText('Return to your books, comics and manga collections.').first()).toBeVisible();
 
-    await page.getByRole('main').getByTestId('language-es').click();
+    await page.getByTestId('language-selector').click();
+    await page.getByTestId('language-es').click();
     await expect(page.getByText(/Vuelve a tus colecciones de libros/i).first()).toBeVisible();
   });
 });

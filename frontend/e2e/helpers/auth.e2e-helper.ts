@@ -12,7 +12,7 @@ export async function registerUser(page: Page, user: E2eUserData): Promise<void>
   await page.getByTestId('register-submit').click();
   await expect(page).toHaveURL(/\/collections$/);
   await expect(page.getByRole('heading', { name: /biblioteca|library/i })).toBeVisible();
-  await expect(page.getByTestId('session-label')).toContainText(user.displayName);
+  await expect(page.getByTestId('user-menu-button')).toBeVisible();
 }
 
 export async function loginUser(page: Page, user: E2eUserData): Promise<void> {
@@ -23,13 +23,14 @@ export async function loginUser(page: Page, user: E2eUserData): Promise<void> {
   await page.getByTestId('login-submit').click();
   await expect(page).toHaveURL(/\/collections$/);
   await expect(page.getByRole('heading', { name: /biblioteca|library/i })).toBeVisible();
-  await expect(page.getByTestId('session-label')).toContainText(user.displayName);
+  await expect(page.getByTestId('user-menu-button')).toBeVisible();
 }
 
 export async function logoutIfVisible(page: Page): Promise<void> {
-  const logout = page.getByTestId('logout-button');
-  if (await logout.isVisible().catch(() => false)) {
-    await logout.click();
-    await expect(page.getByTestId('login-link')).toBeVisible();
+  const menuButton = page.getByTestId('user-menu-button');
+  if (await menuButton.isVisible().catch(() => false)) {
+    await menuButton.click();
+    await page.getByTestId('user-menu-logout').click();
+    await expect(page.getByTestId('login-header-link')).toBeVisible();
   }
 }

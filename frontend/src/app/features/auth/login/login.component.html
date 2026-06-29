@@ -1,13 +1,5 @@
 <section class="auth-page">
-  <div class="auth-intro" aria-hidden="true">
-    <span class="visual-token">CH</span>
-    <p class="page-eyebrow">{{ 'auth.login.introEyebrow' | translate }}</p>
-    <h1>{{ 'auth.login.introTitle' | translate }}</h1>
-  </div>
-
   <mat-card class="auth-card">
-    <app-language-selector />
-
     <mat-card-header>
       <mat-card-title>{{ 'auth.login.title' | translate }}</mat-card-title>
       <mat-card-subtitle>{{ 'auth.login.subtitle' | translate }}</mat-card-subtitle>
@@ -64,7 +56,9 @@
 
     <mat-card-actions>
       <span>{{ 'auth.login.noAccount' | translate }}</span>
-      <a mat-button routerLink="/register">{{ 'auth.login.createAccount' | translate }}</a>
+      <a mat-button routerLink="/register" data-testid="login-register-link">
+        {{ 'auth.login.createAccount' | translate }}
+      </a>
     </mat-card-actions>
   </mat-card>
 </section>

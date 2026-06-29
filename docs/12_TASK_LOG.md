@@ -587,3 +587,28 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Intentado `cd infra && docker compose up --build -d`: bloqueado porque Docker Desktop/daemon no esta iniciado (`dockerDesktopLinuxEngine` no disponible).
 - No se ejecutan E2E en esta sesion por Docker no disponible; los tests quedan preparados para ejecutarse cuando Docker Desktop este iniciado.
 - No se modifica backend, base de datos, endpoints, pagos, chat, marketplace, OAuth, 2FA, uploads ni app movil.
+
+## 2026-06-23 - EPIC 25A - Header global, navegacion publica e idioma
+
+- Revisada la documentacion y frontend indicados en el prompt de la fase: prompt, README raiz, frontend README, task log, decisiones, estado MVP, UI/UX, i18n, reenfoque de producto, rutas Angular, layout principal, auth, home y E2E.
+- Implementado header global persistente con marca, navegacion principal, selector de idioma, enlace de login para visitantes y menu de usuario autenticado.
+- Simplificada la sidebar desktop para que contenga solo navegacion principal, sin login, registro, selector de idioma, datos de sesion ni CTAs de tienda.
+- Eliminado `Register` de la navegacion global y de los CTAs publicos persistentes; `/register` permanece accesible desde la pantalla de login y por URL directa.
+- Convertido `LanguageSelectorComponent` en selector compacto con menu Angular Material y `data-testid` estables: `language-selector`, `language-es` y `language-en`.
+- Anadido menu de usuario autenticado con Angular Material y `data-testid` estables: `user-menu-button`, `user-menu-profile` y `user-menu-logout`.
+- Simplificadas las pantallas de login y registro a cards centradas sin panel introductorio decorativo, token visual ni selector interno de idioma.
+- Mantenido en registro el campo `preferredInterfaceLanguage` sincronizado con el idioma activo sin duplicar el selector global.
+- Actualizada home para que la CTA secundaria publica lleve a login, no a registro.
+- Actualizada navegacion movil para conservar accesos principales y mover perfil/logout al menu de usuario del header.
+- Actualizados diccionarios ES/EN, README raiz, README frontend y documentos de estado/UI/i18n/reenfoque.
+- Creado `docs/27_PUBLIC_NAVIGATION_UX.md` con la estructura oficial de navegacion publica, header, sidebar limpia, registro desde login, selector unico de idioma, avatar/menu y criterios de test.
+- Anadidos tests unitarios para el selector de idioma, layout publico/autenticado y CTA anonima de home.
+- Actualizados tests E2E y helpers Playwright para usar el nuevo header, selector de idioma y menu de usuario.
+- Ejecutado `cd frontend && npm.cmd ci`: correcto; se mantienen 7 vulnerabilidades dev/transitivas y aviso de deprecacion de `@angular/animations`.
+- Ejecutado `cd frontend && npm.cmd test -- --watch=false`: correcto; 37 archivos de test y 77 tests correctos.
+- Ejecutado `cd frontend && npm.cmd run build`: correcto; se mantiene aviso de budget inicial excedido, ahora por 92.26 kB.
+- Ejecutado `cd infra && docker compose down`: correcto.
+- Ejecutado `cd infra && docker compose up --build -d`: correcto; PostgreSQL queda healthy y backend/frontend arrancan.
+- Validado `GET http://localhost:8080/api/health`: primer intento durante calentamiento con conexion cerrada; segundo intento correcto con `UP`.
+- Intentado ejecutar `cd frontend && npm.cmd run e2e`: no se ejecuta porque la solicitud de permisos elevados para Playwright fue rechazada por limite de uso del entorno. La suite queda actualizada y preparada para ejecutarse cuando haya permisos disponibles.
+- No se modifica backend, base de datos, endpoints, modelos, pagos, chat, marketplace, OAuth, 2FA, uploads ni app movil.

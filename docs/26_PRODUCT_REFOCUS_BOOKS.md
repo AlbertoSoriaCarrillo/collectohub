@@ -15,7 +15,7 @@ El recorrido principal de frontend pasa a ser:
 
 1. Home publica.
 2. Catalogo publico.
-3. Registro/login.
+3. Login y registro desde login.
 4. Colecciones personales.
 5. Buscados.
 6. Perfil.
@@ -36,6 +36,8 @@ home, dashboard y CTAs primarios.
 - La primera pantalla debe mostrar la propuesta de biblioteca social.
 - La navegacion principal debe ser corta: Home, Catalogo, Colecciones, Buscados
   y Perfil.
+- Header global: marca, navegacion, selector de idioma, login o avatar/menu.
+- Register no debe mostrarse como CTA global; solo se ofrece desde login.
 - `/dashboard` deja de ser destino primario y redirige a `/home`.
 - El perfil existe como pantalla simple con acciones futuras deshabilitadas.
 
@@ -65,7 +67,7 @@ home, dashboard y CTAs primarios.
 - `/home`: publica.
 - `/catalog`: publica.
 - `/login`: publica.
-- `/register`: publica.
+- `/register`: publica, pero visible solo desde login.
 - `/collections`: protegida.
 - `/wanted`: protegida.
 - `/profile`: protegida.

@@ -274,6 +274,12 @@
 - Motivo: evita que el usuario perciba el producto como marketplace/reservas en esta fase.
 - Decision: redirigir `/dashboard` a `/home` y `/recommendations` a `/wanted`.
 - Motivo: mantiene compatibilidad de rutas sin promocionar el flujo antiguo.
+- Decision: mover login, selector de idioma y sesion de usuario al header global; la sidebar queda solo para navegacion principal.
+- Motivo: evita duplicidades visuales, deja el acceso de usuario en una posicion esperada y mejora la lectura publica del producto.
+- Decision: no mostrar `Register` en header, sidebar ni CTA global; `/register` queda accesible desde login o por URL manual.
+- Motivo: el registro debe ser un paso secundario desde la intencion de iniciar sesion, no una accion persistente en toda la interfaz.
+- Decision: usar un avatar/menu Material para Perfil y Cerrar sesion sin implementar subida real de avatar.
+- Motivo: prepara el patron de usuario autenticado sin ampliar backend ni perfil.
 
 ## 2026-06-16 - Edad recomendada
 

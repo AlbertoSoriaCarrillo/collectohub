@@ -18,4 +18,15 @@ describe('HomeComponent', () => {
 
     expect(fixture.nativeElement.textContent).toContain('CollectoHub');
   });
+
+  it('routes anonymous secondary action to login instead of register', () => {
+    const fixture = TestBed.createComponent(HomeComponent);
+    fixture.detectChanges();
+
+    const secondaryLink = fixture.nativeElement.querySelector(
+      '[data-testid="home-secondary-link"]'
+    ) as HTMLAnchorElement;
+
+    expect(secondaryLink.getAttribute('href')).toBe('/login');
+  });
 });

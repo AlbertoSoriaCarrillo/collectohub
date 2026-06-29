@@ -1,5 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { LanguageService } from './language.service';
 import type { SupportedLanguage } from './language.service';
 import { TranslatePipe } from './translate.pipe';
@@ -7,21 +9,34 @@ import { TranslatePipe } from './translate.pipe';
 @Component({
   selector: 'app-language-selector',
   standalone: true,
-  imports: [MatButtonModule, TranslatePipe],
+  imports: [MatButtonModule, MatIconModule, MatMenuModule, TranslatePipe],
   template: `
-    <div class="language-selector" role="group" [attr.aria-label]="'language.selectorLabel' | translate">
+    <div class="language-selector" [attr.aria-label]="'language.selectorLabel' | translate">
+      <button
+        mat-stroked-button
+        type="button"
+        class="language-trigger"
+        [matMenuTriggerFor]="languageMenu"
+        data-testid="language-selector"
+        [attr.aria-label]="'language.selectorLabel' | translate"
+      >
+        <mat-icon aria-hidden="true">language</mat-icon>
+        <span>{{ activeLanguageLabel() }}</span>
+      </button>
+
+      <mat-menu #languageMenu="matMenu">
       @for (language of languageService.availableLanguages(); track language) {
         <button
-          mat-button
+          mat-menu-item
           type="button"
           [class.active-language]="languageService.currentLanguage() === language"
-          [attr.aria-pressed]="languageService.currentLanguage() === language"
           [attr.data-testid]="'language-' + language"
           (click)="setLanguage(language)"
         >
-          {{ language === 'es' ? ('language.shortEs' | translate) : ('language.shortEn' | translate) }}
+          <span>{{ language === 'es' ? ('language.es' | translate) : ('language.en' | translate) }}</span>
         </button>
       }
+      </mat-menu>
     </div>
   `,
   styles: [
@@ -29,18 +44,22 @@ import { TranslatePipe } from './translate.pipe';
       .language-selector {
         align-items: center;
         display: inline-flex;
-        gap: 4px;
       }
 
-      .language-selector button {
+      .language-trigger {
         border: 1px solid var(--ch-border);
-        min-width: 44px;
+        min-height: 40px;
         padding-inline: 10px;
       }
 
-      .language-selector button.active-language {
-        background: rgba(103, 213, 200, 0.14);
-        border-color: rgba(103, 213, 200, 0.42);
+      .language-trigger mat-icon {
+        font-size: 18px;
+        height: 18px;
+        margin-right: 6px;
+        width: 18px;
+      }
+
+      [mat-menu-item].active-language {
         color: var(--ch-primary);
       }
     `
@@ -48,6 +67,12 @@ import { TranslatePipe } from './translate.pipe';
 })
 export class LanguageSelectorComponent {
   readonly languageService = inject(LanguageService);
+
+  activeLanguageLabel(): string {
+    return this.languageService.currentLanguage() === 'es'
+      ? this.languageService.translate('language.shortEs')
+      : this.languageService.translate('language.shortEn');
+  }
 
   setLanguage(language: SupportedLanguage): void {
     this.languageService.setLanguage(language);

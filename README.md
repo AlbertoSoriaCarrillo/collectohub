@@ -209,6 +209,7 @@ Capturas recomendadas:
 - E2E Playwright: `docs/21_E2E_TESTING.md`.
 - Revision portfolio/entrevista: `docs/22_PORTFOLIO_REVIEW.md`.
 - Reenfoque producto libros/comics/manga: `docs/26_PRODUCT_REFOCUS_BOOKS.md`.
+- Navegacion publica y header: `docs/27_PUBLIC_NAVIGATION_UX.md`.
 - Datos de demo local: `docs/25_DEMO_DATA.md`.
 
 ## Limitaciones Actuales

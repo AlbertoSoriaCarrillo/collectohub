@@ -5,9 +5,11 @@ SPA Angular del MVP de CollectoHub. Consume el backend real en
 gestionar colecciones de libros, comics y manga.
 
 La navegacion principal se centra en Home, Catalogo, Colecciones, Buscados y
-Perfil. Las pantallas de tiendas, inventario y reservas siguen existiendo como
-rutas legacy/futuras para no romper el backend ni los flujos ya implementados,
-pero no se promocionan en el recorrido principal.
+Perfil. El acceso de registro no se muestra como CTA global: se llega a
+`/register` desde el enlace inferior de login. Las pantallas de tiendas,
+inventario y reservas siguen existiendo como rutas legacy/futuras para no romper
+el backend ni los flujos ya implementados, pero no se promocionan en el
+recorrido principal.
 
 ## Stack
 
@@ -141,7 +143,7 @@ datos levantados previamente. Guia completa: `../docs/21_E2E_TESTING.md`.
 
 - `/home` publica.
 - `/login`
-- `/register`
+- `/register`, accesible desde login o por URL manual.
 - `/collections` protegida.
 - `/collections/new` protegida.
 - `/collections/:collectionId` publica/protegida segun visibilidad backend.
@@ -178,10 +180,11 @@ Rutas legacy/futuras conservadas:
 
 ## UI/UX MVP
 
-- Layout tipo producto social con sidebar desktop, navegacion inferior movil y contenido central.
+- Layout tipo producto social con header global, sidebar desktop solo de navegacion, navegacion inferior movil y contenido central.
 - Sistema visual dark-soft con variables SCSS, tarjetas de radio maximo 8px, chips, badges, tokens visuales y estados vacios.
 - Login, registro, home, catalogo, colecciones, buscados y perfil como primeras pantallas de producto.
 - Listados y formularios MVP usan una jerarquia visual comun para catalogo, colecciones y buscados.
+- El header muestra idioma y login para visitante; al iniciar sesion muestra avatar/menu con Perfil y Cerrar sesion.
 - Los `data-testid` de Playwright se mantienen para no fragilizar los E2E.
 
 Guia de la fase: `../docs/23_UI_UX_REDESIGN.md`.
@@ -189,9 +192,9 @@ Guia de la fase: `../docs/23_UI_UX_REDESIGN.md`.
 ## Internacionalizacion
 
 - Idiomas soportados: `es` y `en`.
-- Selector visible en layout principal, login y registro.
+- Selector principal visible una sola vez en el header global.
 - Idioma persistido en `localStorage` con la clave `collectohub.language`.
-- Registro sincroniza `preferredInterfaceLanguage` con el idioma activo.
+- Registro mantiene el campo `preferredInterfaceLanguage` como dato enviado al backend y lo sincroniza con el idioma activo.
 - Enums visibles se traducen sin cambiar los valores enviados al backend.
 - Los datos dinamicos de usuarios, tiendas, productos, colecciones y API no se traducen.
 

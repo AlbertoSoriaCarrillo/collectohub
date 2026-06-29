@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { AuthService } from '../core/auth/auth.service';
 import { LanguageSelectorComponent } from '../core/i18n/language-selector.component';
 import { TranslatePipe } from '../core/i18n/translate.pipe';
@@ -20,6 +21,7 @@ interface NavItem {
     RouterLinkActive,
     MatButtonModule,
     MatIconModule,
+    MatMenuModule,
     LanguageSelectorComponent,
     TranslatePipe
   ],
@@ -40,8 +42,7 @@ export class MainLayoutComponent {
     { labelKey: 'layout.nav.home', route: '/home', icon: 'home' },
     { labelKey: 'layout.nav.catalog', route: '/catalog', icon: 'travel_explore' },
     { labelKey: 'layout.nav.collectionsShort', route: '/collections', icon: 'collections_bookmark' },
-    { labelKey: 'layout.nav.wanted', route: '/wanted', icon: 'bookmark_search' },
-    { labelKey: 'layout.nav.profile', route: '/profile', icon: 'person' }
+    { labelKey: 'layout.nav.wanted', route: '/wanted', icon: 'bookmark_search' }
   ];
 
   userInitials(): string {

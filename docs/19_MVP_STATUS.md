@@ -61,6 +61,8 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 - Home publica y perfil basico.
 - Modulos UI principales para catalogo, colecciones y buscados.
 - Rutas legacy/futuras para tiendas, inventario y reservas conservadas por URL manual.
+- Header global con logo, navegacion, selector unico de idioma y login/avatar segun sesion.
+- Sidebar desktop limpia, limitada a navegacion principal.
 - Persistencia MVP de sesion en `localStorage`.
 - Mensajes de error normalizados para errores HTTP comunes.
 - Tests de servicios, guards, rutas y pantallas principales.
@@ -94,6 +96,7 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 - Tras crear la primera tienda, el backend actualiza roles en base de datos, pero el JWT existente no cambia. El usuario debe volver a iniciar sesion para que la UI vea `SHOP_OWNER`.
 - Las reservas no reducen stock automaticamente y no caducan por job automatico.
 - Tiendas, inventario y reservas estan implementadas, pero en el frontend actual son rutas legacy/futuras fuera de la navegacion principal.
+- `Register` no se muestra como accion global; se accede desde login o por URL manual.
 - La sesion frontend usa `localStorage`, aceptado solo como simplificacion MVP.
 - Algunos filtros frontend MVP son numericos/manuales, como `shopId`, `userId` o `shopProductId`.
 - No hay subida real de imagenes; los productos y colecciones se gestionan sin archivos.
@@ -199,9 +202,10 @@ Guia completa: `docs/21_E2E_TESTING.md`.
 La fase de rediseño visual mantiene el alcance funcional del MVP y mejora la
 presentacion para demo/portfolio:
 
-- Sidebar desktop con navegacion principal, sesion y CTA.
+- Header global con marca, navegacion, selector de idioma y menu de usuario.
+- Sidebar desktop limpia solo con navegacion principal.
 - Bottom navigation movil para rutas principales autenticadas.
-- Login y registro con panel introductorio y formularios Material.
+- Login y registro con cards centradas, limpias y formularios Material.
 - Home, catalogo, colecciones, buscados y perfil como recorrido principal.
 - Listados y formularios de catalogo, colecciones y buscados con tarjetas y estados vacios.
 - `data-testid` conservados para Playwright.
