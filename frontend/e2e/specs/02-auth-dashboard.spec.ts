@@ -33,5 +33,7 @@ test('registers a collector, reaches collections, opens profile and logs in agai
   await loginUser(page, data.user);
 
   await page.goto('/wanted');
-  await expect(page.getByRole('heading', { name: /Buscados|Wanted/i })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { level: 1, name: /^(Buscados|Wanted)$/i })
+  ).toBeVisible();
 });

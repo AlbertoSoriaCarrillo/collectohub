@@ -105,7 +105,7 @@ no cambia.
 
 ## URLs utiles
 
-Al terminar, el script imprime primero enlaces principales como:
+Al terminar, el script imprime una primera seccion `MVP 1 URLs` con:
 
 - `http://localhost:4200/home`
 - `http://localhost:4200/login`
@@ -115,7 +115,7 @@ Al terminar, el script imprime primero enlaces principales como:
 - `http://localhost:4200/wanted`
 - `http://localhost:4200/profile`
 
-Tambien imprime URLs legacy/futuras:
+Despues imprime una seccion separada `Legacy/future URLs` con:
 
 - `http://localhost:4200/shops/{shopId}`
 - `http://localhost:4200/shops/{shopId}/inventory`
@@ -170,3 +170,6 @@ conservar los datos existentes.
 - No reduce stock, igual que el MVP actual.
 - No sustituye los tests E2E.
 - No esta pensado para produccion ni para datos persistentes reales.
+
+El script se valida con el parser nativo de PowerShell durante el cierre de MVP
+1 para detectar errores de sintaxis sin necesitar crear datos.

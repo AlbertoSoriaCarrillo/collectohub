@@ -79,4 +79,15 @@ describe('CollectionItemCreateComponent', () => {
     expect(component.form.controls.masterProductId.hasError('required')).toBe(true);
     expect(component.form.controls.collectionStatus.hasError('required')).toBe(true);
   });
+
+  it('offers only the four collection states in MVP 1', () => {
+    const fixture = TestBed.createComponent(CollectionItemCreateComponent);
+
+    expect(fixture.componentInstance.statuses).toEqual([
+      'OWNED',
+      'WANTED',
+      'MISSING',
+      'DUPLICATED'
+    ]);
+  });
 });

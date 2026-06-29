@@ -19,6 +19,24 @@ creadores, con matching, social y comercio desarrollados por fases.
 | Commerce | Reservas sin pago; resto futuro |
 | Content Creators | Futuro |
 
+## Cierre MVP 1 - 2026-06-29
+
+MVP 1 queda cerrado como base tecnica/producto tras una auditoria de alcance,
+navegacion, UI, rutas, i18n, demo, seguridad basica y documentacion.
+
+Correcciones de cierre:
+
+- estados visibles de coleccion limitados a `OWNED`, `WANTED`, `MISSING` y
+  `DUPLICATED`;
+- Buscados sin filtros comerciales ni enlaces a productos de tienda;
+- subtitulo global alineado con biblioteca personal, sin prometer social;
+- URLs demo separadas entre MVP 1 y legacy/futuro;
+- healthcheck nginx corregido para usar `127.0.0.1`;
+- selectores E2E de Buscados estabilizados para ES/EN.
+
+Checklist y backlog: `docs/07_MVP1_ACCEPTANCE_CHECKLIST.md` y
+`docs/08_NEXT_BACKLOG.md`.
+
 ## Reenfoque 2026-06-23
 
 El MVP tecnico de backend y frontend esta implementado. El foco visible de
@@ -257,6 +275,19 @@ El workflow local `.github/workflows/ci.yml` define:
 La revision de este archivo no encontro necesidad de cambios en esta fase.
 
 ## Validacion realizada
+
+### Auditoria de cierre 2026-06-29
+
+- Frontend `npm.cmd ci`: correcto; 7 vulnerabilidades transitivas/dev conocidas.
+- Frontend tests: 38 archivos y 80 tests correctos.
+- Frontend build: correcto; aviso no bloqueante de budget por 92.30 kB.
+- Backend: 161 tests correctos, 0 fallos, 0 errores, 0 saltados con Docker.
+- Docker Compose: PostgreSQL, backend y frontend `healthy`.
+- Health: backend `UP` y frontend nginx `OK`.
+- Playwright: 4 E2E correctos sobre el stack Docker final.
+- Parser PowerShell de datos demo: correcto.
+
+### Evidencias historicas acumuladas
 
 - Backend: `.\mvnw.cmd clean verify` correcto.
 - Frontend: `npm ci` correcto.

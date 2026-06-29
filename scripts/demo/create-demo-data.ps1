@@ -548,9 +548,14 @@ Write-Host "  Collection ID:  $collectionId"
 Write-Host "  Reservation ID: $reservationId"
 Write-Host "  Recommendations: $($recommendations.totalRecommendations)"
 Write-Host ""
-Write-Host "Useful URLs:"
-foreach ($entry in $urls.GetEnumerator()) {
-    Write-Host "  $($entry.Key): $($entry.Value)"
+Write-Host "MVP 1 URLs:"
+foreach ($key in @("home", "login", "catalog", "collections", "collectionDetail", "wanted", "profile")) {
+    Write-Host "  ${key}: $($urls[$key])"
+}
+Write-Host ""
+Write-Host "Legacy/future URLs:"
+foreach ($key in @("legacyShopDetail", "legacyShopInventory", "legacyShopProductDetail", "legacyReservations", "legacyReservationDetail", "legacyShopReservations")) {
+    Write-Host "  ${key}: $($urls[$key])"
 }
 Write-Host ""
 Write-Host "Saved local summary: $lastDataPath"

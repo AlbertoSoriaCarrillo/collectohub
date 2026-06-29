@@ -19,7 +19,9 @@ test('validates the collection-focused MVP flow from the UI', async ({ page }) =
   await expect(page.getByRole('heading', { name: /Catalogo|Catalog|Obras|Works/i })).toBeVisible();
 
   await page.goto('/wanted');
-  await expect(page.getByRole('heading', { name: /Buscados|Wanted/i })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { level: 1, name: /^(Buscados|Wanted)$/i })
+  ).toBeVisible();
 
   await page.goto('/profile');
   await expect(page.getByTestId('profile-page')).toBeVisible();

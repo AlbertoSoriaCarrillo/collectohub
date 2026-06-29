@@ -132,3 +132,11 @@ priorizar el recorrido anterior.
 Tiendas, inventario, reservas, social y creadores no se descartan. Se mantienen
 fuera del foco actual para evitar que MVP 1 se convierta en un producto
 inabarcable.
+
+## 13. Cierre de MVP 1
+
+La auditoria de cierre del 2026-06-29 confirma este reenfoque como experiencia
+principal. Evidencia y pendientes posteriores:
+
+- `docs/07_MVP1_ACCEPTANCE_CHECKLIST.md`.
+- `docs/08_NEXT_BACKLOG.md`.

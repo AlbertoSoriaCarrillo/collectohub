@@ -1,5 +1,8 @@
 # CollectoHub MVP 1 scope
 
+Estado: cerrado como base tecnica/producto el 2026-06-29. Evidencia de
+aceptacion en `docs/07_MVP1_ACCEPTANCE_CHECKLIST.md`.
+
 ## Objetivo
 
 Validar que una persona coleccionista obtiene valor al gestionar su biblioteca
@@ -24,8 +27,9 @@ MVP 1 no intenta validar marketplace, red social completa ni gestion comercial.
 - datos demo;
 - Docker, tests y CI.
 
-Los estados tecnicos adicionales ya soportados, como `SELLABLE` o `TRADABLE`,
-no convierten MVP 1 en un marketplace.
+El contrato backend conserva estados tecnicos adicionales como `SELLABLE` o
+`TRADABLE` por compatibilidad, pero los formularios principales de MVP 1 solo
+ofrecen los cuatro estados anteriores.
 
 ## No entra en MVP 1
 

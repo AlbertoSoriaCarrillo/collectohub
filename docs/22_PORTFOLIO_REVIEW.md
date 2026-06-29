@@ -18,6 +18,9 @@ La vision larga incorpora catalogo editorial, social, matching oferta/demanda,
 comercio y herramientas para creadores por fases. El portfolio no presenta esas
 capacidades como producto final disponible.
 
+MVP 1 fue auditado y cerrado como base tecnica/producto el 2026-06-29. La
+evidencia reproducible esta en `docs/07_MVP1_ACCEPTANCE_CHECKLIST.md`.
+
 ## 2. Problema Que Resuelve
 
 Los coleccionistas suelen tener listas dispersas de libros, comics y manga que
@@ -180,6 +183,14 @@ E2E:
 - Smoke de frontend y health backend.
 - Registro/login/colecciones/perfil.
 - Flujo MVP principal centrado en biblioteca.
+
+Ultima auditoria integral:
+
+- 80 tests frontend correctos.
+- 161 tests backend correctos, incluidos Testcontainers.
+- build Angular correcto.
+- tres servicios Docker healthy.
+- 4 E2E Playwright correctos.
 
 ## 10. Docker Y Despliegue Local
 

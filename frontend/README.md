@@ -16,6 +16,10 @@ inventario y reservas siguen existiendo como rutas legacy/futuras para no romper
 el backend ni los flujos ya implementados, pero no se promocionan en el
 recorrido principal.
 
+MVP 1 queda auditado y cerrado como base tecnica/producto desde el 2026-06-29.
+La UI principal ofrece solo los estados `OWNED`, `WANTED`, `MISSING` y
+`DUPLICATED`; Buscados no enlaza a reserva ni producto de tienda.
+
 ## Stack
 
 - Angular 21.
@@ -255,3 +259,5 @@ Flujo recomendado desde UI:
 - Roadmap por fases: `../docs/01_ROADMAP.md`.
 - Limites del MVP 1: `../docs/02_MVP1_SCOPE.md`.
 - Dominios y estado real: `../docs/03_PRODUCT_DOMAINS.md`.
+- Checklist de cierre: `../docs/07_MVP1_ACCEPTANCE_CHECKLIST.md`.
+- Backlog posterior: `../docs/08_NEXT_BACKLOG.md`.

@@ -82,7 +82,5 @@ export const COLLECTION_ITEM_STATUSES: CollectionItemStatus[] = [
   'OWNED',
   'WANTED',
   'MISSING',
-  'DUPLICATED',
-  'SELLABLE',
-  'TRADABLE'
+  'DUPLICATED'
 ];

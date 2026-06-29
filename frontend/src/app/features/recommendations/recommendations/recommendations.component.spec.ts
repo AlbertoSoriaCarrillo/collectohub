@@ -125,33 +125,35 @@ describe('RecommendationsComponent', () => {
     );
   });
 
-  it('sends filters when searching', async () => {
+  it('keeps wanted filters focused on collection data', async () => {
     const fixture = TestBed.createComponent(RecommendationsComponent);
     fixture.detectChanges();
     await fixture.whenStable();
 
     const component = fixture.componentInstance;
     component.filters.setValue({
-      categoryCode: 'MANGA_COMIC',
-      maxPrice: 20,
-      currency: 'EUR',
-      physicalCondition: 'NEW'
+      categoryCode: 'MANGA_COMIC'
     });
     component.loadRecommendations();
 
     expect(recommendationService.getMyRecommendations).toHaveBeenLastCalledWith({
-      categoryCode: 'MANGA_COMIC',
-      maxPrice: 20,
-      currency: 'EUR',
-      physicalCondition: 'NEW',
-      shopId: null
+      categoryCode: 'MANGA_COMIC'
     });
     expect(recommendationService.getMyRecommendationSummary).toHaveBeenLastCalledWith({
-      categoryCode: 'MANGA_COMIC',
-      maxPrice: 20,
-      currency: 'EUR',
-      physicalCondition: 'NEW',
-      shopId: null
+      categoryCode: 'MANGA_COMIC'
     });
+  });
+
+  it('does not promote shop-product routes from wanted matches', async () => {
+    const fixture = TestBed.createComponent(RecommendationsComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const links = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLAnchorElement>('a')
+    ).map((link) => link.getAttribute('href'));
+
+    expect(links.some((href) => href?.startsWith('/shop-products/'))).toBe(false);
   });
 });

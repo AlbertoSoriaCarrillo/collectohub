@@ -24,6 +24,8 @@ marketplace, pagos o tiendas ya listos para usuario final.
 
 ## Estado Del Proyecto
 
+- MVP 1 cerrado como base tecnica/producto el 2026-06-29; checklist completo en
+  `docs/07_MVP1_ACCEPTANCE_CHECKLIST.md`.
 - MVP funcional de backend y frontend.
 - Docker Compose local con PostgreSQL, backend y frontend validado.
 - Tests backend, tests frontend y E2E Playwright implementados.
@@ -221,6 +223,8 @@ Capturas recomendadas:
 - Modelo conceptual de catalogo: `docs/04_CATALOG_CONCEPT_MODEL.md`.
 - Matching usuario-tienda: `docs/05_USER_SHOP_MATCHING.md`.
 - Social y creadores: `docs/06_SOCIAL_AND_CREATORS.md`.
+- Checklist de cierre MVP 1: `docs/07_MVP1_ACCEPTANCE_CHECKLIST.md`.
+- Backlog posterior: `docs/08_NEXT_BACKLOG.md`.
 - Endpoints MVP: `docs/16_MVP_API_ENDPOINTS.md`.
 - Flujo manual por API: `docs/17_MANUAL_TESTING_FLOW.md`.
 - Demo desde UI: `docs/18_DEMO_FLOW.md`.

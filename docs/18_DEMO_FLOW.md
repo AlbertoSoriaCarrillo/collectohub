@@ -1,9 +1,9 @@
 # CollectoHub MVP demo flow
 
 Esta guia prepara una demo local del MVP usando la UI Angular contra el backend
-Spring Boot local. El recorrido principal actual presenta CollectoHub como red
-social/catalogo para gestionar colecciones de libros, comics y manga. Los datos
-son ejemplos desechables para entorno local, no secretos reales.
+Spring Boot local. El recorrido principal presenta MVP 1 como gestion de
+colecciones personales de libros, comics y manga usando un catalogo comun. Los
+datos son ejemplos desechables para entorno local, no secretos reales.
 
 ## 1. Arrancar el entorno
 
@@ -85,7 +85,7 @@ Resultado esperado:
 
 ## 4. Registro y login
 
-1. Entrar en `/register`.
+1. Entrar en `/login` y usar `Crear cuenta`.
 2. Registrar el usuario con email, password, confirmacion de password y nombre visible.
 3. Confirmar que se abre la sesion y aparece `Tu biblioteca`.
 4. Cerrar sesion y volver a entrar por `/login` para verificar login normal.
@@ -112,7 +112,8 @@ Resultado esperado:
 1. Ir a `Colecciones`.
 2. Crear una coleccion privada de categoria `MANGA_COMIC`.
 3. Abrir la coleccion.
-4. Si hay productos maestros de demo, anadir un item y marcarlo como `OWNED`, `WANTED` o `MISSING`.
+4. Si hay productos maestros de demo, anadir un item y marcarlo como `OWNED`,
+   `WANTED`, `MISSING` o `DUPLICATED`.
 
 Resultado esperado:
 
@@ -123,12 +124,13 @@ Resultado esperado:
 
 1. Ir a `Buscados` (`/wanted`).
 2. Revisar resumen de `Me falta`, `Lo quiero` y coincidencias.
-3. Filtrar por categoria, precio, moneda o condicion si hay datos.
+3. Filtrar por categoria si hay datos.
 
 Resultado esperado:
 
 - La pantalla funciona como lista de intereses/faltantes del coleccionista.
 - No se pide introducir `shopId` en el recorrido principal.
+- No hay CTA a producto de tienda, reserva o compra.
 
 ## 8. Revisar perfil
 

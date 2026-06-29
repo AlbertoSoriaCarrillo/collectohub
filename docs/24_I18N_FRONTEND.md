@@ -121,6 +121,7 @@ Tests anadidos:
 - `LanguageService`: idioma inicial, `localStorage`, idioma de navegador,
   fallback, cambio en caliente, idiomas disponibles e interpolacion.
 - `TranslatePipe`: traduccion, cambio de idioma y fallback de clave.
+- Paridad de claves hoja entre diccionarios ES y EN.
 - E2E Playwright: cambio de idioma en login y persistencia tras recarga.
 
 Los helpers E2E del flujo MVP usan `data-testid` en campos traducibles para no

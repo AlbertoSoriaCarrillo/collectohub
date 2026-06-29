@@ -300,6 +300,23 @@
 - Motivo: conserva el trabajo validado sin prometer matching, pedidos, pagos,
   almacen ni operacion comercial que todavia no existen.
 
+## 2026-06-29 - Cierre de MVP 1
+
+- Decision: cerrar MVP 1 como base tecnica/producto con Home, Catalogo,
+  Colecciones, Buscados, Perfil e i18n como recorrido principal.
+- Motivo: el alcance tiene navegacion coherente, tests completos, Docker healthy
+  y E2E del flujo real; las capacidades futuras estan separadas en roadmap y
+  backlog.
+- Decision: limitar los estados seleccionables en la UI principal a `OWNED`,
+  `WANTED`, `MISSING` y `DUPLICATED`, manteniendo `SELLABLE` y `TRADABLE` en el
+  contrato/modelo para compatibilidad.
+- Motivo: evita lenguaje de venta/intercambio dentro del nucleo coleccionista
+  sin romper backend ni datos existentes.
+- Decision: mantener el calculo backend de recomendaciones contra stock, pero
+  retirar de `/wanted` filtros comerciales y enlaces a producto de tienda.
+- Motivo: Buscados debe representar faltantes, deseados y coincidencias de MVP 1,
+  no funcionar como entrada visible a reservas o marketplace.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

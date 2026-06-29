@@ -57,26 +57,6 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'recommendations.maxPrice' | translate }}</mat-label>
-          <input matInput type="number" min="0" step="0.01" formControlName="maxPrice" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'common.currency' | translate }}</mat-label>
-          <input matInput maxlength="3" formControlName="currency" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'recommendations.condition' | translate }}</mat-label>
-          <mat-select formControlName="physicalCondition">
-            <mat-option value="">{{ 'common.all' | translate }}</mat-option>
-            @for (condition of physicalConditions; track condition) {
-              <mat-option [value]="condition">{{ 'enums.physicalCondition.' + condition | translate }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-
         <div class="filter-actions">
           <button mat-flat-button color="primary" type="submit" [disabled]="loading()">
             {{ loading() ? ('actions.searching' | translate) : ('actions.filter' | translate) }}
@@ -128,14 +108,10 @@
           <mat-card-content>
             <mat-chip-set [attr.aria-label]="'recommendations.dataAria' | translate">
               <mat-chip>{{ 'enums.collectionStatus.' + recommendation.matchedCollectionItemStatus | translate }}</mat-chip>
-              <mat-chip>{{ 'enums.physicalCondition.' + recommendation.physicalCondition | translate }}</mat-chip>
+              <mat-chip>{{ recommendation.categoryCode }}</mat-chip>
             </mat-chip-set>
 
             <dl>
-              <div>
-                <dt>{{ 'common.price' | translate }}</dt>
-                <dd>{{ priceLabel(recommendation) }}</dd>
-              </div>
               <div>
                 <dt>{{ 'common.collection' | translate }}</dt>
                 <dd>{{ recommendation.matchedCollectionName }}</dd>
@@ -156,9 +132,6 @@
           <mat-card-actions>
             <a mat-button [routerLink]="['/catalog', recommendation.masterProductId]">
               {{ 'catalog.viewRecord' | translate }}
-            </a>
-            <a mat-button [routerLink]="['/shop-products', recommendation.shopProductId]">
-              {{ 'recommendations.viewAvailability' | translate }}
             </a>
           </mat-card-actions>
         </mat-card>

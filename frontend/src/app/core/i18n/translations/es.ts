@@ -3,7 +3,7 @@ import type { TranslationDictionary } from '../translations';
 export const es: TranslationDictionary = {
   common: {
     appName: 'CollectoHub',
-    brandSubtitle: 'Biblioteca social de libros y comics',
+    brandSubtitle: 'Tu biblioteca de libros y comics',
     email: 'Email',
     password: 'Contraseña',
     name: 'Nombre',
@@ -351,7 +351,7 @@ export const es: TranslationDictionary = {
     loading: 'Cargando buscados...',
     noMatchesTitle: 'No hay coincidencias disponibles',
     noMatchesDescription:
-      'Ajusta los filtros o revisa mas tarde cuando haya coincidencias disponibles.',
+      'Aun no hay coincidencias para estos buscados. Tus estados siguen guardados en la coleccion.',
     noNeedsTitle: 'No hay elementos buscados o faltantes',
     noNeedsDescription:
       'Marca elementos de tus colecciones como "Me falta" o "Lo quiero" para verlos aqui.',

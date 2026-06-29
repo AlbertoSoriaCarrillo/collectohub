@@ -41,6 +41,8 @@ describe('MainLayoutComponent', () => {
     expect(compiled.querySelector('[data-testid="language-selector"]')).toBeTruthy();
     expect(compiled.querySelector('[data-testid="register-link"]')).toBeFalsy();
     expect(compiled.querySelector('[data-testid="user-menu-button"]')).toBeFalsy();
+    expect(visibleRoutes(compiled)).not.toContain('/shops');
+    expect(visibleRoutes(compiled)).not.toContain('/reservations');
   });
 
   it('shows the authenticated user menu instead of login', () => {
@@ -59,5 +61,13 @@ describe('MainLayoutComponent', () => {
 
     expect(compiled.querySelector('[data-testid="user-menu-button"]')).toBeTruthy();
     expect(compiled.querySelector('[data-testid="login-header-link"]')).toBeFalsy();
+    expect(visibleRoutes(compiled)).not.toContain('/shops');
+    expect(visibleRoutes(compiled)).not.toContain('/reservations');
   });
 });
+
+function visibleRoutes(element: HTMLElement): Array<string | null> {
+  return Array.from(element.querySelectorAll<HTMLAnchorElement>('a')).map((link) =>
+    link.getAttribute('href')
+  );
+}

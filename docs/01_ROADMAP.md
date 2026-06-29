@@ -34,8 +34,9 @@ Incluye:
 No incluye marketplace, pagos, tiendas como flujo principal, chat, feed social
 completo, monetizacion, pedidos ni almacen.
 
-**Estado actual:** implementado como recorrido principal, con limitaciones de
-producto documentadas en `docs/02_MVP1_SCOPE.md`.
+**Estado actual:** cerrado como base tecnica/producto el 2026-06-29. Alcance en
+`docs/02_MVP1_SCOPE.md` y evidencia en
+`docs/07_MVP1_ACCEPTANCE_CHECKLIST.md`.
 
 ## MVP 2 - Catalogo editorial solido
 

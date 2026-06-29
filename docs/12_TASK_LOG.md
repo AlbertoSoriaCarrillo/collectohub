@@ -651,3 +651,53 @@ Siguiente paso: crear el backend en la carpeta backend.
   documentos estrategicos nuevos.
 - No se ejecutan suites backend/frontend al ser una EPIC exclusivamente
   documental sin cambios de codigo, configuracion ni contratos.
+
+## 2026-06-29 - EPIC 28 - Cierre y auditoria de MVP 1
+
+- Auditados producto visible, layout, navegacion, auth, Home, Catalogo,
+  Colecciones, Buscados, Perfil, rutas, guards, i18n, tests, E2E, demo data,
+  Docker y documentacion estrategica/operativa.
+- Confirmado que Home, header, sidebar y bottom nav no promocionan tiendas,
+  inventario ni reservas.
+- Confirmado que Register solo se enlaza desde Login y que `confirmPassword` no
+  se envia al backend.
+- Limitados los estados seleccionables de items a `OWNED`, `WANTED`, `MISSING`
+  y `DUPLICATED`; `SELLABLE` y `TRADABLE` siguen soportados por contrato para
+  compatibilidad legacy.
+- Simplificada `/wanted` para filtrar solo por categoria y mostrar coincidencias
+  sin precio, condicion ni enlace a `/shop-products`.
+- Cambiado el subtitulo global de biblioteca social a biblioteca personal en
+  ES/EN.
+- Anadido test de paridad de claves de traduccion ES/EN.
+- Anadidos tests de estados MVP 1, ausencia de rutas legacy en layout y ausencia
+  de CTA comercial en Buscados.
+- Actualizado E2E smoke para impedir enlaces principales de tiendas,
+  inventario o reservas.
+- Corregidos selectores E2E de Buscados para exigir el `h1` exacto y evitar
+  colision con el texto del estado vacio en ingles.
+- Separada la salida de `create-demo-data.ps1` en `MVP 1 URLs` y
+  `Legacy/future URLs`; parser PowerShell correcto.
+- Detectado que el healthcheck frontend resolvia `localhost` por IPv6 mientras
+  nginx escuchaba IPv4; corregido a `http://127.0.0.1/health`.
+- Creado `docs/07_MVP1_ACCEPTANCE_CHECKLIST.md` con criterios funcionales, UI,
+  i18n, seguridad, demo, Docker, tests, fuera de alcance y paso a MVP 2.
+- Creado `docs/08_NEXT_BACKLOG.md` con gates de portfolio y backlog separado
+  para MVP 2 a MVP 6.
+- Actualizados README, README frontend, roadmap, alcance, dominios, decisiones,
+  demo, estado MVP, portfolio, i18n, demo data y reenfoque.
+- Ejecutado `cd frontend && npm.cmd ci`: correcto; 7 vulnerabilidades
+  transitivas/dev (3 low, 4 high) y deprecacion de `@angular/animations`.
+- Ejecutado `cd frontend && npm.cmd test -- --watch=false`: 38 archivos y 80
+  tests correctos.
+- Ejecutado `cd frontend && npm.cmd run build`: correcto; warning de budget
+  inicial, 592.30 kB frente a 500 kB.
+- Ejecutado `cd backend && .\mvnw.cmd clean verify` con Docker activo: 161
+  tests correctos, 0 fallos, 0 errores, 0 saltados.
+- Ejecutados `docker compose down` y `docker compose up --build -d`; PostgreSQL,
+  backend y frontend quedan healthy.
+- Validado backend `/api/health` con `UP` y frontend `/health` con `OK`.
+- Ejecutado `cd frontend && npm.cmd run e2e`: primer cierre detecto selector
+  estricto ambiguo en ingles; corregido y reejecutado con 4 E2E correctos.
+- No se modifican backend, base de datos, migraciones, endpoints ni contratos.
+- MVP 1 queda cerrado como base tecnica/producto, no como sistema productivo ni
+  como implementacion de la vision larga.

@@ -15,4 +15,7 @@ test('loads the frontend shell and public navigation', async ({ page, request })
   await expect(page.getByTestId('register-link')).toHaveCount(0);
   await expect(page.getByTestId('language-selector')).toBeVisible();
   await expect(page.getByRole('link', { name: /catalogo|catalog/i }).first()).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: /tiendas|shops|inventario|inventory|reservas|reservations/i })
+  ).toHaveCount(0);
 });

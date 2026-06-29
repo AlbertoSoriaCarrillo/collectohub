@@ -6,12 +6,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ProductCategoryResponse } from '../../../core/models/catalog.model';
-import { PHYSICAL_CONDITIONS, PhysicalCondition } from '../../../core/models/inventory.model';
 import {
   RecommendationFilters,
   RecommendedShopProductResponse,
@@ -29,7 +27,6 @@ import { RecommendationService } from '../../../core/services/recommendation.ser
     MatCardModule,
     MatChipsModule,
     MatFormFieldModule,
-    MatInputModule,
     MatSelectModule,
     TranslatePipe
   ],
@@ -42,17 +39,13 @@ export class RecommendationsComponent implements OnInit {
   private readonly recommendationService = inject(RecommendationService);
   private readonly errorMessageService = inject(ErrorMessageService);
 
-  readonly physicalConditions = PHYSICAL_CONDITIONS;
   readonly categories = signal<ProductCategoryResponse[]>([]);
   readonly recommendations = signal<RecommendedShopProductResponse[]>([]);
   readonly summary = signal<UserRecommendationSummaryResponse | null>(null);
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly filters = this.fb.group({
-    categoryCode: [''],
-    maxPrice: [null as number | null],
-    currency: [''],
-    physicalCondition: ['']
+    categoryCode: ['']
   });
 
   ngOnInit(): void {
@@ -81,16 +74,9 @@ export class RecommendationsComponent implements OnInit {
 
   resetFilters(): void {
     this.filters.reset({
-      categoryCode: '',
-      maxPrice: null,
-      currency: '',
-      physicalCondition: ''
+      categoryCode: ''
     });
     this.loadRecommendations();
-  }
-
-  priceLabel(recommendation: RecommendedShopProductResponse): string {
-    return `${recommendation.priceAmount} ${recommendation.currency}`;
   }
 
   hasCollectionNeeds(): boolean {
@@ -108,18 +94,7 @@ export class RecommendationsComponent implements OnInit {
   private toFilters(): RecommendationFilters {
     const value = this.filters.getRawValue();
     return {
-      categoryCode: value.categoryCode || null,
-      maxPrice: this.positiveNumberOrNull(value.maxPrice),
-      currency: value.currency?.trim() || null,
-      physicalCondition: value.physicalCondition
-        ? (value.physicalCondition as PhysicalCondition)
-        : null,
-      shopId: null
+      categoryCode: value.categoryCode || null
     };
-  }
-
-  private positiveNumberOrNull(value: number | null | undefined): number | null {
-    const numberValue = Number(value);
-    return Number.isFinite(numberValue) && numberValue > 0 ? numberValue : null;
   }
 }

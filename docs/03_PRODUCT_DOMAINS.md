@@ -45,7 +45,9 @@ futuras imagenes personales.
 
 Esta implementado para MVP 1: alta, lectura, edicion, borrado logico, items,
 estados y visibilidad. Faltan imagenes personales, comparticion social avanzada
-e importacion masiva.
+e importacion masiva. La UI de MVP 1 limita la seleccion a `OWNED`, `WANTED`,
+`MISSING` y `DUPLICATED`; otros estados del contrato quedan fuera del recorrido
+actual.
 
 ## 4. Social
 

@@ -3,7 +3,7 @@ import type { TranslationDictionary } from '../translations';
 export const en: TranslationDictionary = {
   common: {
     appName: 'CollectoHub',
-    brandSubtitle: 'Social library for books and comics',
+    brandSubtitle: 'Your books and comics library',
     email: 'Email',
     password: 'Password',
     name: 'Name',
@@ -348,7 +348,8 @@ export const en: TranslationDictionary = {
     shopId: 'Shop ID',
     loading: 'Loading wanted items...',
     noMatchesTitle: 'No matches available',
-    noMatchesDescription: 'Adjust filters or check back later when matches are available.',
+    noMatchesDescription:
+      'There are no matches for these wanted items yet. Their status remains saved in your collection.',
     noNeedsTitle: 'No wanted or missing items',
     noNeedsDescription: 'Mark collection items as wanted or missing to see them here.',
     dataAria: 'Wanted data',
