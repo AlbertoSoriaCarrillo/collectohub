@@ -222,6 +222,9 @@ Los servicios frontend usan los endpoints MVP documentados en
 Tambien existen servicios para endpoints legacy/futuros de tiendas, inventario y
 reservas porque el backend los conserva.
 
+El inventario completo de rutas y el mapa entre componentes, servicios Angular
+y endpoints esta disponible en `../docs/export/` en Markdown y CSV.
+
 ## Sesion
 
 En el MVP se usa `localStorage` para guardar `accessToken`, `refreshToken` y

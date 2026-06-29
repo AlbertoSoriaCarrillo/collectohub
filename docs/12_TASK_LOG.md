@@ -701,3 +701,36 @@ Siguiente paso: crear el backend en la carpeta backend.
 - No se modifican backend, base de datos, migraciones, endpoints ni contratos.
 - MVP 1 queda cerrado como base tecnica/producto, no como sistema productivo ni
   como implementacion de la vision larga.
+
+## 2026-06-29 - EPIC 29 - Documentacion tecnica exportable
+
+- Revisados README, vision, roadmap, alcance, dominios, modelo de catalogo,
+  matching, social, estado MVP, API, portfolio, demo y reenfoque de producto.
+- Contrastados los cuatro changelogs Liquibase, entidades JPA, repositorios,
+  DTOs, diez controladores, reglas de Spring Security, rutas Angular, servicios
+  y llamadas HTTP de los componentes enrutados.
+- Creada `docs/export/` con referencia en Markdown y CSV para base de datos,
+  endpoints backend, rutas frontend y mapa frontend-backend, mas diagrama
+  Mermaid y README de uso/actualizacion.
+- Documentadas 13 tablas de aplicacion, 15 indices Liquibase explicitos y las
+  relaciones PK/FK/UNIQUE, auditoria y borrado logico reales.
+- Documentados 35 endpoints REST de aplicacion, excluyendo rutas generadas por
+  Swagger/OpenAPI del conteo.
+- Documentadas 28 rutas hijas navegables, redirecciones y fallback; el wrapper
+  `MainLayoutComponent` no se cuenta como destino independiente.
+- Documentadas 53 relaciones pantalla-backend: 48 llamadas HTTP y 5 rutas sin
+  llamada directa.
+- Clasificados elementos como `MVP1_VISIBLE`, `LEGACY_FUTURE`, `TECHNICAL` o
+  `REDIRECT` segun el recorrido de producto vigente.
+- Validados los CSV con `Import-Csv`: 13 tablas, 35 endpoints, 28 rutas y 53
+  relaciones; 48 relaciones corresponden a llamadas HTTP reales.
+- Cruzados automaticamente los CSV contra los 13 `CREATE TABLE`, 15
+  `CREATE INDEX`, 35 mappings de controladores y 28 registros de rutas; no hay
+  tablas, endpoints ni rutas mapeadas ausentes o duplicadas.
+- Validado el Mermaid con cabecera `erDiagram` y 13 bloques de entidad, y
+  comprobados los diez archivos requeridos sin whitespace final.
+- Ejecutado `git status`: el alcance contiene solo README y documentacion.
+- No se ejecutan suites backend/frontend porque no hay cambios funcionales,
+  de configuracion, contratos, dependencias ni tests.
+- No se modifica backend, frontend funcional, base de datos, migraciones,
+  endpoints, rutas, componentes, seguridad, tests ni dependencias.

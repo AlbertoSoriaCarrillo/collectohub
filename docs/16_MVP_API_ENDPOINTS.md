@@ -5,6 +5,9 @@ Estado: contrato backend MVP consumido por el frontend Angular y validado en el 
 Esta guia documenta el contrato real expuesto por el backend actual. Todos los
 errores controlados usan el envelope `ErrorResponse`:
 
+La exportacion completa y filtrable de los 35 endpoints actuales esta en
+`docs/export/backend-endpoints.md` y `docs/export/backend-endpoints.csv`.
+
 ```json
 {
   "timestamp": "2026-06-17T00:00:00Z",

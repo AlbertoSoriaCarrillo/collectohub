@@ -164,6 +164,10 @@ Tablas principales:
 
 Las entidades principales incluyen auditoria y borrado logico cuando aplica.
 
+La estructura completa puede descargarse desde `docs/export/` como Markdown,
+CSV y diagrama Mermaid. La misma carpeta incluye el inventario de endpoints,
+rutas Angular y sus relaciones pantalla-servicio-API.
+
 ## 9. Testing
 
 Backend:

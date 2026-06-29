@@ -128,6 +128,8 @@ priorizar el recorrido anterior.
 - `docs/01_ROADMAP.md`: secuencia MVP 1 a MVP 6.
 - `docs/02_MVP1_SCOPE.md`: limites del foco coleccionista actual.
 - `docs/03_PRODUCT_DOMAINS.md`: estado implementado, parcial y futuro.
+- `docs/export/`: esquema, API, rutas y mapa frontend-backend descargables con
+  estado `MVP1_VISIBLE`, `LEGACY_FUTURE`, `TECHNICAL` o `REDIRECT`.
 
 Tiendas, inventario, reservas, social y creadores no se descartan. Se mantienen
 fuera del foco actual para evitar que MVP 1 se convierta en un producto

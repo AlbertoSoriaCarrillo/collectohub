@@ -1,0 +1,130 @@
+erDiagram
+    USERS {
+        BIGINT id PK
+        VARCHAR email UK
+        VARCHAR password_hash
+        VARCHAR display_name
+        VARCHAR preferred_interface_language
+        VARCHAR status
+        TIMESTAMPTZ deleted_at
+    }
+    ROLES {
+        BIGINT id PK
+        VARCHAR code UK
+        VARCHAR name
+        TIMESTAMPTZ deleted_at
+    }
+    USER_ROLES {
+        BIGINT user_id PK,FK
+        BIGINT role_id PK,FK
+    }
+    REFRESH_TOKENS {
+        BIGINT id PK
+        BIGINT user_id FK
+        VARCHAR token_hash UK
+        TIMESTAMPTZ expires_at
+        TIMESTAMPTZ revoked_at
+        TIMESTAMPTZ deleted_at
+    }
+    PRODUCT_CATEGORIES {
+        BIGINT id PK
+        VARCHAR code UK
+        VARCHAR name
+        BIGINT parent_id FK
+        TIMESTAMPTZ deleted_at
+    }
+    MASTER_PRODUCTS {
+        BIGINT id PK
+        BIGINT category_id FK
+        VARCHAR name
+        VARCHAR isbn
+        VARCHAR ean
+        VARCHAR status
+        JSONB publication_countries
+        JSONB attributes
+        TIMESTAMPTZ deleted_at
+    }
+    PRODUCT_SUGGESTIONS {
+        BIGINT id PK
+        BIGINT suggested_by_user_id FK
+        BIGINT reviewed_by_user_id FK
+        VARCHAR name
+        JSONB data
+        VARCHAR status
+        TIMESTAMPTZ deleted_at
+    }
+    COLLECTIONS {
+        BIGINT id PK
+        BIGINT user_id FK
+        BIGINT category_id FK
+        VARCHAR name
+        VARCHAR visibility
+        TIMESTAMPTZ deleted_at
+    }
+    COLLECTION_ITEMS {
+        BIGINT id PK
+        BIGINT collection_id FK
+        BIGINT master_product_id FK
+        VARCHAR collection_status
+        VARCHAR physical_condition
+        TIMESTAMPTZ deleted_at
+    }
+    SHOPS {
+        BIGINT id PK
+        BIGINT owner_user_id FK
+        VARCHAR name
+        VARCHAR currency
+        VARCHAR status
+        TIMESTAMPTZ deleted_at
+    }
+    SHOP_MEMBERS {
+        BIGINT id PK
+        BIGINT shop_id FK
+        BIGINT user_id FK
+        VARCHAR role
+        VARCHAR status
+        TIMESTAMPTZ deleted_at
+    }
+    SHOP_PRODUCTS {
+        BIGINT id PK
+        BIGINT shop_id FK
+        BIGINT master_product_id FK
+        NUMERIC price_amount
+        INTEGER stock_quantity
+        VARCHAR commercial_status
+        BOOLEAN visible
+        TIMESTAMPTZ deleted_at
+    }
+    RESERVATIONS {
+        BIGINT id PK
+        BIGINT user_id FK
+        BIGINT shop_id FK
+        BIGINT shop_product_id FK
+        INTEGER quantity
+        VARCHAR status
+        TIMESTAMPTZ expires_at
+        TIMESTAMPTZ deleted_at
+    }
+
+    USERS ||--o{ USER_ROLES : has
+    ROLES ||--o{ USER_ROLES : grants
+    USERS ||--o{ REFRESH_TOKENS : owns
+    USERS ||--o{ SHOPS : owns
+    SHOPS ||--o{ SHOP_MEMBERS : has
+    USERS ||--o{ SHOP_MEMBERS : joins
+    PRODUCT_CATEGORIES o|--o{ PRODUCT_CATEGORIES : parent_of
+    PRODUCT_CATEGORIES ||--o{ MASTER_PRODUCTS : classifies
+    USERS ||--o{ PRODUCT_SUGGESTIONS : suggests
+    USERS o|--o{ PRODUCT_SUGGESTIONS : reviews
+    USERS ||--o{ COLLECTIONS : owns
+    PRODUCT_CATEGORIES o|--o{ COLLECTIONS : scopes
+    COLLECTIONS ||--o{ COLLECTION_ITEMS : contains
+    MASTER_PRODUCTS ||--o{ COLLECTION_ITEMS : identifies
+    SHOPS ||--o{ SHOP_PRODUCTS : stocks
+    MASTER_PRODUCTS ||--o{ SHOP_PRODUCTS : identifies
+    USERS ||--o{ RESERVATIONS : places
+    SHOPS ||--o{ RESERVATIONS : receives
+    SHOP_PRODUCTS ||--o{ RESERVATIONS : reserves
+
+%% Recommendations have no persisted table. RecommendationService calculates
+%% matches from COLLECTION_ITEMS and available SHOP_PRODUCTS.

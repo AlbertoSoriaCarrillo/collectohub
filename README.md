@@ -236,6 +236,12 @@ Capturas recomendadas:
 - Navegacion publica y header: `docs/27_PUBLIC_NAVIGATION_UX.md`.
 - Datos de demo local: `docs/25_DEMO_DATA.md`.
 
+## Documentacion tecnica exportable
+
+La estructura real de base de datos, los endpoints backend, las rutas frontend
+y el mapa pantalla-servicio-endpoint estan disponibles en `docs/export/` en
+formatos Markdown, Mermaid y CSV descargables.
+
 ## Limitaciones Actuales
 
 - No hay pagos ni bloqueo transaccional de stock.

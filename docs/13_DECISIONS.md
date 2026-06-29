@@ -317,6 +317,20 @@
 - Motivo: Buscados debe representar faltantes, deseados y coincidencias de MVP 1,
   no funcionar como entrada visible a reservas o marketplace.
 
+## 2026-06-29 - Exportacion tecnica versionada
+
+- Decision: mantener en `docs/export/` una referencia manual y versionada del
+  esquema Liquibase, endpoints Spring, rutas Angular y relaciones
+  frontend-backend en Markdown, Mermaid y CSV.
+- Motivo: los formatos son descargables y revisables desde GitHub sin introducir
+  generadores complejos ni cambiar codigo funcional; Swagger sigue siendo la
+  referencia interactiva de API.
+- Decision: clasificar cada elemento como `MVP1_VISIBLE`, `LEGACY_FUTURE`,
+  `TECHNICAL` o `REDIRECT` segun su papel en el recorrido cerrado de MVP 1, no
+  solo segun si existe implementacion tecnica.
+- Motivo: evita presentar tiendas, inventario y reservas conservados como si
+  formaran parte de la experiencia principal actual.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

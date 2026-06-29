@@ -307,6 +307,11 @@ La revision de este archivo no encontro necesidad de cambios en esta fase.
 
 ## Siguientes pasos recomendados
 
+La referencia tecnica descargable de EPIC 29 queda versionada en
+`docs/export/`: 13 tablas de aplicacion, 35 endpoints, 28 rutas Angular y 53
+relaciones pantalla-backend. Los estados distinguen recorrido MVP 1, base
+legacy/futura, infraestructura y redirecciones sin alterar codigo funcional.
+
 La siguiente ampliacion funcional recomendada es **MVP 2 - Catalogo editorial
 solido**. No se recomienda activar social, matching comercial o pagos antes de
 definir y validar ese modelo comun.
