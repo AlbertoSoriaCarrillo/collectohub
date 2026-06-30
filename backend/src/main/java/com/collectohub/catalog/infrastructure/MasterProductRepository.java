@@ -8,10 +8,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
+import java.util.List;
 
 public interface MasterProductRepository extends JpaRepository<MasterProduct, Long>, JpaSpecificationExecutor<MasterProduct> {
 
     Optional<MasterProduct> findByIdAndDeletedAtIsNull(Long id);
+
+    List<MasterProduct> findAllByDeletedAtIsNull();
 
     boolean existsByIsbnIgnoreCaseAndStatusAndDeletedAtIsNull(String isbn, MasterProductStatus status);
 

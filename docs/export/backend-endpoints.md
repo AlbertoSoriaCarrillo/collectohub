@@ -2,7 +2,7 @@
 
 Source of truth reviewed: Spring MVC controllers, `SecurityConfig`, request and
 response DTOs, and application-service authorization. This inventory contains
-55 application endpoints. Framework-generated Swagger/OpenAPI paths are public
+62 application endpoints. Framework-generated Swagger/OpenAPI paths are public
 but are not counted as application endpoints.
 
 Authentication is stateless JWT. `PROTECTED` requires a valid Bearer token;
@@ -77,6 +77,13 @@ and expose only `ACTIVE`, non-deleted records by default. An authenticated
 | `GET /api/catalog/editions/{id}` | `CatalogItemEditionController` | Public ACTIVE chain or ADMIN | Path `id` | `CatalogItemEditionResponse` |
 | `POST /api/catalog/items/{itemId}/editions` | `CatalogItemEditionController` | `ADMIN` | `CreateCatalogItemEditionRequest` | `CatalogItemEditionResponse` |
 | `PUT /api/catalog/editions/{id}` | `CatalogItemEditionController` | `ADMIN` | `UpdateCatalogItemEditionRequest` | `CatalogItemEditionResponse` |
+| `GET /api/catalog/master-product-links` | `MasterProductCatalogLinkController` | `ADMIN` | Bridge filters and pagination | `PageResponse<MasterProductCatalogLinkResponse>` |
+| `GET /api/catalog/master-product-links/{id}` | `MasterProductCatalogLinkController` | `ADMIN` | Path `id` | `MasterProductCatalogLinkResponse` |
+| `POST /api/catalog/master-product-links` | `MasterProductCatalogLinkController` | `ADMIN` | `CreateMasterProductCatalogLinkRequest` | `MasterProductCatalogLinkResponse` |
+| `PUT /api/catalog/master-product-links/{id}` | `MasterProductCatalogLinkController` | `ADMIN` | `UpdateMasterProductCatalogLinkRequest` | `MasterProductCatalogLinkResponse` |
+| `PUT /api/catalog/master-product-links/{id}/verify` | `MasterProductCatalogLinkController` | `ADMIN` | Path `id` | `MasterProductCatalogLinkResponse` |
+| `PUT /api/catalog/master-product-links/{id}/reject` | `MasterProductCatalogLinkController` | `ADMIN` | Path `id` | `MasterProductCatalogLinkResponse` |
+| `POST /api/catalog/master-product-links/backfill` | `MasterProductCatalogLinkController` | `ADMIN` | None | `BackfillMasterProductCatalogLinksResponse` |
 
 Writes may return 400 for validation/lifecycle rules, 401 without a token, 403
 without `ADMIN`, 404 for missing dependencies, and 409 for duplicate identity.

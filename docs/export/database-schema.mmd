@@ -82,6 +82,16 @@ erDiagram
         VARCHAR record_status
         TIMESTAMPTZ deleted_at
     }
+    MASTER_PRODUCT_CATALOG_LINKS {
+        BIGINT id PK
+        BIGINT master_product_id FK
+        BIGINT catalog_item_id FK
+        BIGINT catalog_item_edition_id FK
+        VARCHAR link_status
+        VARCHAR link_source
+        NUMERIC confidence_score
+        TIMESTAMPTZ deleted_at
+    }
     MASTER_PRODUCTS {
         BIGINT id PK
         BIGINT category_id FK
@@ -168,6 +178,9 @@ erDiagram
     CATALOG_SERIES ||--o{ CATALOG_ITEMS : contains
     CATALOG_ITEMS ||--o{ CATALOG_ITEM_EDITIONS : publishes_as
     PUBLISHERS o|--o{ CATALOG_ITEM_EDITIONS : publishes
+    MASTER_PRODUCTS ||--o{ MASTER_PRODUCT_CATALOG_LINKS : reconciles
+    CATALOG_ITEMS ||--o{ MASTER_PRODUCT_CATALOG_LINKS : identifies
+    CATALOG_ITEM_EDITIONS o|--o{ MASTER_PRODUCT_CATALOG_LINKS : specifies
     USERS ||--o{ PRODUCT_SUGGESTIONS : suggests
     USERS o|--o{ PRODUCT_SUGGESTIONS : reviews
     USERS ||--o{ COLLECTIONS : owns

@@ -58,7 +58,7 @@ This snapshot is maintained manually. When the implementation changes:
   matching documentation update.
 - They do not replace Swagger/OpenAPI for interactive API exploration.
 - Liquibase's own `databasechangelog` and `databasechangeloglock` tables are
-  runtime infrastructure and are intentionally excluded from the 18
+  runtime infrastructure and are intentionally excluded from the 19
   application-table count.
 - Recommendations have no table: the backend calculates them from collection
   items and currently available shop inventory.

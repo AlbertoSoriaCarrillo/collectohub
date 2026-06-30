@@ -8,10 +8,9 @@ Este estado corresponde a **MVP 1 - Nucleo coleccionista**, no al producto
 final. La vision completa conecta coleccionistas, catalogo comun, tiendas y
 creadores, con matching, social y comercio desarrollados por fases.
 
-MVP 1 permanece cerrado y estable. MVP 2 completa EPIC 31 y EPIC 32 con
-fundamentos backend para publishers, franchises, series, items y editions. No
-existen aun puente con `master_products`, backfill ni pantallas editoriales
-nuevas.
+MVP 1 permanece cerrado y estable. MVP 2 completa EPIC 31 a EPIC 33 con
+fundamentos editoriales y puente de reconciliacion ADMIN. Los consumidores
+legacy aun no usan el puente y no existen pantallas editoriales nuevas.
 
 | Dominio | Estado actual |
 | --- | --- |
@@ -128,9 +127,9 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 - PWA completa/offline avanzado.
 - Internacionalizacion avanzada, pluralizacion compleja o traducciones servidas desde backend.
 - Edicion real de perfil, cambio de password, avatar/upload.
-- Puente con `master_products`, backfill/reconciliacion, frontend editorial,
-  colecciones editoriales conectadas a `catalog_items`/`catalog_item_editions`,
-  inventario por edicion y matching editorial.
+- Lectura del puente desde la fachada legacy, frontend editorial, colecciones
+  conectadas a `catalog_items`/`catalog_item_editions`, inventario por edicion y
+  matching editorial.
 - Autores/credits estructurados y relaciones avanzadas de catalogo entre obras.
 - Perfiles publicos, follows, posts, comentarios, likes, resenas y moderacion.
 - Pedidos, carrito, pagos, facturas, envios, devoluciones y almacen comercial.
@@ -315,13 +314,13 @@ La revision de este archivo no encontro necesidad de cambios en esta fase.
 ## Siguientes pasos recomendados
 
 La referencia tecnica descargable de EPIC 29 queda versionada en
-`docs/export/`: 18 tablas de aplicacion, 55 endpoints, 28 rutas Angular y 53
+`docs/export/`: 19 tablas de aplicacion, 62 endpoints, 28 rutas Angular y 53
 relaciones pantalla-backend. Los estados distinguen recorrido MVP 1, base
 legacy/futura, infraestructura y redirecciones sin alterar codigo funcional.
 
-La siguiente tarea recomendada es **EPIC 33 - Puente y backfill**. Debe mantener
-el enfoque aditivo, producir reconciliacion auditable y conservar intactos los
-consumidores legacy. Diseno: `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
+La siguiente tarea recomendada es **EPIC 34 - API/fachada de compatibilidad**.
+Debe conservar `/api/master-products` y activar cualquier lectura editorial de
+forma gradual y reversible. Diseno: `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
 
 1. Preparar capturas reales para `docs/assets/screenshots/` y enlazarlas desde el README.
 2. Revisar el rediseño visual en desktop y movil real, anadir capturas a `docs/assets/screenshots/`.

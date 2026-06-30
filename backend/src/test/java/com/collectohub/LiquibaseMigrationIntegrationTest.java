@@ -39,7 +39,8 @@ class LiquibaseMigrationIntegrationTest {
             "catalog_franchises",
             "catalog_series",
             "catalog_items",
-            "catalog_item_editions"
+            "catalog_item_editions",
+            "master_product_catalog_links"
     );
 
     private static final List<String> REQUIRED_INDEXES = List.of(
@@ -89,7 +90,14 @@ class LiquibaseMigrationIntegrationTest {
             "idx_catalog_item_editions_format",
             "idx_catalog_item_editions_language",
             "idx_catalog_item_editions_country",
-            "idx_catalog_item_editions_publication_year"
+            "idx_catalog_item_editions_publication_year",
+            "idx_master_product_catalog_links_master_product_id",
+            "idx_master_product_catalog_links_catalog_item_id",
+            "idx_master_product_catalog_links_catalog_item_edition_id",
+            "idx_master_product_catalog_links_status",
+            "idx_master_product_catalog_links_source",
+            "idx_master_product_catalog_links_confidence",
+            "uk_master_product_catalog_links_verified_master"
     );
 
     private static final List<String> REQUIRED_CONSTRAINTS = List.of(
@@ -126,7 +134,13 @@ class LiquibaseMigrationIntegrationTest {
             "chk_catalog_item_editions_format",
             "chk_catalog_item_editions_page_count",
             "chk_catalog_item_editions_publication_year",
-            "chk_catalog_item_editions_record_status"
+            "chk_catalog_item_editions_record_status",
+            "fk_master_product_catalog_links_master_product",
+            "fk_master_product_catalog_links_catalog_item",
+            "fk_master_product_catalog_links_catalog_item_edition",
+            "chk_master_product_catalog_links_status",
+            "chk_master_product_catalog_links_source",
+            "chk_master_product_catalog_links_confidence"
     );
 
     @Container

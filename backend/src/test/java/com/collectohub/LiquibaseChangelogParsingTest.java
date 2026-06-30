@@ -29,7 +29,8 @@ class LiquibaseChangelogParsingTest {
                         "003-create-refresh-tokens",
                         "004-alter-shops-country-nullable",
                         "005-create-editorial-catalog-foundations",
-                        "006-create-editorial-catalog-items-and-editions"
+                        "006-create-editorial-catalog-items-and-editions",
+                        "007-create-master-product-catalog-links"
                 );
     }
 }

@@ -391,6 +391,21 @@
 - Motivo: preserva la cadena publica completa y evita respuestas que revelen
   indirectamente contenido DRAFT o ARCHIVED.
 
+## 2026-06-30 - Puente de catalogo y reconciliacion
+
+- Decision: crear `master_product_catalog_links` como puente aditivo entre
+  `master_products` y el catalogo editorial.
+- Motivo: permite reconciliar productos legacy con items/editions sin romper
+  colecciones, inventario, recomendaciones ni reservas.
+- Decision: el backfill crea propuestas `PROPOSED` y nunca verifica
+  automaticamente.
+- Motivo: los campos legacy pueden ser ambiguos y requieren revision ADMIN
+  antes de afectar a futuros consumidores.
+- Decision: impedir mas de un enlace `VERIFIED` no eliminado por master product
+  mediante regla de servicio e indice parcial PostgreSQL.
+- Motivo: una identidad legacy necesita una unica reconciliacion canonica sin
+  impedir propuestas alternativas ni conservar rechazos historicos.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

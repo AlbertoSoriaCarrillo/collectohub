@@ -6,12 +6,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.Optional;
+import java.util.List;
 
 public interface CatalogItemRepository extends
         JpaRepository<CatalogItem, Long>,
         JpaSpecificationExecutor<CatalogItem> {
 
     Optional<CatalogItem> findByIdAndDeletedAtIsNull(Long id);
+
+    List<CatalogItem> findAllByTitleIgnoreCaseAndDeletedAtIsNull(String title);
 
     boolean existsBySeries_IdAndRecordStatusAndDeletedAtIsNull(Long seriesId, CatalogRecordStatus recordStatus);
 

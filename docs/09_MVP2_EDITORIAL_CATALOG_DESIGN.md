@@ -1,8 +1,8 @@
 # CollectoHub MVP 2 editorial catalog technical design
 
-Estado: diseno tecnico aprobado en EPIC 30. EPIC 31 implementa publishers,
-franchises y series; EPIC 32 implementa items y editions. Puente y UI editorial
-siguen pendientes.
+Estado: diseno tecnico aprobado en EPIC 30. EPIC 31 y 32 implementan el catalogo
+editorial; EPIC 33 implementa puente, propuestas y reconciliacion ADMIN. La
+fachada de compatibilidad y la UI editorial siguen pendientes.
 
 ## Estado de implementacion
 
@@ -23,6 +23,10 @@ EPIC 32, completada el 2026-06-30, anade de forma aditiva:
 - ocho endpoints paginados con lectura publica y escritura `ADMIN`;
 - validacion de la cadena `series -> item -> edition` y publisher opcional;
 - tests de servicios, seguridad, validacion, duplicados y migracion.
+
+EPIC 33, completada el 2026-06-30, anade `master_product_catalog_links`,
+backfill idempotente que solo crea propuestas, reconciliacion ADMIN y siete
+endpoints protegidos. No modifica consumidores legacy.
 
 No modifica `master_products`, `collection_items`, `shop_products`, matching ni
 frontend. Los elementos aun no implementados de este documento siguen siendo
@@ -707,6 +711,9 @@ Estado: implementada el 2026-06-30 mediante el changeset
 
 `master_product_catalog_links`, proceso idempotente, informe de reconciliacion,
 enlaces verificados y contract tests legacy.
+
+Estado: implementada el 2026-06-30 mediante el changeset
+`007-create-master-product-catalog-links`.
 
 ### EPIC 34 - API/fachada de compatibilidad
 
