@@ -1,8 +1,8 @@
 # Database schema
 
-This document describes the PostgreSQL application schema created by the four
-Liquibase changelogs currently included by
-`db/changelog/db.changelog-master.yaml`. It contains 13 application tables.
+This document describes the PostgreSQL application schema created by the five
+Liquibase SQL migrations currently included by
+`db/changelog/db.changelog-master.yaml`. It contains 16 application tables.
 Liquibase runtime tables are intentionally excluded.
 
 ## Domain summary
@@ -10,7 +10,7 @@ Liquibase runtime tables are intentionally excluded.
 | Domain | Tables | Product status |
 | --- | --- | --- |
 | Identity & Access | `users`, `roles`, `user_roles` | MVP 1 visible |
-| Catalog Knowledge Base | `product_categories`, `master_products`, `product_suggestions` | Current catalog plus future suggestion workflow |
+| Catalog Knowledge Base | `product_categories`, `master_products`, `product_suggestions`, `publishers`, `catalog_franchises`, `catalog_series` | MVP 1 catalog plus MVP 2 foundations |
 | User Collections | `collections`, `collection_items` | MVP 1 visible |
 | Shops & Inventory | `shops`, `shop_members`, `shop_products` | Implemented legacy/future base |
 | Matching | No table | Calculated from collections and inventory |
@@ -29,6 +29,10 @@ Every table except the pure join table `user_roles` contains this audit set:
 | `updated_by` | `BIGINT` | No | Last update actor; not declared as a foreign key. |
 | `deleted_at` | `TIMESTAMPTZ` | No | Logical deletion time. |
 | `deleted_by` | `BIGINT` | No | Logical deletion actor; not declared as a foreign key. |
+
+The MVP 2 foundation tables make `created_by` mandatory because their write
+endpoints require an authenticated ADMIN. Earlier tables retain their original
+nullable audit actor definition.
 
 Repositories normally query `deleted_at IS NULL`. A populated `deleted_at`
 therefore hides a row without physically deleting it. The schema does not add
@@ -122,6 +126,75 @@ Indexes: unique `uk_refresh_tokens_token_hash`,
 Seeded codes: `MANGA_COMIC`, `TRADING_CARD`, `FIGURE`, `VIDEOGAME`,
 `MERCHANDISING`, `MOVIE_SERIES`. Constraints: `uk_product_categories_code` and
 `fk_product_categories_parent`.
+
+### publishers
+
+- Domain: Catalog Knowledge Base
+- Status: `MVP2_FOUNDATION`
+
+Editorial publisher identity used by series and future item editions.
+
+| Column | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `BIGINT IDENTITY` | Yes | Primary key. |
+| `name` | `VARCHAR(160)` | Yes | Publisher display name. |
+| `country` | `VARCHAR(2)` | No | Two-letter country code. |
+| `record_status` | `VARCHAR(30)` | Yes | `DRAFT`, `ACTIVE` or `ARCHIVED`; default `DRAFT`. |
+| audit set | shared columns | Mixed | `created_at` and `created_by` are required; update and soft-delete fields are optional. |
+
+Check: `chk_publishers_record_status`. Indexes: `idx_publishers_name` and
+`idx_publishers_record_status`.
+
+### catalog_franchises
+
+- Domain: Catalog Knowledge Base
+- Status: `MVP2_FOUNDATION`
+
+Optional universe or intellectual-property grouping above catalog series.
+
+| Column | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `BIGINT IDENTITY` | Yes | Primary key. |
+| `name` | `VARCHAR(160)` | Yes | Public franchise name. |
+| `slug` | `VARCHAR(160)` | Yes | Lowercase URL identifier. |
+| `description` | `TEXT` | No | Editorial description. |
+| `record_status` | `VARCHAR(30)` | Yes | `DRAFT`, `ACTIVE` or `ARCHIVED`; default `DRAFT`. |
+| audit set | shared columns | Mixed | `created_at` and `created_by` are required; update and soft-delete fields are optional. |
+
+Check: `chk_catalog_franchises_record_status`. Indexes:
+`idx_catalog_franchises_name`, `idx_catalog_franchises_slug`,
+`idx_catalog_franchises_record_status`; partial unique index
+`uk_catalog_franchises_slug_active` applies while `deleted_at IS NULL`.
+
+### catalog_series
+
+- Domain: Catalog Knowledge Base
+- Status: `MVP2_FOUNDATION`
+
+Editorial series, line or single-item grouping. This type is intentionally
+separate from `product_categories`.
+
+| Column | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `BIGINT IDENTITY` | Yes | Primary key. |
+| `franchise_id` | `BIGINT` | No | FK to `catalog_franchises.id`. |
+| `primary_publisher_id` | `BIGINT` | No | FK to `publishers.id`. |
+| `title` | `VARCHAR(240)` | Yes | Main series title. |
+| `original_title` | `VARCHAR(240)` | No | Original-language title. |
+| `type` | `VARCHAR(30)` | Yes | `BOOK`, `COMIC` or `MANGA`. |
+| `publication_status` | `VARCHAR(30)` | Yes | `ONGOING`, `COMPLETED`, `CANCELLED`, `HIATUS` or `UNKNOWN`. |
+| `description` | `TEXT` | No | Editorial description. |
+| `origin_country` | `VARCHAR(2)` | No | Country of origin. |
+| `original_language` | `VARCHAR(10)` | No | Original language code. |
+| `start_year` | `INTEGER` | No | First year, constrained to 1000-3000. |
+| `end_year` | `INTEGER` | No | Final year, constrained to 1000-3000 and not before start. |
+| `record_status` | `VARCHAR(30)` | Yes | `DRAFT`, `ACTIVE` or `ARCHIVED`; default `DRAFT`. |
+| audit set | shared columns | Mixed | `created_at` and `created_by` are required; update and soft-delete fields are optional. |
+
+FKs: `fk_catalog_series_franchise`,
+`fk_catalog_series_primary_publisher`. Six check constraints validate type,
+publication status, record status and years. Indexes cover both FKs, title,
+type, publication status and record status.
 
 ### master_products
 
@@ -320,7 +393,8 @@ FKs: `fk_reservations_user`, `fk_reservations_shop`,
 
 ## Index inventory
 
-Liquibase declares 15 non-constraint indexes:
+Liquibase declares 27 explicit indexes, including the partial unique franchise
+slug index:
 
 | Table | Indexes |
 | --- | --- |
@@ -331,6 +405,9 @@ Liquibase declares 15 non-constraint indexes:
 | `collection_items` | `idx_collection_items_collection_id(collection_id)`, `idx_collection_items_master_product_id(master_product_id)` |
 | `reservations` | `idx_reservations_user_id(user_id)`, `idx_reservations_shop_id(shop_id)`, `idx_reservations_status(status)` |
 | `refresh_tokens` | `idx_refresh_tokens_user_id(user_id)`, `idx_refresh_tokens_expires_at(expires_at)` |
+| `publishers` | `idx_publishers_name(lower(name))`, `idx_publishers_record_status(record_status)` |
+| `catalog_franchises` | `idx_catalog_franchises_name(lower(name))`, `idx_catalog_franchises_slug(slug)`, `uk_catalog_franchises_slug_active(slug)`, `idx_catalog_franchises_record_status(record_status)` |
+| `catalog_series` | `idx_catalog_series_franchise_id(franchise_id)`, `idx_catalog_series_primary_publisher_id(primary_publisher_id)`, `idx_catalog_series_type(type)`, `idx_catalog_series_publication_status(publication_status)`, `idx_catalog_series_record_status(record_status)`, `idx_catalog_series_title(lower(title))` |
 
 PostgreSQL additionally creates indexes to enforce every primary key and the
 unique constraints on user email, role code, category code, shop membership and

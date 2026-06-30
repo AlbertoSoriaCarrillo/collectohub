@@ -3,9 +3,14 @@ package com.collectohub.shared.api;
 import com.collectohub.auth.application.EmailAlreadyExistsException;
 import com.collectohub.auth.application.UnsupportedInterfaceLanguageException;
 import com.collectohub.catalog.application.DuplicateMasterProductException;
+import com.collectohub.catalog.application.DuplicateEditorialCatalogException;
+import com.collectohub.catalog.application.CatalogFranchiseNotFoundException;
+import com.collectohub.catalog.application.CatalogSeriesNotFoundException;
 import com.collectohub.catalog.application.InvalidCatalogFilterException;
+import com.collectohub.catalog.application.InvalidEditorialCatalogRequestException;
 import com.collectohub.catalog.application.MasterProductNotFoundException;
 import com.collectohub.catalog.application.ProductCategoryNotFoundException;
+import com.collectohub.catalog.application.PublisherNotFoundException;
 import com.collectohub.collections.application.CollectionItemNotFoundException;
 import com.collectohub.collections.application.CollectionNotFoundException;
 import com.collectohub.inventory.application.ShopProductNotFoundException;
@@ -54,9 +59,18 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.CONFLICT, ex.getMessage(), request, List.of());
     }
 
+    @ExceptionHandler(DuplicateEditorialCatalogException.class)
+    ResponseEntity<ErrorResponse> handleDuplicateEditorialCatalog(
+            DuplicateEditorialCatalogException ex,
+            HttpServletRequest request
+    ) {
+        return build(HttpStatus.CONFLICT, ex.getMessage(), request, List.of());
+    }
+
     @ExceptionHandler({
             ProductCategoryNotFoundException.class,
             InvalidCatalogFilterException.class,
+            InvalidEditorialCatalogRequestException.class,
             InvalidReservationFilterException.class,
             InvalidReservationRequestException.class,
             UnsupportedInterfaceLanguageException.class
@@ -78,6 +92,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MasterProductNotFoundException.class)
     ResponseEntity<ErrorResponse> handleMasterProductNotFound(
             MasterProductNotFoundException ex,
+            HttpServletRequest request
+    ) {
+        return build(HttpStatus.NOT_FOUND, ex.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler({
+            PublisherNotFoundException.class,
+            CatalogFranchiseNotFoundException.class,
+            CatalogSeriesNotFoundException.class
+    })
+    ResponseEntity<ErrorResponse> handleEditorialCatalogNotFound(
+            RuntimeException ex,
             HttpServletRequest request
     ) {
         return build(HttpStatus.NOT_FOUND, ex.getMessage(), request, List.of());

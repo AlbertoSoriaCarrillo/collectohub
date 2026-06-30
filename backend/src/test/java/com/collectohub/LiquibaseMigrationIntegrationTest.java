@@ -34,7 +34,10 @@ class LiquibaseMigrationIntegrationTest {
             "collections",
             "collection_items",
             "reservations",
-            "refresh_tokens"
+            "refresh_tokens",
+            "publishers",
+            "catalog_franchises",
+            "catalog_series"
     );
 
     private static final List<String> REQUIRED_INDEXES = List.of(
@@ -56,7 +59,19 @@ class LiquibaseMigrationIntegrationTest {
             "idx_reservations_status",
             "uk_refresh_tokens_token_hash",
             "idx_refresh_tokens_user_id",
-            "idx_refresh_tokens_expires_at"
+            "idx_refresh_tokens_expires_at",
+            "idx_publishers_name",
+            "idx_publishers_record_status",
+            "idx_catalog_franchises_name",
+            "idx_catalog_franchises_slug",
+            "uk_catalog_franchises_slug_active",
+            "idx_catalog_franchises_record_status",
+            "idx_catalog_series_franchise_id",
+            "idx_catalog_series_primary_publisher_id",
+            "idx_catalog_series_type",
+            "idx_catalog_series_publication_status",
+            "idx_catalog_series_record_status",
+            "idx_catalog_series_title"
     );
 
     private static final List<String> REQUIRED_CONSTRAINTS = List.of(
@@ -73,7 +88,17 @@ class LiquibaseMigrationIntegrationTest {
             "fk_reservations_shop",
             "fk_reservations_shop_product",
             "uk_refresh_tokens_token_hash",
-            "fk_refresh_tokens_user"
+            "fk_refresh_tokens_user",
+            "fk_catalog_series_franchise",
+            "fk_catalog_series_primary_publisher",
+            "chk_publishers_record_status",
+            "chk_catalog_franchises_record_status",
+            "chk_catalog_series_type",
+            "chk_catalog_series_publication_status",
+            "chk_catalog_series_record_status",
+            "chk_catalog_series_start_year",
+            "chk_catalog_series_end_year",
+            "chk_catalog_series_year_range"
     );
 
     @Container

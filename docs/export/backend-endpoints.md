@@ -2,7 +2,7 @@
 
 Source of truth reviewed: Spring MVC controllers, `SecurityConfig`, request and
 response DTOs, and application-service authorization. This inventory contains
-35 application endpoints. Framework-generated Swagger/OpenAPI paths are public
+47 application endpoints. Framework-generated Swagger/OpenAPI paths are public
 but are not counted as application endpoints.
 
 Authentication is stateless JWT. `PROTECTED` requires a valid Bearer token;
@@ -47,6 +47,31 @@ they never expose `password_hash`.
 Writes validate categories and logical duplicates. Expected errors include 400
 for validation, 403 for insufficient authority, 404 for missing resources and
 409 for duplicate ISBN, EAN or logical identity.
+
+## Editorial catalog foundations
+
+Status: `MVP2_FOUNDATION`. All list operations return a stable `PageResponse`
+and expose only `ACTIVE`, non-deleted records by default. An authenticated
+`ADMIN` may filter by `recordStatus` and read non-public detail. Writes require
+`ADMIN`; `SHOP_OWNER` retains only its legacy `/api/master-products` permission.
+
+| Method and path | Controller | Access/permission | Request or query | Response |
+| --- | --- | --- | --- | --- |
+| `GET /api/catalog/publishers` | `PublisherController` | Public ACTIVE; ADMIN status filter | `q`, `recordStatus`, `page`, `size`, `sort` | `PageResponse<PublisherResponse>` |
+| `GET /api/catalog/publishers/{id}` | `PublisherController` | Public ACTIVE or ADMIN | Path `id` | `PublisherResponse` |
+| `POST /api/catalog/publishers` | `PublisherController` | `ADMIN` | `CreatePublisherRequest` | `PublisherResponse` |
+| `PUT /api/catalog/publishers/{id}` | `PublisherController` | `ADMIN` | `UpdatePublisherRequest` | `PublisherResponse` |
+| `GET /api/catalog/franchises` | `CatalogFranchiseController` | Public ACTIVE; ADMIN status filter | `q`, `recordStatus`, `page`, `size`, `sort` | `PageResponse<CatalogFranchiseResponse>` |
+| `GET /api/catalog/franchises/{id}` | `CatalogFranchiseController` | Public ACTIVE or ADMIN | Path `id` | `CatalogFranchiseResponse` |
+| `POST /api/catalog/franchises` | `CatalogFranchiseController` | `ADMIN` | `CreateCatalogFranchiseRequest` | `CatalogFranchiseResponse` |
+| `PUT /api/catalog/franchises/{id}` | `CatalogFranchiseController` | `ADMIN` | `UpdateCatalogFranchiseRequest` | `CatalogFranchiseResponse` |
+| `GET /api/catalog/series` | `CatalogSeriesController` | Public ACTIVE; ADMIN status filter | `q`, `franchiseId`, `type`, `publicationStatus`, `publisherId`, `language`, `country`, `recordStatus`, pagination | `PageResponse<CatalogSeriesResponse>` |
+| `GET /api/catalog/series/{id}` | `CatalogSeriesController` | Public ACTIVE or ADMIN | Path `id` | `CatalogSeriesResponse` |
+| `POST /api/catalog/series` | `CatalogSeriesController` | `ADMIN` | `CreateCatalogSeriesRequest` | `CatalogSeriesResponse` |
+| `PUT /api/catalog/series/{id}` | `CatalogSeriesController` | `ADMIN` | `UpdateCatalogSeriesRequest` | `CatalogSeriesResponse` |
+
+Writes may return 400 for validation/lifecycle rules, 401 without a token, 403
+without `ADMIN`, 404 for missing dependencies, and 409 for duplicate identity.
 
 ## Collections
 

@@ -9,9 +9,9 @@ creadores de contenido, apoyada en un catalogo comun de objetos coleccionables.
 
 El recorrido visible de MVP 1 permanece estable: explorar libros, comics y
 manga, crear colecciones, marcar lo que se tiene o busca y revisar faltantes.
-MVP 2 esta en fase de diseno tecnico para separar franquicias, series, items y
-ediciones sin romper `master_products` ni ese recorrido. Tiendas, inventario y
-reservas siguen como base tecnica legacy/futura.
+MVP 2 ya dispone de fundamentos backend para publishers, franquicias y series,
+sin UI nueva y sin romper `master_products` ni ese recorrido. Tiendas,
+inventario y reservas siguen como base tecnica legacy/futura.
 
 ## Vision A Largo Plazo
 
@@ -27,8 +27,9 @@ marketplace, pagos o tiendas ya listos para usuario final.
 
 - MVP 1 cerrado como base tecnica/producto el 2026-06-29; checklist completo en
   `docs/07_MVP1_ACCEPTANCE_CHECKLIST.md`.
-- MVP 2 iniciado con el diseno tecnico editorial de
-  `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`; aun no hay tablas ni API nuevas.
+- MVP 2 iniciado con el diseno de `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md` y
+  EPIC 31 implementada: tres tablas editoriales y doce endpoints bajo
+  `/api/catalog`; catalog items y editions siguen pendientes.
 - MVP funcional de backend y frontend.
 - Docker Compose local con PostgreSQL, backend y frontend validado.
 - Tests backend, tests frontend y E2E Playwright implementados.

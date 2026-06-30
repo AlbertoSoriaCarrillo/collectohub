@@ -27,7 +27,8 @@ class LiquibaseChangelogParsingTest {
                         "001-create-mvp-schema",
                         "002-seed-reference-data",
                         "003-create-refresh-tokens",
-                        "004-alter-shops-country-nullable"
+                        "004-alter-shops-country-nullable",
+                        "005-create-editorial-catalog-foundations"
                 );
     }
 }

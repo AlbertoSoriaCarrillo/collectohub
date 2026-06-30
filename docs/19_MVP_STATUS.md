@@ -8,13 +8,14 @@ Este estado corresponde a **MVP 1 - Nucleo coleccionista**, no al producto
 final. La vision completa conecta coleccionistas, catalogo comun, tiendas y
 creadores, con matching, social y comercio desarrollados por fases.
 
-MVP 1 permanece cerrado y estable. MVP 2 ha comenzado en fase de diseno tecnico
-con EPIC 30; no existen aun tablas, endpoints ni pantallas editoriales nuevas.
+MVP 1 permanece cerrado y estable. MVP 2 completa EPIC 31 con fundamentos
+backend para publishers, franchises y series. No existen aun catalog items,
+editions, puente con `master_products` ni pantallas editoriales nuevas.
 
 | Dominio | Estado actual |
 | --- | --- |
 | Identity & Access | Implementado para MVP |
-| Catalog Knowledge Base | Parcial; MVP 2 editorial disenado, no implementado |
+| Catalog Knowledge Base | Parcial; fundamentos MVP 2 implementados sin UI |
 | User Collections | Implementado para MVP 1 |
 | Social | Futuro |
 | Shops & Inventory | Base tecnica parcial, fuera del foco visible |
@@ -311,14 +312,13 @@ La revision de este archivo no encontro necesidad de cambios en esta fase.
 ## Siguientes pasos recomendados
 
 La referencia tecnica descargable de EPIC 29 queda versionada en
-`docs/export/`: 13 tablas de aplicacion, 35 endpoints, 28 rutas Angular y 53
+`docs/export/`: 16 tablas de aplicacion, 47 endpoints, 28 rutas Angular y 53
 relaciones pantalla-backend. Los estados distinguen recorrido MVP 1, base
 legacy/futura, infraestructura y redirecciones sin alterar codigo funcional.
 
-La siguiente tarea recomendada es **EPIC 31 - Fundamentos editoriales**:
-publishers, franchises y series mediante migraciones aditivas. El diseno y la
-compatibilidad con `master_products` estan definidos en
-`docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
+La siguiente tarea recomendada es **EPIC 32 - Catalog items y editions**. Debe
+mantener el enfoque aditivo; el puente y backfill de `master_products` siguen
+reservados para EPIC 33. Diseno: `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
 
 1. Preparar capturas reales para `docs/assets/screenshots/` y enlazarlas desde el README.
 2. Revisar el rediseño visual en desktop y movil real, anadir capturas a `docs/assets/screenshots/`.

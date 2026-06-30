@@ -33,6 +33,34 @@ erDiagram
         BIGINT parent_id FK
         TIMESTAMPTZ deleted_at
     }
+    PUBLISHERS {
+        BIGINT id PK
+        VARCHAR name
+        VARCHAR country
+        VARCHAR record_status
+        BIGINT created_by
+        TIMESTAMPTZ deleted_at
+    }
+    CATALOG_FRANCHISES {
+        BIGINT id PK
+        VARCHAR name
+        VARCHAR slug UK
+        VARCHAR record_status
+        BIGINT created_by
+        TIMESTAMPTZ deleted_at
+    }
+    CATALOG_SERIES {
+        BIGINT id PK
+        BIGINT franchise_id FK
+        BIGINT primary_publisher_id FK
+        VARCHAR title
+        VARCHAR type
+        VARCHAR publication_status
+        VARCHAR record_status
+        INTEGER start_year
+        INTEGER end_year
+        TIMESTAMPTZ deleted_at
+    }
     MASTER_PRODUCTS {
         BIGINT id PK
         BIGINT category_id FK
@@ -114,6 +142,8 @@ erDiagram
     USERS ||--o{ SHOP_MEMBERS : joins
     PRODUCT_CATEGORIES o|--o{ PRODUCT_CATEGORIES : parent_of
     PRODUCT_CATEGORIES ||--o{ MASTER_PRODUCTS : classifies
+    CATALOG_FRANCHISES o|--o{ CATALOG_SERIES : groups
+    PUBLISHERS o|--o{ CATALOG_SERIES : primary_publisher
     USERS ||--o{ PRODUCT_SUGGESTIONS : suggests
     USERS o|--o{ PRODUCT_SUGGESTIONS : reviews
     USERS ||--o{ COLLECTIONS : owns

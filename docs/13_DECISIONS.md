@@ -355,6 +355,26 @@
 - Motivo: la calidad del catalogo comun requiere revision antes de abrir
   contribuciones de tiendas o usuarios.
 
+## 2026-06-30 - Fundamentos editoriales aditivos
+
+- Decision: implementar primero `publishers`, `catalog_franchises` y
+  `catalog_series` como fundamentos editoriales aditivos.
+- Motivo: separan identidad editorial de `master_products` sin romper
+  colecciones, inventario, buscados ni endpoints legacy.
+- Decision: usar `TIMESTAMPTZ` y actores `BIGINT` para la auditoria nueva;
+  `created_by` es obligatorio porque toda escritura editorial exige un ADMIN
+  autenticado.
+- Motivo: mantiene consistencia con el modelo JPA y el esquema actual, evitando
+  introducir actores textuales incompatibles con el resto del backend.
+- Decision: introducir `MVP2_FOUNDATION` en exportables para backend y datos sin
+  UI editorial todavia.
+- Motivo: distingue una base activa de MVP 2 tanto del recorrido visible de MVP
+  1 como de las capacidades legacy/futuras.
+- Decision: una serie `ACTIVE` solo puede referenciar publisher/franchise
+  `ACTIVE`, y estos no se archivan mientras una serie publica los use.
+- Motivo: evita exponer indirectamente registros DRAFT/ARCHIVED en una respuesta
+  publica de series.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

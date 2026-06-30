@@ -5,7 +5,7 @@ Estado: contrato backend MVP consumido por el frontend Angular y validado en el 
 Esta guia documenta el contrato real expuesto por el backend actual. Todos los
 errores controlados usan el envelope `ErrorResponse`:
 
-La exportacion completa y filtrable de los 35 endpoints actuales esta en
+La exportacion completa y filtrable de los 47 endpoints actuales esta en
 `docs/export/backend-endpoints.md` y `docs/export/backend-endpoints.csv`.
 
 ```json
@@ -101,6 +101,36 @@ Deteccion de duplicados:
 - Mismo `isbn` activo si se informa.
 - Mismo `ean` activo si se informa.
 - Misma combinacion normalizada aproximada de `name`, `franchise`, `volumeNumber` y `language`.
+
+## Catalogo editorial MVP 2 - Fundamentos
+
+Los listados usan `PageResponse` con `content`, `page`, `size`,
+`totalElements`, `totalPages`, `first` y `last`. Por defecto solo exponen
+registros `ACTIVE` no eliminados. `recordStatus` es un filtro exclusivo de
+`ADMIN`; la escritura editorial nueva no admite `SHOP_OWNER`.
+
+| Metodo | Path | Acceso | Permiso | Body/Filtros | Respuesta | Errores |
+| --- | --- | --- | --- | --- | --- | --- |
+| GET | `/api/catalog/publishers` | Publico | ACTIVE; ADMIN puede filtrar estado | `q`, `recordStatus`, `page`, `size`, `sort` | `PageResponse<PublisherResponse>` | `400`, `403` |
+| GET | `/api/catalog/publishers/{id}` | Publico/ADMIN | ACTIVE publico; cualquier no eliminado para ADMIN | No | `PublisherResponse` | `404` |
+| POST | `/api/catalog/publishers` | Protegido | `ADMIN` | `CreatePublisherRequest` | `PublisherResponse` | `400`, `401`, `403`, `409` |
+| PUT | `/api/catalog/publishers/{id}` | Protegido | `ADMIN` | `UpdatePublisherRequest` | `PublisherResponse` | `400`, `401`, `403`, `404`, `409` |
+| GET | `/api/catalog/franchises` | Publico | ACTIVE; ADMIN puede filtrar estado | `q`, `recordStatus`, `page`, `size`, `sort` | `PageResponse<CatalogFranchiseResponse>` | `400`, `403` |
+| GET | `/api/catalog/franchises/{id}` | Publico/ADMIN | ACTIVE publico; cualquier no eliminado para ADMIN | No | `CatalogFranchiseResponse` | `404` |
+| POST | `/api/catalog/franchises` | Protegido | `ADMIN` | `CreateCatalogFranchiseRequest` | `CatalogFranchiseResponse` | `400`, `401`, `403`, `409` |
+| PUT | `/api/catalog/franchises/{id}` | Protegido | `ADMIN` | `UpdateCatalogFranchiseRequest` | `CatalogFranchiseResponse` | `400`, `401`, `403`, `404`, `409` |
+| GET | `/api/catalog/series` | Publico | ACTIVE; ADMIN puede filtrar estado | `q`, `franchiseId`, `type`, `publicationStatus`, `publisherId`, `language`, `country`, `recordStatus`, paginacion | `PageResponse<CatalogSeriesResponse>` | `400`, `403` |
+| GET | `/api/catalog/series/{id}` | Publico/ADMIN | ACTIVE publico; cualquier no eliminado para ADMIN | No | `CatalogSeriesResponse` | `404` |
+| POST | `/api/catalog/series` | Protegido | `ADMIN` | `CreateCatalogSeriesRequest` | `CatalogSeriesResponse` | `400`, `401`, `403`, `404`, `409` |
+| PUT | `/api/catalog/series/{id}` | Protegido | `ADMIN` | `UpdateCatalogSeriesRequest` | `CatalogSeriesResponse` | `400`, `401`, `403`, `404`, `409` |
+
+Enums iniciales:
+
+- `recordStatus`: `DRAFT`, `ACTIVE`, `ARCHIVED`.
+- `type`: `BOOK`, `COMIC`, `MANGA`.
+- `publicationStatus`: `ONGOING`, `COMPLETED`, `CANCELLED`, `HIATUS`, `UNKNOWN`.
+
+Estos endpoints no modifican ni sustituyen `/api/master-products`.
 
 ## Inventario de tienda
 

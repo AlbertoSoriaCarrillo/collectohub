@@ -27,7 +27,7 @@ Pulido recomendado para portfolio, no bloqueante del MVP:
 EPIC 30 completa el diseno tecnico y recomienda modelo nuevo con puente de
 compatibilidad. No hay implementacion todavia. Orden propuesto:
 
-1. EPIC 31: publishers, franchises y series.
+1. EPIC 31: publishers, franchises y series. Completada el 2026-06-30.
 2. EPIC 32: items y editions.
 3. EPIC 33: puente con `master_products`, backfill y reconciliacion.
 4. EPIC 34: API editorial y fachada legacy.
@@ -39,6 +39,9 @@ compatibilidad. No hay implementacion todavia. Orden propuesto:
 Creators pertenece a MVP 2, pero despues del nucleo. Relaciones entre obras se
 implementan solo con casos de uso validados. Fuente de diseno:
 `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
+
+Siguiente tarea: EPIC 32, catalog items y editions, sin activar todavia el
+puente con `master_products`.
 
 ## MVP 3 - Social basico
 

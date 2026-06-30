@@ -26,6 +26,8 @@ spreadsheet; `database-schema.mmd` can be opened in Mermaid-compatible tools.
 
 - `MVP1_VISIBLE`: part of the closed MVP 1 collector journey or directly
   supports it.
+- `MVP2_FOUNDATION`: implemented MVP 2 backend/data foundation without a
+  collector-facing editorial UI yet.
 - `LEGACY_FUTURE`: implemented and retained for compatibility or a later
   product phase, but not promoted in the current main journey.
 - `TECHNICAL`: infrastructure or operational support rather than a product

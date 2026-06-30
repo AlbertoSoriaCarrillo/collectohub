@@ -768,3 +768,55 @@ Siguiente paso: crear el backend en la carpeta backend.
   configuracion.
 - No se modifica codigo, frontend funcional, base de datos, Liquibase,
   endpoints, rutas, tests, demo data ni documentacion exportable.
+
+## 2026-06-30 - EPIC 31 - Fundamentos editoriales de MVP 2
+
+- Revisados el diseno editorial aprobado, alcance MVP 1, backlog, decisiones,
+  contratos API, documentacion exportable, modulo `catalog`, seguridad,
+  auditoria JPA, Liquibase y tests existentes.
+- Creada la migracion Liquibase
+  `005-create-editorial-catalog-foundations.sql` e incluida en el changelog
+  master sin modificar las migraciones previas.
+- Creadas las tablas aditivas `publishers`, `catalog_franchises` y
+  `catalog_series` con auditoria, borrado logico, checks, dos claves foraneas y
+  12 indices explicitos; el esquema suma 16 tablas y 27 indices Liquibase.
+- Creadas las entidades `Publisher`, `CatalogFranchise` y `CatalogSeries`, y
+  los enums `CatalogRecordStatus`, `CatalogSeriesType` y
+  `CatalogPublicationStatus`.
+- Creados tres repositorios JPA, nueve DTOs de request/response, un DTO
+  generico de paginacion, tres servicios de aplicacion y excepciones de
+  dominio controladas.
+- Expuestos 12 endpoints paginados bajo `/api/catalog`: lectura publica de
+  registros `ACTIVE` no eliminados y escritura exclusiva para `ADMIN`.
+- Anadidos filtros editoriales, validacion de slugs, estados, dependencias y
+  anos, deteccion de duplicados y proteccion del ciclo de vida de dependencias
+  activas.
+- Actualizada Spring Security para permitir solo los nuevos `GET` de forma
+  publica; `POST` y `PUT` siguen autenticados y protegidos adicionalmente con
+  `@PreAuthorize("hasAuthority('ADMIN')")`.
+- Documentados los endpoints con OpenAPI y respuestas 400, 401, 403, 404 y
+  409.
+- Anadidos tests unitarios de los tres servicios, tests web de visibilidad,
+  filtros, validacion y autorizacion, y ampliados los tests de Liquibase y de
+  arranque de contexto.
+- Ejecutado `cd backend && .\mvnw.cmd -DskipTests compile`: correcto.
+- Ejecutado `cd backend && .\mvnw.cmd test`: 198 tests correctos, 0 fallos,
+  0 errores y 2 saltados por disponibilidad de Docker en ese punto de control.
+  Despues se anadieron tres casos web adicionales de autorizacion; el
+  `clean verify` final no pudo reintentarse porque el entorno alcanzo su limite
+  temporal de ejecucion con permisos elevados.
+- Los tests y el build frontend no pudieron completarse en el sandbox por
+  errores de acceso a los archivos de Angular; el reintento con permisos
+  elevados fue bloqueado por el mismo limite temporal del entorno.
+- Docker no se ejecuto: el daemon no estaba disponible y el entorno tampoco
+  permitio leer su configuracion local.
+- Actualizados README, diseno MVP 2, backlog, decisiones, referencia API,
+  estado MVP y exportaciones de esquema/endpoints; validados 16 registros de
+  tablas, 47 endpoints, 16 entidades Mermaid y la marca `MVP2_FOUNDATION` en
+  las tres tablas y los 12 endpoints nuevos.
+- `git diff --check` no detecta errores de whitespace; solo muestra los avisos
+  locales esperados de conversion LF/CRLF.
+- Se mantienen intactos `master_products`, `/api/master-products`,
+  `collection_items`, `shop_products`, recomendaciones, rutas y UI frontend.
+- La siguiente tarea recomendada es EPIC 32: `catalog_items`, una vez ejecutada
+  la validacion global pendiente en un entorno sin las restricciones actuales.

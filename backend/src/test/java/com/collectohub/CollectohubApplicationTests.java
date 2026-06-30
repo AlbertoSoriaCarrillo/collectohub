@@ -3,6 +3,9 @@ package com.collectohub;
 import com.collectohub.auth.infrastructure.RefreshTokenRepository;
 import com.collectohub.catalog.infrastructure.MasterProductRepository;
 import com.collectohub.catalog.infrastructure.ProductCategoryRepository;
+import com.collectohub.catalog.infrastructure.PublisherRepository;
+import com.collectohub.catalog.infrastructure.CatalogFranchiseRepository;
+import com.collectohub.catalog.infrastructure.CatalogSeriesRepository;
 import com.collectohub.collections.infrastructure.CollectionItemRepository;
 import com.collectohub.collections.infrastructure.CollectionRepository;
 import com.collectohub.inventory.infrastructure.ShopProductRepository;
@@ -72,6 +75,21 @@ class CollectohubApplicationTests {
         @Bean
         MasterProductRepository masterProductRepository() {
             return mock(MasterProductRepository.class);
+        }
+
+        @Bean
+        PublisherRepository publisherRepository() {
+            return mock(PublisherRepository.class);
+        }
+
+        @Bean
+        CatalogFranchiseRepository catalogFranchiseRepository() {
+            return mock(CatalogFranchiseRepository.class);
+        }
+
+        @Bean
+        CatalogSeriesRepository catalogSeriesRepository() {
+            return mock(CatalogSeriesRepository.class);
         }
 
         @Bean

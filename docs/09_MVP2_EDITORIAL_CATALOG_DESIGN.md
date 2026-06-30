@@ -1,7 +1,22 @@
 # CollectoHub MVP 2 editorial catalog technical design
 
-Estado: diseno tecnico de EPIC 30. No hay tablas, migraciones, endpoints ni
-pantallas editoriales nuevas implementadas todavia.
+Estado: diseno tecnico aprobado en EPIC 30. EPIC 31 implementa publishers,
+franchises y series; items, editions, puente y UI editorial siguen pendientes.
+
+## Estado de implementacion
+
+EPIC 31, completada el 2026-06-30, anade de forma aditiva:
+
+- `publishers`, `catalog_franchises` y `catalog_series` mediante Liquibase 005;
+- entidades, enums, repositorios, servicios y DTOs paginados;
+- doce endpoints bajo `/api/catalog`;
+- lectura publica de registros `ACTIVE` y escritura solo `ADMIN`;
+- auditoria compatible con actores `BIGINT` y borrado logico;
+- tests de migracion, servicios, validacion y seguridad.
+
+No modifica `master_products`, `collection_items`, `shop_products`, matching ni
+frontend. Los elementos aun no implementados de este documento siguen siendo
+diseno futuro.
 
 ## 1. Objetivo de MVP 2
 
@@ -113,8 +128,9 @@ dependen directa o indirectamente de ese contrato.
 ### QA Agent
 
 - Cada migracion se prueba sobre base vacia y sobre un dataset MVP 1 poblado.
-- Los 35 endpoints actuales y el flujo Home/Catalogo/Colecciones/Buscados deben
-  conservar comportamiento durante la transicion.
+- Los 35 endpoints anteriores a MVP 2 y el flujo
+  Home/Catalogo/Colecciones/Buscados deben conservar comportamiento durante la
+  transicion.
 - El backfill necesita pruebas de repeticion, duplicados, huerfanos y
   reconciliacion manual.
 - Deben existir tests de permisos, visibilidad de borradores, constraints,
@@ -665,6 +681,9 @@ cuando URLs demo, colecciones e inventario ya no dependan de el.
 
 Liquibase, entidades, repositorios y API inicial de publishers, franchises y
 series. Todo aditivo y con lectura publica/escritura ADMIN.
+
+Estado: implementada el 2026-06-30 mediante el changeset
+`005-create-editorial-catalog-foundations`.
 
 ### EPIC 32 - Items y ediciones
 
