@@ -262,8 +262,12 @@ formatos Markdown, Mermaid y CSV descargables.
 
 ## Proximas Fases Posibles
 
-- Ejecutar las sub-EPICs de MVP 2 empezando por publishers, franquicias y series,
-  con migraciones aditivas y compatibilidad con `master_products`.
+- EPIC 31 ya implemento los fundamentos editoriales: publishers, franquicias y
+  series.
+- El siguiente paso tecnico es EPIC 32: `catalog_items` y
+  `catalog_item_editions`.
+- Despues vendran el puente con `master_products`, el frontend editorial, las
+  colecciones editoriales y el matching por item/edicion.
 - Validar despues social basico y, en fases separadas, matching con tiendas,
   comercio real y herramientas para creadores.
 - Ejecutar E2E en CI con un job separado y estable.

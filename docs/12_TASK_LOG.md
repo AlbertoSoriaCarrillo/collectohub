@@ -820,3 +820,42 @@ Siguiente paso: crear el backend en la carpeta backend.
   `collection_items`, `shop_products`, recomendaciones, rutas y UI frontend.
 - La siguiente tarea recomendada es EPIC 32: `catalog_items`, una vez ejecutada
   la validacion global pendiente en un entorno sin las restricciones actuales.
+
+## 2026-06-30 - EPIC 31B - Validacion global de fundamentos editoriales
+
+- Estado inicial limpio en `main`, sincronizado con `origin/main`; EPIC 31
+  estaba versionada en `5fb4a99`.
+- Confirmado mediante el diff de EPIC 31 que la implementacion fue aditiva y
+  no modifico funcionalmente `master_products`, `collection_items`,
+  `shop_products`, recomendaciones, reservas, rutas ni UI frontend.
+- Ejecutado `cd backend && .\mvnw.cmd clean verify`: `BUILD SUCCESS`, 201
+  tests, 0 fallos, 0 errores y 2 saltados por disponibilidad de Docker en los
+  tests de integracion condicionados.
+- Ejecutado `cd frontend && npm.cmd ci`: correcto, 474 paquetes instalados;
+  persiste la deprecacion conocida de `@angular/animations` y avisos de scripts
+  de dependencias sujetos a aprobacion de npm.
+- Ejecutado `cd frontend && npm.cmd test -- --watch=false`: 38 archivos y 80
+  tests correctos. El primer intento fallo por permisos del sandbox sobre
+  archivos SCSS/spec; el reintento fuera del sandbox confirmo que no habia un
+  fallo del proyecto.
+- Ejecutado `cd frontend && npm.cmd run build`: correcto; permanece el warning
+  conocido del bundle inicial, 592.30 kB frente al budget de 500 kB.
+- Iniciado Docker Desktop 29.5.3 y ejecutados `docker compose down` y
+  `docker compose up --build -d` sin eliminar volumenes. PostgreSQL, backend y
+  frontend arrancaron correctamente y sus healthchecks quedaron sanos.
+- Validado `GET /api/health`: HTTP 200 con estado `UP`.
+- Validados sin autenticacion `GET /api/catalog/publishers`,
+  `GET /api/catalog/franchises` y `GET /api/catalog/series`: HTTP 200 con
+  paginas vacias validas en la base local.
+- Validado Swagger UI: redireccion correcta desde `/swagger-ui.html` y HTTP
+  200 final. OpenAPI 3.1 expone 33 paths e incluye los grupos `Editorial
+  publishers`, `Editorial franchises` y `Editorial series`.
+- Ejecutado `cd frontend && npm.cmd run e2e`: 4 pruebas Playwright correctas
+  sobre Chromium (smoke, i18n, autenticacion/colecciones y flujo MVP 1).
+- Ejecutado `docker compose down` al finalizar, sin `-v`; contenedores y red
+  quedan detenidos y los datos se conservan.
+- No fue necesaria ninguna correccion funcional. Se actualizan unicamente
+  README y documentacion de estado para cerrar la validacion y situar EPIC 32
+  como siguiente paso.
+- No se implementan `catalog_items`, `catalog_item_editions`, creators, puente,
+  backfill ni UI editorial; no se inicia EPIC 32.

@@ -1,6 +1,6 @@
 # CollectoHub MVP status
 
-Fecha de revision: 2026-06-29.
+Fecha de revision: 2026-06-30.
 
 ## Estado general
 
@@ -8,9 +8,10 @@ Este estado corresponde a **MVP 1 - Nucleo coleccionista**, no al producto
 final. La vision completa conecta coleccionistas, catalogo comun, tiendas y
 creadores, con matching, social y comercio desarrollados por fases.
 
-MVP 1 permanece cerrado y estable. MVP 2 completa EPIC 31 con fundamentos
-backend para publishers, franchises y series. No existen aun catalog items,
-editions, puente con `master_products` ni pantallas editoriales nuevas.
+MVP 1 permanece cerrado y estable. MVP 2 completa y valida EPIC 31 con
+fundamentos backend para publishers, franchises y series. No existen aun
+catalog items, editions, puente con `master_products` ni pantallas editoriales
+nuevas.
 
 | Dominio | Estado actual |
 | --- | --- |

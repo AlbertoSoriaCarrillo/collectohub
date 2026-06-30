@@ -25,9 +25,10 @@ Pulido recomendado para portfolio, no bloqueante del MVP:
 ## MVP 2 - Catalogo editorial
 
 EPIC 30 completa el diseno tecnico y recomienda modelo nuevo con puente de
-compatibilidad. No hay implementacion todavia. Orden propuesto:
+compatibilidad. EPIC 31 implementa y valida ya el primer tramo. Orden:
 
-1. EPIC 31: publishers, franchises y series. Completada el 2026-06-30.
+1. EPIC 31: publishers, franchises y series. Completada y validada mediante
+   EPIC 31B el 2026-06-30.
 2. EPIC 32: items y editions.
 3. EPIC 33: puente con `master_products`, backfill y reconciliacion.
 4. EPIC 34: API editorial y fachada legacy.
