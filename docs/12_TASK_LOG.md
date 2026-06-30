@@ -859,3 +859,61 @@ Siguiente paso: crear el backend en la carpeta backend.
   como siguiente paso.
 - No se implementan `catalog_items`, `catalog_item_editions`, creators, puente,
   backfill ni UI editorial; no se inicia EPIC 32.
+
+## 2026-06-30 - EPIC 32 - Catalog items y catalog item editions
+
+- Implementada la segunda capa del catalogo editorial con las tablas aditivas
+  `catalog_items` y `catalog_item_editions`.
+- Creada la migracion Liquibase
+  `006-create-editorial-catalog-items-and-editions.sql` e incluida en
+  `db.changelog-master.yaml`.
+- `catalog_items` modela la identidad coleccionable dentro de una serie
+  editorial.
+- `catalog_item_editions` modela ediciones concretas de un item, con publisher
+  opcional, ISBN, EAN, formato, idioma, pais, fecha/ano de publicacion y paginas.
+- Anadidas constraints, FKs, checks, indices y unicidad parcial para ISBN/EAN
+  entre filas no eliminadas.
+- Creadas las entidades `CatalogItem` y `CatalogItemEdition`.
+- Creado el enum `CatalogItemEditionFormat`.
+- Creados los repositorios `CatalogItemRepository` y
+  `CatalogItemEditionRepository`.
+- Creados DTOs de request/response para items y editions.
+- Creados los servicios `CatalogItemService` y `CatalogItemEditionService`.
+- Expuestos 8 endpoints bajo `/api/catalog`:
+  - `GET /api/catalog/series/{seriesId}/items`
+  - `GET /api/catalog/items/{id}`
+  - `POST /api/catalog/series/{seriesId}/items`
+  - `PUT /api/catalog/items/{id}`
+  - `GET /api/catalog/items/{itemId}/editions`
+  - `GET /api/catalog/editions/{id}`
+  - `POST /api/catalog/items/{itemId}/editions`
+  - `PUT /api/catalog/editions/{id}`
+- Los `GET` son publicos para cadenas `ACTIVE` no eliminadas y permiten lectura
+  ampliada a `ADMIN`.
+- Las escrituras `POST` y `PUT` siguen limitadas a `ADMIN`.
+- Se normalizan ISBN/EAN en servicio eliminando espacios y guiones y pasando a
+  mayusculas.
+- Una edition `ACTIVE` requiere item y serie activos, y publisher activo si se
+  informa.
+- Ejecutado `cd backend && .\mvnw.cmd clean verify`: 237 tests, 0 fallos,
+  0 errores y 2 saltados mientras Docker no estaba disponible.
+- Ejecutado despues el test `LiquibaseMigrationIntegrationTest` con Docker
+  Desktop 29.5.3 y PostgreSQL 17: 1 test correcto, 0 fallos, 0 errores y
+  0 saltados; Liquibase 006, las 18 tablas, 43 indices y constraints quedan
+  validados sobre PostgreSQL real.
+- Ejecutado `cd frontend && npm.cmd ci`: correcto, 474 paquetes instalados.
+- Ejecutado `cd frontend && npm.cmd test -- --watch=false`: 38 archivos y 80
+  tests correctos.
+- Ejecutado `cd frontend && npm.cmd run build`: correcto; permanece el warning
+  conocido del bundle inicial de 592.30 kB frente al budget de 500 kB.
+- Ejecutado `docker compose up --build -d`: imagenes backend/frontend
+  construidas y PostgreSQL, backend y frontend iniciados correctamente.
+- Se mantiene intacto `master_products`.
+- Se mantiene intacto `collection_items`.
+- Se mantiene intacto `shop_products`.
+- Se mantienen intactas recomendaciones, reservas, rutas y UI frontend.
+- No se crea `master_product_catalog_links`.
+- No se implementa backfill ni frontend editorial.
+- No se inicia EPIC 33.
+- Siguiente tarea recomendada: EPIC 33, puente con `master_products`, backfill y
+  reconciliacion, tras cerrar esta sincronizacion documental.

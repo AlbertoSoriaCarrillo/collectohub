@@ -2,7 +2,7 @@
 
 This directory is a downloadable snapshot of the architecture implemented in
 the repository. It is derived from Liquibase changelogs, Spring controllers and
-DTOs, Angular routes, services and feature components as of 2026-06-29.
+DTOs, Angular routes, services and feature components as of 2026-06-30.
 
 ## Files
 
@@ -58,7 +58,7 @@ This snapshot is maintained manually. When the implementation changes:
   matching documentation update.
 - They do not replace Swagger/OpenAPI for interactive API exploration.
 - Liquibase's own `databasechangelog` and `databasechangeloglock` tables are
-  runtime infrastructure and are intentionally excluded from the 13
+  runtime infrastructure and are intentionally excluded from the 18
   application-table count.
 - Recommendations have no table: the backend calculates them from collection
   items and currently available shop inventory.

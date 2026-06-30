@@ -128,8 +128,10 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 - PWA completa/offline avanzado.
 - Internacionalizacion avanzada, pluralizacion compleja o traducciones servidas desde backend.
 - Edicion real de perfil, cambio de password, avatar/upload.
-- Franquicias, colecciones editoriales, autores, editoriales y relaciones de
-  catalogo como entidades de dominio.
+- Puente con `master_products`, backfill/reconciliacion, frontend editorial,
+  colecciones editoriales conectadas a `catalog_items`/`catalog_item_editions`,
+  inventario por edicion y matching editorial.
+- Autores/credits estructurados y relaciones avanzadas de catalogo entre obras.
 - Perfiles publicos, follows, posts, comentarios, likes, resenas y moderacion.
 - Pedidos, carrito, pagos, facturas, envios, devoluciones y almacen comercial.
 - Herramientas funcionales para creadores, comunidades, eventos o monetizacion.
