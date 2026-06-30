@@ -29,7 +29,7 @@ compatibilidad. EPIC 31 implementa y valida ya el primer tramo. Orden:
 
 1. EPIC 31: publishers, franchises y series. Completada y validada mediante
    EPIC 31B el 2026-06-30.
-2. EPIC 32: items y editions.
+2. EPIC 32: items y editions. Completada el 2026-06-30.
 3. EPIC 33: puente con `master_products`, backfill y reconciliacion.
 4. EPIC 34: API editorial y fachada legacy.
 5. EPIC 35: frontend editorial.
@@ -41,8 +41,8 @@ Creators pertenece a MVP 2, pero despues del nucleo. Relaciones entre obras se
 implementan solo con casos de uso validados. Fuente de diseno:
 `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
 
-Siguiente tarea: EPIC 32, catalog items y editions, sin activar todavia el
-puente con `master_products`.
+Siguiente tarea: EPIC 33, puente con `master_products`, backfill y
+reconciliacion, sin modificar aun los consumidores legacy.
 
 ## MVP 3 - Social basico
 

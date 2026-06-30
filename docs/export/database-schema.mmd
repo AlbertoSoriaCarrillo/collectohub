@@ -61,6 +61,27 @@ erDiagram
         INTEGER end_year
         TIMESTAMPTZ deleted_at
     }
+    CATALOG_ITEMS {
+        BIGINT id PK
+        BIGINT series_id FK
+        VARCHAR title
+        VARCHAR sequence_label
+        NUMERIC sort_order
+        INTEGER first_publication_year
+        VARCHAR record_status
+        TIMESTAMPTZ deleted_at
+    }
+    CATALOG_ITEM_EDITIONS {
+        BIGINT id PK
+        BIGINT catalog_item_id FK
+        BIGINT publisher_id FK
+        VARCHAR isbn UK
+        VARCHAR ean UK
+        VARCHAR format
+        INTEGER publication_year
+        VARCHAR record_status
+        TIMESTAMPTZ deleted_at
+    }
     MASTER_PRODUCTS {
         BIGINT id PK
         BIGINT category_id FK
@@ -144,6 +165,9 @@ erDiagram
     PRODUCT_CATEGORIES ||--o{ MASTER_PRODUCTS : classifies
     CATALOG_FRANCHISES o|--o{ CATALOG_SERIES : groups
     PUBLISHERS o|--o{ CATALOG_SERIES : primary_publisher
+    CATALOG_SERIES ||--o{ CATALOG_ITEMS : contains
+    CATALOG_ITEMS ||--o{ CATALOG_ITEM_EDITIONS : publishes_as
+    PUBLISHERS o|--o{ CATALOG_ITEM_EDITIONS : publishes
     USERS ||--o{ PRODUCT_SUGGESTIONS : suggests
     USERS o|--o{ PRODUCT_SUGGESTIONS : reviews
     USERS ||--o{ COLLECTIONS : owns

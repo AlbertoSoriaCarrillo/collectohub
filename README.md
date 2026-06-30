@@ -28,8 +28,8 @@ marketplace, pagos o tiendas ya listos para usuario final.
 - MVP 1 cerrado como base tecnica/producto el 2026-06-29; checklist completo en
   `docs/07_MVP1_ACCEPTANCE_CHECKLIST.md`.
 - MVP 2 iniciado con el diseno de `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md` y
-  EPIC 31 implementada: tres tablas editoriales y doce endpoints bajo
-  `/api/catalog`; catalog items y editions siguen pendientes.
+  EPIC 31 y EPIC 32 implementadas: cinco tablas editoriales y veinte endpoints
+  bajo `/api/catalog`; el puente con `master_products` sigue pendiente.
 - MVP funcional de backend y frontend.
 - Docker Compose local con PostgreSQL, backend y frontend validado.
 - Tests backend, tests frontend y E2E Playwright implementados.
@@ -264,10 +264,12 @@ formatos Markdown, Mermaid y CSV descargables.
 
 - EPIC 31 ya implemento los fundamentos editoriales: publishers, franquicias y
   series.
-- El siguiente paso tecnico es EPIC 32: `catalog_items` y
-  `catalog_item_editions`.
-- Despues vendran el puente con `master_products`, el frontend editorial, las
-  colecciones editoriales y el matching por item/edicion.
+- EPIC 32 ya implemento `catalog_items` y `catalog_item_editions` como segunda
+  capa editorial.
+- El siguiente paso tecnico es EPIC 33: puente con `master_products`, backfill
+  y reconciliacion.
+- Despues vendran el frontend editorial, las colecciones editoriales y el
+  matching por item/edicion.
 - Validar despues social basico y, en fases separadas, matching con tiendas,
   comercio real y herramientas para creadores.
 - Ejecutar E2E en CI con un job separado y estable.

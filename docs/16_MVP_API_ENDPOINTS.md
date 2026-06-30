@@ -5,7 +5,7 @@ Estado: contrato backend MVP consumido por el frontend Angular y validado en el 
 Esta guia documenta el contrato real expuesto por el backend actual. Todos los
 errores controlados usan el envelope `ErrorResponse`:
 
-La exportacion completa y filtrable de los 47 endpoints actuales esta en
+La exportacion completa y filtrable de los 55 endpoints actuales esta en
 `docs/export/backend-endpoints.md` y `docs/export/backend-endpoints.csv`.
 
 ```json
@@ -123,12 +123,22 @@ registros `ACTIVE` no eliminados. `recordStatus` es un filtro exclusivo de
 | GET | `/api/catalog/series/{id}` | Publico/ADMIN | ACTIVE publico; cualquier no eliminado para ADMIN | No | `CatalogSeriesResponse` | `404` |
 | POST | `/api/catalog/series` | Protegido | `ADMIN` | `CreateCatalogSeriesRequest` | `CatalogSeriesResponse` | `400`, `401`, `403`, `404`, `409` |
 | PUT | `/api/catalog/series/{id}` | Protegido | `ADMIN` | `UpdateCatalogSeriesRequest` | `CatalogSeriesResponse` | `400`, `401`, `403`, `404`, `409` |
+| GET | `/api/catalog/series/{seriesId}/items` | Publico/ADMIN | ACTIVE publico; ADMIN puede filtrar estado | `q`, `publicationYear`, `language`, `country`, `recordStatus`, paginacion | `PageResponse<CatalogItemResponse>` | `400`, `403`, `404` |
+| GET | `/api/catalog/items/{id}` | Publico/ADMIN | ACTIVE con serie ACTIVE; cualquier no eliminado para ADMIN | No | `CatalogItemResponse` | `404` |
+| POST | `/api/catalog/series/{seriesId}/items` | Protegido | `ADMIN` | `CreateCatalogItemRequest` | `CatalogItemResponse` | `400`, `401`, `403`, `404`, `409` |
+| PUT | `/api/catalog/items/{id}` | Protegido | `ADMIN` | `UpdateCatalogItemRequest` | `CatalogItemResponse` | `400`, `401`, `403`, `404`, `409` |
+| GET | `/api/catalog/items/{itemId}/editions` | Publico/ADMIN | ACTIVE con item/serie ACTIVE; ADMIN puede filtrar estado | `publisherId`, `isbn`, `ean`, `format`, `language`, `country`, `publicationYear`, `recordStatus`, paginacion | `PageResponse<CatalogItemEditionResponse>` | `400`, `403`, `404` |
+| GET | `/api/catalog/editions/{id}` | Publico/ADMIN | Cadena ACTIVE publica; cualquier no eliminada para ADMIN | No | `CatalogItemEditionResponse` | `404` |
+| POST | `/api/catalog/items/{itemId}/editions` | Protegido | `ADMIN` | `CreateCatalogItemEditionRequest` | `CatalogItemEditionResponse` | `400`, `401`, `403`, `404`, `409` |
+| PUT | `/api/catalog/editions/{id}` | Protegido | `ADMIN` | `UpdateCatalogItemEditionRequest` | `CatalogItemEditionResponse` | `400`, `401`, `403`, `404`, `409` |
 
 Enums iniciales:
 
 - `recordStatus`: `DRAFT`, `ACTIVE`, `ARCHIVED`.
 - `type`: `BOOK`, `COMIC`, `MANGA`.
 - `publicationStatus`: `ONGOING`, `COMPLETED`, `CANCELLED`, `HIATUS`, `UNKNOWN`.
+- `editionFormat`: `HARDCOVER`, `PAPERBACK`, `SOFTCOVER`, `DIGITAL`, `OMNIBUS`,
+  `BOX_SET`, `SINGLE_ISSUE`, `OTHER`.
 
 Estos endpoints no modifican ni sustituyen `/api/master-products`.
 

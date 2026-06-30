@@ -37,7 +37,9 @@ class LiquibaseMigrationIntegrationTest {
             "refresh_tokens",
             "publishers",
             "catalog_franchises",
-            "catalog_series"
+            "catalog_series",
+            "catalog_items",
+            "catalog_item_editions"
     );
 
     private static final List<String> REQUIRED_INDEXES = List.of(
@@ -71,7 +73,23 @@ class LiquibaseMigrationIntegrationTest {
             "idx_catalog_series_type",
             "idx_catalog_series_publication_status",
             "idx_catalog_series_record_status",
-            "idx_catalog_series_title"
+            "idx_catalog_series_title",
+            "idx_catalog_items_series_id",
+            "idx_catalog_items_record_status",
+            "idx_catalog_items_title",
+            "idx_catalog_items_sort_order",
+            "idx_catalog_items_first_publication_year",
+            "idx_catalog_items_original_language",
+            "idx_catalog_items_origin_country",
+            "idx_catalog_item_editions_catalog_item_id",
+            "idx_catalog_item_editions_publisher_id",
+            "idx_catalog_item_editions_record_status",
+            "uk_catalog_item_editions_isbn_active",
+            "uk_catalog_item_editions_ean_active",
+            "idx_catalog_item_editions_format",
+            "idx_catalog_item_editions_language",
+            "idx_catalog_item_editions_country",
+            "idx_catalog_item_editions_publication_year"
     );
 
     private static final List<String> REQUIRED_CONSTRAINTS = List.of(
@@ -98,7 +116,17 @@ class LiquibaseMigrationIntegrationTest {
             "chk_catalog_series_record_status",
             "chk_catalog_series_start_year",
             "chk_catalog_series_end_year",
-            "chk_catalog_series_year_range"
+            "chk_catalog_series_year_range",
+            "fk_catalog_items_series",
+            "chk_catalog_items_sort_order",
+            "chk_catalog_items_first_publication_year",
+            "chk_catalog_items_record_status",
+            "fk_catalog_item_editions_item",
+            "fk_catalog_item_editions_publisher",
+            "chk_catalog_item_editions_format",
+            "chk_catalog_item_editions_page_count",
+            "chk_catalog_item_editions_publication_year",
+            "chk_catalog_item_editions_record_status"
     );
 
     @Container

@@ -10,6 +10,7 @@ import com.collectohub.catalog.domain.Publisher;
 import com.collectohub.catalog.dto.CreateCatalogSeriesRequest;
 import com.collectohub.catalog.infrastructure.CatalogFranchiseRepository;
 import com.collectohub.catalog.infrastructure.CatalogSeriesRepository;
+import com.collectohub.catalog.infrastructure.CatalogItemRepository;
 import com.collectohub.catalog.infrastructure.PublisherRepository;
 import com.collectohub.users.domain.Role;
 import com.collectohub.users.domain.User;
@@ -39,12 +40,20 @@ class CatalogSeriesServiceTest {
     @Mock
     private PublisherRepository publisherRepository;
 
+    @Mock
+    private CatalogItemRepository itemRepository;
+
     private CatalogSeriesService seriesService;
     private AuthenticatedUser admin;
 
     @BeforeEach
     void setUp() {
-        seriesService = new CatalogSeriesService(seriesRepository, franchiseRepository, publisherRepository);
+        seriesService = new CatalogSeriesService(
+                seriesRepository,
+                franchiseRepository,
+                publisherRepository,
+                itemRepository
+        );
         admin = authenticatedUser();
     }
 

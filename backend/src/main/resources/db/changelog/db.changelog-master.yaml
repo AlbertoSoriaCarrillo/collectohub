@@ -16,3 +16,5 @@ databaseChangeLog:
       file: db/changelog/changes/004-alter-shops-country-nullable.sql
   - include:
       file: db/changelog/changes/005-create-editorial-catalog-foundations.sql
+  - include:
+      file: db/changelog/changes/006-create-editorial-catalog-items-and-editions.sql

@@ -375,6 +375,22 @@
 - Motivo: evita exponer indirectamente registros DRAFT/ARCHIVED en una respuesta
   publica de series.
 
+## 2026-06-30 - Items y ediciones editoriales
+
+- Decision: implementar `catalog_items` y `catalog_item_editions` como segunda
+  capa del catalogo editorial.
+- Motivo: separa la identidad coleccionable de una obra o volumen de sus
+  ediciones concretas y prepara colecciones editoriales, inventario por edicion
+  y matching flexible sin romper `master_products`.
+- Decision: normalizar ISBN y EAN en servicio eliminando espacios y guiones, y
+  aplicar unicidad parcial entre filas no eliminadas sin columnas auxiliares.
+- Motivo: mantiene un esquema pequeno, admite entrada humana razonable y evita
+  duplicados identificables sin validar checksums ni consultar fuentes externas.
+- Decision: una edition `ACTIVE` requiere item, serie y publisher opcional
+  `ACTIVE`; no se archivan dependencias mientras tengan descendientes activos.
+- Motivo: preserva la cadena publica completa y evita respuestas que revelen
+  indirectamente contenido DRAFT o ARCHIVED.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

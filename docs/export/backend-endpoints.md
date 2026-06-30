@@ -2,7 +2,7 @@
 
 Source of truth reviewed: Spring MVC controllers, `SecurityConfig`, request and
 response DTOs, and application-service authorization. This inventory contains
-47 application endpoints. Framework-generated Swagger/OpenAPI paths are public
+55 application endpoints. Framework-generated Swagger/OpenAPI paths are public
 but are not counted as application endpoints.
 
 Authentication is stateless JWT. `PROTECTED` requires a valid Bearer token;
@@ -69,6 +69,14 @@ and expose only `ACTIVE`, non-deleted records by default. An authenticated
 | `GET /api/catalog/series/{id}` | `CatalogSeriesController` | Public ACTIVE or ADMIN | Path `id` | `CatalogSeriesResponse` |
 | `POST /api/catalog/series` | `CatalogSeriesController` | `ADMIN` | `CreateCatalogSeriesRequest` | `CatalogSeriesResponse` |
 | `PUT /api/catalog/series/{id}` | `CatalogSeriesController` | `ADMIN` | `UpdateCatalogSeriesRequest` | `CatalogSeriesResponse` |
+| `GET /api/catalog/series/{seriesId}/items` | `CatalogItemController` | Public ACTIVE chain; ADMIN status filter | Item filters and pagination | `PageResponse<CatalogItemResponse>` |
+| `GET /api/catalog/items/{id}` | `CatalogItemController` | Public ACTIVE chain or ADMIN | Path `id` | `CatalogItemResponse` |
+| `POST /api/catalog/series/{seriesId}/items` | `CatalogItemController` | `ADMIN` | `CreateCatalogItemRequest` | `CatalogItemResponse` |
+| `PUT /api/catalog/items/{id}` | `CatalogItemController` | `ADMIN` | `UpdateCatalogItemRequest` | `CatalogItemResponse` |
+| `GET /api/catalog/items/{itemId}/editions` | `CatalogItemEditionController` | Public ACTIVE chain; ADMIN status filter | Edition filters and pagination | `PageResponse<CatalogItemEditionResponse>` |
+| `GET /api/catalog/editions/{id}` | `CatalogItemEditionController` | Public ACTIVE chain or ADMIN | Path `id` | `CatalogItemEditionResponse` |
+| `POST /api/catalog/items/{itemId}/editions` | `CatalogItemEditionController` | `ADMIN` | `CreateCatalogItemEditionRequest` | `CatalogItemEditionResponse` |
+| `PUT /api/catalog/editions/{id}` | `CatalogItemEditionController` | `ADMIN` | `UpdateCatalogItemEditionRequest` | `CatalogItemEditionResponse` |
 
 Writes may return 400 for validation/lifecycle rules, 401 without a token, 403
 without `ADMIN`, 404 for missing dependencies, and 409 for duplicate identity.

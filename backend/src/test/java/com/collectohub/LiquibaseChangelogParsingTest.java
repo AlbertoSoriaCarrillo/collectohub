@@ -28,7 +28,8 @@ class LiquibaseChangelogParsingTest {
                         "002-seed-reference-data",
                         "003-create-refresh-tokens",
                         "004-alter-shops-country-nullable",
-                        "005-create-editorial-catalog-foundations"
+                        "005-create-editorial-catalog-foundations",
+                        "006-create-editorial-catalog-items-and-editions"
                 );
     }
 }

@@ -5,6 +5,7 @@ import com.collectohub.catalog.domain.CatalogRecordStatus;
 import com.collectohub.catalog.domain.Publisher;
 import com.collectohub.catalog.dto.CreatePublisherRequest;
 import com.collectohub.catalog.infrastructure.CatalogSeriesRepository;
+import com.collectohub.catalog.infrastructure.CatalogItemEditionRepository;
 import com.collectohub.catalog.infrastructure.PublisherRepository;
 import com.collectohub.users.domain.Role;
 import com.collectohub.users.domain.User;
@@ -34,13 +35,16 @@ class PublisherServiceTest {
     @Mock
     private CatalogSeriesRepository catalogSeriesRepository;
 
+    @Mock
+    private CatalogItemEditionRepository editionRepository;
+
     private PublisherService publisherService;
     private AuthenticatedUser admin;
     private AuthenticatedUser regularUser;
 
     @BeforeEach
     void setUp() {
-        publisherService = new PublisherService(publisherRepository, catalogSeriesRepository);
+        publisherService = new PublisherService(publisherRepository, catalogSeriesRepository, editionRepository);
         admin = authenticatedUser(1L, "admin@example.com", "ADMIN");
         regularUser = authenticatedUser(2L, "user@example.com", "USER");
     }

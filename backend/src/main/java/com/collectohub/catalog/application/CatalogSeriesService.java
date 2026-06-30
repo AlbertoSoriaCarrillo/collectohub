@@ -11,6 +11,7 @@ import com.collectohub.catalog.dto.CatalogSeriesResponse;
 import com.collectohub.catalog.dto.CreateCatalogSeriesRequest;
 import com.collectohub.catalog.dto.UpdateCatalogSeriesRequest;
 import com.collectohub.catalog.infrastructure.CatalogFranchiseRepository;
+import com.collectohub.catalog.infrastructure.CatalogItemRepository;
 import com.collectohub.catalog.infrastructure.CatalogSeriesRepository;
 import com.collectohub.catalog.infrastructure.PublisherRepository;
 import com.collectohub.shared.dto.PageResponse;
@@ -37,15 +38,18 @@ public class CatalogSeriesService {
     private final CatalogSeriesRepository seriesRepository;
     private final CatalogFranchiseRepository franchiseRepository;
     private final PublisherRepository publisherRepository;
+    private final CatalogItemRepository itemRepository;
 
     public CatalogSeriesService(
             CatalogSeriesRepository seriesRepository,
             CatalogFranchiseRepository franchiseRepository,
-            PublisherRepository publisherRepository
+            PublisherRepository publisherRepository,
+            CatalogItemRepository itemRepository
     ) {
         this.seriesRepository = seriesRepository;
         this.franchiseRepository = franchiseRepository;
         this.publisherRepository = publisherRepository;
+        this.itemRepository = itemRepository;
     }
 
     @Transactional(readOnly = true)
@@ -163,6 +167,7 @@ public class CatalogSeriesService {
         Publisher publisher = findPublisher(request.primaryPublisherId());
         ensureDependenciesArePublishable(request.recordStatus(), franchise, publisher);
         ensureUnique(title, request.type(), franchise, id);
+        ensureCanChangeStatus(series, request.recordStatus());
 
         series.update(
                 franchise,
@@ -219,6 +224,19 @@ public class CatalogSeriesService {
         if (publisher != null && !publisher.isPubliclyVisible()) {
             throw new InvalidEditorialCatalogRequestException(
                     "An active catalog series requires an active primary publisher"
+            );
+        }
+    }
+
+    private void ensureCanChangeStatus(CatalogSeries series, CatalogRecordStatus nextStatus) {
+        if (series.getRecordStatus() == CatalogRecordStatus.ACTIVE
+                && nextStatus != CatalogRecordStatus.ACTIVE
+                && itemRepository.existsBySeries_IdAndRecordStatusAndDeletedAtIsNull(
+                        series.getId(),
+                        CatalogRecordStatus.ACTIVE
+                )) {
+            throw new InvalidEditorialCatalogRequestException(
+                    "Cannot archive a catalog series referenced by an active catalog item"
             );
         }
     }

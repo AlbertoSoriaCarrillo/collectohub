@@ -6,6 +6,8 @@ import com.collectohub.catalog.infrastructure.ProductCategoryRepository;
 import com.collectohub.catalog.infrastructure.PublisherRepository;
 import com.collectohub.catalog.infrastructure.CatalogFranchiseRepository;
 import com.collectohub.catalog.infrastructure.CatalogSeriesRepository;
+import com.collectohub.catalog.infrastructure.CatalogItemRepository;
+import com.collectohub.catalog.infrastructure.CatalogItemEditionRepository;
 import com.collectohub.collections.infrastructure.CollectionItemRepository;
 import com.collectohub.collections.infrastructure.CollectionRepository;
 import com.collectohub.inventory.infrastructure.ShopProductRepository;
@@ -90,6 +92,16 @@ class CollectohubApplicationTests {
         @Bean
         CatalogSeriesRepository catalogSeriesRepository() {
             return mock(CatalogSeriesRepository.class);
+        }
+
+        @Bean
+        CatalogItemRepository catalogItemRepository() {
+            return mock(CatalogItemRepository.class);
+        }
+
+        @Bean
+        CatalogItemEditionRepository catalogItemEditionRepository() {
+            return mock(CatalogItemEditionRepository.class);
         }
 
         @Bean

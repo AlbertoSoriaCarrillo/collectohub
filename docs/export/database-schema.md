@@ -1,8 +1,8 @@
 # Database schema
 
-This document describes the PostgreSQL application schema created by the five
+This document describes the PostgreSQL application schema created by the six
 Liquibase SQL migrations currently included by
-`db/changelog/db.changelog-master.yaml`. It contains 16 application tables.
+`db/changelog/db.changelog-master.yaml`. It contains 18 application tables.
 Liquibase runtime tables are intentionally excluded.
 
 ## Domain summary
@@ -10,7 +10,7 @@ Liquibase runtime tables are intentionally excluded.
 | Domain | Tables | Product status |
 | --- | --- | --- |
 | Identity & Access | `users`, `roles`, `user_roles` | MVP 1 visible |
-| Catalog Knowledge Base | `product_categories`, `master_products`, `product_suggestions`, `publishers`, `catalog_franchises`, `catalog_series` | MVP 1 catalog plus MVP 2 foundations |
+| Catalog Knowledge Base | `product_categories`, `master_products`, `product_suggestions`, `publishers`, `catalog_franchises`, `catalog_series`, `catalog_items`, `catalog_item_editions` | MVP 1 catalog plus MVP 2 foundations |
 | User Collections | `collections`, `collection_items` | MVP 1 visible |
 | Shops & Inventory | `shops`, `shop_members`, `shop_products` | Implemented legacy/future base |
 | Matching | No table | Calculated from collections and inventory |
@@ -195,6 +195,70 @@ FKs: `fk_catalog_series_franchise`,
 `fk_catalog_series_primary_publisher`. Six check constraints validate type,
 publication status, record status and years. Indexes cover both FKs, title,
 type, publication status and record status.
+
+### catalog_items
+
+- Domain: Catalog Knowledge Base
+- Status: `MVP2_FOUNDATION`
+
+Collectable editorial identity inside a series, independent from any concrete
+publication edition.
+
+| Column | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `BIGINT IDENTITY` | Yes | Primary key. |
+| `series_id` | `BIGINT` | Yes | FK to `catalog_series.id`. |
+| `title` | `VARCHAR(240)` | Yes | Main item title. |
+| `original_title` | `VARCHAR(240)` | No | Original-language title. |
+| `sequence_label` | `VARCHAR(50)` | No | Flexible volume/issue label. |
+| `sort_order` | `NUMERIC(10,3)` | No | Non-negative ordering value. |
+| `description` | `TEXT` | No | Editorial description. |
+| `first_publication_date` | `DATE` | No | Earliest known publication date. |
+| `first_publication_year` | `INTEGER` | No | Year constrained to 1000-3000. |
+| `original_language` | `VARCHAR(10)` | No | Original language code. |
+| `origin_country` | `VARCHAR(2)` | No | Country of origin. |
+| `record_status` | `VARCHAR(30)` | Yes | `DRAFT`, `ACTIVE` or `ARCHIVED`; default `DRAFT`. |
+| audit set | shared columns | Mixed | `created_at` and `created_by` are required. |
+
+FK: `fk_catalog_items_series`. Checks enforce non-negative `sort_order`, a
+reasonable publication year and valid record status. Seven indexes cover the
+FK, public status, title, ordering, year, language and country. Logical
+duplicate detection for series, title and sequence label is handled by the
+service to avoid an overly aggressive database constraint.
+
+### catalog_item_editions
+
+- Domain: Catalog Knowledge Base
+- Status: `MVP2_FOUNDATION`
+
+Concrete publication of a catalog item, including identifiers, format,
+language and optional publisher.
+
+| Column | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `BIGINT IDENTITY` | Yes | Primary key. |
+| `catalog_item_id` | `BIGINT` | Yes | FK to `catalog_items.id`. |
+| `publisher_id` | `BIGINT` | No | FK to `publishers.id`. |
+| `isbn` | `VARCHAR(32)` | No | Normalized ISBN without spaces or hyphens. |
+| `ean` | `VARCHAR(32)` | No | Normalized EAN without spaces or hyphens. |
+| `format` | `VARCHAR(40)` | Yes | `HARDCOVER`, `PAPERBACK`, `SOFTCOVER`, `DIGITAL`, `OMNIBUS`, `BOX_SET`, `SINGLE_ISSUE` or `OTHER`. |
+| `edition_name` | `VARCHAR(240)` | No | Commercial edition name. |
+| `publication_date` | `DATE` | No | Edition publication date. |
+| `publication_year` | `INTEGER` | No | Year constrained to 1000-3000. |
+| `language` | `VARCHAR(10)` | No | Edition language code. |
+| `country` | `VARCHAR(2)` | No | Publication market/country. |
+| `page_count` | `INTEGER` | No | Positive page count. |
+| `cover_image_url` | `VARCHAR(1000)` | No | Temporary external HTTP(S) cover URL. |
+| `record_status` | `VARCHAR(30)` | Yes | `DRAFT`, `ACTIVE` or `ARCHIVED`; default `DRAFT`. |
+| audit set | shared columns | Mixed | `created_at` and `created_by` are required. |
+
+FKs: `fk_catalog_item_editions_item`,
+`fk_catalog_item_editions_publisher`. Checks validate format, positive page
+count, publication year and record status. Nine indexes cover both FKs, status,
+ISBN, EAN, format, language, country and year. Partial unique indexes
+`uk_catalog_item_editions_isbn_active` and
+`uk_catalog_item_editions_ean_active` apply to non-null identifiers while
+`deleted_at IS NULL`.
 
 ### master_products
 
@@ -393,8 +457,8 @@ FKs: `fk_reservations_user`, `fk_reservations_shop`,
 
 ## Index inventory
 
-Liquibase declares 27 explicit indexes, including the partial unique franchise
-slug index:
+Liquibase declares 43 explicit indexes, including partial unique franchise,
+ISBN and EAN indexes:
 
 | Table | Indexes |
 | --- | --- |
@@ -408,6 +472,8 @@ slug index:
 | `publishers` | `idx_publishers_name(lower(name))`, `idx_publishers_record_status(record_status)` |
 | `catalog_franchises` | `idx_catalog_franchises_name(lower(name))`, `idx_catalog_franchises_slug(slug)`, `uk_catalog_franchises_slug_active(slug)`, `idx_catalog_franchises_record_status(record_status)` |
 | `catalog_series` | `idx_catalog_series_franchise_id(franchise_id)`, `idx_catalog_series_primary_publisher_id(primary_publisher_id)`, `idx_catalog_series_type(type)`, `idx_catalog_series_publication_status(publication_status)`, `idx_catalog_series_record_status(record_status)`, `idx_catalog_series_title(lower(title))` |
+| `catalog_items` | `idx_catalog_items_series_id(series_id)`, `idx_catalog_items_record_status(record_status)`, `idx_catalog_items_title(lower(title))`, `idx_catalog_items_sort_order(sort_order)`, `idx_catalog_items_first_publication_year(first_publication_year)`, `idx_catalog_items_original_language(original_language)`, `idx_catalog_items_origin_country(origin_country)` |
+| `catalog_item_editions` | `idx_catalog_item_editions_catalog_item_id(catalog_item_id)`, `idx_catalog_item_editions_publisher_id(publisher_id)`, `idx_catalog_item_editions_record_status(record_status)`, `uk_catalog_item_editions_isbn_active(isbn)`, `uk_catalog_item_editions_ean_active(ean)`, `idx_catalog_item_editions_format(format)`, `idx_catalog_item_editions_language(language)`, `idx_catalog_item_editions_country(country)`, `idx_catalog_item_editions_publication_year(publication_year)` |
 
 PostgreSQL additionally creates indexes to enforce every primary key and the
 unique constraints on user email, role code, category code, shop membership and

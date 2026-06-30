@@ -7,6 +7,7 @@ import com.collectohub.catalog.dto.CreatePublisherRequest;
 import com.collectohub.catalog.dto.PublisherResponse;
 import com.collectohub.catalog.dto.UpdatePublisherRequest;
 import com.collectohub.catalog.infrastructure.CatalogSeriesRepository;
+import com.collectohub.catalog.infrastructure.CatalogItemEditionRepository;
 import com.collectohub.catalog.infrastructure.PublisherRepository;
 import com.collectohub.shared.dto.PageResponse;
 import org.springframework.data.domain.PageRequest;
@@ -24,13 +25,16 @@ public class PublisherService {
 
     private final PublisherRepository publisherRepository;
     private final CatalogSeriesRepository catalogSeriesRepository;
+    private final CatalogItemEditionRepository editionRepository;
 
     public PublisherService(
             PublisherRepository publisherRepository,
-            CatalogSeriesRepository catalogSeriesRepository
+            CatalogSeriesRepository catalogSeriesRepository,
+            CatalogItemEditionRepository editionRepository
     ) {
         this.publisherRepository = publisherRepository;
         this.catalogSeriesRepository = catalogSeriesRepository;
+        this.editionRepository = editionRepository;
     }
 
     @Transactional(readOnly = true)
@@ -111,14 +115,21 @@ public class PublisherService {
     }
 
     private void ensureCanChangeStatus(Publisher publisher, CatalogRecordStatus nextStatus) {
-        if (publisher.getRecordStatus() == CatalogRecordStatus.ACTIVE
-                && nextStatus != CatalogRecordStatus.ACTIVE
-                && catalogSeriesRepository.existsByPrimaryPublisher_IdAndRecordStatusAndDeletedAtIsNull(
-                        publisher.getId(),
-                        CatalogRecordStatus.ACTIVE
-                )) {
+        if (publisher.getRecordStatus() != CatalogRecordStatus.ACTIVE
+                || nextStatus == CatalogRecordStatus.ACTIVE) {
+            return;
+        }
+        boolean usedBySeries = catalogSeriesRepository.existsByPrimaryPublisher_IdAndRecordStatusAndDeletedAtIsNull(
+                publisher.getId(),
+                CatalogRecordStatus.ACTIVE
+        );
+        boolean usedByEdition = editionRepository.existsByPublisher_IdAndRecordStatusAndDeletedAtIsNull(
+                publisher.getId(),
+                CatalogRecordStatus.ACTIVE
+        );
+        if (usedBySeries || usedByEdition) {
             throw new InvalidEditorialCatalogRequestException(
-                    "Cannot archive a publisher referenced by an active catalog series"
+                    "Cannot archive a publisher referenced by active catalog content"
             );
         }
     }

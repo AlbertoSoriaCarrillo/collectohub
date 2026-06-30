@@ -8,9 +8,9 @@ Este estado corresponde a **MVP 1 - Nucleo coleccionista**, no al producto
 final. La vision completa conecta coleccionistas, catalogo comun, tiendas y
 creadores, con matching, social y comercio desarrollados por fases.
 
-MVP 1 permanece cerrado y estable. MVP 2 completa y valida EPIC 31 con
-fundamentos backend para publishers, franchises y series. No existen aun
-catalog items, editions, puente con `master_products` ni pantallas editoriales
+MVP 1 permanece cerrado y estable. MVP 2 completa EPIC 31 y EPIC 32 con
+fundamentos backend para publishers, franchises, series, items y editions. No
+existen aun puente con `master_products`, backfill ni pantallas editoriales
 nuevas.
 
 | Dominio | Estado actual |
@@ -313,13 +313,13 @@ La revision de este archivo no encontro necesidad de cambios en esta fase.
 ## Siguientes pasos recomendados
 
 La referencia tecnica descargable de EPIC 29 queda versionada en
-`docs/export/`: 16 tablas de aplicacion, 47 endpoints, 28 rutas Angular y 53
+`docs/export/`: 18 tablas de aplicacion, 55 endpoints, 28 rutas Angular y 53
 relaciones pantalla-backend. Los estados distinguen recorrido MVP 1, base
 legacy/futura, infraestructura y redirecciones sin alterar codigo funcional.
 
-La siguiente tarea recomendada es **EPIC 32 - Catalog items y editions**. Debe
-mantener el enfoque aditivo; el puente y backfill de `master_products` siguen
-reservados para EPIC 33. Diseno: `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
+La siguiente tarea recomendada es **EPIC 33 - Puente y backfill**. Debe mantener
+el enfoque aditivo, producir reconciliacion auditable y conservar intactos los
+consumidores legacy. Diseno: `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
 
 1. Preparar capturas reales para `docs/assets/screenshots/` y enlazarlas desde el README.
 2. Revisar el rediseño visual en desktop y movil real, anadir capturas a `docs/assets/screenshots/`.

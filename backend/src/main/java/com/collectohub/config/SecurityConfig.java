@@ -67,6 +67,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/catalog/publishers/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/catalog/franchises/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/catalog/series/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/catalog/items/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/catalog/editions/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/shops/{shopId:[0-9]+}/products").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/shop-products/{shopProductId:[0-9]+}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/collections/{collectionId:[0-9]+}").permitAll()

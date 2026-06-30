@@ -1,7 +1,8 @@
 # CollectoHub MVP 2 editorial catalog technical design
 
 Estado: diseno tecnico aprobado en EPIC 30. EPIC 31 implementa publishers,
-franchises y series; items, editions, puente y UI editorial siguen pendientes.
+franchises y series; EPIC 32 implementa items y editions. Puente y UI editorial
+siguen pendientes.
 
 ## Estado de implementacion
 
@@ -13,6 +14,15 @@ EPIC 31, completada el 2026-06-30, anade de forma aditiva:
 - lectura publica de registros `ACTIVE` y escritura solo `ADMIN`;
 - auditoria compatible con actores `BIGINT` y borrado logico;
 - tests de migracion, servicios, validacion y seguridad.
+
+EPIC 32, completada el 2026-06-30, anade de forma aditiva:
+
+- `catalog_items` y `catalog_item_editions` mediante Liquibase 006;
+- identidad coleccionable separada de sus ediciones concretas;
+- ocho formatos editoriales, ISBN/EAN normalizados y unicidad parcial;
+- ocho endpoints paginados con lectura publica y escritura `ADMIN`;
+- validacion de la cadena `series -> item -> edition` y publisher opcional;
+- tests de servicios, seguridad, validacion, duplicados y migracion.
 
 No modifica `master_products`, `collection_items`, `shop_products`, matching ni
 frontend. Los elementos aun no implementados de este documento siguen siendo
@@ -689,6 +699,9 @@ Estado: implementada el 2026-06-30 mediante el changeset
 
 Catalog items, editions, constraints, filtros, paginacion y tests de identidad
 editorial. Sin cambiar todavia colecciones o inventario.
+
+Estado: implementada el 2026-06-30 mediante el changeset
+`006-create-editorial-catalog-items-and-editions`.
 
 ### EPIC 33 - Puente y backfill
 
