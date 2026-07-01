@@ -1005,20 +1005,28 @@ Siguiente paso: crear el backend en la carpeta backend.
   ADMIN la propuesta mas reciente. No se exponen propuestas al publico.
 - Anadidos 13 tests de servicio y seguridad para busqueda, detalle, estados,
   filtros, paginacion y permisos del puente.
-- Ejecutado el backend completo: 263 tests, 0 fallos, 0 errores y 2 saltados;
-  `BUILD SUCCESS`. El primer `clean verify` detecto que el test de contexto sin
-  JPA necesitaba un `EntityManager` simulado; corregido el fixture, el test de
-  contexto y el `verify` completo finalizaron correctamente.
-- Validado el JAR con perfil `local` contra PostgreSQL real: health `UP`, la
-  busqueda editorial respondio correctamente y OpenAPI mostro las 5 operaciones
-  bajo el tag `Editorial catalog facade`.
-- Ejecutado `npm.cmd ci`: correcto, 474 paquetes instalados. Los tests y el
-  build Angular no pudieron repetirse dentro del sandbox porque el compilador
-  no obtuvo permisos de lectura sobre SCSS/spec. El frontend no fue modificado
-  y su baseline anterior permanece en 38 archivos, 80 tests y build correcto.
-- Docker no pudo ejecutarse desde el sandbox por denegacion de acceso al named
-  pipe; la validacion integrada backend/PostgreSQL se realizo con los servicios
-  locales, sin borrar datos ni volumenes.
+- Ejecutado localmente `cd backend && .\mvnw.cmd clean verify`: `BUILD SUCCESS`,
+  263 tests, 0 fallos, 0 errores y 2 saltados. Los 2 tests saltados
+  corresponden a integraciones condicionadas por disponibilidad de Docker/Testcontainers
+  durante la fase Maven.
+- Ejecutado localmente `cd frontend && npm.cmd ci`: correcto, 474 paquetes
+  instalados y 475 auditados. Se mantienen avisos conocidos de
+  `@angular/animations`, scripts pendientes de aprobacion y `npm audit`
+  reporta 7 vulnerabilidades, 3 bajas y 4 altas, a revisar en una tarea futura
+  de mantenimiento sin aplicar `npm audit fix --force` automaticamente.
+- Ejecutado localmente `cd frontend && npm.cmd test -- --watch=false`: 38
+  archivos de test correctos y 80 tests correctos.
+- Ejecutado localmente `cd frontend && npm.cmd run build`: correcto. Permanece
+  el warning conocido del bundle inicial de 592.30 kB frente al budget de 500 kB.
+- Ejecutado localmente `cd infra && docker compose down`. El primer intento fallo
+  porque Docker Desktop no estaba iniciado; tras arrancarlo, el comando funciono.
+- Ejecutado localmente `docker compose up --build -d`: imagenes backend/frontend
+  construidas, red creada, PostgreSQL healthy y contenedores backend/frontend
+  iniciados correctamente.
+- Validado localmente `curl.exe http://localhost:8080/api/health`: HTTP 200 con
+  respuesta `{"status":"UP","service":"collectohub-backend"}`.
+- Ejecutado localmente `docker compose down`: contenedores frontend, backend,
+  PostgreSQL y red eliminados correctamente, sin usar `-v` y sin borrar volumenes.
 - Actualizados contrato API, decisiones, estado, backlog, README y exportables;
   el inventario queda alineado en 67 endpoints, 5 de la fachada.
 - Se mantiene intacto `/api/master-products` y `MasterProductResponse`.
