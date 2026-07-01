@@ -127,9 +127,9 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 - PWA completa/offline avanzado.
 - Internacionalizacion avanzada, pluralizacion compleja o traducciones servidas desde backend.
 - Edicion real de perfil, cambio de password, avatar/upload.
-- Frontend editorial, colecciones conectadas a
-  `catalog_items`/`catalog_item_editions`, inventario por edicion y matching
-  editorial. La fachada backend y la lectura ADMIN del puente ya existen.
+- Colecciones conectadas a `catalog_items`/`catalog_item_editions`, inventario
+  por edicion y matching editorial. La fachada backend, la lectura ADMIN del
+  puente y el frontend editorial publico ya existen.
 - Autores/credits estructurados y relaciones avanzadas de catalogo entre obras.
 - Perfiles publicos, follows, posts, comentarios, likes, resenas y moderacion.
 - Pedidos, carrito, pagos, facturas, envios, devoluciones y almacen comercial.
@@ -314,13 +314,13 @@ La revision de este archivo no encontro necesidad de cambios en esta fase.
 ## Siguientes pasos recomendados
 
 La referencia tecnica descargable de EPIC 29 queda versionada en
-`docs/export/`: 19 tablas de aplicacion, 67 endpoints, 28 rutas Angular y 53
+`docs/export/`: 19 tablas de aplicacion, 67 endpoints, 32 rutas Angular y 57
 relaciones pantalla-backend. Los estados distinguen recorrido MVP 1, base
 legacy/futura, infraestructura y redirecciones sin alterar codigo funcional.
 
-La siguiente tarea recomendada es **EPIC 35 - Frontend editorial**. Debe
-consumir la fachada agregada sin activar todavia consumidores legacy sobre el
-puente. Diseno: `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
+La siguiente tarea recomendada es **EPIC 36 - Colecciones editoriales**. Debe
+introducir referencias graduales a item/edicion sin activar todavia inventario
+o matching editorial. Diseno: `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
 
 1. Preparar capturas reales para `docs/assets/screenshots/` y enlazarlas desde el README.
 2. Revisar el rediseño visual en desktop y movil real, anadir capturas a `docs/assets/screenshots/`.

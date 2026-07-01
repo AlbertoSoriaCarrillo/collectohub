@@ -5,6 +5,16 @@ describe('translation dictionaries', () => {
   it('keeps Spanish and English leaf keys aligned', () => {
     expect(leafKeys(TRANSLATIONS.es)).toEqual(leafKeys(TRANSLATIONS.en));
   });
+
+  it('includes the public editorial catalog vocabulary in both languages', () => {
+    const keys = leafKeys(TRANSLATIONS.es);
+    expect(keys).toContain('editorial.searchTitle');
+    expect(keys).toContain('editorial.viewSeries');
+    expect(keys).toContain('editorial.viewItem');
+    expect(keys).toContain('editorial.viewEdition');
+    expect(keys).toContain('enums.editorialResultType.EDITION');
+    expect(leafKeys(TRANSLATIONS.en)).toEqual(keys);
+  });
 });
 
 function leafKeys(dictionary: TranslationDictionary, prefix = ''): string[] {

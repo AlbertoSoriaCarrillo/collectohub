@@ -41,6 +41,7 @@ describe('MainLayoutComponent', () => {
     expect(compiled.querySelector('[data-testid="language-selector"]')).toBeTruthy();
     expect(compiled.querySelector('[data-testid="register-link"]')).toBeFalsy();
     expect(compiled.querySelector('[data-testid="user-menu-button"]')).toBeFalsy();
+    expect(visibleRoutes(compiled)).toContain('/catalog/editorial');
     expect(visibleRoutes(compiled)).not.toContain('/shops');
     expect(visibleRoutes(compiled)).not.toContain('/reservations');
   });
@@ -61,6 +62,7 @@ describe('MainLayoutComponent', () => {
 
     expect(compiled.querySelector('[data-testid="user-menu-button"]')).toBeTruthy();
     expect(compiled.querySelector('[data-testid="login-header-link"]')).toBeFalsy();
+    expect(visibleRoutes(compiled)).toContain('/catalog/editorial');
     expect(visibleRoutes(compiled)).not.toContain('/shops');
     expect(visibleRoutes(compiled)).not.toContain('/reservations');
   });

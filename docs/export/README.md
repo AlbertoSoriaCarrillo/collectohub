@@ -28,6 +28,8 @@ spreadsheet; `database-schema.mmd` can be opened in Mermaid-compatible tools.
   supports it.
 - `MVP2_FOUNDATION`: implemented MVP 2 backend/data foundation without a
   collector-facing editorial UI yet.
+- `MVP2_VISIBLE`: public MVP 2 editorial reading flow exposed in the Angular
+  application.
 - `LEGACY_FUTURE`: implemented and retained for compatibility or a later
   product phase, but not promoted in the current main journey.
 - `TECHNICAL`: infrastructure or operational support rather than a product

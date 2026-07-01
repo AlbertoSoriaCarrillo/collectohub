@@ -728,6 +728,10 @@ detalles jerarquicos y consulta ADMIN del puente legacy.
 
 Busqueda jerarquica, detalles de franchise/series/item/edition y alias legacy.
 
+Estado: implementada el 2026-07-01 con busqueda publica agregada, detalles de
+serie/item/edicion, navegacion principal e i18n ES/EN. El catalogo legacy se
+mantiene disponible y no se expone reconciliacion ADMIN.
+
 ### EPIC 36 - Colecciones editoriales
 
 Referencias duales, item requerido conceptualmente, edicion opcional, backfill y

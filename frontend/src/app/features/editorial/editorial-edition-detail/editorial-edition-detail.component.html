@@ -1,0 +1,51 @@
+<section class="editorial-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">{{ 'editorial.edition' | translate }}</p>
+      <h1>{{ detail()?.edition?.editionName || detail()?.edition?.format || ('editorial.edition' | translate) }}</h1>
+      <p>{{ 'editorial.editionDescription' | translate }}</p>
+    </div>
+    <a mat-button routerLink="/catalog/editorial"><mat-icon>arrow_back</mat-icon>{{ 'editorial.backToResults' | translate }}</a>
+  </header>
+
+  @if (errorMessage()) {
+    <p class="form-error" role="alert">{{ errorMessage() }}</p>
+  } @else if (loading()) {
+    <div class="editorial-loading" role="status"><mat-spinner diameter="28" />{{ 'editorial.loadingDetail' | translate }}</div>
+  } @else if (detail(); as data) {
+    <section class="editorial-section editorial-detail-layout" data-testid="editorial-edition-detail">
+      <div>
+        @if (data.edition.coverImageUrl) {
+          <img class="editorial-cover large" [src]="data.edition.coverImageUrl" [alt]="data.edition.editionName || data.item.title" />
+        } @else {
+          <span class="cover-placeholder large-placeholder" aria-hidden="true"><mat-icon>auto_stories</mat-icon></span>
+        }
+      </div>
+
+      <div class="edition-copy">
+        <div>
+          <p class="eyebrow">{{ 'enums.editorialEditionFormat.' + data.edition.format | translate }}</p>
+          <h2>{{ data.edition.editionName || data.item.title }}</h2>
+          <p class="muted">{{ data.item.title }} · {{ data.catalog.series.title }}</p>
+        </div>
+
+        <dl>
+          <div><dt>{{ 'editorial.format' | translate }}</dt><dd>{{ 'enums.editorialEditionFormat.' + data.edition.format | translate }}</dd></div>
+          <div><dt>{{ 'common.publisher' | translate }}</dt><dd>{{ data.publisher?.name || data.edition.publisherName || ('common.notReported' | translate) }}</dd></div>
+          <div><dt>{{ 'editorial.isbn' | translate }}</dt><dd>{{ data.edition.isbn || ('common.notReported' | translate) }}</dd></div>
+          <div><dt>{{ 'editorial.ean' | translate }}</dt><dd>{{ data.edition.ean || ('common.notReported' | translate) }}</dd></div>
+          <div><dt>{{ 'editorial.year' | translate }}</dt><dd>{{ data.edition.publicationYear || ('common.notReported' | translate) }}</dd></div>
+          <div><dt>{{ 'editorial.language' | translate }}</dt><dd>{{ data.edition.language || ('common.notReported' | translate) }}</dd></div>
+          <div><dt>{{ 'editorial.country' | translate }}</dt><dd>{{ data.edition.country || ('common.notReported' | translate) }}</dd></div>
+          <div><dt>{{ 'editorial.pages' | translate }}</dt><dd>{{ data.edition.pageCount || ('common.notReported' | translate) }}</dd></div>
+          <div><dt>{{ 'editorial.franchise' | translate }}</dt><dd>{{ data.catalog.franchise?.name || ('common.notReported' | translate) }}</dd></div>
+        </dl>
+
+        <div class="actions">
+          <a mat-button [routerLink]="['/catalog/editorial/items', data.item.id]">{{ 'editorial.viewItem' | translate }}</a>
+          <a mat-button [routerLink]="['/catalog/editorial/series', data.catalog.series.id]">{{ 'editorial.viewSeries' | translate }}</a>
+        </div>
+      </div>
+    </section>
+  }
+</section>

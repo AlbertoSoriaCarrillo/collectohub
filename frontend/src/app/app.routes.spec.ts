@@ -21,6 +21,16 @@ describe('app routes', () => {
 
     const home = children.find((route) => route.path === 'home');
     const catalog = children.find((route) => route.path === 'catalog');
+    const editorialCatalog = children.find((route) => route.path === 'catalog/editorial');
+    const editorialSeries = children.find(
+      (route) => route.path === 'catalog/editorial/series/:seriesId'
+    );
+    const editorialItem = children.find(
+      (route) => route.path === 'catalog/editorial/items/:itemId'
+    );
+    const editorialEdition = children.find(
+      (route) => route.path === 'catalog/editorial/editions/:editionId'
+    );
     const shops = children.find((route) => route.path === 'shops');
     const newShop = children.find((route) => route.path === 'shops/new');
     const newProduct = children.find((route) => route.path === 'catalog/new');
@@ -50,6 +60,10 @@ describe('app routes', () => {
 
     expect(home?.canActivate).toBeUndefined();
     expect(catalog?.canActivate).toBeUndefined();
+    expect(editorialCatalog?.canActivate).toBeUndefined();
+    expect(editorialSeries?.canActivate).toBeUndefined();
+    expect(editorialItem?.canActivate).toBeUndefined();
+    expect(editorialEdition?.canActivate).toBeUndefined();
     expect(shops?.canActivate).toContain(authGuard);
     expect(newShop?.canActivate).toContain(authGuard);
     expect(newProduct?.canActivate).toContain(authGuard);

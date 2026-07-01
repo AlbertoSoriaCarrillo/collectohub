@@ -1,7 +1,7 @@
 # Frontend to backend map
 
 This map follows actual HTTP calls made by routed Angular components through
-the services in `frontend/src/app/core`. It contains 53 relationships: 48 API
+the services in `frontend/src/app/core`. It contains 57 relationships: 52 API
 calls and 5 routes with no direct API call. Local-only calls such as
 `AuthService.currentUser()`, logout, translation and error formatting are not
 listed as backend relationships.
@@ -27,6 +27,18 @@ listed as backend relationships.
 
 `CatalogService.updateMasterProduct()` exists for the backend `PUT` operation,
 but no current routed component calls it.
+
+## Editorial catalog
+
+| Route/component | Angular service | Backend operation | Status |
+| --- | --- | --- | --- |
+| `/catalog/editorial` - `EditorialSearchComponent` | `EditorialCatalogService` | `GET /api/catalog/editorial/search` | `MVP2_VISIBLE` |
+| `/catalog/editorial/series/:seriesId` - `EditorialSeriesDetailComponent` | `EditorialCatalogService` | `GET /api/catalog/editorial/series/{seriesId}/detail` | `MVP2_VISIBLE` |
+| `/catalog/editorial/items/:itemId` - `EditorialItemDetailComponent` | `EditorialCatalogService` | `GET /api/catalog/editorial/items/{itemId}/detail` | `MVP2_VISIBLE` |
+| `/catalog/editorial/editions/:editionId` - `EditorialEditionDetailComponent` | `EditorialCatalogService` | `GET /api/catalog/editorial/editions/{editionId}/detail` | `MVP2_VISIBLE` |
+
+`EditorialCatalogService.getMasterProductLink()` models the ADMIN endpoint for
+future use, but no public route or component invokes or exposes it in EPIC 35.
 
 ## Collections
 

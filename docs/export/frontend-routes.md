@@ -1,7 +1,7 @@
 # Frontend routes
 
 Source of truth: `frontend/src/app/app.routes.ts` and the lazy-loaded feature
-components. The 28 child routes below are all wrapped by
+components. The 32 child routes below are all wrapped by
 `MainLayoutComponent`; the wrapper route is not independently navigable and is
 therefore not counted.
 
@@ -18,6 +18,10 @@ notably private collection reads.
 | `/register` | `RegisterComponent` | Login link/direct | `MVP1_VISIBLE` | Account creation; not a global CTA. |
 | `/catalog` | `CatalogListComponent` | Primary | `MVP1_VISIBLE` | Public catalog search. |
 | `/catalog/:id` | `MasterProductDetailComponent` | Contextual | `MVP1_VISIBLE` | Public catalog detail. |
+| `/catalog/editorial` | `EditorialSearchComponent` | Primary | `MVP2_VISIBLE` | Public editorial search. |
+| `/catalog/editorial/series/:seriesId` | `EditorialSeriesDetailComponent` | Contextual | `MVP2_VISIBLE` | Series with active items and editions. |
+| `/catalog/editorial/items/:itemId` | `EditorialItemDetailComponent` | Contextual | `MVP2_VISIBLE` | Item with active editions. |
+| `/catalog/editorial/editions/:editionId` | `EditorialEditionDetailComponent` | Contextual | `MVP2_VISIBLE` | Concrete edition and editorial context. |
 | `/collections/:collectionId` | `CollectionDetailComponent` | Contextual | `MVP1_VISIBLE` | Public collection or private owner view, enforced by backend. |
 
 ## Authenticated MVP 1

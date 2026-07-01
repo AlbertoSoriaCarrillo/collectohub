@@ -269,8 +269,9 @@ formatos Markdown, Mermaid y CSV descargables.
 - EPIC 33 ya implemento el puente con `master_products`, backfill de propuestas
   y reconciliacion ADMIN.
 - EPIC 34 ya implemento la API editorial y la fachada de compatibilidad.
-- El siguiente paso tecnico es EPIC 35: frontend editorial.
-- Despues vendran las colecciones editoriales y el
+- EPIC 35 ya implemento la busqueda y los detalles editoriales publicos.
+- El siguiente paso tecnico es EPIC 36: colecciones editoriales.
+- Despues vendran el inventario editorial y el
   matching por item/edicion.
 - Validar despues social basico y, en fases separadas, matching con tiendas,
   comercio real y herramientas para creadores.

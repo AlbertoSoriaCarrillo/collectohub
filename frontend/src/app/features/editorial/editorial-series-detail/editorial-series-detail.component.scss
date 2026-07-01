@@ -1,0 +1,47 @@
+.series-summary,
+.items-section {
+  display: grid;
+  gap: 18px;
+}
+
+.result-type {
+  color: var(--ch-primary);
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.original-title {
+  color: var(--ch-muted);
+  margin-top: 4px;
+}
+
+.item-card a {
+  color: inherit;
+}
+
+.edition-links {
+  display: grid;
+  gap: 8px;
+}
+
+.edition-links a {
+  align-items: center;
+  border-top: 1px solid var(--ch-border);
+  color: var(--ch-text-soft);
+  display: flex;
+  gap: 8px;
+  padding-top: 8px;
+  text-decoration: none;
+}
+
+.edition-links a:hover {
+  color: var(--ch-primary);
+}
+
+.edition-links mat-icon {
+  color: var(--ch-muted);
+  font-size: 19px;
+  height: 19px;
+  width: 19px;
+}

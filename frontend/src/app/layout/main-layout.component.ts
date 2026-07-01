@@ -32,15 +32,19 @@ export class MainLayoutComponent {
   readonly authService = inject(AuthService);
   readonly publicNavItems: NavItem[] = [
     { labelKey: 'layout.nav.home', route: '/home', icon: 'home' },
-    { labelKey: 'layout.nav.catalog', route: '/catalog', icon: 'travel_explore' }
+    { labelKey: 'layout.nav.catalog', route: '/catalog', icon: 'travel_explore' },
+    { labelKey: 'layout.nav.editorialCatalog', route: '/catalog/editorial', icon: 'menu_book' }
   ];
   readonly privateNavItems: NavItem[] = [
     { labelKey: 'layout.nav.collections', route: '/collections', icon: 'collections_bookmark' },
     { labelKey: 'layout.nav.wanted', route: '/wanted', icon: 'bookmark_search' }
   ];
-  readonly mobileNavItems: NavItem[] = [
+  readonly mobilePublicNavItems: NavItem[] = [
     { labelKey: 'layout.nav.home', route: '/home', icon: 'home' },
     { labelKey: 'layout.nav.catalog', route: '/catalog', icon: 'travel_explore' },
+    { labelKey: 'layout.nav.editorialCatalogShort', route: '/catalog/editorial', icon: 'menu_book' }
+  ];
+  readonly mobilePrivateNavItems: NavItem[] = [
     { labelKey: 'layout.nav.collectionsShort', route: '/collections', icon: 'collections_bookmark' },
     { labelKey: 'layout.nav.wanted', route: '/wanted', icon: 'bookmark_search' }
   ];

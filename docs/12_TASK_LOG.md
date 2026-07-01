@@ -1035,3 +1035,47 @@ Siguiente paso: crear el backend en la carpeta backend.
 - No se crea frontend editorial ni se inicia EPIC 35.
 - Siguiente tarea recomendada: EPIC 35, frontend editorial sobre la nueva
   fachada de lectura.
+
+## 2026-07-01 - EPIC 35 - Frontend editorial
+
+- Creado el modelo TypeScript `editorial-catalog.model.ts` con respuestas de
+  busqueda, serie, item, edicion, puente legacy, paginacion y filtros.
+- Creado `EditorialCatalogService` para consumir los 5 endpoints de la fachada
+  bajo `/api/catalog/editorial`.
+- El metodo ADMIN `getMasterProductLink` queda modelado para uso futuro, pero no
+  se expone desde la UI publica.
+- Anadidas 4 rutas publicas lazy-loaded:
+  - `/catalog/editorial`
+  - `/catalog/editorial/series/:seriesId`
+  - `/catalog/editorial/items/:itemId`
+  - `/catalog/editorial/editions/:editionId`
+- Creada la busqueda editorial con query, tipo BOOK/COMIC/MANGA, tipo de
+  resultado SERIES/ITEM/EDITION, estados de carga/error/vacio y paginacion.
+- Creados detalles publicos de serie, item y edicion con navegacion jerarquica,
+  metadatos editoriales y cubiertas cuando estan disponibles.
+- Anadido acceso visible `Catalogo editorial` en header, sidebar y navegacion
+  movil, manteniendo `/catalog` como catalogo legacy independiente.
+- Actualizado i18n ES/EN con textos y enums editoriales.
+- Anadidos tests de servicio HTTP, busqueda, estado vacio, resultados,
+  navegacion por tipo, detalles, rutas e i18n.
+- Ejecutado `cd frontend && npm.cmd ci`: correcto, 474 paquetes instalados.
+- Ejecutado `npm.cmd test -- --watch=false`: 43 archivos y 89 tests correctos.
+- Ejecutado `npm.cmd run build`: correcto; permanece el warning conocido del
+  bundle inicial, 597.68 kB frente al budget de 500 kB.
+- Validada visualmente la busqueda editorial en escritorio y movil con
+  Playwright sobre backend/frontend locales, sin cortes ni solapamientos.
+- Ejecutado `cd backend && .\mvnw.cmd clean verify`: `BUILD SUCCESS`, 263 tests,
+  0 fallos, 0 errores y 0 saltados.
+- Ejecutados `docker compose down` y `docker compose up --build -d`; PostgreSQL,
+  backend y frontend quedaron `healthy`.
+- Validados `GET /api/health` con estado `UP` y `/catalog/editorial` con HTTP
+  200 sobre el stack Docker.
+- Ejecutado `docker compose down` al finalizar, sin `-v` ni borrado de volumenes.
+- Actualizados backlog, decisiones, estado, README y exportables: 32 rutas
+  Angular y 57 relaciones frontend-backend.
+- No se modifica backend, migraciones, `/api/master-products`,
+  `collection_items`, `shop_products`, recomendaciones ni reservas.
+- No se crean colecciones editoriales, inventario por edicion, matching ni UI
+  ADMIN de reconciliacion. No se inicia EPIC 36.
+- Siguiente tarea recomendada: EPIC 36, referencias editoriales graduales en
+  colecciones.

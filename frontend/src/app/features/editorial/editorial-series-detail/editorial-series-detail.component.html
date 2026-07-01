@@ -1,0 +1,116 @@
+<section class="editorial-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">{{ 'editorial.series' | translate }}</p>
+      <h1>{{ detail()?.catalog?.series?.title || ('editorial.series' | translate) }}</h1>
+      <p>{{ 'editorial.seriesDescription' | translate }}</p>
+    </div>
+    <a mat-button routerLink="/catalog/editorial">
+      <mat-icon aria-hidden="true">arrow_back</mat-icon>
+      {{ 'editorial.backToResults' | translate }}
+    </a>
+  </header>
+
+  @if (errorMessage()) {
+    <p class="form-error" role="alert">{{ errorMessage() }}</p>
+  } @else if (loading()) {
+    <div class="editorial-loading" role="status">
+      <mat-spinner diameter="28" />
+      <span>{{ 'editorial.loadingDetail' | translate }}</span>
+    </div>
+  } @else if (detail(); as data) {
+    <section class="editorial-section series-summary" data-testid="editorial-series-detail">
+      <div>
+        <span class="result-type">{{ 'enums.editorialSeriesType.' + data.catalog.series.type | translate }}</span>
+        <h2>{{ data.catalog.series.title }}</h2>
+        @if (data.catalog.series.originalTitle) {
+          <p class="original-title">{{ data.catalog.series.originalTitle }}</p>
+        }
+      </div>
+
+      @if (data.catalog.series.description) {
+        <p class="description">{{ data.catalog.series.description }}</p>
+      }
+
+      <dl>
+        <div>
+          <dt>{{ 'editorial.franchise' | translate }}</dt>
+          <dd>{{ data.catalog.franchise?.name || ('common.notReported' | translate) }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'common.publisher' | translate }}</dt>
+          <dd>{{ data.catalog.primaryPublisher?.name || ('common.notReported' | translate) }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'editorial.language' | translate }}</dt>
+          <dd>{{ data.catalog.series.originalLanguage || ('common.notReported' | translate) }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'editorial.country' | translate }}</dt>
+          <dd>{{ data.catalog.series.originCountry || ('common.notReported' | translate) }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'editorial.years' | translate }}</dt>
+          <dd>{{ data.catalog.series.startYear || '?' }} - {{ data.catalog.series.endYear || '?' }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="items-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">{{ 'editorial.items' | translate }}</p>
+          <h2>{{ 'editorial.seriesItems' | translate }}</h2>
+        </div>
+        <span class="editorial-meta">{{ data.items.length }}</span>
+      </div>
+
+      @if (data.items.length) {
+        <div class="editorial-grid">
+          @for (entry of data.items; track entry.item.id) {
+            <mat-card class="editorial-card item-card">
+              <mat-card-header>
+                <mat-card-title>
+                  <a [routerLink]="['/catalog/editorial/items', entry.item.id]">{{ entry.item.title }}</a>
+                </mat-card-title>
+                @if (entry.item.sequenceLabel) {
+                  <mat-card-subtitle>{{ 'editorial.sequence' | translate }} {{ entry.item.sequenceLabel }}</mat-card-subtitle>
+                }
+              </mat-card-header>
+              <mat-card-content>
+                <div class="editorial-meta">
+                  @if (entry.item.firstPublicationYear) { <span>{{ entry.item.firstPublicationYear }}</span> }
+                  @if (entry.item.originalLanguage) { <span>{{ entry.item.originalLanguage }}</span> }
+                  @if (entry.item.originCountry) { <span>{{ entry.item.originCountry }}</span> }
+                </div>
+
+                @if (entry.editions.length) {
+                  <div class="edition-links">
+                    @for (edition of entry.editions; track edition.id) {
+                      <a [routerLink]="['/catalog/editorial/editions', edition.id]">
+                        <mat-icon aria-hidden="true">auto_stories</mat-icon>
+                        <span>{{ edition.editionName || edition.format }}</span>
+                      </a>
+                    }
+                  </div>
+                }
+              </mat-card-content>
+              <mat-card-actions>
+                <a mat-button [routerLink]="['/catalog/editorial/items', entry.item.id]">
+                  {{ 'editorial.viewItem' | translate }}
+                </a>
+              </mat-card-actions>
+            </mat-card>
+          }
+        </div>
+      } @else {
+        <mat-card class="editorial-empty">
+          <mat-card-content>
+            <mat-icon aria-hidden="true">library_books</mat-icon>
+            <h2>{{ 'editorial.noItems' | translate }}</h2>
+          </mat-card-content>
+        </mat-card>
+      }
+    </section>
+  }
+</section>

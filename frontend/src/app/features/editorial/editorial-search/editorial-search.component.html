@@ -1,0 +1,142 @@
+<section class="editorial-page editorial-search-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">{{ 'editorial.eyebrow' | translate }}</p>
+      <h1>{{ 'editorial.searchTitle' | translate }}</h1>
+      <p>{{ 'editorial.searchDescription' | translate }}</p>
+    </div>
+    <a mat-button routerLink="/catalog">{{ 'editorial.legacyCatalog' | translate }}</a>
+  </header>
+
+  <mat-card class="filters-card">
+    <mat-card-content>
+      <form class="editorial-filters" [formGroup]="form" (ngSubmit)="search()" novalidate>
+        <mat-form-field appearance="outline" class="query-field">
+          <mat-label>{{ 'editorial.searchLabel' | translate }}</mat-label>
+          <mat-icon matPrefix aria-hidden="true">search</mat-icon>
+          <input matInput type="search" formControlName="q" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'editorial.workType' | translate }}</mat-label>
+          <mat-select formControlName="type">
+            <mat-option value="">{{ 'common.all' | translate }}</mat-option>
+            <mat-option value="BOOK">{{ 'enums.editorialSeriesType.BOOK' | translate }}</mat-option>
+            <mat-option value="COMIC">{{ 'enums.editorialSeriesType.COMIC' | translate }}</mat-option>
+            <mat-option value="MANGA">{{ 'enums.editorialSeriesType.MANGA' | translate }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'editorial.resultType' | translate }}</mat-label>
+          <mat-select formControlName="resultType">
+            <mat-option value="">{{ 'common.all' | translate }}</mat-option>
+            <mat-option value="SERIES">{{ 'editorial.series' | translate }}</mat-option>
+            <mat-option value="ITEM">{{ 'editorial.item' | translate }}</mat-option>
+            <mat-option value="EDITION">{{ 'editorial.edition' | translate }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="filter-actions">
+          <button mat-flat-button color="primary" type="submit" [disabled]="loading()">
+            <mat-icon aria-hidden="true">search</mat-icon>
+            {{ loading() ? ('actions.searching' | translate) : ('actions.search' | translate) }}
+          </button>
+          <button mat-button type="button" (click)="clear()">{{ 'actions.clear' | translate }}</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  @if (errorMessage()) {
+    <p class="form-error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (loading()) {
+    <div class="editorial-loading" role="status">
+      <mat-spinner diameter="28" />
+      <span>{{ 'editorial.loading' | translate }}</span>
+    </div>
+  } @else if (result(); as page) {
+    @if (page.content.length) {
+      <div class="results-heading">
+        <p>{{ 'editorial.resultCount' | translate: { count: page.totalElements } }}</p>
+      </div>
+
+      <div class="editorial-grid" data-testid="editorial-results">
+        @for (item of page.content; track item.resultType + '-' + (item.editionId || item.itemId || item.seriesId)) {
+          <a
+            class="editorial-card-link"
+            [routerLink]="resultLink(item)"
+            [attr.data-result-type]="item.resultType"
+          >
+            <mat-card class="editorial-card result-card">
+              <mat-card-content>
+                <div class="result-layout">
+                  @if (item.coverImageUrl) {
+                    <img class="editorial-cover" [src]="item.coverImageUrl" [alt]="displayTitle(item)" />
+                  } @else {
+                    <span class="cover-placeholder" aria-hidden="true"><mat-icon>menu_book</mat-icon></span>
+                  }
+
+                  <div class="result-copy">
+                    <span class="result-type">
+                      {{ 'enums.editorialResultType.' + item.resultType | translate }}
+                    </span>
+                    <h2>{{ displayTitle(item) }}</h2>
+                    @if (item.itemTitle && item.editionName) {
+                      <p>{{ item.itemTitle }}</p>
+                    }
+                    @if (item.seriesTitle && item.resultType !== 'SERIES') {
+                      <p class="series-line">{{ item.seriesTitle }}</p>
+                    }
+                  </div>
+                </div>
+
+                <div class="editorial-meta">
+                  @if (item.franchiseName) { <span>{{ item.franchiseName }}</span> }
+                  @if (item.publisherName) { <span>{{ item.publisherName }}</span> }
+                  @if (item.publicationYear) { <span>{{ item.publicationYear }}</span> }
+                  @if (item.language) { <span>{{ item.language }}</span> }
+                  @if (item.country) { <span>{{ item.country }}</span> }
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </a>
+        }
+      </div>
+
+      @if (page.totalPages > 1) {
+        <nav class="pagination" [attr.aria-label]="'editorial.pagination' | translate">
+          <button
+            mat-icon-button
+            type="button"
+            [disabled]="page.first"
+            (click)="changePage(page.page - 1)"
+            [attr.aria-label]="'editorial.previousPage' | translate"
+          >
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <span>{{ 'editorial.page' | translate: { current: page.page + 1, total: page.totalPages } }}</span>
+          <button
+            mat-icon-button
+            type="button"
+            [disabled]="page.last"
+            (click)="changePage(page.page + 1)"
+            [attr.aria-label]="'editorial.nextPage' | translate"
+          >
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </nav>
+      }
+    } @else {
+      <mat-card class="editorial-empty" data-testid="editorial-empty-state">
+        <mat-card-content>
+          <mat-icon aria-hidden="true">search_off</mat-icon>
+          <h2>{{ 'editorial.emptyTitle' | translate }}</h2>
+          <p>{{ 'editorial.emptyDescription' | translate }}</p>
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+</section>

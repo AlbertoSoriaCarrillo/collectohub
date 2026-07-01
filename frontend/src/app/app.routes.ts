@@ -182,6 +182,34 @@ export const routes: Routes = [
           )
       },
       {
+        path: 'catalog/editorial',
+        loadComponent: () =>
+          import('./features/editorial/editorial-search/editorial-search.component').then(
+            (m) => m.EditorialSearchComponent
+          )
+      },
+      {
+        path: 'catalog/editorial/series/:seriesId',
+        loadComponent: () =>
+          import(
+            './features/editorial/editorial-series-detail/editorial-series-detail.component'
+          ).then((m) => m.EditorialSeriesDetailComponent)
+      },
+      {
+        path: 'catalog/editorial/items/:itemId',
+        loadComponent: () =>
+          import('./features/editorial/editorial-item-detail/editorial-item-detail.component').then(
+            (m) => m.EditorialItemDetailComponent
+          )
+      },
+      {
+        path: 'catalog/editorial/editions/:editionId',
+        loadComponent: () =>
+          import(
+            './features/editorial/editorial-edition-detail/editorial-edition-detail.component'
+          ).then((m) => m.EditorialEditionDetailComponent)
+      },
+      {
         path: 'catalog/new',
         canActivate: [authGuard],
         loadComponent: () =>

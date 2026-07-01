@@ -1,0 +1,28 @@
+.editions-section {
+  display: grid;
+  gap: 18px;
+}
+
+.muted {
+  color: var(--ch-muted);
+  margin-top: 4px;
+}
+
+.edition-layout {
+  align-items: start;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 88px minmax(0, 1fr);
+}
+
+.result-type {
+  color: var(--ch-primary);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.edition-layout h3 {
+  margin-top: 5px;
+  overflow-wrap: anywhere;
+}

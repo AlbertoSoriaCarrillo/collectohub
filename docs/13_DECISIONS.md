@@ -420,6 +420,20 @@
 - Motivo: mantiene una paginacion global estable sin cargar los tres catalogos
   completos en memoria ni introducir una nueva dependencia de busqueda.
 
+## 2026-07-01 - Frontend editorial publico
+
+- Decision: mantener `/catalog` como catalogo legacy y publicar el nuevo flujo
+  editorial bajo `/catalog/editorial` con rutas propias de lectura.
+- Motivo: permite validar la navegacion editorial sin romper el recorrido MVP 1
+  ni cambiar consumidores de `master_products`.
+- Decision: exponer en UI solo resultados `SERIES`, `ITEM` y `EDITION`; modelar
+  el lookup `MASTER_PRODUCT_LINK` en el servicio sin enlazarlo desde pantallas.
+- Motivo: la reconciliacion sigue siendo una capacidad interna exclusiva de
+  ADMIN y no debe filtrarse al catalogo publico.
+- Decision: clasificar las nuevas rutas y relaciones como `MVP2_VISIBLE`.
+- Motivo: distingue el primer recorrido editorial visible de la base backend
+  `MVP2_FOUNDATION` y evita presentar MVP 2 completo antes de EPIC 36-38.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.
