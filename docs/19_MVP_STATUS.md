@@ -8,15 +8,19 @@ Este estado corresponde a **MVP 1 - Nucleo coleccionista**, no al producto
 final. La vision completa conecta coleccionistas, catalogo comun, tiendas y
 creadores, con matching, social y comercio desarrollados por fases.
 
-MVP 1 permanece cerrado y estable. MVP 2 completa EPIC 31 a EPIC 33 con
-fundamentos editoriales y puente de reconciliacion ADMIN. Los consumidores
-legacy aun no usan el puente y no existen pantallas editoriales nuevas.
+MVP 1 permanece cerrado y estable. MVP 2 ha completado EPIC 31 a EPIC 35:
+fundamentos editoriales, items y ediciones, puente de reconciliacion ADMIN,
+fachada editorial de lectura y frontend editorial publico.
+
+Los consumidores legacy principales (`collection_items`, `shop_products`,
+recomendaciones y reservas) todavia no usan referencias editoriales directas.
+La adopcion gradual empieza en EPIC 36 con colecciones editoriales.
 
 | Dominio | Estado actual |
 | --- | --- |
 | Identity & Access | Implementado para MVP |
-| Catalog Knowledge Base | Parcial; fundamentos MVP 2 implementados sin UI |
-| User Collections | Implementado para MVP 1 |
+| Catalog Knowledge Base | Parcial; fundamentos MVP 2, fachada de lectura y frontend editorial publico implementados |
+| User Collections | Implementado para MVP 1; referencias editoriales pendientes de EPIC 36 |
 | Social | Futuro |
 | Shops & Inventory | Base tecnica parcial, fuera del foco visible |
 | Matching | Recomendaciones simples parciales |
