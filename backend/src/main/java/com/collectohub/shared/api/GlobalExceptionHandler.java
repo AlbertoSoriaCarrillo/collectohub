@@ -10,6 +10,7 @@ import com.collectohub.catalog.application.CatalogItemNotFoundException;
 import com.collectohub.catalog.application.CatalogItemEditionNotFoundException;
 import com.collectohub.catalog.application.InvalidCatalogFilterException;
 import com.collectohub.catalog.application.InvalidEditorialCatalogRequestException;
+import com.collectohub.catalog.application.EditorialLegacyBridgeNotFoundException;
 import com.collectohub.catalog.application.MasterProductNotFoundException;
 import com.collectohub.catalog.application.MasterProductCatalogLinkNotFoundException;
 import com.collectohub.catalog.application.ProductCategoryNotFoundException;
@@ -106,6 +107,7 @@ public class GlobalExceptionHandler {
             CatalogSeriesNotFoundException.class,
             CatalogItemNotFoundException.class,
             CatalogItemEditionNotFoundException.class,
+            EditorialLegacyBridgeNotFoundException.class,
             MasterProductCatalogLinkNotFoundException.class
     })
     ResponseEntity<ErrorResponse> handleEditorialCatalogNotFound(

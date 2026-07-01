@@ -16,6 +16,11 @@ public interface CatalogItemRepository extends
 
     List<CatalogItem> findAllByTitleIgnoreCaseAndDeletedAtIsNull(String title);
 
+    List<CatalogItem> findAllBySeries_IdAndRecordStatusAndDeletedAtIsNullOrderBySortOrderAscTitleAsc(
+            Long seriesId,
+            CatalogRecordStatus recordStatus
+    );
+
     boolean existsBySeries_IdAndRecordStatusAndDeletedAtIsNull(Long seriesId, CatalogRecordStatus recordStatus);
 
     boolean existsBySeries_IdAndTitleIgnoreCaseAndSequenceLabelIgnoreCaseAndDeletedAtIsNull(

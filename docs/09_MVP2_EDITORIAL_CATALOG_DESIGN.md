@@ -2,7 +2,7 @@
 
 Estado: diseno tecnico aprobado en EPIC 30. EPIC 31 y 32 implementan el catalogo
 editorial; EPIC 33 implementa puente, propuestas y reconciliacion ADMIN. La
-fachada de compatibilidad y la UI editorial siguen pendientes.
+fachada de compatibilidad ya esta implementada; la UI editorial sigue pendiente.
 
 ## Estado de implementacion
 
@@ -719,6 +719,10 @@ Estado: implementada el 2026-06-30 mediante el changeset
 
 Completar `/api/catalog/**`, definir fuente de verdad de escrituras y mantener
 `/api/master-products` sin regresiones.
+
+Estado: implementada el 2026-06-30 mediante una fachada de lectura agregada
+bajo `/api/catalog/editorial`, con busqueda publica de cadenas `ACTIVE`,
+detalles jerarquicos y consulta ADMIN del puente legacy.
 
 ### EPIC 35 - Frontend editorial
 

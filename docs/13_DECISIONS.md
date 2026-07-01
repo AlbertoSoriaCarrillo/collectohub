@@ -406,6 +406,20 @@
 - Motivo: una identidad legacy necesita una unica reconciliacion canonica sin
   impedir propuestas alternativas ni conservar rechazos historicos.
 
+## 2026-06-30 - Fachada editorial de lectura
+
+- Decision: exponer una fachada agregada bajo `/api/catalog/editorial` sin
+  modificar `/api/master-products` ni sus consumidores.
+- Motivo: permite adoptar el catalogo editorial de forma gradual y reversible.
+- Decision: limitar las lecturas publicas a cadenas completas `ACTIVE` y no
+  eliminadas; los resultados y consultas del puente requieren `ADMIN`.
+- Motivo: evita filtrar borradores, dependencias archivadas o reconciliaciones
+  internas al recorrido publico.
+- Decision: resolver la busqueda combinada mediante una consulta JPA nativa,
+  parametrizada y paginada sobre series, items y ediciones.
+- Motivo: mantiene una paginacion global estable sin cargar los tres catalogos
+  completos en memoria ni introducir una nueva dependencia de busqueda.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

@@ -982,3 +982,48 @@ Siguiente paso: crear el backend en la carpeta backend.
   aplicacion, 62 endpoints y los 7 endpoints del puente.
 - Confirmado que EPIC 33 esta completada, EPIC 34 es la siguiente tarea y MVP 2
   no se presenta como terminado.
+
+## 2026-06-30 - EPIC 34 - API editorial y fachada legacy
+
+- Creada la fachada de lectura `EditorialCatalogFacadeService` y el controller
+  `EditorialCatalogFacadeController` bajo `/api/catalog/editorial`.
+- Expuestos 5 endpoints nuevos:
+  - `GET /api/catalog/editorial/search`
+  - `GET /api/catalog/editorial/series/{seriesId}/detail`
+  - `GET /api/catalog/editorial/items/{itemId}/detail`
+  - `GET /api/catalog/editorial/editions/{editionId}/detail`
+  - `GET /api/catalog/editorial/master-products/{masterProductId}/link`
+- La busqueda combina series, items y ediciones en un
+  `PageResponse<EditorialCatalogSearchItemResponse>` y admite filtros y orden
+  validados.
+- Creados DTOs agregados de busqueda, contexto, detalle de serie, item y
+  edicion, y respuesta del puente legacy.
+- Las lecturas publicas solo exponen cadenas completas `ACTIVE` y no
+  eliminadas.
+- Los resultados `MASTER_PRODUCT_LINK` y la consulta legacy requieren `ADMIN`.
+- La consulta legacy prioriza el enlace `VERIFIED`; si no existe, devuelve al
+  ADMIN la propuesta mas reciente. No se exponen propuestas al publico.
+- Anadidos 13 tests de servicio y seguridad para busqueda, detalle, estados,
+  filtros, paginacion y permisos del puente.
+- Ejecutado el backend completo: 263 tests, 0 fallos, 0 errores y 2 saltados;
+  `BUILD SUCCESS`. El primer `clean verify` detecto que el test de contexto sin
+  JPA necesitaba un `EntityManager` simulado; corregido el fixture, el test de
+  contexto y el `verify` completo finalizaron correctamente.
+- Validado el JAR con perfil `local` contra PostgreSQL real: health `UP`, la
+  busqueda editorial respondio correctamente y OpenAPI mostro las 5 operaciones
+  bajo el tag `Editorial catalog facade`.
+- Ejecutado `npm.cmd ci`: correcto, 474 paquetes instalados. Los tests y el
+  build Angular no pudieron repetirse dentro del sandbox porque el compilador
+  no obtuvo permisos de lectura sobre SCSS/spec. El frontend no fue modificado
+  y su baseline anterior permanece en 38 archivos, 80 tests y build correcto.
+- Docker no pudo ejecutarse desde el sandbox por denegacion de acceso al named
+  pipe; la validacion integrada backend/PostgreSQL se realizo con los servicios
+  locales, sin borrar datos ni volumenes.
+- Actualizados contrato API, decisiones, estado, backlog, README y exportables;
+  el inventario queda alineado en 67 endpoints, 5 de la fachada.
+- Se mantiene intacto `/api/master-products` y `MasterProductResponse`.
+- Se mantienen intactos `collection_items`, `shop_products`, recomendaciones y
+  reservas.
+- No se crea frontend editorial ni se inicia EPIC 35.
+- Siguiente tarea recomendada: EPIC 35, frontend editorial sobre la nueva
+  fachada de lectura.

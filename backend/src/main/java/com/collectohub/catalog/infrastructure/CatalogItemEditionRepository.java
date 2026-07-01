@@ -18,6 +18,11 @@ public interface CatalogItemEditionRepository extends
 
     List<CatalogItemEdition> findAllByEanAndDeletedAtIsNull(String ean);
 
+    List<CatalogItemEdition> findAllByCatalogItem_IdAndRecordStatusAndDeletedAtIsNullOrderByPublicationYearAscIdAsc(
+            Long itemId,
+            CatalogRecordStatus recordStatus
+    );
+
     boolean existsByCatalogItem_IdAndRecordStatusAndDeletedAtIsNull(
             Long itemId,
             CatalogRecordStatus recordStatus

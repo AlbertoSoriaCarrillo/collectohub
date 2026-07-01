@@ -17,6 +17,7 @@ import com.collectohub.shops.infrastructure.ShopMemberRepository;
 import com.collectohub.shops.infrastructure.ShopRepository;
 import com.collectohub.users.infrastructure.RoleRepository;
 import com.collectohub.users.infrastructure.UserRepository;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -44,6 +45,11 @@ class CollectohubApplicationTests {
 
     @TestConfiguration
     static class RepositoryMocks {
+
+        @Bean
+        EntityManager entityManager() {
+            return mock(EntityManager.class);
+        }
 
         @Bean
         UserRepository userRepository() {

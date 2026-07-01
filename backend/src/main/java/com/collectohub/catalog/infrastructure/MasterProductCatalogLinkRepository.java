@@ -18,6 +18,11 @@ public interface MasterProductCatalogLinkRepository extends
             MasterProductCatalogLinkStatus status
     );
 
+    Optional<MasterProductCatalogLink> findFirstByMasterProduct_IdAndLinkStatusAndDeletedAtIsNullOrderByCreatedAtDesc(
+            Long masterProductId,
+            MasterProductCatalogLinkStatus status
+    );
+
     boolean existsByMasterProduct_IdAndLinkStatusAndDeletedAtIsNull(
             Long masterProductId,
             MasterProductCatalogLinkStatus status

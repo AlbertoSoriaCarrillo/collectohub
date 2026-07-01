@@ -2,7 +2,7 @@
 
 Source of truth reviewed: Spring MVC controllers, `SecurityConfig`, request and
 response DTOs, and application-service authorization. This inventory contains
-62 application endpoints. Framework-generated Swagger/OpenAPI paths are public
+67 application endpoints. Framework-generated Swagger/OpenAPI paths are public
 but are not counted as application endpoints.
 
 Authentication is stateless JWT. `PROTECTED` requires a valid Bearer token;
@@ -84,6 +84,11 @@ and expose only `ACTIVE`, non-deleted records by default. An authenticated
 | `PUT /api/catalog/master-product-links/{id}/verify` | `MasterProductCatalogLinkController` | `ADMIN` | Path `id` | `MasterProductCatalogLinkResponse` |
 | `PUT /api/catalog/master-product-links/{id}/reject` | `MasterProductCatalogLinkController` | `ADMIN` | Path `id` | `MasterProductCatalogLinkResponse` |
 | `POST /api/catalog/master-product-links/backfill` | `MasterProductCatalogLinkController` | `ADMIN` | None | `BackfillMasterProductCatalogLinksResponse` |
+| `GET /api/catalog/editorial/search` | `EditorialCatalogFacadeController` | Public ACTIVE; link results require `ADMIN` | Editorial filters and pagination | `PageResponse<EditorialCatalogSearchItemResponse>` |
+| `GET /api/catalog/editorial/series/{seriesId}/detail` | `EditorialCatalogFacadeController` | Public ACTIVE chain | Path `seriesId` | `EditorialCatalogSeriesDetailResponse` |
+| `GET /api/catalog/editorial/items/{itemId}/detail` | `EditorialCatalogFacadeController` | Public ACTIVE chain | Path `itemId` | `EditorialCatalogItemDetailResponse` |
+| `GET /api/catalog/editorial/editions/{editionId}/detail` | `EditorialCatalogFacadeController` | Public ACTIVE chain | Path `editionId` | `EditorialCatalogEditionDetailResponse` |
+| `GET /api/catalog/editorial/master-products/{masterProductId}/link` | `EditorialCatalogFacadeController` | `ADMIN` | Path `masterProductId` | `EditorialLegacyBridgeResponse` |
 
 Writes may return 400 for validation/lifecycle rules, 401 without a token, 403
 without `ADMIN`, 404 for missing dependencies, and 409 for duplicate identity.

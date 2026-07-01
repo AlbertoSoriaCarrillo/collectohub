@@ -5,7 +5,7 @@ Estado: contrato backend MVP consumido por el frontend Angular y validado en el 
 Esta guia documenta el contrato real expuesto por el backend actual. Todos los
 errores controlados usan el envelope `ErrorResponse`:
 
-La exportacion completa y filtrable de los 62 endpoints actuales esta en
+La exportacion completa y filtrable de los 67 endpoints actuales esta en
 `docs/export/backend-endpoints.md` y `docs/export/backend-endpoints.csv`.
 
 ```json
@@ -138,6 +138,11 @@ registros `ACTIVE` no eliminados. `recordStatus` es un filtro exclusivo de
 | PUT | `/api/catalog/master-product-links/{id}/verify` | Protegido | `ADMIN` | No | `MasterProductCatalogLinkResponse` | `401`, `403`, `404`, `409` |
 | PUT | `/api/catalog/master-product-links/{id}/reject` | Protegido | `ADMIN` | No | `MasterProductCatalogLinkResponse` | `401`, `403`, `404` |
 | POST | `/api/catalog/master-product-links/backfill` | Protegido | `ADMIN` | No | `BackfillMasterProductCatalogLinksResponse` | `401`, `403` |
+| GET | `/api/catalog/editorial/search` | Publico | Cadena `ACTIVE`; enlaces solo `ADMIN` | `q`, `type`, `franchiseId`, `seriesId`, `publisherId`, `language`, `country`, `publicationYear`, `resultType`, paginacion | `PageResponse<EditorialCatalogSearchItemResponse>` | `400`, `403` |
+| GET | `/api/catalog/editorial/series/{seriesId}/detail` | Publico | Cadena `ACTIVE` | No | `EditorialCatalogSeriesDetailResponse` | `404` |
+| GET | `/api/catalog/editorial/items/{itemId}/detail` | Publico | Cadena `ACTIVE` | No | `EditorialCatalogItemDetailResponse` | `404` |
+| GET | `/api/catalog/editorial/editions/{editionId}/detail` | Publico | Cadena `ACTIVE` | No | `EditorialCatalogEditionDetailResponse` | `404` |
+| GET | `/api/catalog/editorial/master-products/{masterProductId}/link` | Protegido | `ADMIN` | No | `EditorialLegacyBridgeResponse` | `401`, `403`, `404` |
 
 Enums iniciales:
 
@@ -148,6 +153,11 @@ Enums iniciales:
   `BOX_SET`, `SINGLE_ISSUE`, `OTHER`.
 
 Estos endpoints no modifican ni sustituyen `/api/master-products`.
+
+La fachada editorial agrega busqueda y detalle sin activar todavia
+`collection_items`, `shop_products`, recomendaciones ni reservas sobre el
+nuevo modelo. La consulta legacy devuelve primero el enlace `VERIFIED`; si no
+existe, un ADMIN puede consultar la propuesta mas reciente.
 
 ## Inventario de tienda
 
