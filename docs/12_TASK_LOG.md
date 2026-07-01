@@ -917,3 +917,68 @@ Siguiente paso: crear el backend en la carpeta backend.
 - No se inicia EPIC 33.
 - Siguiente tarea recomendada: EPIC 33, puente con `master_products`, backfill y
   reconciliacion, tras cerrar esta sincronizacion documental.
+
+## 2026-06-30 - EPIC 33 - Puente master_products con catalogo editorial
+
+- Implementado el puente aditivo `master_product_catalog_links` entre
+  `master_products` y el catalogo editorial.
+- Creada la migracion Liquibase
+  `007-create-master-product-catalog-links.sql` e incluida en
+  `db.changelog-master.yaml`.
+- La tabla enlaza `master_products` con `catalog_items` y opcionalmente con
+  `catalog_item_editions`.
+- Anadidos estados de enlace `PROPOSED`, `VERIFIED` y `REJECTED`.
+- Anadidos origenes de enlace `MANUAL`, `ISBN`, `EAN`, `TITLE`,
+  `TITLE_AND_VOLUME`, `TITLE_AND_PUBLISHER` y `BACKFILL`.
+- Anadidos checks, FKs, indices y un indice unico parcial para impedir mas de un
+  enlace `VERIFIED` activo por `master_product_id`.
+- Creada la entidad `MasterProductCatalogLink`.
+- Creados los enums `MasterProductCatalogLinkStatus` y
+  `MasterProductCatalogLinkSource`.
+- Creado el repositorio `MasterProductCatalogLinkRepository`.
+- Creados DTOs de request/response para enlaces y respuesta de backfill.
+- Creado `MasterProductCatalogLinkService` para busqueda, detalle, creacion,
+  actualizacion, verificacion y rechazo.
+- Creado `MasterProductCatalogBackfillService` para propuestas idempotentes.
+- El backfill crea enlaces `PROPOSED` y nunca verifica automaticamente.
+- El backfill propone enlaces por ISBN/EAN normalizados y por coincidencias
+  textuales simples cuando hay un unico candidato.
+- Expuestos endpoints ADMIN bajo `/api/catalog/master-product-links`:
+  - `GET /api/catalog/master-product-links`
+  - `GET /api/catalog/master-product-links/{id}`
+  - `POST /api/catalog/master-product-links`
+  - `PUT /api/catalog/master-product-links/{id}`
+  - `PUT /api/catalog/master-product-links/{id}/verify`
+  - `PUT /api/catalog/master-product-links/{id}/reject`
+  - `POST /api/catalog/master-product-links/backfill`
+- Los endpoints del puente son exclusivamente ADMIN.
+- Se mantiene intacto `master_products`.
+- Se mantiene intacto `collection_items`.
+- Se mantiene intacto `shop_products`.
+- Se mantienen intactas recomendaciones y reservas.
+- No se modifica frontend ni se crea UI de reconciliacion.
+- No se activan consumidores legacy sobre el puente.
+- No se inicia EPIC 34.
+- Ejecutado `cd backend && .\mvnw.cmd clean verify`: `BUILD SUCCESS`, 250
+  tests, 0 fallos, 0 errores y 2 saltados por disponibilidad de Docker en los
+  tests de integracion condicionados.
+- Ejecutado `cd frontend && npm.cmd ci`: correcto, 474 paquetes instalados.
+- Ejecutado `cd frontend && npm.cmd test -- --watch=false`: 38 archivos y 80
+  tests correctos.
+- Ejecutado `cd frontend && npm.cmd run build`: correcto; permanece el warning
+  conocido del bundle inicial de 592.30 kB frente al budget de 500 kB.
+- Iniciado Docker Desktop 29.5.3 y ejecutados `docker compose down`,
+  `docker compose up --build -d`, `docker compose ps` y `docker compose down`
+  sin eliminar volumenes. PostgreSQL, backend y frontend arrancaron
+  correctamente.
+- Validado `GET /api/health`: HTTP 200 con estado `UP`.
+- Validado Swagger UI: HTTP 200. OpenAPI incluye el tag `Editorial catalog
+  bridge` y las 7 operaciones del puente.
+- Sin credenciales ADMIN locales disponibles, no se ejecutaron operaciones
+  autenticadas del puente. `GET /api/catalog/master-product-links` y
+  `POST /api/catalog/master-product-links/backfill` devolvieron HTTP 401 sin
+  token, confirmando su proteccion.
+- Confirmada la documentacion exportable: 7 migraciones, 19 tablas de
+  aplicacion, 62 endpoints y los 7 endpoints del puente.
+- Confirmado que EPIC 33 esta completada, EPIC 34 es la siguiente tarea y MVP 2
+  no se presenta como terminado.
