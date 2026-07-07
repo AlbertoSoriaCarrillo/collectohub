@@ -11,6 +11,15 @@
 
   <mat-card class="form-card">
     <mat-card-content>
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'collections.reference' | translate }}</mat-label>
+        <mat-select [formControl]="form.controls.referenceMode" data-testid="collection-reference-mode">
+          <mat-option value="LEGACY">{{ 'collections.legacyReference' | translate }}</mat-option>
+          <mat-option value="EDITORIAL">{{ 'collections.editorialReference' | translate }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      @if (form.controls.referenceMode.value === 'LEGACY') {
       <form class="search-form" [formGroup]="productSearch" (ngSubmit)="searchProducts()" novalidate>
         <mat-form-field appearance="outline">
           <mat-label>{{ 'inventory.masterProductSearch' | translate }}</mat-label>
@@ -30,9 +39,32 @@
           {{ searching() ? ('actions.searching' | translate) : ('actions.search' | translate) }}
         </button>
       </form>
+      } @else {
+        <form class="search-form" [formGroup]="editorialSearch" (ngSubmit)="searchEditorial()" novalidate>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'collections.searchEditorial' | translate }}</mat-label>
+            <input matInput type="search" formControlName="q" data-testid="collection-item-search-editorial" />
+          </mat-form-field>
+          <button mat-stroked-button type="submit" [disabled]="searching()">
+            {{ searching() ? ('actions.searching' | translate) : ('actions.search' | translate) }}
+          </button>
+        </form>
+        <mat-form-field class="wide" appearance="outline">
+          <mat-label>{{ 'collections.selectEditorialItem' | translate }}</mat-label>
+          <mat-select data-testid="collection-item-editorial-result"
+            [value]="selectedEditorial()" (selectionChange)="selectEditorial($event.value)">
+            @for (result of editorialResults(); track result.resultType + '-' + (result.editionId || result.itemId)) {
+              <mat-option [value]="result">
+                {{ result.itemTitle }} @if (result.editionName) { - {{ result.editionName }} }
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
 
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
         <div class="form-grid">
+          @if (form.controls.referenceMode.value === 'LEGACY') {
           <mat-form-field class="wide" appearance="outline">
             <mat-label>{{ 'inventory.masterProduct' | translate }}</mat-label>
             <mat-select formControlName="masterProductId" data-testid="collection-item-master-product">
@@ -42,13 +74,8 @@
                 </mat-option>
               }
             </mat-select>
-            @if (
-              form.controls.masterProductId.hasError('required') &&
-              form.controls.masterProductId.touched
-            ) {
-              <mat-error>{{ 'validation.requiredMasterProduct' | translate }}</mat-error>
-            }
           </mat-form-field>
+          }
 
           <mat-form-field appearance="outline">
             <mat-label>{{ 'collections.itemStatus' | translate }}</mat-label>

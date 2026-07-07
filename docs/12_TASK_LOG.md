@@ -1079,3 +1079,50 @@ Siguiente paso: crear el backend en la carpeta backend.
   ADMIN de reconciliacion. No se inicia EPIC 36.
 - Siguiente tarea recomendada: EPIC 36, referencias editoriales graduales en
   colecciones.
+
+## 2026-07-01 - EPIC 36 - Referencias editoriales en colecciones
+
+- Creada la migracion Liquibase
+  `008-add-editorial-references-to-collection-items.sql` y registrada en el
+  changelog master.
+- `collection_items` incorpora `catalog_item_id`, `catalog_item_edition_id` y
+  `editorial_reference_source`; `master_product_id` pasa a nullable con checks,
+  FKs e indices defensivos.
+- Anadido backfill idempotente para items activos usando exclusivamente enlaces
+  `VERIFIED` activos, sin cambiar producto master ni estado de coleccion.
+- Ampliados entidad, DTOs y servicio para referencias legacy, puente verificado
+  y editorial manual. Las contradicciones con puente verificado devuelven 409.
+- Las recomendaciones ignoran defensivamente items editoriales puros; no se
+  implementa matching editorial.
+- Actualizados create/edit/detail de colecciones con selector legacy/editorial,
+  busqueda de items/ediciones, rechazo de series y fallback visual legacy.
+- Anadidas traducciones ES/EN y tests backend/frontend para los contratos y
+  comportamientos nuevos.
+- Ejecutado localmente el 2026-07-07
+  `cd backend && .\mvnw.cmd clean verify`: `BUILD SUCCESS`, 271 tests,
+  0 fallos, 0 errores y 2 saltados. Los saltos corresponden a integraciones
+  condicionadas por Docker/Testcontainers porque Docker Desktop no estaba
+  iniciado.
+- Ejecutado `npx.cmd tsc -p tsconfig.spec.json --noEmit`: correcto.
+- Ejecutado localmente el 2026-07-07 `cd frontend && npm.cmd ci`: correcto,
+  474 paquetes instalados y 475 auditados. Se mantienen los avisos conocidos de
+  `@angular/animations`, scripts pendientes de aprobacion y 7 vulnerabilidades
+  npm, 3 bajas y 4 altas, sin aplicar `npm audit fix --force`.
+- Ejecutado localmente `npm.cmd test -- --watch=false`: 43 archivos de test y
+  94 tests correctos.
+- Ejecutado localmente `npm.cmd run build`: correcto. Permanece el warning
+  conocido del bundle inicial de 598.92 kB frente al budget de 500 kB.
+- Ejecutado `docker compose down` y `docker compose up --build -d`: imagenes
+  backend/frontend construidas, PostgreSQL y frontend healthy, y backend
+  iniciado. El primer health se consulto mientras Spring seguia en `starting`;
+  la repeticion y el `docker compose down` final quedaron bloqueados al agotarse
+  la ventana de acciones ampliadas del entorno. No se uso `-v` ni se borraron
+  volumenes.
+- Revisado el 2026-07-07: Docker Desktop no estaba iniciado y no habia un daemon
+  accesible; no se repitio el stack. La validacion de build Docker anterior se
+  conserva como evidencia, sin presentar el health final como completado.
+- Se mantienen 19 tablas, 67 endpoints y 32 rutas Angular; el mapa
+  frontend-backend pasa a 59 relaciones.
+- No se modifican `shop_products`, inventario ni reservas. No se implementa
+  inventario por edicion, matching editorial ni EPIC 37.
+- Siguiente tarea recomendada: EPIC 37, inventario y matching editorial.

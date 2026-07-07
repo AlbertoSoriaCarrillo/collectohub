@@ -373,6 +373,9 @@ class RecommendationServiceTest {
         return withId(CollectionItem.create(
                 collection,
                 masterProduct,
+                null,
+                null,
+                com.collectohub.collections.domain.CollectionEditorialReferenceSource.LEGACY,
                 status,
                 null,
                 null,

@@ -379,7 +379,21 @@ export const es: TranslationDictionary = {
     collectionDeleteConfirm: 'Eliminar la coleccion "{{name}}"?',
     itemDeleteConfirm: 'Eliminar "{{name}}" de la coleccion?',
     createSubmit: 'Crear coleccion',
-    noItems: '{{count}} items'
+    noItems: '{{count}} items',
+    reference: 'Referencia',
+    legacyReference: 'Referencia legacy',
+    editorialReference: 'Referencia editorial',
+    searchEditorial: 'Buscar en catalogo editorial',
+    selectEditorialItem: 'Seleccionar item editorial',
+    selectEditorialEdition: 'Seleccionar edicion',
+    verifiedBridge: 'Puente verificado',
+    noEditorialReference: 'Sin referencia editorial',
+    editorialItem: 'Item editorial',
+    editorialEdition: 'Edicion editorial',
+    publisher: 'Editorial',
+    seriesNotAllowed: 'No se puede anadir una serie completa a una coleccion.',
+    referenceRequired: 'Debes seleccionar un producto legacy o un item editorial.',
+    editionItemMismatch: 'La edicion no pertenece al item seleccionado.'
   },
   recommendations: {
     eyebrow: 'Buscados',

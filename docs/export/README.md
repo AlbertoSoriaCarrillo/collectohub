@@ -63,4 +63,6 @@ This snapshot is maintained manually. When the implementation changes:
   runtime infrastructure and are intentionally excluded from the 19
   application-table count.
 - Recommendations have no table: the backend calculates them from collection
-  items and currently available shop inventory.
+  items with a legacy master product and currently available shop inventory.
+- EPIC 36 keeps 19 application tables and 32 routes, raises Liquibase migrations
+  to 8 and maps 59 frontend-backend relationships.

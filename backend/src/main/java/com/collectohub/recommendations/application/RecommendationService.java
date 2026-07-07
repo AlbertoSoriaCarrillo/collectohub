@@ -111,12 +111,17 @@ public class RecommendationService {
         }
 
         Map<Long, CollectionItem> bestItemsByMasterProduct = targetItems.stream()
+                .filter(item -> item.getMasterProduct() != null)
                 .collect(Collectors.toMap(
                         item -> item.getMasterProduct().getId(),
                         item -> item,
                         this::bestMatch,
                         LinkedHashMap::new
                 ));
+
+        if (bestItemsByMasterProduct.isEmpty()) {
+            return List.of();
+        }
 
         List<ShopProduct> candidates = shopProductRepository.findRecommendationCandidates(
                 bestItemsByMasterProduct.keySet(),

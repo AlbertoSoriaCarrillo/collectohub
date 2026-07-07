@@ -737,6 +737,12 @@ mantiene disponible y no se expone reconciliacion ADMIN.
 Referencias duales, item requerido conceptualmente, edicion opcional, backfill y
 actualizacion gradual de DTOs/UI.
 
+Estado: implementada el 2026-07-01 mediante la migracion 008. Los items de
+coleccion admiten referencia legacy, referencia enriquecida por puente
+`VERIFIED` o referencia editorial manual. `master_product_id` pasa a nullable,
+pero una constraint exige `master_product_id` o `catalog_item_id`. La UI de
+alta/edicion permite ambos catalogos y el detalle conserva fallback legacy.
+
 ### EPIC 37 - Inventario y matching editorial
 
 Enlace de stock a edicion y reglas exact/flexible. Alertas, ubicacion y comercio

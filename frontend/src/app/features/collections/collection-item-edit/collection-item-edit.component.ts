@@ -17,6 +17,8 @@ import {
 } from '../../../core/models/collection.model';
 import { PHYSICAL_CONDITIONS } from '../../../core/models/inventory.model';
 import { CollectionService } from '../../../core/services/collection.service';
+import { EditorialCatalogSearchItem } from '../../../core/models/editorial-catalog.model';
+import { EditorialCatalogService } from '../../../core/services/editorial-catalog.service';
 
 @Component({
   selector: 'app-collection-item-edit',
@@ -38,6 +40,7 @@ export class CollectionItemEditComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly collectionService = inject(CollectionService);
+  private readonly editorialCatalogService = inject(EditorialCatalogService);
   private readonly errorMessageService = inject(ErrorMessageService);
   private readonly languageService = inject(LanguageService);
 
@@ -49,7 +52,11 @@ export class CollectionItemEditComponent implements OnInit {
   readonly loading = signal(false);
   readonly saving = signal(false);
   readonly errorMessage = signal<string | null>(null);
+  readonly editorialResults = signal<EditorialCatalogSearchItem[]>([]);
+  readonly selectedEditorial = signal<EditorialCatalogSearchItem | null>(null);
+  readonly editorialSearch = this.fb.nonNullable.group({ q: [''] });
   readonly form = this.fb.group({
+    referenceMode: ['LEGACY' as 'LEGACY' | 'EDITORIAL'],
     collectionStatus: ['', [Validators.required]],
     physicalCondition: [''],
     unitNumber: ['', [Validators.maxLength(50)]],
@@ -57,6 +64,24 @@ export class CollectionItemEditComponent implements OnInit {
     notes: ['', [Validators.maxLength(4000)]],
     acquiredAt: ['']
   });
+
+  searchEditorial(): void {
+    this.editorialCatalogService.search({ q: this.editorialSearch.controls.q.value, size: 30 })
+      .subscribe({
+        next: (page) => this.editorialResults.set(
+          page.content.filter((result) => result.resultType === 'ITEM' || result.resultType === 'EDITION')
+        ),
+        error: (error) => this.errorMessage.set(this.errorMessageService.toMessage(error))
+      });
+  }
+
+  selectEditorial(result: EditorialCatalogSearchItem): void {
+    if (result.resultType === 'SERIES' || result.itemId == null) {
+      this.errorMessage.set(this.languageService.translate('collections.seriesNotAllowed'));
+      return;
+    }
+    this.selectedEditorial.set(result);
+  }
 
   ngOnInit(): void {
     const collectionId = Number(this.route.snapshot.paramMap.get('collectionId'));
@@ -115,6 +140,7 @@ export class CollectionItemEditComponent implements OnInit {
 
           this.item.set(item);
           this.form.patchValue({
+            referenceMode: item.catalogItemId ? 'EDITORIAL' : 'LEGACY',
             collectionStatus: item.collectionStatus,
             physicalCondition: item.physicalCondition ?? '',
             unitNumber: item.unitNumber ?? '',
@@ -129,7 +155,10 @@ export class CollectionItemEditComponent implements OnInit {
 
   private toRequest(): UpdateCollectionItemRequest {
     const value = this.form.getRawValue();
+    const editorial = value.referenceMode === 'EDITORIAL' ? this.selectedEditorial() : null;
     return {
+      catalogItemId: editorial?.itemId,
+      catalogItemEditionId: editorial?.editionId,
       collectionStatus: value.collectionStatus as UpdateCollectionItemRequest['collectionStatus'],
       physicalCondition:
         (this.optionalText(value.physicalCondition) as UpdateCollectionItemRequest['physicalCondition']) ??

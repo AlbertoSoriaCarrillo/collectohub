@@ -3,13 +3,23 @@ package com.collectohub.collections.application;
 import com.collectohub.auth.security.AuthenticatedUser;
 import com.collectohub.catalog.application.MasterProductNotFoundException;
 import com.collectohub.catalog.application.ProductCategoryNotFoundException;
+import com.collectohub.catalog.application.CatalogItemNotFoundException;
+import com.collectohub.catalog.application.CatalogItemEditionNotFoundException;
+import com.collectohub.catalog.domain.CatalogItem;
+import com.collectohub.catalog.domain.CatalogItemEdition;
 import com.collectohub.catalog.domain.MasterProduct;
+import com.collectohub.catalog.domain.MasterProductCatalogLink;
+import com.collectohub.catalog.domain.MasterProductCatalogLinkStatus;
 import com.collectohub.catalog.domain.ProductCategory;
 import com.collectohub.catalog.infrastructure.MasterProductRepository;
+import com.collectohub.catalog.infrastructure.CatalogItemRepository;
+import com.collectohub.catalog.infrastructure.CatalogItemEditionRepository;
+import com.collectohub.catalog.infrastructure.MasterProductCatalogLinkRepository;
 import com.collectohub.catalog.infrastructure.ProductCategoryRepository;
 import com.collectohub.collections.domain.Collection;
 import com.collectohub.collections.domain.CollectionItem;
 import com.collectohub.collections.domain.CollectionItemStatus;
+import com.collectohub.collections.domain.CollectionEditorialReferenceSource;
 import com.collectohub.collections.domain.CollectionVisibility;
 import com.collectohub.collections.dto.CollectionItemResponse;
 import com.collectohub.collections.dto.CollectionResponse;
@@ -41,19 +51,28 @@ public class CollectionService {
     private final UserRepository userRepository;
     private final ProductCategoryRepository productCategoryRepository;
     private final MasterProductRepository masterProductRepository;
+    private final CatalogItemRepository catalogItemRepository;
+    private final CatalogItemEditionRepository catalogItemEditionRepository;
+    private final MasterProductCatalogLinkRepository masterProductCatalogLinkRepository;
 
     public CollectionService(
             CollectionRepository collectionRepository,
             CollectionItemRepository collectionItemRepository,
             UserRepository userRepository,
             ProductCategoryRepository productCategoryRepository,
-            MasterProductRepository masterProductRepository
+            MasterProductRepository masterProductRepository,
+            CatalogItemRepository catalogItemRepository,
+            CatalogItemEditionRepository catalogItemEditionRepository,
+            MasterProductCatalogLinkRepository masterProductCatalogLinkRepository
     ) {
         this.collectionRepository = collectionRepository;
         this.collectionItemRepository = collectionItemRepository;
         this.userRepository = userRepository;
         this.productCategoryRepository = productCategoryRepository;
         this.masterProductRepository = masterProductRepository;
+        this.catalogItemRepository = catalogItemRepository;
+        this.catalogItemEditionRepository = catalogItemEditionRepository;
+        this.masterProductCatalogLinkRepository = masterProductCatalogLinkRepository;
     }
 
     @Transactional
@@ -138,10 +157,17 @@ public class CollectionService {
     ) {
         Collection collection = findActiveCollection(collectionId);
         ensureOwner(authenticatedUser, collection);
-        MasterProduct masterProduct = findActiveMasterProduct(request.masterProductId());
+        ResolvedReference reference = resolveReference(
+                request.masterProductId(),
+                request.catalogItemId(),
+                request.catalogItemEditionId()
+        );
         CollectionItem item = CollectionItem.create(
                 collection,
-                masterProduct,
+                reference.masterProduct(),
+                reference.catalogItem(),
+                reference.catalogItemEdition(),
+                reference.source(),
                 request.collectionStatus(),
                 request.physicalCondition(),
                 normalizeNullable(request.unitNumber()),
@@ -164,6 +190,26 @@ public class CollectionService {
         ensureOwner(authenticatedUser, collection);
         CollectionItem item = collectionItemRepository.findByIdAndCollection_IdAndDeletedAtIsNull(itemId, collectionId)
                 .orElseThrow(() -> new CollectionItemNotFoundException(itemId));
+        if (hasExplicitReference(request)) {
+            ResolvedReference reference = resolveReference(
+                    request.masterProductId() == null
+                            ? idOf(item.getMasterProduct())
+                            : request.masterProductId(),
+                    request.catalogItemId() == null
+                            ? idOf(item.getCatalogItem())
+                            : request.catalogItemId(),
+                    request.catalogItemEditionId() == null
+                            ? idOf(item.getCatalogItemEdition())
+                            : request.catalogItemEditionId()
+            );
+            item.updateReference(
+                    reference.masterProduct(),
+                    reference.catalogItem(),
+                    reference.catalogItemEdition(),
+                    reference.source(),
+                    authenticatedUser.id()
+            );
+        }
         item.update(
                 Objects.requireNonNullElse(request.collectionStatus(), item.getCollectionStatus()),
                 nullablePhysicalConditionOrExisting(request.physicalCondition(), item.getPhysicalCondition()),
@@ -226,6 +272,114 @@ public class CollectionService {
                 .orElseThrow(() -> new MasterProductNotFoundException(masterProductId));
     }
 
+    private ResolvedReference resolveReference(Long masterProductId, Long catalogItemId, Long editionId) {
+        if (masterProductId == null && catalogItemId == null) {
+            throw new InvalidCollectionItemReferenceException(
+                    "A master product or editorial catalog item is required"
+            );
+        }
+        if (editionId != null && catalogItemId == null) {
+            throw new InvalidCollectionItemReferenceException(
+                    "An editorial edition requires an editorial catalog item"
+            );
+        }
+
+        MasterProduct masterProduct = masterProductId == null ? null : findActiveMasterProduct(masterProductId);
+        CatalogItem catalogItem = catalogItemId == null ? null : findActiveCatalogItem(catalogItemId);
+        CatalogItemEdition edition = editionId == null ? null : findActiveCatalogItemEdition(editionId);
+        validateEditionBelongsToItem(edition, catalogItem);
+
+        if (catalogItem != null) {
+            validateVerifiedBridgeDoesNotConflict(masterProduct, catalogItem, edition);
+            return new ResolvedReference(
+                    masterProduct,
+                    catalogItem,
+                    edition,
+                    CollectionEditorialReferenceSource.MANUAL_EDITORIAL
+            );
+        }
+
+        return resolveEditorialReferenceFromVerifiedBridge(masterProduct);
+    }
+
+    private CatalogItem findActiveCatalogItem(Long catalogItemId) {
+        return catalogItemRepository.findByIdAndDeletedAtIsNull(catalogItemId)
+                .filter(CatalogItem::isPubliclyVisible)
+                .orElseThrow(() -> new CatalogItemNotFoundException(catalogItemId));
+    }
+
+    private CatalogItemEdition findActiveCatalogItemEdition(Long editionId) {
+        return catalogItemEditionRepository.findByIdAndDeletedAtIsNull(editionId)
+                .filter(CatalogItemEdition::isPubliclyVisible)
+                .orElseThrow(() -> new CatalogItemEditionNotFoundException(editionId));
+    }
+
+    private void validateEditionBelongsToItem(CatalogItemEdition edition, CatalogItem catalogItem) {
+        if (edition != null && !edition.getCatalogItem().getId().equals(catalogItem.getId())) {
+            throw new InvalidCollectionItemReferenceException(
+                    "The editorial edition does not belong to the selected catalog item"
+            );
+        }
+    }
+
+    private ResolvedReference resolveEditorialReferenceFromVerifiedBridge(MasterProduct masterProduct) {
+        return verifiedBridge(masterProduct.getId())
+                .filter(link -> link.getCatalogItem().isPubliclyVisible())
+                .filter(link -> link.getCatalogItemEdition() == null
+                        || link.getCatalogItemEdition().isPubliclyVisible())
+                .map(link -> new ResolvedReference(
+                        masterProduct,
+                        link.getCatalogItem(),
+                        link.getCatalogItemEdition(),
+                        CollectionEditorialReferenceSource.VERIFIED_BRIDGE
+                ))
+                .orElseGet(() -> new ResolvedReference(
+                        masterProduct,
+                        null,
+                        null,
+                        CollectionEditorialReferenceSource.LEGACY
+                ));
+    }
+
+    private void validateVerifiedBridgeDoesNotConflict(
+            MasterProduct masterProduct,
+            CatalogItem catalogItem,
+            CatalogItemEdition edition
+    ) {
+        if (masterProduct == null) {
+            return;
+        }
+        verifiedBridge(masterProduct.getId()).ifPresent(link -> {
+            boolean itemConflict = !link.getCatalogItem().getId().equals(catalogItem.getId());
+            boolean editionConflict = link.getCatalogItemEdition() != null
+                    && edition != null
+                    && !link.getCatalogItemEdition().getId().equals(edition.getId());
+            if (itemConflict || editionConflict) {
+                throw new ConflictingCollectionItemReferenceException(
+                        "The editorial reference conflicts with the verified master product bridge"
+                );
+            }
+        });
+    }
+
+    private java.util.Optional<MasterProductCatalogLink> verifiedBridge(Long masterProductId) {
+        return masterProductCatalogLinkRepository
+                .findByMasterProduct_IdAndLinkStatusAndDeletedAtIsNull(
+                        masterProductId,
+                        MasterProductCatalogLinkStatus.VERIFIED
+                );
+    }
+
+    private boolean hasExplicitReference(UpdateCollectionItemRequest request) {
+        return request.masterProductId() != null
+                || request.catalogItemId() != null
+                || request.catalogItemEditionId() != null;
+    }
+
+    private Long idOf(MasterProduct value) { return value == null ? null : value.getId(); }
+    private Long idOf(CatalogItem value) { return value == null ? null : value.getId(); }
+    private Long idOf(CatalogItemEdition value) { return value == null ? null : value.getId(); }
+
     private void ensureOwner(AuthenticatedUser authenticatedUser, Collection collection) {
         Long userId = requireAuthenticated(authenticatedUser).id();
         if (!collection.isOwnedBy(userId)) {
@@ -280,5 +434,13 @@ public class CollectionService {
 
     private LocalDate nullableDateOrExisting(LocalDate value, LocalDate existing) {
         return value == null ? existing : value;
+    }
+
+    private record ResolvedReference(
+            MasterProduct masterProduct,
+            CatalogItem catalogItem,
+            CatalogItemEdition catalogItemEdition,
+            CollectionEditorialReferenceSource source
+    ) {
     }
 }

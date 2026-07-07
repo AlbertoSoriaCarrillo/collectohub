@@ -72,6 +72,9 @@ a `REDIRECT` fallback route.
 
 ## Navigation values
 
+EPIC 36 does not add routes. Existing collection create/edit/detail routes now
+support dual legacy and editorial references.
+
 - `PRIMARY`: visible in the main collector navigation.
 - `HEADER`: visible in the global anonymous header.
 - `USER_MENU`: visible in the authenticated avatar menu.

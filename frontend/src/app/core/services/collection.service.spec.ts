@@ -108,6 +108,23 @@ describe('CollectionService', () => {
     request.flush(item);
   });
 
+  it('adds a collection item with an editorial item and edition', () => {
+    const payload = {
+      masterProductId: null,
+      catalogItemId: 11,
+      catalogItemEditionId: 12,
+      collectionStatus: 'OWNED' as const
+    };
+
+    service.addCollectionItem(3, payload).subscribe();
+
+    const request = httpTestingController.expectOne(
+      'http://localhost:8080/api/collections/3/items'
+    );
+    expect(request.request.body).toEqual(payload);
+    request.flush({ ...item, masterProductId: null, catalogItemId: 11, catalogItemEditionId: 12 });
+  });
+
   it('updates a collection item', () => {
     const payload = { collectionStatus: 'OWNED' as const };
 

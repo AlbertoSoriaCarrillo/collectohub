@@ -8,6 +8,12 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
 public record UpdateCollectionItemRequest(
+        Long masterProductId,
+
+        Long catalogItemId,
+
+        Long catalogItemEditionId,
+
         CollectionItemStatus collectionStatus,
 
         PhysicalCondition physicalCondition,

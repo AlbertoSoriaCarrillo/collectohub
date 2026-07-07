@@ -20,13 +20,39 @@
   @if (item(); as currentItem) {
     <mat-card class="form-card">
       <mat-card-header>
-        <mat-card-title>{{ currentItem.masterProductName }}</mat-card-title>
+        <mat-card-title>{{ currentItem.catalogItemTitle || currentItem.masterProductName }}</mat-card-title>
         <mat-card-subtitle>
-          {{ currentItem.masterProductFranchise || currentItem.masterProductCategoryCode }}
+          {{ currentItem.catalogFranchiseName || currentItem.masterProductFranchise || currentItem.masterProductCategoryCode }}
         </mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'collections.reference' | translate }}</mat-label>
+          <mat-select [formControl]="form.controls.referenceMode" data-testid="collection-edit-reference-mode">
+            <mat-option value="LEGACY">{{ 'collections.legacyReference' | translate }}</mat-option>
+            <mat-option value="EDITORIAL">{{ 'collections.editorialReference' | translate }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        @if (form.controls.referenceMode.value === 'EDITORIAL') {
+          <form class="search-form" [formGroup]="editorialSearch" (ngSubmit)="searchEditorial()" novalidate>
+            <mat-form-field appearance="outline">
+              <mat-label>{{ 'collections.searchEditorial' | translate }}</mat-label>
+              <input matInput type="search" formControlName="q" />
+            </mat-form-field>
+            <button mat-stroked-button type="submit">{{ 'actions.search' | translate }}</button>
+          </form>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'collections.selectEditorialItem' | translate }}</mat-label>
+            <mat-select [value]="selectedEditorial()" (selectionChange)="selectEditorial($event.value)">
+              @for (result of editorialResults(); track result.resultType + '-' + (result.editionId || result.itemId)) {
+                <mat-option [value]="result">
+                  {{ result.itemTitle }} @if (result.editionName) { - {{ result.editionName }} }
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
         <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
           <div class="form-grid">
             <mat-form-field appearance="outline">

@@ -13,6 +13,9 @@ describe('translation dictionaries', () => {
     expect(keys).toContain('editorial.viewItem');
     expect(keys).toContain('editorial.viewEdition');
     expect(keys).toContain('enums.editorialResultType.EDITION');
+    expect(keys).toContain('collections.editorialReference');
+    expect(keys).toContain('collections.verifiedBridge');
+    expect(keys).toContain('collections.seriesNotAllowed');
     expect(leafKeys(TRANSLATIONS.en)).toEqual(keys);
   });
 });

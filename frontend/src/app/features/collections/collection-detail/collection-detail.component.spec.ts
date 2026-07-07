@@ -82,4 +82,11 @@ describe('CollectionDetailComponent', () => {
     expect(compiled.textContent).toContain('One Piece 1');
     expect(compiled.textContent).toMatch(/Faltante|Missing/);
   });
+
+  it('prefers editorial metadata and keeps the legacy fallback', () => {
+    const component = TestBed.createComponent(CollectionDetailComponent).componentInstance;
+
+    expect(component.itemTitle({ ...item, catalogItemTitle: 'Editorial title' })).toBe('Editorial title');
+    expect(component.itemTitle(item)).toBe('One Piece 1');
+  });
 });

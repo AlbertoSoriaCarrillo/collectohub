@@ -11,7 +11,7 @@ Liquibase runtime tables are intentionally excluded.
 | --- | --- | --- |
 | Identity & Access | `users`, `roles`, `user_roles` | MVP 1 visible |
 | Catalog Knowledge Base | `product_categories`, `master_products`, `product_suggestions`, `publishers`, `catalog_franchises`, `catalog_series`, `catalog_items`, `catalog_item_editions`, `master_product_catalog_links` | MVP 1 catalog plus MVP 2 foundations |
-| User Collections | `collections`, `collection_items` | MVP 1 visible |
+| User Collections | `collections`, `collection_items` | MVP 1 visible plus EPIC 36 editorial references |
 | Shops & Inventory | `shops`, `shop_members`, `shop_products` | Implemented legacy/future base |
 | Matching | No table | Calculated from collections and inventory |
 | Commerce | `reservations` | Implemented legacy/future base |
@@ -367,13 +367,16 @@ FKs: `fk_collections_user`, `fk_collections_category`. Index:
 ### collection_items
 
 - Domain: User Collections
-- Status: `MVP1_VISIBLE`
+- Status: `MVP2_VISIBLE`
 
 | Column | Type | Required | Description |
 | --- | --- | --- | --- |
 | `id` | `BIGINT IDENTITY` | Yes | Primary key. |
 | `collection_id` | `BIGINT` | Yes | FK to `collections.id`. |
-| `master_product_id` | `BIGINT` | Yes | FK to `master_products.id`. |
+| `master_product_id` | `BIGINT` | No | Optional legacy FK to `master_products.id`. |
+| `catalog_item_id` | `BIGINT` | No | Preferred editorial FK to `catalog_items.id`. |
+| `catalog_item_edition_id` | `BIGINT` | No | Optional editorial FK to `catalog_item_editions.id`. |
+| `editorial_reference_source` | `VARCHAR(40)` | Yes | `LEGACY`, `VERIFIED_BRIDGE` or `MANUAL_EDITORIAL`. |
 | `collection_status` | `VARCHAR(30)` | Yes | Collector state such as `OWNED`, `WANTED` or `MISSING`. |
 | `physical_condition` | `VARCHAR(30)` | No | Optional copy condition. |
 | `unit_number` | `VARCHAR(50)` | No | Number for a limited copy. |
@@ -383,10 +386,14 @@ FKs: `fk_collections_user`, `fk_collections_category`. Index:
 | audit set | shared columns | Mixed | Creation, update and soft-delete metadata. |
 
 FKs: `fk_collection_items_collection`,
-`fk_collection_items_master_product`. Indexes:
+`fk_collection_items_master_product`, `fk_collection_items_catalog_item`,
+`fk_collection_items_catalog_item_edition`. Indexes:
 `idx_collection_items_collection_id`,
-`idx_collection_items_master_product_id`. Check:
-`total_limited_units IS NULL OR total_limited_units > 0`.
+`idx_collection_items_master_product_id`, `idx_collection_items_catalog_item_id`,
+`idx_collection_items_catalog_item_edition_id`,
+`idx_collection_items_editorial_reference_source`. Checks require a master
+product or catalog item, require an item when an edition is present, constrain
+the reference source and preserve the positive limited-unit rule.
 
 ## Shops & Inventory
 
@@ -492,7 +499,7 @@ ISBN and EAN indexes:
 | `shop_products` | `idx_shop_products_shop_id(shop_id)`, `idx_shop_products_master_product_id(master_product_id)` |
 | `master_products` | `idx_master_products_isbn(isbn)`, `idx_master_products_ean(ean)`, `idx_master_products_name(name)`, `idx_master_products_franchise(franchise)` |
 | `collections` | `idx_collections_user_id(user_id)` |
-| `collection_items` | `idx_collection_items_collection_id(collection_id)`, `idx_collection_items_master_product_id(master_product_id)` |
+| `collection_items` | `idx_collection_items_collection_id(collection_id)`, `idx_collection_items_master_product_id(master_product_id)`, `idx_collection_items_catalog_item_id(catalog_item_id)`, `idx_collection_items_catalog_item_edition_id(catalog_item_edition_id)`, `idx_collection_items_editorial_reference_source(editorial_reference_source)` |
 | `reservations` | `idx_reservations_user_id(user_id)`, `idx_reservations_shop_id(shop_id)`, `idx_reservations_status(status)` |
 | `refresh_tokens` | `idx_refresh_tokens_user_id(user_id)`, `idx_refresh_tokens_expires_at(expires_at)` |
 | `publishers` | `idx_publishers_name(lower(name))`, `idx_publishers_record_status(record_status)` |

@@ -1,7 +1,7 @@
 # Frontend to backend map
 
 This map follows actual HTTP calls made by routed Angular components through
-the services in `frontend/src/app/core`. It contains 57 relationships: 52 API
+the services in `frontend/src/app/core`. It contains 59 relationships: 54 API
 calls and 5 routes with no direct API call. Local-only calls such as
 `AuthService.currentUser()`, logout, translation and error formatting are not
 listed as backend relationships.
@@ -53,15 +53,18 @@ future use, but no public route or component invokes or exposes it in EPIC 35.
 | `/collections/:collectionId/edit` - `CollectionEditComponent` | `CatalogService` | `GET /api/product-categories` | Form options. |
 | `/collections/:collectionId/edit` - `CollectionEditComponent` | `CollectionService` | `PUT /api/collections/{collectionId}` | Update. |
 | `/collections/:collectionId/items/new` - `CollectionItemCreateComponent` | `CatalogService` | `GET /api/master-products` | Candidate search. |
+| `/collections/:collectionId/items/new` - `CollectionItemCreateComponent` | `EditorialCatalogService` | `GET /api/catalog/editorial/search` | Editorial item/edition search. |
 | `/collections/:collectionId/items/new` - `CollectionItemCreateComponent` | `CollectionService` | `POST /api/collections/{collectionId}/items` | Add item. |
 | `/collections/:collectionId/items/:itemId/edit` - `CollectionItemEditComponent` | `CollectionService` | `GET /api/collections/{collectionId}/items` | Select item. |
+| `/collections/:collectionId/items/:itemId/edit` - `CollectionItemEditComponent` | `EditorialCatalogService` | `GET /api/catalog/editorial/search` | Optional editorial reference replacement. |
 | `/collections/:collectionId/items/:itemId/edit` - `CollectionItemEditComponent` | `CollectionService` | `PUT /api/collections/{collectionId}/items/{itemId}` | Update item. |
 | `/collections/:collectionId` - `CollectionDetailComponent` | `CollectionService` | `GET /api/collections/{collectionId}` | Load readable collection. |
 | `/collections/:collectionId` - `CollectionDetailComponent` | `CollectionService` | `GET /api/collections/{collectionId}/items` | Load items. |
 | `/collections/:collectionId` - `CollectionDetailComponent` | `AuthService` | `GET /api/users/me` | Conditional owner resolution. |
 | `/collections/:collectionId` - `CollectionDetailComponent` | `CollectionService` | `DELETE /api/collections/{collectionId}/items/{itemId}` | Owner action. |
 
-All collection rows are `MVP1_VISIBLE`.
+Legacy collection calls remain `MVP1_VISIBLE`; the two editorial search calls
+are `MVP2_VISIBLE`.
 
 ## Wanted/Recommendations
 

@@ -434,6 +434,25 @@
 - Motivo: distingue el primer recorrido editorial visible de la base backend
   `MVP2_FOUNDATION` y evita presentar MVP 2 completo antes de EPIC 36-38.
 
+## 2026-07-01 - Referencias editoriales en colecciones
+
+- Decision: permitir referencias duales en `collection_items` y hacer
+  `master_product_id` nullable, con una constraint que exige producto master o
+  item editorial.
+- Motivo: habilita items editoriales puros sin romper colecciones legacy.
+- Decision: enriquecer automaticamente referencias legacy solo con enlaces
+  `VERIFIED` activos; las selecciones editoriales explicitas usan
+  `MANUAL_EDITORIAL` y se rechazan con 409 si contradicen un puente verificado.
+- Motivo: no se deben filtrar propuestas o rechazos ni crear identidades
+  ambiguas en una coleccion personal.
+- Decision: en update, los IDs de referencia nulos conservan el valor actual y
+  la referencia solo se resuelve de nuevo cuando llega algun ID explicito.
+- Motivo: mantiene compatibilidad con clientes legacy que actualizan solo estado
+  y metadatos.
+- Decision: las recomendaciones ignoran defensivamente items editoriales puros
+  hasta EPIC 37.
+- Motivo: evita un acceso nulo sin adelantar matching editorial.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

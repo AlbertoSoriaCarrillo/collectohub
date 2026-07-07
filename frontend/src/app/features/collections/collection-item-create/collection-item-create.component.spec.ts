@@ -5,6 +5,7 @@ import { of } from 'rxjs';
 import { ProductCategoryResponse } from '../../../core/models/catalog.model';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { CollectionService } from '../../../core/services/collection.service';
+import { EditorialCatalogService } from '../../../core/services/editorial-catalog.service';
 import { CollectionItemCreateComponent } from './collection-item-create.component';
 
 describe('CollectionItemCreateComponent', () => {
@@ -61,6 +62,12 @@ describe('CollectionItemCreateComponent', () => {
           }
         },
         {
+          provide: EditorialCatalogService,
+          useValue: {
+            search: vi.fn(() => of({ content: [], page: 0, size: 30, totalElements: 0, totalPages: 0, first: true, last: true }))
+          }
+        },
+        {
           provide: CollectionService,
           useValue: {
             addCollectionItem: vi.fn()
@@ -76,7 +83,7 @@ describe('CollectionItemCreateComponent', () => {
 
     component.submit();
 
-    expect(component.form.controls.masterProductId.hasError('required')).toBe(true);
+    expect(component.errorMessage()).toBeTruthy();
     expect(component.form.controls.collectionStatus.hasError('required')).toBe(true);
   });
 
@@ -89,5 +96,29 @@ describe('CollectionItemCreateComponent', () => {
       'MISSING',
       'DUPLICATED'
     ]);
+  });
+
+  it('supports legacy and editorial reference modes', () => {
+    const fixture = TestBed.createComponent(CollectionItemCreateComponent);
+    const component = fixture.componentInstance;
+
+    expect(component.form.controls.referenceMode.value).toBe('LEGACY');
+    component.form.controls.referenceMode.setValue('EDITORIAL');
+    expect(component.form.controls.referenceMode.value).toBe('EDITORIAL');
+  });
+
+  it('does not allow selecting a complete series', () => {
+    const fixture = TestBed.createComponent(CollectionItemCreateComponent);
+    const component = fixture.componentInstance;
+    component.selectEditorial({
+      resultType: 'SERIES', seriesId: 1, seriesTitle: 'Series', itemId: null,
+      itemTitle: null, editionId: null, editionName: null, publisherName: null,
+      franchiseName: null, type: 'MANGA', language: null, country: null,
+      publicationYear: null, coverImageUrl: null, linkedMasterProductId: null,
+      linkedMasterProductName: null
+    });
+
+    expect(component.selectedEditorial()).toBeNull();
+    expect(component.errorMessage()).toBeTruthy();
   });
 });

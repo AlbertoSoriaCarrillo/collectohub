@@ -3,8 +3,16 @@ package com.collectohub.collections.application;
 import com.collectohub.auth.security.AuthenticatedUser;
 import com.collectohub.catalog.application.MasterProductNotFoundException;
 import com.collectohub.catalog.domain.MasterProduct;
+import com.collectohub.catalog.domain.CatalogItem;
+import com.collectohub.catalog.domain.CatalogItemEdition;
+import com.collectohub.catalog.domain.CatalogItemEditionFormat;
+import com.collectohub.catalog.domain.CatalogSeries;
+import com.collectohub.catalog.domain.MasterProductCatalogLink;
 import com.collectohub.catalog.domain.ProductCategory;
 import com.collectohub.catalog.infrastructure.MasterProductRepository;
+import com.collectohub.catalog.infrastructure.CatalogItemRepository;
+import com.collectohub.catalog.infrastructure.CatalogItemEditionRepository;
+import com.collectohub.catalog.infrastructure.MasterProductCatalogLinkRepository;
 import com.collectohub.catalog.infrastructure.ProductCategoryRepository;
 import com.collectohub.collections.domain.Collection;
 import com.collectohub.collections.domain.CollectionItem;
@@ -41,6 +49,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 class CollectionServiceTest {
@@ -60,6 +70,15 @@ class CollectionServiceTest {
     @Mock
     private MasterProductRepository masterProductRepository;
 
+    @Mock
+    private CatalogItemRepository catalogItemRepository;
+
+    @Mock
+    private CatalogItemEditionRepository catalogItemEditionRepository;
+
+    @Mock
+    private MasterProductCatalogLinkRepository masterProductCatalogLinkRepository;
+
     private CollectionService collectionService;
     private User owner;
     private User otherUser;
@@ -75,7 +94,10 @@ class CollectionServiceTest {
                 collectionItemRepository,
                 userRepository,
                 productCategoryRepository,
-                masterProductRepository
+                masterProductRepository,
+                catalogItemRepository,
+                catalogItemEditionRepository,
+                masterProductCatalogLinkRepository
         );
         owner = user(42L, "owner@example.com");
         otherUser = user(43L, "other@example.com");
@@ -193,6 +215,135 @@ class CollectionServiceTest {
     }
 
     @Test
+    void ownerAddsPureEditorialItem() {
+        CatalogItem catalogItem = editorialItem(500L);
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+        when(catalogItemRepository.findByIdAndDeletedAtIsNull(500L)).thenReturn(Optional.of(catalogItem));
+        when(collectionItemRepository.save(any(CollectionItem.class)))
+                .thenAnswer(invocation -> withId(invocation.getArgument(0), 301L));
+
+        var response = collectionService.addItem(
+                AuthenticatedUser.from(owner),
+                100L,
+                new CreateCollectionItemRequest(null, 500L, null, CollectionItemStatus.OWNED,
+                        null, null, null, null, null)
+        );
+
+        assertThat(response.masterProductId()).isNull();
+        assertThat(response.catalogItemId()).isEqualTo(500L);
+        assertThat(response.editorialReferenceSource()).isEqualTo("MANUAL_EDITORIAL");
+    }
+
+    @Test
+    void ownerAddsEditorialEdition() {
+        CatalogItem catalogItem = editorialItem(500L);
+        CatalogItemEdition edition = editorialEdition(600L, catalogItem);
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+        when(catalogItemRepository.findByIdAndDeletedAtIsNull(500L)).thenReturn(Optional.of(catalogItem));
+        when(catalogItemEditionRepository.findByIdAndDeletedAtIsNull(600L)).thenReturn(Optional.of(edition));
+        when(collectionItemRepository.save(any(CollectionItem.class)))
+                .thenAnswer(invocation -> withId(invocation.getArgument(0), 303L));
+
+        var response = collectionService.addItem(
+                AuthenticatedUser.from(owner),
+                100L,
+                new CreateCollectionItemRequest(null, 500L, 600L, CollectionItemStatus.OWNED,
+                        null, null, null, null, null)
+        );
+
+        assertThat(response.catalogItemEditionId()).isEqualTo(600L);
+        assertThat(response.catalogItemEditionFormat()).isEqualTo("PAPERBACK");
+    }
+
+    @Test
+    void verifiedBridgeEnrichesLegacyItem() {
+        CatalogItem catalogItem = editorialItem(500L);
+        MasterProductCatalogLink link = mock(MasterProductCatalogLink.class);
+        when(link.getCatalogItem()).thenReturn(catalogItem);
+        when(link.getCatalogItemEdition()).thenReturn(null);
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+        when(masterProductRepository.findByIdAndDeletedAtIsNull(200L)).thenReturn(Optional.of(masterProduct));
+        when(masterProductCatalogLinkRepository.findByMasterProduct_IdAndLinkStatusAndDeletedAtIsNull(
+                200L, com.collectohub.catalog.domain.MasterProductCatalogLinkStatus.VERIFIED))
+                .thenReturn(Optional.of(link));
+        when(collectionItemRepository.save(any(CollectionItem.class)))
+                .thenAnswer(invocation -> withId(invocation.getArgument(0), 302L));
+
+        var response = collectionService.addItem(
+                AuthenticatedUser.from(owner), 100L, createItemRequest()
+        );
+
+        assertThat(response.catalogItemId()).isEqualTo(500L);
+        assertThat(response.editorialReferenceSource()).isEqualTo("VERIFIED_BRIDGE");
+    }
+
+    @Test
+    void itemRequiresLegacyOrEditorialReference() {
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+
+        assertThatThrownBy(() -> collectionService.addItem(
+                AuthenticatedUser.from(owner),
+                100L,
+                new CreateCollectionItemRequest(null, null, null, CollectionItemStatus.OWNED,
+                        null, null, null, null, null)
+        )).isInstanceOf(InvalidCollectionItemReferenceException.class);
+    }
+
+    @Test
+    void archivedEditorialItemIsRejected() {
+        CatalogItem catalogItem = editorialItem(500L);
+        when(catalogItem.isPubliclyVisible()).thenReturn(false);
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+        when(catalogItemRepository.findByIdAndDeletedAtIsNull(500L)).thenReturn(Optional.of(catalogItem));
+
+        assertThatThrownBy(() -> collectionService.addItem(
+                AuthenticatedUser.from(owner),
+                100L,
+                new CreateCollectionItemRequest(null, 500L, null, CollectionItemStatus.OWNED,
+                        null, null, null, null, null)
+        )).isInstanceOf(com.collectohub.catalog.application.CatalogItemNotFoundException.class);
+    }
+
+    @Test
+    void explicitEditorialReferenceCannotContradictVerifiedBridge() {
+        CatalogItem verifiedItem = editorialItem(500L);
+        CatalogItem selectedItem = editorialItem(501L);
+        MasterProductCatalogLink link = mock(MasterProductCatalogLink.class);
+        when(link.getCatalogItem()).thenReturn(verifiedItem);
+        when(link.getCatalogItemEdition()).thenReturn(null);
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+        when(masterProductRepository.findByIdAndDeletedAtIsNull(200L)).thenReturn(Optional.of(masterProduct));
+        when(catalogItemRepository.findByIdAndDeletedAtIsNull(501L)).thenReturn(Optional.of(selectedItem));
+        when(masterProductCatalogLinkRepository.findByMasterProduct_IdAndLinkStatusAndDeletedAtIsNull(
+                200L, com.collectohub.catalog.domain.MasterProductCatalogLinkStatus.VERIFIED))
+                .thenReturn(Optional.of(link));
+
+        assertThatThrownBy(() -> collectionService.addItem(
+                AuthenticatedUser.from(owner),
+                100L,
+                new CreateCollectionItemRequest(200L, 501L, null, CollectionItemStatus.OWNED,
+                        null, null, null, null, null)
+        )).isInstanceOf(ConflictingCollectionItemReferenceException.class);
+    }
+
+    @Test
+    void editionMustBelongToSelectedItem() {
+        CatalogItem catalogItem = editorialItem(500L);
+        CatalogItem otherItem = editorialItem(501L);
+        CatalogItemEdition edition = editorialEdition(600L, otherItem);
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+        when(catalogItemRepository.findByIdAndDeletedAtIsNull(500L)).thenReturn(Optional.of(catalogItem));
+        when(catalogItemEditionRepository.findByIdAndDeletedAtIsNull(600L)).thenReturn(Optional.of(edition));
+
+        assertThatThrownBy(() -> collectionService.addItem(
+                AuthenticatedUser.from(owner),
+                100L,
+                new CreateCollectionItemRequest(null, 500L, 600L, CollectionItemStatus.OWNED,
+                        null, null, null, null, null)
+        )).isInstanceOf(InvalidCollectionItemReferenceException.class);
+    }
+
+    @Test
     void otherUserCannotAddItemToCollection() {
         when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
 
@@ -257,6 +408,9 @@ class CollectionServiceTest {
                 100L,
                 300L,
                 new UpdateCollectionItemRequest(
+                        null,
+                        null,
+                        null,
                         CollectionItemStatus.SELLABLE,
                         PhysicalCondition.GOOD,
                         "2",
@@ -279,7 +433,7 @@ class CollectionServiceTest {
                 AuthenticatedUser.from(otherUser),
                 100L,
                 300L,
-                new UpdateCollectionItemRequest(CollectionItemStatus.WANTED, null, null, null, null, null)
+                new UpdateCollectionItemRequest(null, null, null, CollectionItemStatus.WANTED, null, null, null, null, null)
         )).isInstanceOf(AccessDeniedException.class);
     }
 
@@ -297,6 +451,8 @@ class CollectionServiceTest {
     private CreateCollectionItemRequest createItemRequest() {
         return new CreateCollectionItemRequest(
                 200L,
+                null,
+                null,
                 CollectionItemStatus.OWNED,
                 PhysicalCondition.LIKE_NEW,
                 "1",
@@ -320,6 +476,9 @@ class CollectionServiceTest {
         return withId(CollectionItem.create(
                 collection,
                 masterProduct,
+                null,
+                null,
+                com.collectohub.collections.domain.CollectionEditorialReferenceSource.LEGACY,
                 CollectionItemStatus.OWNED,
                 PhysicalCondition.LIKE_NEW,
                 "1",
@@ -351,6 +510,29 @@ class CollectionServiceTest {
                 Map.of(),
                 42L
         ), id);
+    }
+
+    private CatalogItem editorialItem(Long id) {
+        CatalogSeries series = mock(CatalogSeries.class);
+        lenient().when(series.getId()).thenReturn(400L);
+        lenient().when(series.getTitle()).thenReturn("Dragon Ball");
+        lenient().when(series.getFranchise()).thenReturn(null);
+        CatalogItem item = mock(CatalogItem.class);
+        lenient().when(item.getId()).thenReturn(id);
+        lenient().when(item.getTitle()).thenReturn("Dragon Ball 1");
+        lenient().when(item.getSequenceLabel()).thenReturn("1");
+        lenient().when(item.getSeries()).thenReturn(series);
+        lenient().when(item.isPubliclyVisible()).thenReturn(true);
+        return item;
+    }
+
+    private CatalogItemEdition editorialEdition(Long id, CatalogItem item) {
+        CatalogItemEdition edition = mock(CatalogItemEdition.class);
+        lenient().when(edition.getId()).thenReturn(id);
+        lenient().when(edition.getCatalogItem()).thenReturn(item);
+        lenient().when(edition.getFormat()).thenReturn(CatalogItemEditionFormat.PAPERBACK);
+        lenient().when(edition.isPubliclyVisible()).thenReturn(true);
+        return edition;
     }
 
     private <T> T withId(T target, Long id) {

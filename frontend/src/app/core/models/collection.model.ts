@@ -10,15 +10,31 @@ export type CollectionItemStatus =
   | 'SELLABLE'
   | 'TRADABLE';
 
+export type CollectionEditorialReferenceSource = 'LEGACY' | 'VERIFIED_BRIDGE' | 'MANUAL_EDITORIAL';
+
 export interface CollectionItemResponse {
   id: number;
   collectionId: number;
-  masterProductId: number;
-  masterProductName: string;
-  masterProductCategoryCode: string;
+  masterProductId: number | null;
+  masterProductName: string | null;
+  masterProductCategoryCode: string | null;
   masterProductFranchise: string | null;
   masterProductCollectionName: string | null;
   masterProductVolumeNumber: string | null;
+  catalogItemId?: number | null;
+  catalogItemTitle?: string | null;
+  catalogItemSequenceLabel?: string | null;
+  catalogSeriesId?: number | null;
+  catalogSeriesTitle?: string | null;
+  catalogItemEditionId?: number | null;
+  catalogItemEditionName?: string | null;
+  catalogItemEditionFormat?: string | null;
+  catalogItemEditionIsbn?: string | null;
+  catalogItemEditionEan?: string | null;
+  catalogItemEditionCoverImageUrl?: string | null;
+  catalogPublisherName?: string | null;
+  catalogFranchiseName?: string | null;
+  editorialReferenceSource?: CollectionEditorialReferenceSource;
   collectionStatus: CollectionItemStatus;
   physicalCondition: PhysicalCondition | null;
   unitNumber: string | null;
@@ -53,7 +69,9 @@ export interface UpdateCollectionRequest {
 }
 
 export interface CreateCollectionItemRequest {
-  masterProductId: number;
+  masterProductId?: number | null;
+  catalogItemId?: number | null;
+  catalogItemEditionId?: number | null;
   collectionStatus: CollectionItemStatus;
   physicalCondition?: PhysicalCondition | null;
   unitNumber?: string | null;
@@ -63,6 +81,9 @@ export interface CreateCollectionItemRequest {
 }
 
 export interface UpdateCollectionItemRequest {
+  masterProductId?: number | null;
+  catalogItemId?: number | null;
+  catalogItemEditionId?: number | null;
   collectionStatus?: CollectionItemStatus | null;
   physicalCondition?: PhysicalCondition | null;
   unitNumber?: string | null;

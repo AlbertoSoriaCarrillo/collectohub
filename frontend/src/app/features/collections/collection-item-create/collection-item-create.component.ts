@@ -11,6 +11,7 @@ import { ErrorMessageService } from '../../../core/http/error-message.service';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { MasterProductResponse } from '../../../core/models/catalog.model';
+import { EditorialCatalogSearchItem } from '../../../core/models/editorial-catalog.model';
 import {
   COLLECTION_ITEM_STATUSES,
   CreateCollectionItemRequest
@@ -18,6 +19,7 @@ import {
 import { PHYSICAL_CONDITIONS } from '../../../core/models/inventory.model';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { CollectionService } from '../../../core/services/collection.service';
+import { EditorialCatalogService } from '../../../core/services/editorial-catalog.service';
 
 @Component({
   selector: 'app-collection-item-create',
@@ -40,12 +42,15 @@ export class CollectionItemCreateComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly catalogService = inject(CatalogService);
   private readonly collectionService = inject(CollectionService);
+  private readonly editorialCatalogService = inject(EditorialCatalogService);
   private readonly errorMessageService = inject(ErrorMessageService);
   private readonly languageService = inject(LanguageService);
 
   readonly statuses = COLLECTION_ITEM_STATUSES;
   readonly conditions = PHYSICAL_CONDITIONS;
   readonly products = signal<MasterProductResponse[]>([]);
+  readonly editorialResults = signal<EditorialCatalogSearchItem[]>([]);
+  readonly selectedEditorial = signal<EditorialCatalogSearchItem | null>(null);
   readonly collectionId = signal<number | null>(null);
   readonly loading = signal(false);
   readonly searching = signal(false);
@@ -53,8 +58,10 @@ export class CollectionItemCreateComponent implements OnInit {
   readonly productSearch = this.fb.nonNullable.group({
     name: ['']
   });
+  readonly editorialSearch = this.fb.nonNullable.group({ q: [''] });
   readonly form = this.fb.group({
-    masterProductId: [null as number | null, [Validators.required]],
+    referenceMode: ['LEGACY' as 'LEGACY' | 'EDITORIAL', [Validators.required]],
+    masterProductId: [null as number | null],
     collectionStatus: ['', [Validators.required]],
     physicalCondition: [''],
     unitNumber: ['', [Validators.maxLength(50)]],
@@ -88,6 +95,27 @@ export class CollectionItemCreateComponent implements OnInit {
       });
   }
 
+  searchEditorial(): void {
+    this.searching.set(true);
+    this.editorialCatalogService.search({ q: this.editorialSearch.controls.q.value, size: 30 })
+      .pipe(finalize(() => this.searching.set(false)))
+      .subscribe({
+        next: (page) => this.editorialResults.set(
+          page.content.filter((result) => result.resultType === 'ITEM' || result.resultType === 'EDITION')
+        ),
+        error: (error) => this.errorMessage.set(this.errorMessageService.toMessage(error))
+      });
+  }
+
+  selectEditorial(result: EditorialCatalogSearchItem): void {
+    if (result.resultType === 'SERIES' || result.itemId == null) {
+      this.errorMessage.set(this.languageService.translate('collections.seriesNotAllowed'));
+      return;
+    }
+    this.selectedEditorial.set(result);
+    this.errorMessage.set(null);
+  }
+
   submit(): void {
     const collectionId = this.collectionId();
     if (!collectionId) {
@@ -95,8 +123,15 @@ export class CollectionItemCreateComponent implements OnInit {
       return;
     }
 
-    if (this.form.invalid) {
+    const value = this.form.getRawValue();
+    const missingReference = value.referenceMode === 'LEGACY'
+      ? !value.masterProductId
+      : !this.selectedEditorial();
+    if (this.form.invalid || missingReference) {
       this.form.markAllAsTouched();
+      if (missingReference) {
+        this.errorMessage.set(this.languageService.translate('collections.referenceRequired'));
+      }
       return;
     }
 
@@ -113,8 +148,11 @@ export class CollectionItemCreateComponent implements OnInit {
 
   private toRequest(): CreateCollectionItemRequest {
     const value = this.form.getRawValue();
+    const editorial = value.referenceMode === 'EDITORIAL' ? this.selectedEditorial() : null;
     return {
-      masterProductId: Number(value.masterProductId),
+      masterProductId: value.referenceMode === 'LEGACY' ? Number(value.masterProductId) : null,
+      catalogItemId: editorial?.itemId ?? null,
+      catalogItemEditionId: editorial?.editionId ?? null,
       collectionStatus: value.collectionStatus as CreateCollectionItemRequest['collectionStatus'],
       physicalCondition:
         (this.optionalText(value.physicalCondition) as CreateCollectionItemRequest['physicalCondition']) ??

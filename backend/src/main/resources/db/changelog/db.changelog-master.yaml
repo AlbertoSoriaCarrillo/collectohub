@@ -20,3 +20,5 @@ databaseChangeLog:
       file: db/changelog/changes/006-create-editorial-catalog-items-and-editions.sql
   - include:
       file: db/changelog/changes/007-create-master-product-catalog-links.sql
+  - include:
+      file: db/changelog/changes/008-add-editorial-references-to-collection-items.sql

@@ -47,7 +47,7 @@ export class CollectionDetailComponent implements OnInit {
       !collection ||
       !window.confirm(
         this.languageService.translate('collections.itemDeleteConfirm', {
-          name: item.masterProductName
+          name: this.itemTitle(item)
         })
       )
     ) {
@@ -58,6 +58,19 @@ export class CollectionDetailComponent implements OnInit {
       next: () => this.items.set(this.items().filter((candidate) => candidate.id !== item.id)),
       error: (error) => this.errorMessage.set(this.errorMessageService.toMessage(error))
     });
+  }
+
+  itemTitle(item: CollectionItemResponse): string {
+    return item.catalogItemTitle || item.masterProductName || this.languageService.translate('common.notReported');
+  }
+
+  referenceLabel(item: CollectionItemResponse): string {
+    const key = item.editorialReferenceSource === 'VERIFIED_BRIDGE'
+      ? 'collections.verifiedBridge'
+      : item.editorialReferenceSource === 'MANUAL_EDITORIAL'
+        ? 'collections.editorialItem'
+        : 'collections.legacyReference';
+    return this.languageService.translate(key);
   }
 
   private loadCollection(collectionId: number): void {

@@ -1,5 +1,7 @@
 package com.collectohub.collections.domain;
 
+import com.collectohub.catalog.domain.CatalogItem;
+import com.collectohub.catalog.domain.CatalogItemEdition;
 import com.collectohub.catalog.domain.MasterProduct;
 import com.collectohub.inventory.domain.PhysicalCondition;
 import jakarta.persistence.Column;
@@ -29,9 +31,21 @@ public class CollectionItem {
     @JoinColumn(name = "collection_id", nullable = false)
     private Collection collection;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "master_product_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "master_product_id")
     private MasterProduct masterProduct;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "catalog_item_id")
+    private CatalogItem catalogItem;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "catalog_item_edition_id")
+    private CatalogItemEdition catalogItemEdition;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "editorial_reference_source", nullable = false, length = 40)
+    private CollectionEditorialReferenceSource editorialReferenceSource;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "collection_status", nullable = false, length = 30)
@@ -77,6 +91,9 @@ public class CollectionItem {
     public static CollectionItem create(
             Collection collection,
             MasterProduct masterProduct,
+            CatalogItem catalogItem,
+            CatalogItemEdition catalogItemEdition,
+            CollectionEditorialReferenceSource editorialReferenceSource,
             CollectionItemStatus collectionStatus,
             PhysicalCondition physicalCondition,
             String unitNumber,
@@ -88,6 +105,9 @@ public class CollectionItem {
         CollectionItem item = new CollectionItem();
         item.collection = collection;
         item.masterProduct = masterProduct;
+        item.catalogItem = catalogItem;
+        item.catalogItemEdition = catalogItemEdition;
+        item.editorialReferenceSource = editorialReferenceSource;
         item.collectionStatus = collectionStatus;
         item.physicalCondition = physicalCondition;
         item.unitNumber = unitNumber;
@@ -97,6 +117,21 @@ public class CollectionItem {
         item.createdAt = Instant.now();
         item.createdBy = createdBy;
         return item;
+    }
+
+    public void updateReference(
+            MasterProduct masterProduct,
+            CatalogItem catalogItem,
+            CatalogItemEdition catalogItemEdition,
+            CollectionEditorialReferenceSource editorialReferenceSource,
+            Long updatedBy
+    ) {
+        this.masterProduct = masterProduct;
+        this.catalogItem = catalogItem;
+        this.catalogItemEdition = catalogItemEdition;
+        this.editorialReferenceSource = editorialReferenceSource;
+        this.updatedAt = Instant.now();
+        this.updatedBy = updatedBy;
     }
 
     public void update(
@@ -136,6 +171,12 @@ public class CollectionItem {
     public MasterProduct getMasterProduct() {
         return masterProduct;
     }
+
+    public CatalogItem getCatalogItem() { return catalogItem; }
+
+    public CatalogItemEdition getCatalogItemEdition() { return catalogItemEdition; }
+
+    public CollectionEditorialReferenceSource getEditorialReferenceSource() { return editorialReferenceSource; }
 
     public CollectionItemStatus getCollectionStatus() {
         return collectionStatus;

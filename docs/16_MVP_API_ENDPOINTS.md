@@ -8,6 +8,12 @@ errores controlados usan el envelope `ErrorResponse`:
 La exportacion completa y filtrable de los 67 endpoints actuales esta en
 `docs/export/backend-endpoints.md` y `docs/export/backend-endpoints.csv`.
 
+Desde EPIC 36, los bodies de alta y actualizacion de items de coleccion aceptan
+`masterProductId`, `catalogItemId` y `catalogItemEditionId` opcionales. El alta
+requiere al menos master product o catalog item; una edicion debe pertenecer al
+item. La respuesta mantiene los campos legacy y anade metadatos editoriales y
+`editorialReferenceSource`. No se crean endpoints nuevos.
+
 ```json
 {
   "timestamp": "2026-06-17T00:00:00Z",

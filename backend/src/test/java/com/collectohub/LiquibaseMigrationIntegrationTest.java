@@ -97,7 +97,10 @@ class LiquibaseMigrationIntegrationTest {
             "idx_master_product_catalog_links_status",
             "idx_master_product_catalog_links_source",
             "idx_master_product_catalog_links_confidence",
-            "uk_master_product_catalog_links_verified_master"
+            "uk_master_product_catalog_links_verified_master",
+            "idx_collection_items_catalog_item_id",
+            "idx_collection_items_catalog_item_edition_id",
+            "idx_collection_items_editorial_reference_source"
     );
 
     private static final List<String> REQUIRED_CONSTRAINTS = List.of(
@@ -140,7 +143,12 @@ class LiquibaseMigrationIntegrationTest {
             "fk_master_product_catalog_links_catalog_item_edition",
             "chk_master_product_catalog_links_status",
             "chk_master_product_catalog_links_source",
-            "chk_master_product_catalog_links_confidence"
+            "chk_master_product_catalog_links_confidence",
+            "fk_collection_items_catalog_item",
+            "fk_collection_items_catalog_item_edition",
+            "chk_collection_items_reference",
+            "chk_collection_items_edition_requires_item",
+            "chk_collection_items_editorial_reference_source"
     );
 
     @Container

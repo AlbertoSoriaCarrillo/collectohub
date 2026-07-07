@@ -8,19 +8,18 @@ Este estado corresponde a **MVP 1 - Nucleo coleccionista**, no al producto
 final. La vision completa conecta coleccionistas, catalogo comun, tiendas y
 creadores, con matching, social y comercio desarrollados por fases.
 
-MVP 1 permanece cerrado y estable. MVP 2 ha completado EPIC 31 a EPIC 35:
+MVP 1 permanece cerrado y estable. MVP 2 ha completado EPIC 31 a EPIC 36:
 fundamentos editoriales, items y ediciones, puente de reconciliacion ADMIN,
 fachada editorial de lectura y frontend editorial publico.
 
-Los consumidores legacy principales (`collection_items`, `shop_products`,
-recomendaciones y reservas) todavia no usan referencias editoriales directas.
-La adopcion gradual empieza en EPIC 36 con colecciones editoriales.
+`collection_items` ya admite referencias editoriales duales. `shop_products`,
+recomendaciones y reservas todavia no usan referencias editoriales directas.
 
 | Dominio | Estado actual |
 | --- | --- |
 | Identity & Access | Implementado para MVP |
 | Catalog Knowledge Base | Parcial; fundamentos MVP 2, fachada de lectura y frontend editorial publico implementados |
-| User Collections | Implementado para MVP 1; referencias editoriales pendientes de EPIC 36 |
+| User Collections | Implementado con referencias legacy/editoriales duales desde EPIC 36 |
 | Social | Futuro |
 | Shops & Inventory | Base tecnica parcial, fuera del foco visible |
 | Matching | Recomendaciones simples parciales |
@@ -318,13 +317,13 @@ La revision de este archivo no encontro necesidad de cambios en esta fase.
 ## Siguientes pasos recomendados
 
 La referencia tecnica descargable de EPIC 29 queda versionada en
-`docs/export/`: 19 tablas de aplicacion, 67 endpoints, 32 rutas Angular y 57
+`docs/export/`: 19 tablas de aplicacion, 67 endpoints, 32 rutas Angular y 59
 relaciones pantalla-backend. Los estados distinguen recorrido MVP 1, base
 legacy/futura, infraestructura y redirecciones sin alterar codigo funcional.
 
-La siguiente tarea recomendada es **EPIC 36 - Colecciones editoriales**. Debe
-introducir referencias graduales a item/edicion sin activar todavia inventario
-o matching editorial. Diseno: `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
+La siguiente tarea recomendada es **EPIC 37 - Inventario y matching editorial**.
+Debe mantener compatibilidad legacy y separar claramente inventario, matching y
+comercio. Diseno: `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
 
 1. Preparar capturas reales para `docs/assets/screenshots/` y enlazarlas desde el README.
 2. Revisar el rediseño visual en desktop y movil real, anadir capturas a `docs/assets/screenshots/`.

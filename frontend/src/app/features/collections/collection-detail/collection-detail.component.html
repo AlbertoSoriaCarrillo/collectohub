@@ -70,15 +70,16 @@
         @for (item of items(); track item.id) {
           <mat-card class="item-card" data-testid="collection-item-card">
             <mat-card-header>
-              <span class="visual-token" aria-hidden="true">{{ item.masterProductName.slice(0, 1).toUpperCase() }}</span>
-              <mat-card-title>{{ item.masterProductName }}</mat-card-title>
+              <span class="visual-token" aria-hidden="true">{{ itemTitle(item).slice(0, 1).toUpperCase() }}</span>
+              <mat-card-title>{{ itemTitle(item) }}</mat-card-title>
               <mat-card-subtitle>
-                {{ item.masterProductFranchise || item.masterProductCategoryCode }}
+                {{ item.catalogFranchiseName || item.masterProductFranchise || item.masterProductCategoryCode }}
               </mat-card-subtitle>
             </mat-card-header>
             <mat-card-content>
               <mat-chip-set [attr.aria-label]="'collections.itemDataAria' | translate">
                 <mat-chip>{{ 'enums.collectionStatus.' + item.collectionStatus | translate }}</mat-chip>
+                <mat-chip>{{ referenceLabel(item) }}</mat-chip>
                 @if (item.physicalCondition) {
                   <mat-chip>{{ 'enums.physicalCondition.' + item.physicalCondition | translate }}</mat-chip>
                 }
@@ -87,12 +88,22 @@
               <dl>
                 <div>
                   <dt>{{ 'common.collection' | translate }}</dt>
-                  <dd>{{ item.masterProductCollectionName || ('common.notReported' | translate) }}</dd>
+                  <dd>{{ item.catalogSeriesTitle || item.masterProductCollectionName || ('common.notReported' | translate) }}</dd>
                 </div>
                 <div>
                   <dt>{{ 'common.volume' | translate }}</dt>
-                  <dd>{{ item.masterProductVolumeNumber || ('common.notReported' | translate) }}</dd>
+                  <dd>{{ item.catalogItemSequenceLabel || item.masterProductVolumeNumber || ('common.notReported' | translate) }}</dd>
                 </div>
+                @if (item.catalogItemEditionId) {
+                  <div>
+                    <dt>{{ 'collections.editorialEdition' | translate }}</dt>
+                    <dd>{{ item.catalogItemEditionName || item.catalogItemEditionFormat }}</dd>
+                  </div>
+                  <div>
+                    <dt>{{ 'collections.publisher' | translate }}</dt>
+                    <dd>{{ item.catalogPublisherName || ('common.notReported' | translate) }}</dd>
+                  </div>
+                }
                 <div>
                   <dt>{{ 'common.unit' | translate }}</dt>
                   <dd>{{ item.unitNumber || ('common.notReported' | translate) }}</dd>

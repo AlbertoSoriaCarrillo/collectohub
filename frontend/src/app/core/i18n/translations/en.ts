@@ -378,7 +378,21 @@ export const en: TranslationDictionary = {
     collectionDeleteConfirm: 'Delete the collection "{{name}}"?',
     itemDeleteConfirm: 'Delete "{{name}}" from the collection?',
     createSubmit: 'Create collection',
-    noItems: '{{count}} items'
+    noItems: '{{count}} items',
+    reference: 'Reference',
+    legacyReference: 'Legacy reference',
+    editorialReference: 'Editorial reference',
+    searchEditorial: 'Search editorial catalog',
+    selectEditorialItem: 'Select editorial item',
+    selectEditorialEdition: 'Select edition',
+    verifiedBridge: 'Verified bridge',
+    noEditorialReference: 'No editorial reference',
+    editorialItem: 'Editorial item',
+    editorialEdition: 'Editorial edition',
+    publisher: 'Publisher',
+    seriesNotAllowed: 'A complete series cannot be added to a collection.',
+    referenceRequired: 'Select a legacy product or an editorial item.',
+    editionItemMismatch: 'The edition does not belong to the selected item.'
   },
   recommendations: {
     eyebrow: 'Wanted',

@@ -124,6 +124,9 @@ erDiagram
         BIGINT id PK
         BIGINT collection_id FK
         BIGINT master_product_id FK
+        BIGINT catalog_item_id FK
+        BIGINT catalog_item_edition_id FK
+        VARCHAR editorial_reference_source
         VARCHAR collection_status
         VARCHAR physical_condition
         TIMESTAMPTZ deleted_at

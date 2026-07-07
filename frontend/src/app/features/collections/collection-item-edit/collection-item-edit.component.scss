@@ -37,6 +37,12 @@ form {
   gap: 16px;
 }
 
+.search-form {
+  align-items: center;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 16px;
+}
+
 .form-grid {
   display: grid;
   gap: 16px;
@@ -64,8 +70,10 @@ form {
 
 @media (max-width: 640px) {
   .page-header,
-  .form-actions {
+  .form-actions,
+  .search-form {
     align-items: stretch;
+    display: flex;
     flex-direction: column;
   }
 }

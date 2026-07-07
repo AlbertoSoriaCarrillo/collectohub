@@ -4,6 +4,7 @@ import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/route
 import { of } from 'rxjs';
 import { CollectionItemResponse } from '../../../core/models/collection.model';
 import { CollectionService } from '../../../core/services/collection.service';
+import { EditorialCatalogService } from '../../../core/services/editorial-catalog.service';
 import { CollectionItemEditComponent } from './collection-item-edit.component';
 
 describe('CollectionItemEditComponent', () => {
@@ -39,6 +40,12 @@ describe('CollectionItemEditComponent', () => {
           }
         },
         {
+          provide: EditorialCatalogService,
+          useValue: {
+            search: vi.fn(() => of({ content: [], page: 0, size: 30, totalElements: 0, totalPages: 0, first: true, last: true }))
+          }
+        },
+        {
           provide: CollectionService,
           useValue: {
             getCollectionItems: vi.fn(() => of([item])),
@@ -62,5 +69,17 @@ describe('CollectionItemEditComponent', () => {
     component.submit();
 
     expect(component.form.controls.collectionStatus.hasError('required')).toBe(true);
+  });
+
+  it('shows editorial mode for an existing editorial reference', async () => {
+    const service = TestBed.inject(CollectionService) as unknown as {
+      getCollectionItems: ReturnType<typeof vi.fn>;
+    };
+    service.getCollectionItems.mockReturnValue(of([{ ...item, catalogItemId: 20, catalogItemTitle: 'Editorial item' }]));
+    const fixture = TestBed.createComponent(CollectionItemEditComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(fixture.componentInstance.form.controls.referenceMode.value).toBe('EDITORIAL');
   });
 });
