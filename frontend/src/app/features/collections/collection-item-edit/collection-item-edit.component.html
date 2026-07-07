@@ -34,15 +34,42 @@
             <mat-option value="EDITORIAL">{{ 'collections.editorialReference' | translate }}</mat-option>
           </mat-select>
         </mat-form-field>
-        @if (form.controls.referenceMode.value === 'EDITORIAL') {
+        @if (form.controls.referenceMode.value === 'LEGACY') {
+          <form class="search-form" [formGroup]="productSearch" (ngSubmit)="searchProducts()" novalidate>
+            <mat-form-field appearance="outline">
+              <mat-label>{{ 'collections.searchLegacyProduct' | translate }}</mat-label>
+              <input matInput type="search" formControlName="name" data-testid="collection-edit-search-legacy" />
+            </mat-form-field>
+            <button mat-stroked-button type="submit" [disabled]="searching()">
+              {{ searching() ? ('actions.searching' | translate) : ('actions.search' | translate) }}
+            </button>
+          </form>
+          <mat-form-field class="reference-select" appearance="outline">
+            <mat-label>{{ 'collections.selectLegacyProduct' | translate }}</mat-label>
+            <mat-select [formControl]="form.controls.masterProductId" data-testid="collection-edit-master-product">
+              @if (currentItem.masterProductId && currentItem.masterProductName) {
+                <mat-option [value]="currentItem.masterProductId">
+                  {{ currentItem.masterProductName }}
+                </mat-option>
+              }
+              @for (product of products(); track product.id) {
+                <mat-option [value]="product.id">
+                  {{ product.name }} - {{ product.franchise || product.category.name }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        } @else {
           <form class="search-form" [formGroup]="editorialSearch" (ngSubmit)="searchEditorial()" novalidate>
             <mat-form-field appearance="outline">
               <mat-label>{{ 'collections.searchEditorial' | translate }}</mat-label>
               <input matInput type="search" formControlName="q" />
             </mat-form-field>
-            <button mat-stroked-button type="submit">{{ 'actions.search' | translate }}</button>
+            <button mat-stroked-button type="submit" [disabled]="searching()">
+              {{ searching() ? ('actions.searching' | translate) : ('actions.search' | translate) }}
+            </button>
           </form>
-          <mat-form-field appearance="outline">
+          <mat-form-field class="reference-select" appearance="outline">
             <mat-label>{{ 'collections.selectEditorialItem' | translate }}</mat-label>
             <mat-select [value]="selectedEditorial()" (selectionChange)="selectEditorial($event.value)">
               @for (result of editorialResults(); track result.resultType + '-' + (result.editionId || result.itemId)) {
@@ -52,6 +79,12 @@
               }
             </mat-select>
           </mat-form-field>
+          @if (!selectedEditorial() && currentItem.catalogItemTitle) {
+            <p class="current-reference">
+              {{ 'collections.editorialReference' | translate }}: {{ currentItem.catalogItemTitle }}
+              @if (currentItem.catalogItemEditionName) { - {{ currentItem.catalogItemEditionName }} }
+            </p>
+          }
         }
         <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
           <div class="form-grid">

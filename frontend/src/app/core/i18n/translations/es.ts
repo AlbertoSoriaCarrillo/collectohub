@@ -393,7 +393,11 @@ export const es: TranslationDictionary = {
     publisher: 'Editorial',
     seriesNotAllowed: 'No se puede anadir una serie completa a una coleccion.',
     referenceRequired: 'Debes seleccionar un producto legacy o un item editorial.',
-    editionItemMismatch: 'La edicion no pertenece al item seleccionado.'
+    editionItemMismatch: 'La edicion no pertenece al item seleccionado.',
+    searchLegacyProduct: 'Buscar producto legacy',
+    selectLegacyProduct: 'Seleccionar producto legacy',
+    legacyReferenceRequired: 'Debes seleccionar un producto legacy.',
+    editorialReferenceRequired: 'Debes seleccionar una referencia editorial.'
   },
   recommendations: {
     eyebrow: 'Buscados',

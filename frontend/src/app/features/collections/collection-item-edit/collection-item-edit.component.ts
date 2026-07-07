@@ -10,14 +10,16 @@ import { MatSelectModule } from '@angular/material/select';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { MasterProductResponse } from '../../../core/models/catalog.model';
+import { EditorialCatalogSearchItem } from '../../../core/models/editorial-catalog.model';
 import {
   COLLECTION_ITEM_STATUSES,
   CollectionItemResponse,
   UpdateCollectionItemRequest
 } from '../../../core/models/collection.model';
 import { PHYSICAL_CONDITIONS } from '../../../core/models/inventory.model';
+import { CatalogService } from '../../../core/services/catalog.service';
 import { CollectionService } from '../../../core/services/collection.service';
-import { EditorialCatalogSearchItem } from '../../../core/models/editorial-catalog.model';
 import { EditorialCatalogService } from '../../../core/services/editorial-catalog.service';
 
 @Component({
@@ -39,6 +41,7 @@ export class CollectionItemEditComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly catalogService = inject(CatalogService);
   private readonly collectionService = inject(CollectionService);
   private readonly editorialCatalogService = inject(EditorialCatalogService);
   private readonly errorMessageService = inject(ErrorMessageService);
@@ -51,12 +54,16 @@ export class CollectionItemEditComponent implements OnInit {
   readonly item = signal<CollectionItemResponse | null>(null);
   readonly loading = signal(false);
   readonly saving = signal(false);
+  readonly searching = signal(false);
   readonly errorMessage = signal<string | null>(null);
+  readonly products = signal<MasterProductResponse[]>([]);
   readonly editorialResults = signal<EditorialCatalogSearchItem[]>([]);
   readonly selectedEditorial = signal<EditorialCatalogSearchItem | null>(null);
+  readonly productSearch = this.fb.nonNullable.group({ name: [''] });
   readonly editorialSearch = this.fb.nonNullable.group({ q: [''] });
   readonly form = this.fb.group({
     referenceMode: ['LEGACY' as 'LEGACY' | 'EDITORIAL'],
+    masterProductId: [null as number | null],
     collectionStatus: ['', [Validators.required]],
     physicalCondition: [''],
     unitNumber: ['', [Validators.maxLength(50)]],
@@ -65,8 +72,24 @@ export class CollectionItemEditComponent implements OnInit {
     acquiredAt: ['']
   });
 
+  searchProducts(): void {
+    this.searching.set(true);
+    this.catalogService
+      .searchMasterProducts({
+        name: this.productSearch.controls.name.value,
+        status: 'ACTIVE'
+      })
+      .pipe(finalize(() => this.searching.set(false)))
+      .subscribe({
+        next: (products) => this.products.set(products),
+        error: (error) => this.errorMessage.set(this.errorMessageService.toMessage(error))
+      });
+  }
+
   searchEditorial(): void {
+    this.searching.set(true);
     this.editorialCatalogService.search({ q: this.editorialSearch.controls.q.value, size: 30 })
+      .pipe(finalize(() => this.searching.set(false)))
       .subscribe({
         next: (page) => this.editorialResults.set(
           page.content.filter((result) => result.resultType === 'ITEM' || result.resultType === 'EDITION')
@@ -114,6 +137,20 @@ export class CollectionItemEditComponent implements OnInit {
       return;
     }
 
+    const value = this.form.getRawValue();
+    if (value.referenceMode === 'LEGACY' && !value.masterProductId) {
+      this.errorMessage.set(this.languageService.translate('collections.legacyReferenceRequired'));
+      return;
+    }
+    if (
+      value.referenceMode === 'EDITORIAL' &&
+      !this.selectedEditorial() &&
+      !this.item()?.catalogItemId
+    ) {
+      this.errorMessage.set(this.languageService.translate('collections.editorialReferenceRequired'));
+      return;
+    }
+
     this.saving.set(true);
     this.errorMessage.set(null);
     this.collectionService
@@ -141,6 +178,7 @@ export class CollectionItemEditComponent implements OnInit {
           this.item.set(item);
           this.form.patchValue({
             referenceMode: item.catalogItemId ? 'EDITORIAL' : 'LEGACY',
+            masterProductId: item.masterProductId,
             collectionStatus: item.collectionStatus,
             physicalCondition: item.physicalCondition ?? '',
             unitNumber: item.unitNumber ?? '',
@@ -156,9 +194,21 @@ export class CollectionItemEditComponent implements OnInit {
   private toRequest(): UpdateCollectionItemRequest {
     const value = this.form.getRawValue();
     const editorial = value.referenceMode === 'EDITORIAL' ? this.selectedEditorial() : null;
+    const reference = value.referenceMode === 'LEGACY'
+      ? {
+          masterProductId: Number(value.masterProductId),
+          catalogItemId: null,
+          catalogItemEditionId: null
+        }
+      : editorial
+        ? {
+            masterProductId: null,
+            catalogItemId: editorial.itemId,
+            catalogItemEditionId: editorial.editionId
+          }
+        : {};
     return {
-      catalogItemId: editorial?.itemId,
-      catalogItemEditionId: editorial?.editionId,
+      ...reference,
       collectionStatus: value.collectionStatus as UpdateCollectionItemRequest['collectionStatus'],
       physicalCondition:
         (this.optionalText(value.physicalCondition) as UpdateCollectionItemRequest['physicalCondition']) ??

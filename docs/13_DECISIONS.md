@@ -445,8 +445,10 @@
   `MANUAL_EDITORIAL` y se rechazan con 409 si contradicen un puente verificado.
 - Motivo: no se deben filtrar propuestas o rechazos ni crear identidades
   ambiguas en una coleccion personal.
-- Decision: en update, los IDs de referencia nulos conservan el valor actual y
-  la referencia solo se resuelve de nuevo cuando llega algun ID explicito.
+- Decision: en update, la referencia completa se conserva cuando no llega ningun
+  ID. Un `masterProductId` explicito selecciona modo legacy y limpia la
+  referencia editorial; un `catalogItemId` explicito aplica el item y la edicion
+  enviados, incluido `catalogItemEditionId = null`.
 - Motivo: mantiene compatibilidad con clientes legacy que actualizan solo estado
   y metadatos.
 - Decision: las recomendaciones ignoran defensivamente items editoriales puros

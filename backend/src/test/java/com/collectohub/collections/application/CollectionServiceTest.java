@@ -426,6 +426,67 @@ class CollectionServiceTest {
     }
 
     @Test
+    void ownerChangesEditorialItemToLegacyReference() {
+        CollectionItem item = collectionItem(300L, privateCollection);
+        ReflectionTestUtils.setField(item, "catalogItem", editorialItem(500L));
+        ReflectionTestUtils.setField(
+                item,
+                "editorialReferenceSource",
+                com.collectohub.collections.domain.CollectionEditorialReferenceSource.MANUAL_EDITORIAL
+        );
+        MasterProduct replacement = masterProduct(201L);
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+        when(collectionItemRepository.findByIdAndCollection_IdAndDeletedAtIsNull(300L, 100L)).thenReturn(Optional.of(item));
+        when(masterProductRepository.findByIdAndDeletedAtIsNull(201L)).thenReturn(Optional.of(replacement));
+        when(masterProductCatalogLinkRepository.findByMasterProduct_IdAndLinkStatusAndDeletedAtIsNull(
+                201L, com.collectohub.catalog.domain.MasterProductCatalogLinkStatus.VERIFIED))
+                .thenReturn(Optional.empty());
+
+        var response = collectionService.updateItem(
+                AuthenticatedUser.from(owner),
+                100L,
+                300L,
+                new UpdateCollectionItemRequest(201L, null, null, null, null, null, null, null, null)
+        );
+
+        assertThat(response.masterProductId()).isEqualTo(201L);
+        assertThat(response.catalogItemId()).isNull();
+        assertThat(response.catalogItemEditionId()).isNull();
+        assertThat(response.editorialReferenceSource()).isEqualTo("LEGACY");
+    }
+
+    @Test
+    void ownerChangesEditorialEditionToItemReference() {
+        CatalogItem catalogItem = editorialItem(500L);
+        CollectionItem item = collectionItem(300L, privateCollection);
+        ReflectionTestUtils.setField(item, "catalogItem", catalogItem);
+        ReflectionTestUtils.setField(item, "catalogItemEdition", editorialEdition(600L, catalogItem));
+        ReflectionTestUtils.setField(
+                item,
+                "editorialReferenceSource",
+                com.collectohub.collections.domain.CollectionEditorialReferenceSource.MANUAL_EDITORIAL
+        );
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+        when(collectionItemRepository.findByIdAndCollection_IdAndDeletedAtIsNull(300L, 100L)).thenReturn(Optional.of(item));
+        when(masterProductRepository.findByIdAndDeletedAtIsNull(200L)).thenReturn(Optional.of(masterProduct));
+        when(catalogItemRepository.findByIdAndDeletedAtIsNull(500L)).thenReturn(Optional.of(catalogItem));
+        when(masterProductCatalogLinkRepository.findByMasterProduct_IdAndLinkStatusAndDeletedAtIsNull(
+                200L, com.collectohub.catalog.domain.MasterProductCatalogLinkStatus.VERIFIED))
+                .thenReturn(Optional.empty());
+
+        var response = collectionService.updateItem(
+                AuthenticatedUser.from(owner),
+                100L,
+                300L,
+                new UpdateCollectionItemRequest(null, 500L, null, null, null, null, null, null, null)
+        );
+
+        assertThat(response.catalogItemId()).isEqualTo(500L);
+        assertThat(response.catalogItemEditionId()).isNull();
+        assertThat(response.editorialReferenceSource()).isEqualTo("MANUAL_EDITORIAL");
+    }
+
+    @Test
     void otherUserCannotUpdateItem() {
         when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
 

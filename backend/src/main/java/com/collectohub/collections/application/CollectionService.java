@@ -191,17 +191,7 @@ public class CollectionService {
         CollectionItem item = collectionItemRepository.findByIdAndCollection_IdAndDeletedAtIsNull(itemId, collectionId)
                 .orElseThrow(() -> new CollectionItemNotFoundException(itemId));
         if (hasExplicitReference(request)) {
-            ResolvedReference reference = resolveReference(
-                    request.masterProductId() == null
-                            ? idOf(item.getMasterProduct())
-                            : request.masterProductId(),
-                    request.catalogItemId() == null
-                            ? idOf(item.getCatalogItem())
-                            : request.catalogItemId(),
-                    request.catalogItemEditionId() == null
-                            ? idOf(item.getCatalogItemEdition())
-                            : request.catalogItemEditionId()
-            );
+            ResolvedReference reference = resolveUpdatedReference(item, request);
             item.updateReference(
                     reference.masterProduct(),
                     reference.catalogItem(),
@@ -374,6 +364,29 @@ public class CollectionService {
         return request.masterProductId() != null
                 || request.catalogItemId() != null
                 || request.catalogItemEditionId() != null;
+    }
+
+    private ResolvedReference resolveUpdatedReference(
+            CollectionItem item,
+            UpdateCollectionItemRequest request
+    ) {
+        if (request.catalogItemId() != null) {
+            return resolveReference(
+                    request.masterProductId() == null
+                            ? idOf(item.getMasterProduct())
+                            : request.masterProductId(),
+                    request.catalogItemId(),
+                    request.catalogItemEditionId()
+            );
+        }
+        if (request.masterProductId() != null) {
+            return resolveReference(request.masterProductId(), null, null);
+        }
+        return resolveReference(
+                idOf(item.getMasterProduct()),
+                idOf(item.getCatalogItem()),
+                request.catalogItemEditionId()
+        );
     }
 
     private Long idOf(MasterProduct value) { return value == null ? null : value.getId(); }

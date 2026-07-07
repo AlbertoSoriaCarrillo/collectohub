@@ -392,7 +392,11 @@ export const en: TranslationDictionary = {
     publisher: 'Publisher',
     seriesNotAllowed: 'A complete series cannot be added to a collection.',
     referenceRequired: 'Select a legacy product or an editorial item.',
-    editionItemMismatch: 'The edition does not belong to the selected item.'
+    editionItemMismatch: 'The edition does not belong to the selected item.',
+    searchLegacyProduct: 'Search legacy product',
+    selectLegacyProduct: 'Select legacy product',
+    legacyReferenceRequired: 'Select a legacy product.',
+    editorialReferenceRequired: 'Select an editorial reference.'
   },
   recommendations: {
     eyebrow: 'Wanted',

@@ -16,6 +16,10 @@ describe('translation dictionaries', () => {
     expect(keys).toContain('collections.editorialReference');
     expect(keys).toContain('collections.verifiedBridge');
     expect(keys).toContain('collections.seriesNotAllowed');
+    expect(keys).toContain('collections.searchLegacyProduct');
+    expect(keys).toContain('collections.selectLegacyProduct');
+    expect(keys).toContain('collections.legacyReferenceRequired');
+    expect(keys).toContain('collections.editorialReferenceRequired');
     expect(leafKeys(TRANSLATIONS.en)).toEqual(keys);
   });
 });

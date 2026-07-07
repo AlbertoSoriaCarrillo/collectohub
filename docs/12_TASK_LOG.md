@@ -1126,3 +1126,33 @@ Siguiente paso: crear el backend en la carpeta backend.
 - No se modifican `shop_products`, inventario ni reservas. No se implementa
   inventario por edicion, matching editorial ni EPIC 37.
 - Siguiente tarea recomendada: EPIC 37, inventario y matching editorial.
+
+## 2026-07-07 - EPIC 36B - Cierre de referencias editoriales en colecciones
+
+- Corregida la edicion de items para que los modos legacy y editorial sean
+  selecciones funcionales y no solo un cambio visual.
+- El modo legacy permite buscar productos master, precarga el
+  `masterProductId` actual, exige una seleccion y envia los IDs editoriales a
+  `null` al guardar.
+- El modo editorial conserva la referencia existente si no se selecciona otra,
+  permite cambiar a item o edicion y sigue rechazando resultados `SERIES`.
+- Corregida en backend la semantica de update detectada durante la validacion:
+  una seleccion legacy explicita limpia la referencia editorial y una seleccion
+  de item editorial aplica exactamente la edicion enviada, incluido `null`.
+- Anadidas traducciones ES/EN y ampliados los tests del editor y de
+  `CollectionService`.
+- Ejecutado `cd frontend && npm.cmd ci`: correcto, 474 paquetes instalados y
+  475 auditados; se mantienen 7 vulnerabilidades conocidas, 3 bajas y 4 altas,
+  sin ejecutar `npm audit fix --force`.
+- Ejecutado `npm.cmd test -- --watch=false`: 43 archivos y 100 tests correctos.
+- Ejecutado `npm.cmd run build`: correcto; permanece el warning conocido del
+  bundle inicial de 599.35 kB frente al budget de 500 kB.
+- Ejecutado `cd backend && .\mvnw.cmd clean verify` por el ajuste real de
+  servicio: `BUILD SUCCESS`, 273 tests, 0 fallos, 0 errores y 0 saltados.
+- Ejecutado `docker compose down`, `docker compose up --build -d`, health y
+  `docker compose down`: PostgreSQL, backend y frontend healthy; `/api/health`
+  respondio `{"status":"UP","service":"collectohub-backend"}`. No se uso
+  `-v` ni se borraron volumenes.
+- No se crean migraciones, endpoints, inventario editorial, matching editorial
+  ni cambios en `shop_products`, recomendaciones o reservas. No se inicia
+  EPIC 37.
