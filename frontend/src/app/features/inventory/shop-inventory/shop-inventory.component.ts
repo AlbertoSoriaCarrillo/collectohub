@@ -48,6 +48,14 @@ export class ShopInventoryComponent implements OnInit {
     return `${product.priceAmount} ${product.currency}`;
   }
 
+  title(product: ShopProductResponse): string {
+    return product.catalogItemTitle || product.masterProductName || '';
+  }
+
+  referenceSourceKey(product: ShopProductResponse): string {
+    return `inventory.referenceSource.${product.editorialReferenceSource ?? 'LEGACY'}`;
+  }
+
   private loadShop(shopId: number): void {
     this.shopLoading.set(true);
     this.shopService

@@ -17,45 +17,55 @@
       <mat-card-subtitle>{{ 'inventory.createSubtitle' | translate }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      <form class="search-form" [formGroup]="productSearch" (ngSubmit)="searchProducts()" novalidate>
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'inventory.masterProductSearch' | translate }}</mat-label>
-          <input
-            matInput
-            type="search"
-            formControlName="name"
-            data-testid="shop-product-search-master-product"
-          />
-        </mat-form-field>
-
-        <button
-          mat-stroked-button
-          type="submit"
-          [disabled]="searching()"
-          data-testid="shop-product-search-submit"
-        >
-          {{ searching() ? ('actions.searching' | translate) : ('actions.search' | translate) }}
-        </button>
-      </form>
-
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
         <div class="form-grid">
           <mat-form-field class="wide" appearance="outline">
-            <mat-label>{{ 'inventory.masterProduct' | translate }}</mat-label>
-            <mat-select formControlName="masterProductId" data-testid="shop-product-master-product">
-              @for (product of masterProducts(); track product.id) {
-                <mat-option [value]="product.id">
-                  {{ product.name }} - {{ product.franchise || product.category.name }}
-                </mat-option>
-              }
+            <mat-label>{{ 'inventory.reference' | translate }}</mat-label>
+            <mat-select formControlName="referenceMode" data-testid="shop-product-reference-mode">
+              <mat-option value="LEGACY">{{ 'inventory.legacyReference' | translate }}</mat-option>
+              <mat-option value="EDITORIAL">{{ 'inventory.editorialReference' | translate }}</mat-option>
             </mat-select>
-            @if (
-              form.controls.masterProductId.hasError('required') &&
-              form.controls.masterProductId.touched
-            ) {
-              <mat-error>{{ 'validation.requiredMasterProduct' | translate }}</mat-error>
-            }
           </mat-form-field>
+
+          @if (form.controls.referenceMode.value === 'LEGACY') {
+            <div class="wide">
+              <div class="search-form" [formGroup]="productSearch">
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'inventory.searchLegacyProduct' | translate }}</mat-label>
+                  <input matInput type="search" formControlName="name" data-testid="shop-product-search-master-product" />
+                </mat-form-field>
+                <button mat-stroked-button type="button" (click)="searchProducts()" [disabled]="searching()" data-testid="shop-product-search-submit">
+                  {{ searching() ? ('actions.searching' | translate) : ('actions.search' | translate) }}
+                </button>
+              </div>
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'inventory.selectLegacyProduct' | translate }}</mat-label>
+                <mat-select formControlName="masterProductId" data-testid="shop-product-master-product">
+                  @for (product of masterProducts(); track product.id) {
+                    <mat-option [value]="product.id">{{ product.name }} - {{ product.franchise || product.category.name }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+          } @else {
+            <div class="wide">
+              <div class="search-form" [formGroup]="editorialSearch">
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'inventory.searchEditorial' | translate }}</mat-label>
+                  <input matInput type="search" formControlName="query" data-testid="shop-product-search-editorial" />
+                </mat-form-field>
+                <button mat-stroked-button type="button" (click)="searchEditorial()" [disabled]="searching()">{{ 'actions.search' | translate }}</button>
+              </div>
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'inventory.selectEditorialReference' | translate }}</mat-label>
+                <mat-select [value]="selectedEditorial()" (selectionChange)="selectEditorial($event.value)" data-testid="shop-product-editorial-reference">
+                  @for (result of editorialResults(); track result.resultType + '-' + (result.editionId || result.itemId)) {
+                    <mat-option [value]="result">{{ result.itemTitle }} @if (result.editionName) { - {{ result.editionName }} }</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+          }
 
           <mat-form-field appearance="outline">
             <mat-label>{{ 'common.price' | translate }}</mat-label>

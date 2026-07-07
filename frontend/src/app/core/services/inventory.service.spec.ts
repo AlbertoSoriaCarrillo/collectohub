@@ -40,7 +40,7 @@ describe('InventoryService', () => {
     httpTestingController.verify();
   });
 
-  it('creates a shop product', () => {
+  it('creates a legacy shop product', () => {
     const payload = {
       masterProductId: 5,
       priceAmount: 12.95,
@@ -59,8 +59,26 @@ describe('InventoryService', () => {
     request.flush(product);
   });
 
-  it('updates a shop product', () => {
+  it('creates an editorial shop product', () => {
     const payload = {
+      masterProductId: null,
+      catalogItemId: 31,
+      catalogItemEditionId: 41,
+      priceAmount: 15,
+      stockQuantity: 1,
+      physicalCondition: 'NEW' as const
+    };
+    service.createShopProduct(9, payload).subscribe();
+    const request = httpTestingController.expectOne('http://localhost:8080/api/shops/9/products');
+    expect(request.request.body).toEqual(payload);
+    request.flush(product);
+  });
+
+  it('updates a legacy shop product', () => {
+    const payload = {
+      masterProductId: 5,
+      catalogItemId: null,
+      catalogItemEditionId: null,
       priceAmount: 10,
       currency: 'EUR',
       stockQuantity: 1,
@@ -75,6 +93,20 @@ describe('InventoryService', () => {
       'http://localhost:8080/api/shops/9/products/11'
     );
     expect(request.request.method).toBe('PUT');
+    expect(request.request.body).toEqual(payload);
+    request.flush(product);
+  });
+
+  it('updates an editorial shop product', () => {
+    const payload = {
+      masterProductId: null,
+      catalogItemId: 31,
+      catalogItemEditionId: 41
+    };
+    service.updateShopProduct(9, 11, payload).subscribe();
+    const request = httpTestingController.expectOne(
+      'http://localhost:8080/api/shops/9/products/11'
+    );
     expect(request.request.body).toEqual(payload);
     request.flush(product);
   });

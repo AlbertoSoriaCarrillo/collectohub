@@ -36,6 +36,12 @@ describe('ShopProductDetailComponent', () => {
   };
 
   beforeEach(async () => {
+    product.masterProductId = 5;
+    product.masterProductName = 'One Piece 1';
+    product.masterProductCategoryCode = 'MANGA_COMIC';
+    product.catalogItemId = null;
+    product.catalogItemTitle = null;
+    product.catalogPublisherName = null;
     reservationService = {
       createReservation: vi.fn(() =>
         of({
@@ -150,5 +156,21 @@ describe('ShopProductDetailComponent', () => {
         )
       }
     });
+  });
+
+  it('renders editorial product metadata', async () => {
+    product.masterProductId = null;
+    product.masterProductName = null;
+    product.masterProductCategoryCode = null;
+    product.catalogItemId = 31;
+    product.catalogItemTitle = 'Editorial title';
+    product.catalogPublisherName = 'Planeta';
+    product.editorialReferenceSource = 'MANUAL_EDITORIAL';
+    const fixture = TestBed.createComponent(ShopProductDetailComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Editorial title');
+    expect(fixture.nativeElement.textContent).toContain('Planeta');
   });
 });

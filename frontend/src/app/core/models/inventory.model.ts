@@ -5,12 +5,26 @@ export type PhysicalCondition = 'NEW' | 'LIKE_NEW' | 'GOOD' | 'ACCEPTABLE' | 'DA
 export interface ShopProductResponse {
   id: number;
   shopId: number;
-  masterProductId: number;
-  masterProductName: string;
-  masterProductCategoryCode: string;
+  masterProductId: number | null;
+  masterProductName: string | null;
+  masterProductCategoryCode: string | null;
   masterProductFranchise: string | null;
   masterProductCollectionName: string | null;
   masterProductVolumeNumber: string | null;
+  catalogItemId?: number | null;
+  catalogItemTitle?: string | null;
+  catalogItemSequenceLabel?: string | null;
+  catalogSeriesId?: number | null;
+  catalogSeriesTitle?: string | null;
+  catalogItemEditionId?: number | null;
+  catalogItemEditionName?: string | null;
+  catalogItemEditionFormat?: string | null;
+  catalogItemEditionIsbn?: string | null;
+  catalogItemEditionEan?: string | null;
+  catalogItemEditionCoverImageUrl?: string | null;
+  catalogPublisherName?: string | null;
+  catalogFranchiseName?: string | null;
+  editorialReferenceSource?: 'LEGACY' | 'VERIFIED_BRIDGE' | 'MANUAL_EDITORIAL';
   priceAmount: number;
   currency: string;
   stockQuantity: number;
@@ -23,7 +37,9 @@ export interface ShopProductResponse {
 }
 
 export interface CreateShopProductRequest {
-  masterProductId: number;
+  masterProductId?: number | null;
+  catalogItemId?: number | null;
+  catalogItemEditionId?: number | null;
   priceAmount: number;
   currency?: string | null;
   stockQuantity: number;
@@ -36,6 +52,9 @@ export interface CreateShopProductRequest {
 }
 
 export interface UpdateShopProductRequest {
+  masterProductId?: number | null;
+  catalogItemId?: number | null;
+  catalogItemEditionId?: number | null;
   priceAmount?: number | null;
   currency?: string | null;
   stockQuantity?: number | null;

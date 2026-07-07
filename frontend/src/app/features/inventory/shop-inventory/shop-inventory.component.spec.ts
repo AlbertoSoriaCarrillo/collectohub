@@ -99,4 +99,25 @@ describe('ShopInventoryComponent', () => {
     expect(compiled.textContent).toContain('One Piece 1');
     expect(compiled.textContent).toContain('12.95 EUR');
   });
+
+  it('prefers editorial inventory data and keeps legacy fallback', async () => {
+    const editorial: ShopProductResponse = {
+      ...product,
+      masterProductId: null,
+      masterProductName: null,
+      masterProductCategoryCode: null,
+      catalogItemId: 31,
+      catalogItemTitle: 'Editorial title',
+      catalogSeriesTitle: 'Editorial series',
+      catalogFranchiseName: 'Editorial franchise',
+      editorialReferenceSource: 'MANUAL_EDITORIAL'
+    };
+    await configure([editorial, product]);
+    const fixture = TestBed.createComponent(ShopInventoryComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Editorial title');
+    expect(fixture.nativeElement.textContent).toContain('One Piece 1');
+  });
 });

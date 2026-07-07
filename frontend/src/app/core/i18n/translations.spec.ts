@@ -20,6 +20,9 @@ describe('translation dictionaries', () => {
     expect(keys).toContain('collections.selectLegacyProduct');
     expect(keys).toContain('collections.legacyReferenceRequired');
     expect(keys).toContain('collections.editorialReferenceRequired');
+    expect(keys).toContain('inventory.editorialReference');
+    expect(keys).toContain('inventory.seriesNotAllowed');
+    expect(keys).toContain('inventory.referenceSource.VERIFIED_BRIDGE');
     expect(leafKeys(TRANSLATIONS.en)).toEqual(keys);
   });
 });

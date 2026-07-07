@@ -78,6 +78,14 @@ export class ShopProductDetailComponent implements OnInit {
     return `${product.priceAmount} ${product.currency}`;
   }
 
+  title(product: ShopProductResponse | null): string {
+    return product?.catalogItemTitle || product?.masterProductName || '';
+  }
+
+  referenceSourceKey(product: ShopProductResponse): string {
+    return `inventory.referenceSource.${product.editorialReferenceSource ?? 'LEGACY'}`;
+  }
+
   isAuthenticated(): boolean {
     return this.authService.isAuthenticated();
   }

@@ -21,13 +21,65 @@
   @if (product(); as item) {
     <mat-card class="form-card">
       <mat-card-header>
-        <mat-card-title>{{ item.masterProductName }}</mat-card-title>
-        <mat-card-subtitle>{{ item.masterProductFranchise || ('common.noFranchise' | translate) }}</mat-card-subtitle>
+        <mat-card-title>{{ item.catalogItemTitle || item.masterProductName }}</mat-card-title>
+        <mat-card-subtitle>{{ item.catalogFranchiseName || item.masterProductFranchise || ('common.noFranchise' | translate) }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
         <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
           <div class="form-grid">
+            <mat-form-field class="wide" appearance="outline">
+              <mat-label>{{ 'inventory.reference' | translate }}</mat-label>
+              <mat-select formControlName="referenceMode" data-testid="shop-product-reference-mode">
+                <mat-option value="LEGACY">{{ 'inventory.legacyReference' | translate }}</mat-option>
+                <mat-option value="EDITORIAL">{{ 'inventory.editorialReference' | translate }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            @if (form.controls.referenceMode.value === 'LEGACY') {
+              <div class="wide">
+                <div class="search-form" [formGroup]="productSearch">
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{ 'inventory.searchLegacyProduct' | translate }}</mat-label>
+                    <input matInput type="search" formControlName="name" />
+                  </mat-form-field>
+                  <button mat-stroked-button type="button" (click)="searchProducts()" [disabled]="searching()">{{ 'actions.search' | translate }}</button>
+                </div>
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'inventory.selectLegacyProduct' | translate }}</mat-label>
+                  <mat-select formControlName="masterProductId">
+                    @if (item.masterProductId) {
+                      <mat-option [value]="item.masterProductId">{{ item.masterProductName }}</mat-option>
+                    }
+                    @for (product of masterProducts(); track product.id) {
+                      <mat-option [value]="product.id">{{ product.name }} - {{ product.franchise || product.category.name }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            } @else {
+              <div class="wide">
+                @if (!selectedEditorial() && item.catalogItemId) {
+                  <p>{{ item.catalogItemTitle }} @if (item.catalogItemEditionName) { - {{ item.catalogItemEditionName }} }</p>
+                }
+                <div class="search-form" [formGroup]="editorialSearch">
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{ 'inventory.searchEditorial' | translate }}</mat-label>
+                    <input matInput type="search" formControlName="query" />
+                  </mat-form-field>
+                  <button mat-stroked-button type="button" (click)="searchEditorial()" [disabled]="searching()">{{ 'actions.search' | translate }}</button>
+                </div>
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'inventory.selectEditorialReference' | translate }}</mat-label>
+                  <mat-select [value]="selectedEditorial()" (selectionChange)="selectEditorial($event.value)">
+                    @for (result of editorialResults(); track result.resultType + '-' + (result.editionId || result.itemId)) {
+                      <mat-option [value]="result">{{ result.itemTitle }} @if (result.editionName) { - {{ result.editionName }} }</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            }
+
             <mat-form-field appearance="outline">
               <mat-label>{{ 'common.price' | translate }}</mat-label>
               <input matInput type="number" min="0" step="0.01" formControlName="priceAmount" />

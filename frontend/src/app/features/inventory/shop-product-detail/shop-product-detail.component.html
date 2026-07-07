@@ -2,7 +2,7 @@
   <header class="page-header">
     <div>
       <p class="eyebrow">{{ 'inventory.publicProductEyebrow' | translate }}</p>
-      <h1>{{ product()?.masterProductName || ('inventory.publicProductTitle' | translate) }}</h1>
+      <h1>{{ title(product()) || ('inventory.publicProductTitle' | translate) }}</h1>
       <p>{{ 'inventory.publicProductDescription' | translate }}</p>
     </div>
 
@@ -22,10 +22,10 @@
   @if (product(); as item) {
     <mat-card class="detail-card" data-testid="shop-product-detail">
       <mat-card-header>
-        <span class="visual-token" aria-hidden="true">{{ item.masterProductName.slice(0, 1).toUpperCase() }}</span>
-        <mat-card-title>{{ item.masterProductName }}</mat-card-title>
+        <span class="visual-token" aria-hidden="true">{{ title(item).slice(0, 1).toUpperCase() }}</span>
+        <mat-card-title>{{ title(item) }}</mat-card-title>
         <mat-card-subtitle>
-          {{ item.masterProductFranchise || ('common.noFranchise' | translate) }}
+          {{ item.catalogFranchiseName || item.masterProductFranchise || ('common.noFranchise' | translate) }}
         </mat-card-subtitle>
       </mat-card-header>
 
@@ -34,6 +34,7 @@
           <mat-chip>{{ 'enums.commercialStatus.' + item.commercialStatus | translate }}</mat-chip>
           <mat-chip>{{ 'enums.physicalCondition.' + item.physicalCondition | translate }}</mat-chip>
           <mat-chip>{{ 'inventory.stockCount' | translate: { count: item.stockQuantity } }}</mat-chip>
+          <mat-chip>{{ referenceSourceKey(item) | translate }}</mat-chip>
         </mat-chip-set>
 
         <dl>
@@ -47,16 +48,22 @@
           </div>
           <div>
             <dt>{{ 'common.category' | translate }}</dt>
-            <dd>{{ item.masterProductCategoryCode }}</dd>
+            <dd>{{ item.masterProductCategoryCode || ('common.notReported' | translate) }}</dd>
           </div>
           <div>
             <dt>{{ 'common.collection' | translate }}</dt>
-            <dd>{{ item.masterProductCollectionName || ('common.notReported' | translate) }}</dd>
+            <dd>{{ item.catalogSeriesTitle || item.masterProductCollectionName || ('common.notReported' | translate) }}</dd>
           </div>
           <div>
             <dt>{{ 'common.volume' | translate }}</dt>
-            <dd>{{ item.masterProductVolumeNumber || ('common.notReported' | translate) }}</dd>
+            <dd>{{ item.catalogItemSequenceLabel || item.masterProductVolumeNumber || ('common.notReported' | translate) }}</dd>
           </div>
+          @if (item.catalogItemEditionName || item.catalogItemEditionFormat) {
+            <div><dt>{{ 'inventory.edition' | translate }}</dt><dd>{{ item.catalogItemEditionName || item.catalogItemEditionFormat }}</dd></div>
+          }
+          @if (item.catalogPublisherName) {
+            <div><dt>{{ 'inventory.publisher' | translate }}</dt><dd>{{ item.catalogPublisherName }}</dd></div>
+          }
           <div>
             <dt>{{ 'inventory.limitedUnit' | translate }}</dt>
             <dd>{{ item.unitNumber || ('common.notReported' | translate) }}</dd>
@@ -106,7 +113,9 @@
       </mat-card-content>
 
       <mat-card-actions>
-        <a mat-button [routerLink]="['/catalog', item.masterProductId]">{{ 'inventory.viewMasterProduct' | translate }}</a>
+        @if (item.masterProductId) {
+          <a mat-button [routerLink]="['/catalog', item.masterProductId]">{{ 'inventory.viewMasterProduct' | translate }}</a>
+        }
       </mat-card-actions>
     </mat-card>
   }

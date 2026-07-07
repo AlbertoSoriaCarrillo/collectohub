@@ -338,7 +338,24 @@ export const es: TranslationDictionary = {
     viewMasterProduct: 'Ver producto maestro',
     reservationCreated: 'Reserva creada correctamente.',
     notFound: 'Producto de inventario no encontrado.',
-    productNotFound: 'Producto no encontrado.'
+    productNotFound: 'Producto no encontrado.',
+    reference: 'Referencia',
+    legacyReference: 'Referencia legacy',
+    editorialReference: 'Referencia editorial',
+    searchLegacyProduct: 'Buscar producto legacy',
+    selectLegacyProduct: 'Seleccionar producto legacy',
+    searchEditorial: 'Buscar en catalogo editorial',
+    selectEditorialReference: 'Seleccionar item o edicion editorial',
+    seriesNotAllowed: 'No se puede seleccionar una serie.',
+    legacyReferenceRequired: 'Debes seleccionar un producto legacy.',
+    editorialReferenceRequired: 'Debes seleccionar una referencia editorial.',
+    edition: 'Edicion',
+    publisher: 'Editorial',
+    referenceSource: {
+      LEGACY: 'Legacy',
+      VERIFIED_BRIDGE: 'Puente verificado',
+      MANUAL_EDITORIAL: 'Editorial'
+    }
   },
   collections: {
     eyebrow: 'Colecciones',

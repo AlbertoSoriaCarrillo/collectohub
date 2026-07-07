@@ -41,10 +41,10 @@
       @for (product of products(); track product.id) {
         <mat-card class="product-card">
           <mat-card-header>
-            <span class="visual-token" aria-hidden="true">{{ product.masterProductName.slice(0, 1).toUpperCase() }}</span>
-            <mat-card-title>{{ product.masterProductName }}</mat-card-title>
+            <span class="visual-token" aria-hidden="true">{{ title(product).slice(0, 1).toUpperCase() }}</span>
+            <mat-card-title>{{ title(product) }}</mat-card-title>
             <mat-card-subtitle>
-              {{ product.masterProductFranchise || ('common.noFranchise' | translate) }}
+              {{ product.catalogFranchiseName || product.masterProductFranchise || ('common.noFranchise' | translate) }}
             </mat-card-subtitle>
           </mat-card-header>
 
@@ -53,6 +53,7 @@
               <mat-chip>{{ 'enums.commercialStatus.' + product.commercialStatus | translate }}</mat-chip>
               <mat-chip>{{ 'enums.physicalCondition.' + product.physicalCondition | translate }}</mat-chip>
               <mat-chip>{{ product.visible ? ('inventory.visible' | translate) : ('inventory.hidden' | translate) }}</mat-chip>
+              <mat-chip>{{ referenceSourceKey(product) | translate }}</mat-chip>
             </mat-chip-set>
 
             <dl>
@@ -66,12 +67,18 @@
               </div>
               <div>
                 <dt>{{ 'common.collection' | translate }}</dt>
-                <dd>{{ product.masterProductCollectionName || ('common.notReported' | translate) }}</dd>
+                <dd>{{ product.catalogSeriesTitle || product.masterProductCollectionName || ('common.notReported' | translate) }}</dd>
               </div>
               <div>
-                <dt>{{ 'common.unit' | translate }}</dt>
-                <dd>{{ product.unitNumber || ('common.notReported' | translate) }}</dd>
+                <dt>{{ 'common.volume' | translate }}</dt>
+                <dd>{{ product.catalogItemSequenceLabel || product.masterProductVolumeNumber || ('common.notReported' | translate) }}</dd>
               </div>
+              @if (product.catalogItemEditionName || product.catalogItemEditionFormat) {
+                <div><dt>{{ 'inventory.edition' | translate }}</dt><dd>{{ product.catalogItemEditionName || product.catalogItemEditionFormat }}</dd></div>
+              }
+              @if (product.catalogPublisherName) {
+                <div><dt>{{ 'inventory.publisher' | translate }}</dt><dd>{{ product.catalogPublisherName }}</dd></div>
+              }
             </dl>
 
             @if (product.notes) {

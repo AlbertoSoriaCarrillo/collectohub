@@ -11,6 +11,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { MasterProductResponse } from '../../../core/models/catalog.model';
+import { EditorialCatalogSearchItem } from '../../../core/models/editorial-catalog.model';
 import {
   PHYSICAL_CONDITIONS,
   SHOP_PRODUCT_COMMERCIAL_STATUSES,
@@ -18,6 +20,8 @@ import {
   UpdateShopProductRequest
 } from '../../../core/models/inventory.model';
 import { InventoryService } from '../../../core/services/inventory.service';
+import { CatalogService } from '../../../core/services/catalog.service';
+import { EditorialCatalogService } from '../../../core/services/editorial-catalog.service';
 
 @Component({
   selector: 'app-shop-product-edit',
@@ -40,6 +44,8 @@ export class ShopProductEditComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly inventoryService = inject(InventoryService);
+  private readonly catalogService = inject(CatalogService);
+  private readonly editorialCatalogService = inject(EditorialCatalogService);
   private readonly errorMessageService = inject(ErrorMessageService);
   private readonly languageService = inject(LanguageService);
 
@@ -48,10 +54,18 @@ export class ShopProductEditComponent implements OnInit {
   readonly shopId = signal<number | null>(null);
   readonly shopProductId = signal<number | null>(null);
   readonly product = signal<ShopProductResponse | null>(null);
+  readonly masterProducts = signal<MasterProductResponse[]>([]);
+  readonly editorialResults = signal<EditorialCatalogSearchItem[]>([]);
+  readonly selectedEditorial = signal<EditorialCatalogSearchItem | null>(null);
   readonly loading = signal(false);
   readonly saving = signal(false);
   readonly errorMessage = signal<string | null>(null);
+  readonly searching = signal(false);
+  readonly productSearch = this.fb.nonNullable.group({ name: [''] });
+  readonly editorialSearch = this.fb.nonNullable.group({ query: [''] });
   readonly form = this.fb.group({
+    referenceMode: ['LEGACY' as 'LEGACY' | 'EDITORIAL', [Validators.required]],
+    masterProductId: [null as number | null],
     priceAmount: [null as number | null, [Validators.required, Validators.min(0)]],
     currency: ['EUR', [Validators.required, Validators.pattern(/^[A-Za-z]{3}$/)]],
     stockQuantity: [0, [Validators.required, Validators.min(0)]],
@@ -89,7 +103,7 @@ export class ShopProductEditComponent implements OnInit {
       return;
     }
 
-    if (this.form.invalid) {
+    if (this.form.invalid || !this.hasValidReference()) {
       this.form.markAllAsTouched();
       return;
     }
@@ -103,6 +117,40 @@ export class ShopProductEditComponent implements OnInit {
         next: () => void this.router.navigate(['/shops', shopId, 'inventory']),
         error: (error) => this.errorMessage.set(this.errorMessageService.toMessage(error))
       });
+  }
+
+  searchProducts(): void {
+    this.searching.set(true);
+    this.catalogService
+      .searchMasterProducts({ name: this.productSearch.controls.name.value, status: 'ACTIVE' })
+      .pipe(finalize(() => this.searching.set(false)))
+      .subscribe({
+        next: (products) => this.masterProducts.set(products),
+        error: (error) => this.errorMessage.set(this.errorMessageService.toMessage(error))
+      });
+  }
+
+  searchEditorial(): void {
+    this.searching.set(true);
+    this.editorialCatalogService
+      .search({ q: this.editorialSearch.controls.query.value, page: 0, size: 20 })
+      .pipe(finalize(() => this.searching.set(false)))
+      .subscribe({
+        next: (page) =>
+          this.editorialResults.set(
+            page.content.filter((result) => result.resultType === 'ITEM' || result.resultType === 'EDITION')
+          ),
+        error: (error) => this.errorMessage.set(this.errorMessageService.toMessage(error))
+      });
+  }
+
+  selectEditorial(result: EditorialCatalogSearchItem): void {
+    if (result.resultType === 'SERIES') {
+      this.errorMessage.set(this.languageService.translate('inventory.seriesNotAllowed'));
+      return;
+    }
+    this.selectedEditorial.set(result);
+    this.errorMessage.set(null);
   }
 
   private loadProduct(shopId: number, shopProductId: number): void {
@@ -121,7 +169,10 @@ export class ShopProductEditComponent implements OnInit {
             return;
           }
           this.product.set(product);
+          const editorial = Boolean(product.catalogItemId);
           this.form.patchValue({
+            referenceMode: editorial ? 'EDITORIAL' : 'LEGACY',
+            masterProductId: product.masterProductId,
             priceAmount: product.priceAmount,
             currency: product.currency,
             stockQuantity: product.stockQuantity,
@@ -139,7 +190,17 @@ export class ShopProductEditComponent implements OnInit {
 
   private toRequest(): UpdateShopProductRequest {
     const value = this.form.getRawValue();
+    const product = this.product();
+    const selected = this.selectedEditorial();
+    const isLegacy = value.referenceMode === 'LEGACY';
     return {
+      masterProductId: isLegacy ? Number(value.masterProductId) : null,
+      catalogItemId: isLegacy ? null : selected?.itemId ?? product?.catalogItemId ?? null,
+      catalogItemEditionId: isLegacy
+        ? null
+        : selected
+          ? selected.editionId
+          : product?.catalogItemEditionId ?? null,
       priceAmount: Number(value.priceAmount),
       currency: (value.currency ?? '').trim().toUpperCase(),
       stockQuantity: Number(value.stockQuantity),
@@ -150,6 +211,18 @@ export class ShopProductEditComponent implements OnInit {
       totalLimitedUnits: value.totalLimitedUnits ? Number(value.totalLimitedUnits) : null,
       notes: this.optionalText(value.notes)
     };
+  }
+
+  private hasValidReference(): boolean {
+    const value = this.form.getRawValue();
+    if (value.referenceMode === 'LEGACY') {
+      if (value.masterProductId) return true;
+      this.errorMessage.set(this.languageService.translate('inventory.legacyReferenceRequired'));
+      return false;
+    }
+    if (this.selectedEditorial()?.itemId || this.product()?.catalogItemId) return true;
+    this.errorMessage.set(this.languageService.translate('inventory.editorialReferenceRequired'));
+    return false;
   }
 
   private optionalText(value: string | null | undefined): string | null {

@@ -1180,3 +1180,23 @@ Siguiente paso: crear el backend en la carpeta backend.
   implementa matching editorial ni se inicia la siguiente fase.
 - Siguiente tarea recomendada: completar la siguiente sub-EPIC de inventario y
   matching editorial conforme al backlog aprobado.
+
+## 2026-07-07 - EPIC 37B - Frontend inventario editorial
+
+- Actualizados los modelos frontend de inventario para admitir referencias
+  legacy, items y ediciones editoriales, con campos master nullable.
+- Create y edit de inventario incorporan selector de referencia
+  legacy/editorial, busqueda especifica, rechazo de series y conservacion de la
+  referencia editorial actual durante la edicion.
+- Lista, detalle de inventario y resumen de tienda muestran datos editoriales
+  preferentes con fallback completo para productos legacy.
+- Ampliados i18n ES/EN y tests de modelos, payloads, create/edit, lista y detalle.
+- Ejecutado `cd frontend && npm.cmd ci`: correcto, 474 paquetes instalados y
+  475 auditados. Se mantienen 7 vulnerabilidades conocidas, 3 bajas y 4 altas,
+  sin ejecutar `npm audit fix` ni `npm audit fix --force`.
+- Ejecutado `npm.cmd test -- --watch=false`: 43 archivos y 111 tests correctos.
+- Ejecutado `npm.cmd run build`: correcto. Permanece el warning conocido del
+  bundle inicial de 600.57 kB frente al budget de 500 kB.
+- No se modifica backend ni migraciones; no se implementa matching editorial,
+  recomendaciones editoriales, reservas editoriales ni colecciones.
+- Siguiente tarea recomendada: EPIC 37C.

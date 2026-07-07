@@ -12,12 +12,14 @@ import { ErrorMessageService } from '../../../core/http/error-message.service';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { MasterProductResponse } from '../../../core/models/catalog.model';
+import { EditorialCatalogSearchItem } from '../../../core/models/editorial-catalog.model';
 import {
   CreateShopProductRequest,
   PHYSICAL_CONDITIONS,
   SHOP_PRODUCT_COMMERCIAL_STATUSES
 } from '../../../core/models/inventory.model';
 import { CatalogService } from '../../../core/services/catalog.service';
+import { EditorialCatalogService } from '../../../core/services/editorial-catalog.service';
 import { InventoryService } from '../../../core/services/inventory.service';
 
 @Component({
@@ -41,6 +43,7 @@ export class ShopProductCreateComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly catalogService = inject(CatalogService);
+  private readonly editorialCatalogService = inject(EditorialCatalogService);
   private readonly inventoryService = inject(InventoryService);
   private readonly errorMessageService = inject(ErrorMessageService);
   private readonly languageService = inject(LanguageService);
@@ -48,6 +51,8 @@ export class ShopProductCreateComponent implements OnInit {
   readonly statuses = SHOP_PRODUCT_COMMERCIAL_STATUSES;
   readonly conditions = PHYSICAL_CONDITIONS;
   readonly masterProducts = signal<MasterProductResponse[]>([]);
+  readonly editorialResults = signal<EditorialCatalogSearchItem[]>([]);
+  readonly selectedEditorial = signal<EditorialCatalogSearchItem | null>(null);
   readonly shopId = signal<number | null>(null);
   readonly loading = signal(false);
   readonly searching = signal(false);
@@ -55,8 +60,10 @@ export class ShopProductCreateComponent implements OnInit {
   readonly productSearch = this.fb.nonNullable.group({
     name: ['']
   });
+  readonly editorialSearch = this.fb.nonNullable.group({ query: [''] });
   readonly form = this.fb.group({
-    masterProductId: [null as number | null, [Validators.required]],
+    referenceMode: ['LEGACY' as 'LEGACY' | 'EDITORIAL', [Validators.required]],
+    masterProductId: [null as number | null],
     priceAmount: [null as number | null, [Validators.required, Validators.min(0)]],
     currency: ['EUR', [Validators.required, Validators.pattern(/^[A-Za-z]{3}$/)]],
     stockQuantity: [0, [Validators.required, Validators.min(0)]],
@@ -93,6 +100,29 @@ export class ShopProductCreateComponent implements OnInit {
       });
   }
 
+  searchEditorial(): void {
+    this.searching.set(true);
+    this.editorialCatalogService
+      .search({ q: this.editorialSearch.controls.query.value, page: 0, size: 20 })
+      .pipe(finalize(() => this.searching.set(false)))
+      .subscribe({
+        next: (page) =>
+          this.editorialResults.set(
+            page.content.filter((result) => result.resultType === 'ITEM' || result.resultType === 'EDITION')
+          ),
+        error: (error) => this.errorMessage.set(this.errorMessageService.toMessage(error))
+      });
+  }
+
+  selectEditorial(result: EditorialCatalogSearchItem): void {
+    if (result.resultType === 'SERIES') {
+      this.errorMessage.set(this.languageService.translate('inventory.seriesNotAllowed'));
+      return;
+    }
+    this.selectedEditorial.set(result);
+    this.errorMessage.set(null);
+  }
+
   submit(): void {
     const shopId = this.shopId();
     if (!shopId) {
@@ -100,7 +130,7 @@ export class ShopProductCreateComponent implements OnInit {
       return;
     }
 
-    if (this.form.invalid) {
+    if (this.form.invalid || !this.hasValidReference()) {
       this.form.markAllAsTouched();
       return;
     }
@@ -118,8 +148,12 @@ export class ShopProductCreateComponent implements OnInit {
 
   private toRequest(): CreateShopProductRequest {
     const value = this.form.getRawValue();
+    const editorial = this.selectedEditorial();
+    const isLegacy = value.referenceMode === 'LEGACY';
     return {
-      masterProductId: Number(value.masterProductId),
+      masterProductId: isLegacy ? Number(value.masterProductId) : null,
+      catalogItemId: isLegacy ? null : editorial?.itemId ?? null,
+      catalogItemEditionId: isLegacy ? null : editorial?.editionId ?? null,
       priceAmount: Number(value.priceAmount),
       currency: this.requiredUpper(value.currency),
       stockQuantity: Number(value.stockQuantity),
@@ -130,6 +164,18 @@ export class ShopProductCreateComponent implements OnInit {
       totalLimitedUnits: value.totalLimitedUnits ? Number(value.totalLimitedUnits) : null,
       notes: this.optionalText(value.notes)
     };
+  }
+
+  private hasValidReference(): boolean {
+    const value = this.form.getRawValue();
+    if (value.referenceMode === 'LEGACY') {
+      if (value.masterProductId) return true;
+      this.errorMessage.set(this.languageService.translate('inventory.legacyReferenceRequired'));
+      return false;
+    }
+    if (this.selectedEditorial()?.itemId) return true;
+    this.errorMessage.set(this.languageService.translate('inventory.editorialReferenceRequired'));
+    return false;
   }
 
   private requiredUpper(value: string | null | undefined): string {
