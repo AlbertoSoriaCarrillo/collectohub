@@ -1,5 +1,7 @@
 package com.collectohub.inventory.domain;
 
+import com.collectohub.catalog.domain.CatalogItem;
+import com.collectohub.catalog.domain.CatalogItemEdition;
 import com.collectohub.catalog.domain.MasterProduct;
 import com.collectohub.shops.domain.Shop;
 import jakarta.persistence.Column;
@@ -29,9 +31,21 @@ public class ShopProduct {
     @JoinColumn(name = "shop_id", nullable = false)
     private Shop shop;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "master_product_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "master_product_id")
     private MasterProduct masterProduct;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "catalog_item_id")
+    private CatalogItem catalogItem;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "catalog_item_edition_id")
+    private CatalogItemEdition catalogItemEdition;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "editorial_reference_source", nullable = false, length = 40)
+    private ShopProductEditorialReferenceSource editorialReferenceSource;
 
     @Column(name = "price_amount", nullable = false, precision = 12, scale = 2)
     private BigDecimal priceAmount;
@@ -86,6 +100,9 @@ public class ShopProduct {
     public static ShopProduct create(
             Shop shop,
             MasterProduct masterProduct,
+            CatalogItem catalogItem,
+            CatalogItemEdition catalogItemEdition,
+            ShopProductEditorialReferenceSource editorialReferenceSource,
             BigDecimal priceAmount,
             String currency,
             Integer stockQuantity,
@@ -100,6 +117,9 @@ public class ShopProduct {
         ShopProduct shopProduct = new ShopProduct();
         shopProduct.shop = shop;
         shopProduct.masterProduct = masterProduct;
+        shopProduct.catalogItem = catalogItem;
+        shopProduct.catalogItemEdition = catalogItemEdition;
+        shopProduct.editorialReferenceSource = editorialReferenceSource;
         shopProduct.priceAmount = priceAmount;
         shopProduct.currency = currency;
         shopProduct.stockQuantity = stockQuantity;
@@ -112,6 +132,54 @@ public class ShopProduct {
         shopProduct.createdAt = Instant.now();
         shopProduct.createdBy = createdBy;
         return shopProduct;
+    }
+
+    public static ShopProduct create(
+            Shop shop,
+            MasterProduct masterProduct,
+            BigDecimal priceAmount,
+            String currency,
+            Integer stockQuantity,
+            ShopProductCommercialStatus commercialStatus,
+            PhysicalCondition physicalCondition,
+            boolean visible,
+            String unitNumber,
+            Integer totalLimitedUnits,
+            String notes,
+            Long createdBy
+    ) {
+        return create(
+                shop,
+                masterProduct,
+                null,
+                null,
+                ShopProductEditorialReferenceSource.LEGACY,
+                priceAmount,
+                currency,
+                stockQuantity,
+                commercialStatus,
+                physicalCondition,
+                visible,
+                unitNumber,
+                totalLimitedUnits,
+                notes,
+                createdBy
+        );
+    }
+
+    public void updateReference(
+            MasterProduct masterProduct,
+            CatalogItem catalogItem,
+            CatalogItemEdition catalogItemEdition,
+            ShopProductEditorialReferenceSource editorialReferenceSource,
+            Long updatedBy
+    ) {
+        this.masterProduct = masterProduct;
+        this.catalogItem = catalogItem;
+        this.catalogItemEdition = catalogItemEdition;
+        this.editorialReferenceSource = editorialReferenceSource;
+        this.updatedAt = Instant.now();
+        this.updatedBy = updatedBy;
     }
 
     public void update(
@@ -150,6 +218,12 @@ public class ShopProduct {
     public MasterProduct getMasterProduct() {
         return masterProduct;
     }
+
+    public CatalogItem getCatalogItem() { return catalogItem; }
+
+    public CatalogItemEdition getCatalogItemEdition() { return catalogItemEdition; }
+
+    public ShopProductEditorialReferenceSource getEditorialReferenceSource() { return editorialReferenceSource; }
 
     public BigDecimal getPriceAmount() {
         return priceAmount;

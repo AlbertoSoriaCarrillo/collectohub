@@ -33,7 +33,8 @@ class LiquibaseChangelogParsingTest {
                         "005-create-editorial-catalog-foundations",
                         "006-create-editorial-catalog-items-and-editions",
                         "007-create-master-product-catalog-links",
-                        "008-add-editorial-references-to-collection-items"
+                        "008-add-editorial-references-to-collection-items",
+                        "009-add-editorial-references-to-shop-products"
                 );
     }
 
@@ -50,6 +51,23 @@ class LiquibaseChangelogParsingTest {
                 .contains("verified_link.link_status = 'VERIFIED'")
                 .contains("verified_link.deleted_at IS NULL")
                 .contains("collection_item.catalog_item_id IS NULL")
+                .doesNotContain("link_status = 'PROPOSED'")
+                .doesNotContain("link_status = 'REJECTED'");
+    }
+
+    @Test
+    void shopProductEditorialBackfillUsesOnlyVerifiedActiveLinks() throws Exception {
+        String migration;
+        try (var input = getClass().getClassLoader().getResourceAsStream(
+                "db/changelog/changes/009-add-editorial-references-to-shop-products.sql")) {
+            assertThat(input).isNotNull();
+            migration = new String(input.readAllBytes(), StandardCharsets.UTF_8);
+        }
+
+        assertThat(migration)
+                .contains("verified_link.link_status = 'VERIFIED'")
+                .contains("verified_link.deleted_at IS NULL")
+                .contains("shop_product.catalog_item_id IS NULL")
                 .doesNotContain("link_status = 'PROPOSED'")
                 .doesNotContain("link_status = 'REJECTED'");
     }

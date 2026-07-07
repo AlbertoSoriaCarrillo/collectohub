@@ -11,6 +11,12 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 
 public record UpdateShopProductRequest(
+        Long masterProductId,
+
+        Long catalogItemId,
+
+        Long catalogItemEditionId,
+
         @DecimalMin("0.00")
         BigDecimal priceAmount,
 
@@ -35,4 +41,18 @@ public record UpdateShopProductRequest(
         @Size(max = 4000)
         String notes
 ) {
+    public UpdateShopProductRequest(
+            BigDecimal priceAmount,
+            String currency,
+            Integer stockQuantity,
+            ShopProductCommercialStatus commercialStatus,
+            PhysicalCondition physicalCondition,
+            Boolean visible,
+            String unitNumber,
+            Integer totalLimitedUnits,
+            String notes
+    ) {
+        this(null, null, null, priceAmount, currency, stockQuantity,
+                commercialStatus, physicalCondition, visible, unitNumber, totalLimitedUnits, notes);
+    }
 }

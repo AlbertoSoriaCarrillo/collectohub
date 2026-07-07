@@ -20,6 +20,8 @@ import com.collectohub.collections.application.CollectionNotFoundException;
 import com.collectohub.collections.application.InvalidCollectionItemReferenceException;
 import com.collectohub.collections.application.ConflictingCollectionItemReferenceException;
 import com.collectohub.inventory.application.ShopProductNotFoundException;
+import com.collectohub.inventory.application.InvalidShopProductReferenceException;
+import com.collectohub.inventory.application.ConflictingShopProductReferenceException;
 import com.collectohub.reservations.application.InvalidReservationFilterException;
 import com.collectohub.reservations.application.InvalidReservationRequestException;
 import com.collectohub.reservations.application.InvalidReservationTransitionException;
@@ -78,12 +80,21 @@ public class GlobalExceptionHandler {
             InvalidCatalogFilterException.class,
             InvalidEditorialCatalogRequestException.class,
             InvalidCollectionItemReferenceException.class,
+            InvalidShopProductReferenceException.class,
             InvalidReservationFilterException.class,
             InvalidReservationRequestException.class,
             UnsupportedInterfaceLanguageException.class
     })
     ResponseEntity<ErrorResponse> handleCatalogBadRequest(RuntimeException ex, HttpServletRequest request) {
         return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(ConflictingShopProductReferenceException.class)
+    ResponseEntity<ErrorResponse> handleShopProductReferenceConflict(
+            ConflictingShopProductReferenceException ex,
+            HttpServletRequest request
+    ) {
+        return build(HttpStatus.CONFLICT, ex.getMessage(), request, List.of());
     }
 
     @ExceptionHandler(ConflictingCollectionItemReferenceException.class)

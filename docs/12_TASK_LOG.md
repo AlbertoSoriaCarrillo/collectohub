@@ -1156,3 +1156,27 @@ Siguiente paso: crear el backend en la carpeta backend.
 - No se crean migraciones, endpoints, inventario editorial, matching editorial
   ni cambios en `shop_products`, recomendaciones o reservas. No se inicia
   EPIC 37.
+
+## 2026-07-07 - EPIC 37A - Backend de inventario editorial
+
+- Creada y registrada la migracion Liquibase
+  `009-add-editorial-references-to-shop-products.sql`.
+- `shop_products` incorpora referencias opcionales a item y edicion editorial,
+  su origen (`LEGACY`, `VERIFIED_BRIDGE` o `MANUAL_EDITORIAL`), FKs, checks e
+  indices defensivos; `master_product_id` pasa a nullable.
+- Anadido backfill idempotente exclusivamente desde enlaces `VERIFIED` activos,
+  sin aceptar enlaces propuestos o rechazados.
+- Ampliados entidad, DTOs y servicio de inventario para crear y actualizar
+  referencias legacy, puentes verificados, items y ediciones editoriales.
+- Las referencias contradictorias con un puente verificado devuelven 409 y las
+  combinaciones invalidas devuelven 400.
+- Las lecturas publicas admiten inventario editorial puro y conservan los
+  filtros legacy asociados a `master_products`.
+- Anadidos tests de servicio, parseo de changelog y migracion para los nuevos
+  contratos, reglas, constraints e indices.
+- Ejecutado `cd backend && .\mvnw.cmd clean verify`: `BUILD SUCCESS`, 286 tests,
+  0 fallos, 0 errores y 0 saltados.
+- No se modifica frontend, colecciones, reservas ni recomendaciones; no se
+  implementa matching editorial ni se inicia la siguiente fase.
+- Siguiente tarea recomendada: completar la siguiente sub-EPIC de inventario y
+  matching editorial conforme al backlog aprobado.

@@ -22,3 +22,5 @@ databaseChangeLog:
       file: db/changelog/changes/007-create-master-product-catalog-links.sql
   - include:
       file: db/changelog/changes/008-add-editorial-references-to-collection-items.sql
+  - include:
+      file: db/changelog/changes/009-add-editorial-references-to-shop-products.sql

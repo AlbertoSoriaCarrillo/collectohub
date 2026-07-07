@@ -3,8 +3,16 @@ package com.collectohub.inventory.application;
 import com.collectohub.auth.security.AuthenticatedUser;
 import com.collectohub.catalog.application.MasterProductNotFoundException;
 import com.collectohub.catalog.domain.MasterProduct;
+import com.collectohub.catalog.domain.CatalogItem;
+import com.collectohub.catalog.domain.CatalogItemEdition;
+import com.collectohub.catalog.domain.CatalogItemEditionFormat;
+import com.collectohub.catalog.domain.CatalogSeries;
+import com.collectohub.catalog.domain.MasterProductCatalogLink;
 import com.collectohub.catalog.domain.ProductCategory;
+import com.collectohub.catalog.infrastructure.CatalogItemRepository;
+import com.collectohub.catalog.infrastructure.CatalogItemEditionRepository;
 import com.collectohub.catalog.infrastructure.MasterProductRepository;
+import com.collectohub.catalog.infrastructure.MasterProductCatalogLinkRepository;
 import com.collectohub.inventory.domain.PhysicalCondition;
 import com.collectohub.inventory.domain.ShopProduct;
 import com.collectohub.inventory.domain.ShopProductCommercialStatus;
@@ -25,6 +33,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
@@ -35,6 +45,9 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -52,6 +65,15 @@ class InventoryServiceTest {
     private MasterProductRepository masterProductRepository;
 
     @Mock
+    private CatalogItemRepository catalogItemRepository;
+
+    @Mock
+    private CatalogItemEditionRepository catalogItemEditionRepository;
+
+    @Mock
+    private MasterProductCatalogLinkRepository masterProductCatalogLinkRepository;
+
+    @Mock
     private ShopProductRepository shopProductRepository;
 
     private InventoryService inventoryService;
@@ -67,6 +89,9 @@ class InventoryServiceTest {
                 shopRepository,
                 shopMemberRepository,
                 masterProductRepository,
+                catalogItemRepository,
+                catalogItemEditionRepository,
+                masterProductCatalogLinkRepository,
                 shopProductRepository
         );
         owner = user(42L, "owner@example.com");
@@ -100,6 +125,175 @@ class InventoryServiceTest {
         assertThat(response.currency()).isEqualTo("EUR");
         assertThat(response.commercialStatus()).isEqualTo("AVAILABLE");
         assertThat(response.visible()).isTrue();
+        assertThat(response.editorialReferenceSource()).isEqualTo("LEGACY");
+    }
+
+    @Test
+    void verifiedBridgeEnrichesLegacyShopProduct() {
+        CatalogItem catalogItem = editorialItem(500L);
+        CatalogItemEdition edition = editorialEdition(600L, catalogItem);
+        MasterProductCatalogLink link = mock(MasterProductCatalogLink.class);
+        when(link.getCatalogItem()).thenReturn(catalogItem);
+        when(link.getCatalogItemEdition()).thenReturn(edition);
+        stubOwnerCanManage();
+        when(masterProductRepository.findByIdAndDeletedAtIsNull(200L)).thenReturn(Optional.of(masterProduct));
+        when(masterProductCatalogLinkRepository.findByMasterProduct_IdAndLinkStatusAndDeletedAtIsNull(
+                200L, com.collectohub.catalog.domain.MasterProductCatalogLinkStatus.VERIFIED))
+                .thenReturn(Optional.of(link));
+        when(shopProductRepository.save(any(ShopProduct.class)))
+                .thenAnswer(invocation -> withId(invocation.getArgument(0), 300L));
+
+        var response = inventoryService.createShopProduct(
+                AuthenticatedUser.from(owner), 100L, createRequest(null, null, null));
+
+        assertThat(response.catalogItemId()).isEqualTo(500L);
+        assertThat(response.catalogItemEditionId()).isEqualTo(600L);
+        assertThat(response.editorialReferenceSource()).isEqualTo("VERIFIED_BRIDGE");
+    }
+
+    @Test
+    void ownerCreatesPureEditorialShopProduct() {
+        CatalogItem catalogItem = editorialItem(500L);
+        stubOwnerCanManage();
+        when(catalogItemRepository.findByIdAndDeletedAtIsNull(500L)).thenReturn(Optional.of(catalogItem));
+        when(shopProductRepository.save(any(ShopProduct.class)))
+                .thenAnswer(invocation -> withId(invocation.getArgument(0), 300L));
+
+        var response = inventoryService.createShopProduct(
+                AuthenticatedUser.from(owner),
+                100L,
+                editorialRequest(500L, null)
+        );
+
+        assertThat(response.masterProductId()).isNull();
+        assertThat(response.catalogItemId()).isEqualTo(500L);
+        assertThat(response.editorialReferenceSource()).isEqualTo("MANUAL_EDITORIAL");
+    }
+
+    @Test
+    void ownerCreatesEditorialEditionShopProduct() {
+        CatalogItem catalogItem = editorialItem(500L);
+        CatalogItemEdition edition = editorialEdition(600L, catalogItem);
+        stubOwnerCanManage();
+        when(catalogItemRepository.findByIdAndDeletedAtIsNull(500L)).thenReturn(Optional.of(catalogItem));
+        when(catalogItemEditionRepository.findByIdAndDeletedAtIsNull(600L)).thenReturn(Optional.of(edition));
+        when(shopProductRepository.save(any(ShopProduct.class)))
+                .thenAnswer(invocation -> withId(invocation.getArgument(0), 300L));
+
+        var response = inventoryService.createShopProduct(
+                AuthenticatedUser.from(owner),
+                100L,
+                editorialRequest(500L, 600L)
+        );
+
+        assertThat(response.catalogItemEditionId()).isEqualTo(600L);
+        assertThat(response.catalogItemEditionFormat()).isEqualTo("PAPERBACK");
+    }
+
+    @Test
+    void shopProductRequiresLegacyOrEditorialReference() {
+        stubOwnerCanManage();
+
+        assertThatThrownBy(() -> inventoryService.createShopProduct(
+                AuthenticatedUser.from(owner),
+                100L,
+                editorialRequest(null, null)
+        )).isInstanceOf(InvalidShopProductReferenceException.class);
+    }
+
+    @Test
+    void editionMustBelongToSelectedItem() {
+        CatalogItem catalogItem = editorialItem(500L);
+        CatalogItemEdition edition = editorialEdition(600L, editorialItem(501L));
+        stubOwnerCanManage();
+        when(catalogItemRepository.findByIdAndDeletedAtIsNull(500L)).thenReturn(Optional.of(catalogItem));
+        when(catalogItemEditionRepository.findByIdAndDeletedAtIsNull(600L)).thenReturn(Optional.of(edition));
+
+        assertThatThrownBy(() -> inventoryService.createShopProduct(
+                AuthenticatedUser.from(owner), 100L, editorialRequest(500L, 600L)
+        )).isInstanceOf(InvalidShopProductReferenceException.class);
+    }
+
+    @Test
+    void editionWithoutCatalogItemIsRejected() {
+        stubOwnerCanManage();
+
+        assertThatThrownBy(() -> inventoryService.createShopProduct(
+                AuthenticatedUser.from(owner), 100L, editorialRequest(null, 600L)
+        )).isInstanceOf(InvalidShopProductReferenceException.class);
+    }
+
+    @Test
+    void explicitEditorialReferenceCannotContradictVerifiedBridge() {
+        CatalogItem verifiedItem = editorialItem(500L);
+        CatalogItem selectedItem = editorialItem(501L);
+        MasterProductCatalogLink link = mock(MasterProductCatalogLink.class);
+        when(link.getCatalogItem()).thenReturn(verifiedItem);
+        when(link.getCatalogItemEdition()).thenReturn(null);
+        stubOwnerCanManage();
+        when(masterProductRepository.findByIdAndDeletedAtIsNull(200L)).thenReturn(Optional.of(masterProduct));
+        when(catalogItemRepository.findByIdAndDeletedAtIsNull(501L)).thenReturn(Optional.of(selectedItem));
+        when(masterProductCatalogLinkRepository.findByMasterProduct_IdAndLinkStatusAndDeletedAtIsNull(
+                200L, com.collectohub.catalog.domain.MasterProductCatalogLinkStatus.VERIFIED))
+                .thenReturn(Optional.of(link));
+
+        assertThatThrownBy(() -> inventoryService.createShopProduct(
+                AuthenticatedUser.from(owner),
+                100L,
+                new CreateShopProductRequest(
+                        200L, 501L, null, new BigDecimal("9.99"), null, 2,
+                        null, PhysicalCondition.NEW, true, null, null, null
+                )
+        )).isInstanceOf(ConflictingShopProductReferenceException.class);
+    }
+
+    @Test
+    void archivedEditorialItemIsRejected() {
+        CatalogItem catalogItem = editorialItem(500L);
+        when(catalogItem.isPubliclyVisible()).thenReturn(false);
+        stubOwnerCanManage();
+        when(catalogItemRepository.findByIdAndDeletedAtIsNull(500L)).thenReturn(Optional.of(catalogItem));
+
+        assertThatThrownBy(() -> inventoryService.createShopProduct(
+                AuthenticatedUser.from(owner), 100L, editorialRequest(500L, null)
+        )).isInstanceOf(com.collectohub.catalog.application.CatalogItemNotFoundException.class);
+    }
+
+    @Test
+    void pureEditorialShopProductIsPubliclyReadable() {
+        CatalogItem catalogItem = editorialItem(500L);
+        ShopProduct product = withId(ShopProduct.create(
+                shop, null, catalogItem, null,
+                com.collectohub.inventory.domain.ShopProductEditorialReferenceSource.MANUAL_EDITORIAL,
+                BigDecimal.TEN, "EUR", 1, ShopProductCommercialStatus.AVAILABLE,
+                PhysicalCondition.NEW, true, null, null, null, 42L
+        ), 300L);
+        when(shopProductRepository.findByIdAndDeletedAtIsNull(300L)).thenReturn(Optional.of(product));
+
+        var response = inventoryService.getPublicShopProduct(300L);
+
+        assertThat(response.masterProductId()).isNull();
+        assertThat(response.catalogItemId()).isEqualTo(500L);
+    }
+
+    @Test
+    void publicInventoryIncludesPureEditorialProductsWithoutLegacyFilters() {
+        CatalogItem catalogItem = editorialItem(500L);
+        ShopProduct product = withId(ShopProduct.create(
+                shop, null, catalogItem, null,
+                com.collectohub.inventory.domain.ShopProductEditorialReferenceSource.MANUAL_EDITORIAL,
+                BigDecimal.TEN, "EUR", 1, ShopProductCommercialStatus.AVAILABLE,
+                PhysicalCondition.NEW, true, null, null, null, 42L
+        ), 300L);
+        when(shopRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(shop));
+        when(shopProductRepository.findAll(any(Specification.class), eq(Sort.by("id").ascending())))
+                .thenReturn(List.of(product));
+
+        var response = inventoryService.publicShopProducts(
+                100L, null, null, null, null, null, null, null);
+
+        assertThat(response).hasSize(1);
+        assertThat(response.getFirst().catalogItemId()).isEqualTo(500L);
     }
 
     @Test
@@ -227,6 +421,61 @@ class InventoryServiceTest {
     }
 
     @Test
+    void ownerChangesEditorialReferenceBackToLegacy() {
+        ShopProduct product = shopProduct(300L, shop, masterProduct);
+        ReflectionTestUtils.setField(product, "catalogItem", editorialItem(500L));
+        ReflectionTestUtils.setField(
+                product,
+                "editorialReferenceSource",
+                com.collectohub.inventory.domain.ShopProductEditorialReferenceSource.MANUAL_EDITORIAL
+        );
+        stubOwnerCanManage();
+        when(shopProductRepository.findByIdAndShop_IdAndDeletedAtIsNull(300L, 100L))
+                .thenReturn(Optional.of(product));
+        when(masterProductRepository.findByIdAndDeletedAtIsNull(200L)).thenReturn(Optional.of(masterProduct));
+
+        var response = inventoryService.updateShopProduct(
+                AuthenticatedUser.from(owner),
+                100L,
+                300L,
+                new UpdateShopProductRequest(200L, null, null, null, null, null,
+                        null, null, null, null, null, null)
+        );
+
+        assertThat(response.catalogItemId()).isNull();
+        assertThat(response.editorialReferenceSource()).isEqualTo("LEGACY");
+    }
+
+    @Test
+    void ownerChangesEditorialEditionToItemOnly() {
+        CatalogItem catalogItem = editorialItem(500L);
+        ShopProduct product = shopProduct(300L, shop, masterProduct);
+        ReflectionTestUtils.setField(product, "catalogItem", catalogItem);
+        ReflectionTestUtils.setField(product, "catalogItemEdition", editorialEdition(600L, catalogItem));
+        ReflectionTestUtils.setField(
+                product,
+                "editorialReferenceSource",
+                com.collectohub.inventory.domain.ShopProductEditorialReferenceSource.MANUAL_EDITORIAL
+        );
+        stubOwnerCanManage();
+        when(shopProductRepository.findByIdAndShop_IdAndDeletedAtIsNull(300L, 100L))
+                .thenReturn(Optional.of(product));
+        when(masterProductRepository.findByIdAndDeletedAtIsNull(200L)).thenReturn(Optional.of(masterProduct));
+        when(catalogItemRepository.findByIdAndDeletedAtIsNull(500L)).thenReturn(Optional.of(catalogItem));
+
+        var response = inventoryService.updateShopProduct(
+                AuthenticatedUser.from(owner),
+                100L,
+                300L,
+                new UpdateShopProductRequest(null, 500L, null, null, null, null,
+                        null, null, null, null, null, null)
+        );
+
+        assertThat(response.catalogItemId()).isEqualTo(500L);
+        assertThat(response.catalogItemEditionId()).isNull();
+    }
+
+    @Test
     void userOutsideShopCannotUpdateShopProduct() {
         when(shopRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(shop));
         when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
@@ -301,6 +550,54 @@ class InventoryServiceTest {
                 null,
                 null
         );
+    }
+
+    private CreateShopProductRequest editorialRequest(Long catalogItemId, Long editionId) {
+        return new CreateShopProductRequest(
+                null,
+                catalogItemId,
+                editionId,
+                new BigDecimal("9.99"),
+                null,
+                2,
+                null,
+                PhysicalCondition.NEW,
+                true,
+                null,
+                null,
+                null
+        );
+    }
+
+    private void stubOwnerCanManage() {
+        when(shopRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(shop));
+        when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
+                100L, 42L, ShopMemberStatus.ACTIVE
+        )).thenReturn(Optional.of(member(shop, owner, ShopMemberRole.OWNER)));
+    }
+
+    private CatalogItem editorialItem(Long id) {
+        CatalogSeries series = mock(CatalogSeries.class);
+        lenient().when(series.getId()).thenReturn(400L);
+        lenient().when(series.getTitle()).thenReturn("Dragon Ball");
+        lenient().when(series.getFranchise()).thenReturn(null);
+        lenient().when(series.getPrimaryPublisher()).thenReturn(null);
+        CatalogItem item = mock(CatalogItem.class);
+        lenient().when(item.getId()).thenReturn(id);
+        lenient().when(item.getTitle()).thenReturn("Dragon Ball 1");
+        lenient().when(item.getSequenceLabel()).thenReturn("1");
+        lenient().when(item.getSeries()).thenReturn(series);
+        lenient().when(item.isPubliclyVisible()).thenReturn(true);
+        return item;
+    }
+
+    private CatalogItemEdition editorialEdition(Long id, CatalogItem item) {
+        CatalogItemEdition edition = mock(CatalogItemEdition.class);
+        lenient().when(edition.getId()).thenReturn(id);
+        lenient().when(edition.getCatalogItem()).thenReturn(item);
+        lenient().when(edition.getFormat()).thenReturn(CatalogItemEditionFormat.PAPERBACK);
+        lenient().when(edition.isPubliclyVisible()).thenReturn(true);
+        return edition;
     }
 
     private User user(Long id, String email) {

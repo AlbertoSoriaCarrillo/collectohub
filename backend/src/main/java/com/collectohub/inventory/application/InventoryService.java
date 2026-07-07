@@ -2,12 +2,22 @@ package com.collectohub.inventory.application;
 
 import com.collectohub.auth.security.AuthenticatedUser;
 import com.collectohub.catalog.application.InvalidCatalogFilterException;
+import com.collectohub.catalog.application.CatalogItemNotFoundException;
+import com.collectohub.catalog.application.CatalogItemEditionNotFoundException;
 import com.collectohub.catalog.application.MasterProductNotFoundException;
+import com.collectohub.catalog.domain.CatalogItem;
+import com.collectohub.catalog.domain.CatalogItemEdition;
 import com.collectohub.catalog.domain.MasterProduct;
+import com.collectohub.catalog.domain.MasterProductCatalogLink;
+import com.collectohub.catalog.domain.MasterProductCatalogLinkStatus;
+import com.collectohub.catalog.infrastructure.CatalogItemRepository;
+import com.collectohub.catalog.infrastructure.CatalogItemEditionRepository;
 import com.collectohub.catalog.infrastructure.MasterProductRepository;
+import com.collectohub.catalog.infrastructure.MasterProductCatalogLinkRepository;
 import com.collectohub.inventory.domain.PhysicalCondition;
 import com.collectohub.inventory.domain.ShopProduct;
 import com.collectohub.inventory.domain.ShopProductCommercialStatus;
+import com.collectohub.inventory.domain.ShopProductEditorialReferenceSource;
 import com.collectohub.inventory.dto.CreateShopProductRequest;
 import com.collectohub.inventory.dto.ShopProductResponse;
 import com.collectohub.inventory.dto.UpdateShopProductRequest;
@@ -26,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class InventoryService {
@@ -33,17 +44,26 @@ public class InventoryService {
     private final ShopRepository shopRepository;
     private final ShopMemberRepository shopMemberRepository;
     private final MasterProductRepository masterProductRepository;
+    private final CatalogItemRepository catalogItemRepository;
+    private final CatalogItemEditionRepository catalogItemEditionRepository;
+    private final MasterProductCatalogLinkRepository masterProductCatalogLinkRepository;
     private final ShopProductRepository shopProductRepository;
 
     public InventoryService(
             ShopRepository shopRepository,
             ShopMemberRepository shopMemberRepository,
             MasterProductRepository masterProductRepository,
+            CatalogItemRepository catalogItemRepository,
+            CatalogItemEditionRepository catalogItemEditionRepository,
+            MasterProductCatalogLinkRepository masterProductCatalogLinkRepository,
             ShopProductRepository shopProductRepository
     ) {
         this.shopRepository = shopRepository;
         this.shopMemberRepository = shopMemberRepository;
         this.masterProductRepository = masterProductRepository;
+        this.catalogItemRepository = catalogItemRepository;
+        this.catalogItemEditionRepository = catalogItemEditionRepository;
+        this.masterProductCatalogLinkRepository = masterProductCatalogLinkRepository;
         this.shopProductRepository = shopProductRepository;
     }
 
@@ -55,11 +75,18 @@ public class InventoryService {
     ) {
         Shop shop = findActiveShop(shopId);
         ensureCanManageShop(authenticatedUser, shopId);
-        MasterProduct masterProduct = findActiveMasterProduct(request.masterProductId());
+        ResolvedReference reference = resolveReference(
+                request.masterProductId(),
+                request.catalogItemId(),
+                request.catalogItemEditionId()
+        );
 
         ShopProduct shopProduct = ShopProduct.create(
                 shop,
-                masterProduct,
+                reference.masterProduct(),
+                reference.catalogItem(),
+                reference.catalogItemEdition(),
+                reference.source(),
                 request.priceAmount(),
                 normalizeCurrencyOrDefault(request.currency(), shop.getCurrency()),
                 request.stockQuantity(),
@@ -86,6 +113,17 @@ public class InventoryService {
         ensureCanManageShop(authenticatedUser, shopId);
         ShopProduct shopProduct = shopProductRepository.findByIdAndShop_IdAndDeletedAtIsNull(shopProductId, shopId)
                 .orElseThrow(() -> new ShopProductNotFoundException(shopProductId));
+
+        if (hasExplicitReference(request)) {
+            ResolvedReference reference = resolveUpdatedReference(shopProduct, request);
+            shopProduct.updateReference(
+                    reference.masterProduct(),
+                    reference.catalogItem(),
+                    reference.catalogItemEdition(),
+                    reference.source(),
+                    authenticatedUser.id()
+            );
+        }
 
         shopProduct.update(
                 Objects.requireNonNullElse(request.priceAmount(), shopProduct.getPriceAmount()),
@@ -180,6 +218,7 @@ public class InventoryService {
         }
 
         return shopProductRepository.findAll(specification, Sort.by("id").ascending()).stream()
+                .filter(this::hasPublicReference)
                 .map(ShopProductResponse::from)
                 .toList();
     }
@@ -189,7 +228,7 @@ public class InventoryService {
         ShopProduct shopProduct = shopProductRepository.findByIdAndDeletedAtIsNull(shopProductId)
                 .filter(ShopProduct::isPubliclyVisible)
                 .filter(product -> product.getShop().isActive())
-                .filter(product -> product.getMasterProduct().isActive())
+                .filter(this::hasPublicReference)
                 .orElseThrow(() -> new ShopProductNotFoundException(shopProductId));
         return ShopProductResponse.from(shopProduct);
     }
@@ -205,6 +244,144 @@ public class InventoryService {
                 .filter(MasterProduct::isActive)
                 .orElseThrow(() -> new MasterProductNotFoundException(masterProductId));
     }
+
+    private CatalogItem findActiveCatalogItem(Long catalogItemId) {
+        return catalogItemRepository.findByIdAndDeletedAtIsNull(catalogItemId)
+                .filter(CatalogItem::isPubliclyVisible)
+                .orElseThrow(() -> new CatalogItemNotFoundException(catalogItemId));
+    }
+
+    private CatalogItemEdition findActiveCatalogItemEdition(Long editionId) {
+        return catalogItemEditionRepository.findByIdAndDeletedAtIsNull(editionId)
+                .filter(CatalogItemEdition::isPubliclyVisible)
+                .orElseThrow(() -> new CatalogItemEditionNotFoundException(editionId));
+    }
+
+    private ResolvedReference resolveReference(Long masterProductId, Long catalogItemId, Long editionId) {
+        if (masterProductId == null && catalogItemId == null) {
+            throw new InvalidShopProductReferenceException(
+                    "A master product or editorial catalog item is required"
+            );
+        }
+        if (editionId != null && catalogItemId == null) {
+            throw new InvalidShopProductReferenceException(
+                    "An editorial edition requires an editorial catalog item"
+            );
+        }
+
+        MasterProduct masterProduct = masterProductId == null ? null : findActiveMasterProduct(masterProductId);
+        CatalogItem catalogItem = catalogItemId == null ? null : findActiveCatalogItem(catalogItemId);
+        CatalogItemEdition edition = editionId == null ? null : findActiveCatalogItemEdition(editionId);
+        validateEditionBelongsToItem(edition, catalogItem);
+
+        if (catalogItem != null) {
+            validateVerifiedBridgeDoesNotConflict(masterProduct, catalogItem, edition);
+            return new ResolvedReference(
+                    masterProduct,
+                    catalogItem,
+                    edition,
+                    ShopProductEditorialReferenceSource.MANUAL_EDITORIAL
+            );
+        }
+        return resolveEditorialReferenceFromVerifiedBridge(masterProduct);
+    }
+
+    private ResolvedReference resolveUpdatedReference(
+            ShopProduct shopProduct,
+            UpdateShopProductRequest request
+    ) {
+        if (request.catalogItemId() != null) {
+            return resolveReference(
+                    request.masterProductId() == null
+                            ? idOf(shopProduct.getMasterProduct())
+                            : request.masterProductId(),
+                    request.catalogItemId(),
+                    request.catalogItemEditionId()
+            );
+        }
+        if (request.masterProductId() != null) {
+            return resolveReference(request.masterProductId(), null, null);
+        }
+        return resolveReference(
+                idOf(shopProduct.getMasterProduct()),
+                idOf(shopProduct.getCatalogItem()),
+                request.catalogItemEditionId()
+        );
+    }
+
+    private void validateEditionBelongsToItem(CatalogItemEdition edition, CatalogItem catalogItem) {
+        if (edition != null && !edition.getCatalogItem().getId().equals(catalogItem.getId())) {
+            throw new InvalidShopProductReferenceException(
+                    "The editorial edition does not belong to the selected catalog item"
+            );
+        }
+    }
+
+    private ResolvedReference resolveEditorialReferenceFromVerifiedBridge(MasterProduct masterProduct) {
+        return verifiedBridge(masterProduct.getId())
+                .filter(link -> link.getCatalogItem().isPubliclyVisible())
+                .filter(link -> link.getCatalogItemEdition() == null
+                        || link.getCatalogItemEdition().isPubliclyVisible())
+                .map(link -> new ResolvedReference(
+                        masterProduct,
+                        link.getCatalogItem(),
+                        link.getCatalogItemEdition(),
+                        ShopProductEditorialReferenceSource.VERIFIED_BRIDGE
+                ))
+                .orElseGet(() -> new ResolvedReference(
+                        masterProduct,
+                        null,
+                        null,
+                        ShopProductEditorialReferenceSource.LEGACY
+                ));
+    }
+
+    private void validateVerifiedBridgeDoesNotConflict(
+            MasterProduct masterProduct,
+            CatalogItem catalogItem,
+            CatalogItemEdition edition
+    ) {
+        if (masterProduct == null) {
+            return;
+        }
+        verifiedBridge(masterProduct.getId()).ifPresent(link -> {
+            boolean itemConflict = !link.getCatalogItem().getId().equals(catalogItem.getId());
+            boolean editionConflict = link.getCatalogItemEdition() != null
+                    && edition != null
+                    && !link.getCatalogItemEdition().getId().equals(edition.getId());
+            if (itemConflict || editionConflict) {
+                throw new ConflictingShopProductReferenceException(
+                        "The editorial reference conflicts with the verified master product bridge"
+                );
+            }
+        });
+    }
+
+    private Optional<MasterProductCatalogLink> verifiedBridge(Long masterProductId) {
+        return masterProductCatalogLinkRepository
+                .findByMasterProduct_IdAndLinkStatusAndDeletedAtIsNull(
+                        masterProductId,
+                        MasterProductCatalogLinkStatus.VERIFIED
+                );
+    }
+
+    private boolean hasExplicitReference(UpdateShopProductRequest request) {
+        return request.masterProductId() != null
+                || request.catalogItemId() != null
+                || request.catalogItemEditionId() != null;
+    }
+
+    private boolean hasPublicReference(ShopProduct product) {
+        boolean legacyPublic = product.getMasterProduct() != null && product.getMasterProduct().isActive();
+        boolean editorialPublic = product.getCatalogItem() != null
+                && product.getCatalogItem().isPubliclyVisible()
+                && (product.getCatalogItemEdition() == null
+                || product.getCatalogItemEdition().isPubliclyVisible());
+        return legacyPublic || editorialPublic;
+    }
+
+    private Long idOf(MasterProduct value) { return value == null ? null : value.getId(); }
+    private Long idOf(CatalogItem value) { return value == null ? null : value.getId(); }
 
     private void ensureCanManageShop(AuthenticatedUser authenticatedUser, Long shopId) {
         if (authenticatedUser == null) {
@@ -241,8 +418,7 @@ public class InventoryService {
                 criteriaBuilder.isNull(root.get("deletedAt")),
                 criteriaBuilder.isTrue(root.get("visible")),
                 criteriaBuilder.equal(root.get("commercialStatus"), ShopProductCommercialStatus.AVAILABLE),
-                criteriaBuilder.isNull(root.get("shop").get("deletedAt")),
-                criteriaBuilder.isNull(root.get("masterProduct").get("deletedAt"))
+                criteriaBuilder.isNull(root.get("shop").get("deletedAt"))
         );
     }
 
@@ -300,5 +476,13 @@ public class InventoryService {
         } catch (IllegalArgumentException ex) {
             throw new InvalidCatalogFilterException("Unsupported commercial status: " + value);
         }
+    }
+
+    private record ResolvedReference(
+            MasterProduct masterProduct,
+            CatalogItem catalogItem,
+            CatalogItemEdition catalogItemEdition,
+            ShopProductEditorialReferenceSource source
+    ) {
     }
 }
