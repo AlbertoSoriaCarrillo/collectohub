@@ -35,7 +35,8 @@ class LiquibaseChangelogParsingTest {
                         "007-create-master-product-catalog-links",
                         "008-add-editorial-references-to-collection-items",
                         "009-add-editorial-references-to-shop-products",
-                        "010-create-catalog-creators"
+                        "010-create-catalog-creators",
+                        "011-create-catalog-item-relationships"
                 );
     }
 

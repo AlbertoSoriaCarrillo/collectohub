@@ -11,6 +11,7 @@ import com.collectohub.catalog.infrastructure.CatalogItemEditionRepository;
 import com.collectohub.catalog.infrastructure.MasterProductCatalogLinkRepository;
 import com.collectohub.catalog.infrastructure.CreatorRepository;
 import com.collectohub.catalog.infrastructure.CatalogItemCreatorRepository;
+import com.collectohub.catalog.infrastructure.CatalogItemRelationshipRepository;
 import com.collectohub.collections.infrastructure.CollectionItemRepository;
 import com.collectohub.collections.infrastructure.CollectionRepository;
 import com.collectohub.inventory.infrastructure.ShopProductRepository;
@@ -126,6 +127,11 @@ class CollectohubApplicationTests {
         @Bean
         CatalogItemCreatorRepository catalogItemCreatorRepository() {
             return mock(CatalogItemCreatorRepository.class);
+        }
+
+        @Bean
+        CatalogItemRelationshipRepository catalogItemRelationshipRepository() {
+            return mock(CatalogItemRelationshipRepository.class);
         }
 
         @Bean

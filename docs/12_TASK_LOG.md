@@ -1290,3 +1290,25 @@ Siguiente paso: crear el backend en la carpeta backend.
 - No se crean migraciones, tablas, endpoints o rutas; no se implementan
   relaciones entre obras, reservas, marketplace, pagos ni social.
 - Siguiente tarea recomendada: EPIC 38C.
+
+## 2026-07-08 - EPIC 38C - Backend relaciones editoriales
+
+- Creada y registrada la migracion Liquibase 011 con la tabla
+  `catalog_item_relationships`, FKs entre items, checks, indices y unicidad
+  parcial para relaciones activas no eliminadas.
+- Implementados los tipos ADAPTATION, REMAKE, REPRINT, SAME_WORK, SPIN_OFF,
+  PREQUEL, SEQUEL y RELATED, con estado editorial, orden y borrado logico.
+- Creados 5 endpoints bajo `/api/catalog/items/{itemId}/relationships` para
+  listar, consultar, crear, actualizar y eliminar relaciones. GET es publico
+  para relaciones ACTIVE entre items publicos; las escrituras requieren ADMIN.
+- El listado combina relaciones entrantes y salientes, devuelve direccion
+  INCOMING/OUTGOING y mantiene orden estable por prioridad, titulo e ID.
+- Anadidos tests de servicio, seguridad API, contexto, parseo Liquibase y
+  migracion PostgreSQL para tabla, FKs, checks, indices y unicidad parcial.
+- Ejecutado `cd backend && .\mvnw.cmd clean verify`: `BUILD SUCCESS`, 320 tests,
+  0 fallos, 0 errores y 0 saltados.
+- No se modifica frontend ni se crean rutas Angular. La integracion visual y
+  con la fachada editorial queda pendiente para EPIC 38D.
+- No se implementan reservas, marketplace, pagos, social ni relaciones entre
+  series o ediciones.
+- Siguiente tarea recomendada: EPIC 38D.

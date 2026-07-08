@@ -17,6 +17,7 @@ import com.collectohub.catalog.application.ProductCategoryNotFoundException;
 import com.collectohub.catalog.application.PublisherNotFoundException;
 import com.collectohub.catalog.application.CreatorNotFoundException;
 import com.collectohub.catalog.application.CatalogItemCreatorNotFoundException;
+import com.collectohub.catalog.application.CatalogItemRelationshipNotFoundException;
 import com.collectohub.collections.application.CollectionItemNotFoundException;
 import com.collectohub.collections.application.CollectionNotFoundException;
 import com.collectohub.collections.application.InvalidCollectionItemReferenceException;
@@ -133,6 +134,7 @@ public class GlobalExceptionHandler {
             CatalogItemEditionNotFoundException.class,
             CreatorNotFoundException.class,
             CatalogItemCreatorNotFoundException.class,
+            CatalogItemRelationshipNotFoundException.class,
             EditorialLegacyBridgeNotFoundException.class,
             MasterProductCatalogLinkNotFoundException.class
     })
