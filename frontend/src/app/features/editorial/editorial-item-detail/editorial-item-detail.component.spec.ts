@@ -33,6 +33,24 @@ describe('EditorialItemDetailComponent', () => {
     expect(element.textContent).toContain('Deluxe paperback');
     expect(element.querySelector('a[href="/catalog/editorial/editions/3"]')).toBeTruthy();
   });
+
+  it('shows ordered creator credits with translated roles and labels', () => {
+    const fixture = TestBed.createComponent(EditorialItemDetailComponent);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.querySelector('[data-testid="editorial-creators"]')).toBeTruthy();
+    expect(element.textContent).toMatch(/Creditos|Credits/);
+    expect(element.textContent).toMatch(/Autor|Author/);
+    expect(element.textContent).toContain('Yasuhiro Nightow');
+    expect(element.textContent).toContain('Original story');
+  });
+
+  it.each([[], undefined])('hides creator credits when creators are %s', (creators) => {
+    service.getItemDetail.mockReturnValue(of({ ...detail, creators }));
+    const fixture = TestBed.createComponent(EditorialItemDetailComponent);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[data-testid="editorial-creators"]')).toBeNull();
+  });
 });
 
 const catalog = {
@@ -43,5 +61,6 @@ const catalog = {
 const detail: EditorialCatalogItemDetail = {
   catalog,
   item: { id: 2, seriesId: 1, seriesTitle: 'Trigun Maximum', title: 'Volume 1', originalTitle: null, sequenceLabel: '1', sortOrder: 1, description: null, firstPublicationDate: null, firstPublicationYear: 1997, originalLanguage: 'ja', originCountry: 'JP', recordStatus: 'ACTIVE', createdAt: '2026-01-01T00:00:00Z', updatedAt: null },
-  editions: [{ id: 3, catalogItemId: 2, catalogItemTitle: 'Volume 1', publisherId: 5, publisherName: 'Dark Horse', isbn: '9780000000001', ean: null, format: 'PAPERBACK', editionName: 'Deluxe paperback', publicationDate: null, publicationYear: 2004, language: 'en', country: 'US', pageCount: 240, coverImageUrl: null, recordStatus: 'ACTIVE', createdAt: '2026-01-01T00:00:00Z', updatedAt: null }]
+  editions: [{ id: 3, catalogItemId: 2, catalogItemTitle: 'Volume 1', publisherId: 5, publisherName: 'Dark Horse', isbn: '9780000000001', ean: null, format: 'PAPERBACK', editionName: 'Deluxe paperback', publicationDate: null, publicationYear: 2004, language: 'en', country: 'US', pageCount: 240, coverImageUrl: null, recordStatus: 'ACTIVE', createdAt: '2026-01-01T00:00:00Z', updatedAt: null }],
+  creators: [{ id: 10, creatorId: 20, creatorName: 'Yasuhiro Nightow', creatorSlug: 'yasuhiro-nightow', creditRole: 'AUTHOR', creditOrder: 1, creditLabel: 'Original story' }]
 };

@@ -83,6 +83,12 @@ class EditorialCatalogFacadeControllerSecurityTest {
     }
 
     @Test
+    void anonymousCanReadEditorialItemDetail() throws Exception {
+        mockMvc.perform(get("/api/catalog/editorial/items/2/detail"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void legacyLinkRequiresAdmin() throws Exception {
         mockMvc.perform(get("/api/catalog/editorial/master-products/8/link"))
                 .andExpect(status().isUnauthorized());

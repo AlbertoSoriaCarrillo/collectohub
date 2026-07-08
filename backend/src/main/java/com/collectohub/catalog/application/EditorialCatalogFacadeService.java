@@ -15,6 +15,7 @@ import com.collectohub.catalog.dto.CatalogItemResponse;
 import com.collectohub.catalog.dto.CatalogSeriesResponse;
 import com.collectohub.catalog.dto.EditorialCatalogDetailResponse;
 import com.collectohub.catalog.dto.EditorialCatalogEditionDetailResponse;
+import com.collectohub.catalog.dto.EditorialCatalogCreatorCreditResponse;
 import com.collectohub.catalog.dto.EditorialCatalogItemDetailResponse;
 import com.collectohub.catalog.dto.EditorialCatalogSearchItemResponse;
 import com.collectohub.catalog.dto.EditorialCatalogSeriesDetailResponse;
@@ -46,19 +47,22 @@ public class EditorialCatalogFacadeService {
     private final CatalogItemRepository itemRepository;
     private final CatalogItemEditionRepository editionRepository;
     private final MasterProductCatalogLinkRepository linkRepository;
+    private final CatalogItemCreatorService creatorService;
 
     public EditorialCatalogFacadeService(
             EditorialCatalogFacadeRepository facadeRepository,
             CatalogSeriesRepository seriesRepository,
             CatalogItemRepository itemRepository,
             CatalogItemEditionRepository editionRepository,
-            MasterProductCatalogLinkRepository linkRepository
+            MasterProductCatalogLinkRepository linkRepository,
+            CatalogItemCreatorService creatorService
     ) {
         this.facadeRepository = facadeRepository;
         this.seriesRepository = seriesRepository;
         this.itemRepository = itemRepository;
         this.editionRepository = editionRepository;
         this.linkRepository = linkRepository;
+        this.creatorService = creatorService;
     }
 
     @Transactional(readOnly = true)
@@ -208,7 +212,10 @@ public class EditorialCatalogFacadeService {
         return new EditorialCatalogItemDetailResponse(
                 context(item.getSeries()),
                 CatalogItemResponse.from(item),
-                editions
+                editions,
+                creatorService.listPublic(item.getId()).stream()
+                        .map(EditorialCatalogCreatorCreditResponse::from)
+                        .toList()
         );
     }
 

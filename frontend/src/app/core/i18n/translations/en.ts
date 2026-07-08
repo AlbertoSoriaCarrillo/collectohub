@@ -295,7 +295,14 @@ export const en: TranslationDictionary = {
     noEditions: 'This item has no active editions.',
     viewSeries: 'View series',
     viewItem: 'View item',
-    viewEdition: 'View edition'
+    viewEdition: 'View edition',
+    creators: {
+      title: 'Credits',
+      roles: {
+        AUTHOR: 'Author', WRITER: 'Writer', ARTIST: 'Artist', ILLUSTRATOR: 'Illustrator',
+        TRANSLATOR: 'Translator', EDITOR: 'Editor', OTHER: 'Other'
+      }
+    }
   },
   inventory: {
     eyebrow: 'Inventory',

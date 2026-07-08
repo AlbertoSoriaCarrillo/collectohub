@@ -1267,3 +1267,26 @@ Siguiente paso: crear el backend en la carpeta backend.
 - No se modifica frontend; no se implementan relaciones entre obras,
   `catalog_relationships`, creators de serie, reservas, marketplace ni pagos.
 - Siguiente tarea recomendada: EPIC 38B.
+
+## 2026-07-08 - EPIC 38B - Creators en detalle editorial
+
+- Ampliado `GET /api/catalog/editorial/items/{itemId}/detail` con la lista
+  `creators`, usando solo creditos activos y creators publicos ACTIVE, en el
+  orden estable definido por creditOrder, nombre e ID.
+- Anadido DTO agregado de creditos y mantenido el detalle sin creators como
+  lista vacia, sin cambiar endpoints existentes.
+- El frontend de detalle de item muestra la seccion Creditos solo cuando hay
+  datos, con nombre, rol traducido y etiqueta opcional.
+- Anadidos roles de creator en i18n ES/EN y tests para contenido presente,
+  vacio y respuestas antiguas sin el campo `creators`.
+- Ejecutado `cd backend && .\mvnw.cmd clean verify`: `BUILD SUCCESS`, 308 tests,
+  0 fallos, 0 errores y 0 saltados.
+- Ejecutado `cd frontend && npm.cmd ci`: correcto, 474 paquetes instalados y
+  475 auditados; se mantienen 7 vulnerabilidades conocidas, 3 bajas y 4 altas,
+  sin ejecutar `npm audit fix` ni `npm audit fix --force`.
+- Ejecutado `npm.cmd test -- --watch=false`: 43 archivos y 114 tests correctos.
+- Ejecutado `npm.cmd run build`: correcto. Permanece el warning conocido del
+  bundle inicial de 600.90 kB frente al budget de 500 kB.
+- No se crean migraciones, tablas, endpoints o rutas; no se implementan
+  relaciones entre obras, reservas, marketplace, pagos ni social.
+- Siguiente tarea recomendada: EPIC 38C.

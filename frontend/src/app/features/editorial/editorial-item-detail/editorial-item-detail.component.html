@@ -42,6 +42,28 @@
       </dl>
     </section>
 
+    @if (data.creators?.length) {
+      <section class="creators-section" data-testid="editorial-creators">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">{{ 'editorial.creators.title' | translate }}</p>
+            <h2>{{ 'editorial.creators.title' | translate }}</h2>
+          </div>
+        </div>
+        <dl class="creator-list">
+          @for (credit of data.creators; track credit.id) {
+            <div>
+              <dt>{{ 'editorial.creators.roles.' + credit.creditRole | translate }}</dt>
+              <dd>
+                {{ credit.creatorName }}
+                @if (credit.creditLabel) { <span class="muted">{{ credit.creditLabel }}</span> }
+              </dd>
+            </div>
+          }
+        </dl>
+      </section>
+    }
+
     <section class="editions-section">
       <div class="section-heading">
         <div><p class="eyebrow">{{ 'editorial.editions' | translate }}</p><h2>{{ 'editorial.availableEditions' | translate }}</h2></div>

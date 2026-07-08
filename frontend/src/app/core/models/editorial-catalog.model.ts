@@ -115,10 +115,30 @@ export interface EditorialCatalogDetail {
   primaryPublisher: EditorialPublisher | null;
 }
 
+export type EditorialCreatorCreditRole =
+  | 'AUTHOR'
+  | 'WRITER'
+  | 'ARTIST'
+  | 'ILLUSTRATOR'
+  | 'TRANSLATOR'
+  | 'EDITOR'
+  | 'OTHER';
+
+export interface EditorialCatalogCreatorCreditResponse {
+  id: number;
+  creatorId: number;
+  creatorName: string;
+  creatorSlug: string;
+  creditRole: EditorialCreatorCreditRole;
+  creditOrder: number;
+  creditLabel: string | null;
+}
+
 export interface EditorialCatalogItemDetail {
   catalog: EditorialCatalogDetail;
   item: EditorialItem;
   editions: EditorialEdition[];
+  creators?: EditorialCatalogCreatorCreditResponse[];
 }
 
 export interface EditorialCatalogSeriesDetail {

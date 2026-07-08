@@ -3,6 +3,18 @@
   gap: 18px;
 }
 
+.creators-section {
+  display: grid;
+  gap: 12px;
+}
+
+.creator-list dd {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .muted {
   color: var(--ch-muted);
   margin-top: 4px;

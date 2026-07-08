@@ -15,6 +15,7 @@ import com.collectohub.catalog.domain.MasterProductCatalogLinkSource;
 import com.collectohub.catalog.domain.MasterProductCatalogLinkStatus;
 import com.collectohub.catalog.dto.EditorialCatalogItemDetailResponse;
 import com.collectohub.catalog.dto.EditorialCatalogSearchItemResponse;
+import com.collectohub.catalog.dto.CatalogItemCreatorResponse;
 import com.collectohub.shared.dto.PageResponse;
 import com.collectohub.catalog.infrastructure.CatalogItemEditionRepository;
 import com.collectohub.catalog.infrastructure.CatalogItemRepository;
@@ -50,13 +51,14 @@ class EditorialCatalogFacadeServiceTest {
     @Mock private CatalogItemRepository itemRepository;
     @Mock private CatalogItemEditionRepository editionRepository;
     @Mock private MasterProductCatalogLinkRepository linkRepository;
+    @Mock private CatalogItemCreatorService creatorService;
 
     private EditorialCatalogFacadeService service;
 
     @BeforeEach
     void setUp() {
         service = new EditorialCatalogFacadeService(
-                facadeRepository, seriesRepository, itemRepository, editionRepository, linkRepository);
+                facadeRepository, seriesRepository, itemRepository, editionRepository, linkRepository, creatorService);
     }
 
     @Test
@@ -115,6 +117,26 @@ class EditorialCatalogFacadeServiceTest {
 
         assertThat(response.editions()).hasSize(1);
         assertThat(response.editions().getFirst().editionName()).isEqualTo("Paperback");
+        assertThat(response.creators()).isEmpty();
+    }
+
+    @Test
+    void itemDetailContainsOrderedPublicCreatorCredits() {
+        CatalogSeries series = series(CatalogRecordStatus.ACTIVE);
+        CatalogItem item = item(series, CatalogRecordStatus.ACTIVE);
+        when(itemRepository.findByIdAndDeletedAtIsNull(2L)).thenReturn(Optional.of(item));
+        when(editionRepository.findAllByCatalogItem_IdAndRecordStatusAndDeletedAtIsNullOrderByPublicationYearAscIdAsc(
+                item.getId(), CatalogRecordStatus.ACTIVE)).thenReturn(List.of());
+        when(creatorService.listPublic(item.getId())).thenReturn(List.of(
+                new CatalogItemCreatorResponse(10L, item.getId(), 20L, "Yasuhiro Nightow", "yasuhiro-nightow", "AUTHOR", 1, null),
+                new CatalogItemCreatorResponse(11L, item.getId(), 21L, "Justin Burns", "justin-burns", "TRANSLATOR", 2, "English translation")
+        ));
+
+        EditorialCatalogItemDetailResponse response = service.getItemDetail(2L);
+
+        assertThat(response.creators()).extracting("creatorName")
+                .containsExactly("Yasuhiro Nightow", "Justin Burns");
+        assertThat(response.creators().get(1).creditLabel()).isEqualTo("English translation");
     }
 
     @Test

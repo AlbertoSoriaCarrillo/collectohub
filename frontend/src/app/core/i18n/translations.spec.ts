@@ -23,6 +23,9 @@ describe('translation dictionaries', () => {
     expect(keys).toContain('inventory.editorialReference');
     expect(keys).toContain('inventory.seriesNotAllowed');
     expect(keys).toContain('inventory.referenceSource.VERIFIED_BRIDGE');
+    expect(keys).toContain('editorial.creators.title');
+    expect(keys).toContain('editorial.creators.roles.AUTHOR');
+    expect(keys).toContain('editorial.creators.roles.TRANSLATOR');
     expect(leafKeys(TRANSLATIONS.en)).toEqual(keys);
   });
 });
