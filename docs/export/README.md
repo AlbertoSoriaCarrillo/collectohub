@@ -2,7 +2,7 @@
 
 This directory is a downloadable snapshot of the architecture implemented in
 the repository. It is derived from Liquibase changelogs, Spring controllers and
-DTOs, Angular routes, services and feature components as of 2026-06-30.
+DTOs, Angular routes, services and feature components as of 2026-07-07.
 
 ## Files
 
@@ -62,7 +62,7 @@ This snapshot is maintained manually. When the implementation changes:
 - Liquibase's own `databasechangelog` and `databasechangeloglock` tables are
   runtime infrastructure and are intentionally excluded from the 19
   application-table count.
-- Recommendations have no table: the backend calculates them from collection
-  items with a legacy master product and currently available shop inventory.
-- EPIC 36 keeps 19 application tables and 32 routes, raises Liquibase migrations
-  to 8 and maps 59 frontend-backend relationships.
+- Recommendations have no table: the backend matches collection and inventory
+  references by edition, item or legacy master product.
+- EPIC 37 keeps 19 application tables, 67 endpoints and 32 routes, raises
+  Liquibase migrations to 9 and maps 61 frontend-backend relationships.

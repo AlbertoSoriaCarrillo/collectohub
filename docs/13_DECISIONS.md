@@ -455,6 +455,18 @@
   hasta EPIC 37.
 - Motivo: evita un acceso nulo sin adelantar matching editorial.
 
+## 2026-07-07 - Matching editorial gradual en recomendaciones
+
+Las recomendaciones usan una estrategia de prioridad:
+
+1. coincidencia exacta por edicion editorial;
+2. coincidencia por item editorial;
+3. fallback legacy por master product.
+
+`categoryCode` permanece como filtro legacy mientras no exista una equivalencia
+segura entre categorias legacy y tipos editoriales. No se implementan reservas
+editoriales, pagos ni marketplace en EPIC 37.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

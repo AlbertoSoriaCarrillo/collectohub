@@ -1,6 +1,6 @@
 # CollectoHub MVP status
 
-Fecha de revision: 2026-06-30.
+Fecha de revision: 2026-07-07.
 
 ## Estado general
 
@@ -8,12 +8,11 @@ Este estado corresponde a **MVP 1 - Nucleo coleccionista**, no al producto
 final. La vision completa conecta coleccionistas, catalogo comun, tiendas y
 creadores, con matching, social y comercio desarrollados por fases.
 
-MVP 1 permanece cerrado y estable. MVP 2 ha completado EPIC 31 a EPIC 36:
-fundamentos editoriales, items y ediciones, puente de reconciliacion ADMIN,
-fachada editorial de lectura y frontend editorial publico.
-
-`collection_items` ya admite referencias editoriales duales. `shop_products`,
-recomendaciones y reservas todavia no usan referencias editoriales directas.
+MVP 1 permanece cerrado y estable. MVP 2 ha completado EPIC 31 a EPIC 37:
+fundamentos editoriales, fachada y frontend editorial, referencias editoriales
+en colecciones e inventario, y matching editorial basico en recomendaciones.
+Siguen pendientes creators, relaciones priorizadas, reservas editoriales,
+marketplace, pagos y alertas.
 
 | Dominio | Estado actual |
 | --- | --- |
@@ -21,8 +20,8 @@ recomendaciones y reservas todavia no usan referencias editoriales directas.
 | Catalog Knowledge Base | Parcial; fundamentos MVP 2, fachada de lectura y frontend editorial publico implementados |
 | User Collections | Implementado con referencias legacy/editoriales duales desde EPIC 36 |
 | Social | Futuro |
-| Shops & Inventory | Base tecnica parcial, fuera del foco visible |
-| Matching | Recomendaciones simples parciales |
+| Shops & Inventory | Inventario legacy/editorial implementado; fuera del recorrido principal |
+| Matching | Recomendaciones por edicion, item y fallback legacy |
 | Commerce | Reservas sin pago; resto futuro |
 | Content Creators | Futuro |
 
@@ -317,13 +316,12 @@ La revision de este archivo no encontro necesidad de cambios en esta fase.
 ## Siguientes pasos recomendados
 
 La referencia tecnica descargable de EPIC 29 queda versionada en
-`docs/export/`: 19 tablas de aplicacion, 67 endpoints, 32 rutas Angular y 59
+`docs/export/`: 19 tablas de aplicacion, 67 endpoints, 32 rutas Angular y 61
 relaciones pantalla-backend. Los estados distinguen recorrido MVP 1, base
 legacy/futura, infraestructura y redirecciones sin alterar codigo funcional.
 
-La siguiente tarea recomendada es **EPIC 37 - Inventario y matching editorial**.
-Debe mantener compatibilidad legacy y separar claramente inventario, matching y
-comercio. Diseno: `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
+La siguiente tarea recomendada es **EPIC 38 - Creators y relaciones
+priorizadas**. Diseno: `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
 
 1. Preparar capturas reales para `docs/assets/screenshots/` y enlazarlas desde el README.
 2. Revisar el rediseño visual en desktop y movil real, anadir capturas a `docs/assets/screenshots/`.

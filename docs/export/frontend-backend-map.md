@@ -1,7 +1,7 @@
 # Frontend to backend map
 
 This map follows actual HTTP calls made by routed Angular components through
-the services in `frontend/src/app/core`. It contains 59 relationships: 54 API
+the services in `frontend/src/app/core`. It contains 61 relationships: 56 API
 calls and 5 routes with no direct API call. Local-only calls such as
 `AuthService.currentUser()`, logout, translation and error formatting are not
 listed as backend relationships.
@@ -86,8 +86,10 @@ links, even though the backend calculation still reads future inventory data.
 | `/shops/:shopId/inventory` - `ShopInventoryComponent` | `ShopService` | `GET /api/shops/{shopId}` |
 | `/shops/:shopId/inventory` - `ShopInventoryComponent` | `InventoryService` | `GET /api/shops/{shopId}/products/my` |
 | `/shops/:shopId/inventory/new` - `ShopProductCreateComponent` | `CatalogService` | `GET /api/master-products` |
+| `/shops/:shopId/inventory/new` - `ShopProductCreateComponent` | `EditorialCatalogService` | `GET /api/catalog/editorial/search` |
 | `/shops/:shopId/inventory/new` - `ShopProductCreateComponent` | `InventoryService` | `POST /api/shops/{shopId}/products` |
 | `/shops/:shopId/inventory/:shopProductId/edit` - `ShopProductEditComponent` | `InventoryService` | `GET /api/shops/{shopId}/products/my` |
+| `/shops/:shopId/inventory/:shopProductId/edit` - `ShopProductEditComponent` | `EditorialCatalogService` | `GET /api/catalog/editorial/search` |
 | `/shops/:shopId/inventory/:shopProductId/edit` - `ShopProductEditComponent` | `InventoryService` | `PUT /api/shops/{shopId}/products/{shopProductId}` |
 | `/shops/:id` - `ShopDetailComponent` | `ShopService` | `GET /api/shops/{shopId}` |
 | `/shops/:id` - `ShopDetailComponent` | `InventoryService` | `GET /api/shops/{shopId}/products` |
@@ -96,8 +98,9 @@ links, even though the backend calculation still reads future inventory data.
 | `/shop-products/:shopProductId` - `ShopProductDetailComponent` | `ShopService` | `GET /api/shops/{shopId}` |
 | `/shop-products/:shopProductId` - `ShopProductDetailComponent` | `ReservationService` | `POST /api/reservations` |
 
-All rows in this section are `LEGACY_FUTURE`. `ShopService.updateShop()` is
-implemented but no current routed component calls it.
+Inventory create/edit supports legacy and editorial references. Routes remain
+outside the primary navigation. `ShopService.updateShop()` is implemented but
+no current routed component calls it.
 
 ## Reservations
 

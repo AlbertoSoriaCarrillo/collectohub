@@ -1222,3 +1222,28 @@ Siguiente paso: crear el backend en la carpeta backend.
 - No se modifica frontend ni migraciones; no se tocan reservas y no se
   implementan marketplace, pagos, alertas ni ranking avanzado.
 - Siguiente tarea recomendada: EPIC 37D.
+
+## 2026-07-07 - EPIC 37D - Cierre documental y validacion integral
+
+- Actualizados README, backlog, diseno MVP 2, decisiones, estado MVP, contrato
+  API y exportables tecnicos para cerrar EPIC 37 y situar EPIC 38 como siguiente
+  tarea.
+- Los exports reflejan 9 migraciones Liquibase, 19 tablas de aplicacion, 67
+  endpoints, 32 rutas Angular y 61 relaciones frontend-backend.
+- Ejecutado `cd backend && .\mvnw.cmd clean verify`: `BUILD SUCCESS`, 292 tests,
+  0 fallos, 0 errores y 0 saltados.
+- Ejecutado `cd frontend && npm.cmd ci`: correcto, 474 paquetes instalados y
+  475 auditados. Se mantienen 7 vulnerabilidades conocidas, 3 bajas y 4 altas,
+  sin ejecutar `npm audit fix` ni `npm audit fix --force`.
+- Ejecutado `npm.cmd test -- --watch=false`: 43 archivos y 111 tests correctos.
+- Ejecutado `npm.cmd run build`: correcto. Permanece el warning conocido del
+  bundle inicial de 600.57 kB frente al budget de 500 kB.
+- Ejecutado `docker compose down` y `docker compose up --build -d`: imagenes
+  backend/frontend construidas, PostgreSQL healthy y servicios iniciados.
+- Validado `curl.exe http://localhost:8080/api/health`: respuesta
+  `{"status":"UP","service":"collectohub-backend"}`.
+- Ejecutado `docker compose down` al finalizar, sin `-v` ni borrado de volumenes.
+- No se modifica backend funcional ni frontend funcional; no se crean
+  migraciones, endpoints o rutas y no se inicia EPIC 38.
+- EPIC 37 queda cerrada. Siguiente tarea recomendada: EPIC 38, creators y
+  relaciones priorizadas.

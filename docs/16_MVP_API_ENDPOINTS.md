@@ -14,6 +14,11 @@ requiere al menos master product o catalog item; una edicion debe pertenecer al
 item. La respuesta mantiene los campos legacy y anade metadatos editoriales y
 `editorialReferenceSource`. No se crean endpoints nuevos.
 
+Desde EPIC 37, el alta y actualizacion de productos de tienda acepta
+`masterProductId` o `catalogItemId` con `catalogItemEditionId` opcional. Las
+respuestas conservan campos legacy y anaden metadatos editoriales. Las
+recomendaciones incluyen `matchType` y datos editoriales sin crear endpoints.
+
 ```json
 {
   "timestamp": "2026-06-17T00:00:00Z",
@@ -169,7 +174,7 @@ existe, un ADMIN puede consultar la propuesta mas reciente.
 
 | Metodo | Path | Acceso | Permiso | Body/Filtros | Respuesta | Errores |
 | --- | --- | --- | --- | --- | --- | --- |
-| POST | `/api/shops/{shopId}/products` | Protegido | `shop_members` OWNER o MANAGER | `masterProductId`, `priceAmount`, `currency`, `stockQuantity`, `commercialStatus`, `physicalCondition`, `visible`, `unitNumber`, `totalLimitedUnits`, `notes` | `ShopProductResponse` | `400`, `401`, `403`, `404` |
+| POST | `/api/shops/{shopId}/products` | Protegido | `shop_members` OWNER o MANAGER | `masterProductId` o `catalogItemId`/`catalogItemEditionId`, mas campos comerciales | `ShopProductResponse` legacy/editorial | `400`, `401`, `403`, `404`, `409` |
 | PUT | `/api/shops/{shopId}/products/{shopProductId}` | Protegido | `shop_members` OWNER o MANAGER | Campos de `UpdateShopProductRequest` | `ShopProductResponse` | `400`, `401`, `403`, `404` |
 | GET | `/api/shops/{shopId}/products/my` | Protegido | Miembro activo de tienda | No | Inventario completo no eliminado de la tienda | `401`, `403`, `404` |
 | GET | `/api/shops/{shopId}/products` | Publico | Solo productos visibles y disponibles | Filtros `masterProductId`, `categoryCode`, `name`, `franchise`, `collectionName`, `physicalCondition`, `commercialStatus` | Lista publica de `ShopProductResponse` | `400`, `404` |
@@ -211,6 +216,10 @@ Reglas:
 - Solo usa items propios en estado `MISSING` o `WANTED`.
 - Solo recomienda productos de tienda activos, visibles, `AVAILABLE` y con stock mayor que cero.
 - Deduplica por `shopProductId`.
+- Prioriza `EDITION_EXACT`, `ITEM_EXACT` y `LEGACY_MASTER_PRODUCT`, en ese orden.
+- Cada recomendacion devuelve `matchType` y metadatos editoriales cuando existen.
+- `categoryCode` permanece como filtro legacy; los demas filtros aplican tambien
+  a coincidencias editoriales.
 
 ## Reservas
 

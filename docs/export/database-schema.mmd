@@ -151,6 +151,9 @@ erDiagram
         BIGINT id PK
         BIGINT shop_id FK
         BIGINT master_product_id FK
+        BIGINT catalog_item_id FK
+        BIGINT catalog_item_edition_id FK
+        VARCHAR editorial_reference_source
         NUMERIC price_amount
         INTEGER stock_quantity
         VARCHAR commercial_status
@@ -192,9 +195,12 @@ erDiagram
     MASTER_PRODUCTS ||--o{ COLLECTION_ITEMS : identifies
     SHOPS ||--o{ SHOP_PRODUCTS : stocks
     MASTER_PRODUCTS ||--o{ SHOP_PRODUCTS : identifies
+    CATALOG_ITEMS ||--o{ SHOP_PRODUCTS : identifies
+    CATALOG_ITEM_EDITIONS o|--o{ SHOP_PRODUCTS : specifies
     USERS ||--o{ RESERVATIONS : places
     SHOPS ||--o{ RESERVATIONS : receives
     SHOP_PRODUCTS ||--o{ RESERVATIONS : reserves
 
 %% Recommendations have no persisted table. RecommendationService calculates
-%% matches from COLLECTION_ITEMS and available SHOP_PRODUCTS.
+%% matches from COLLECTION_ITEMS and available SHOP_PRODUCTS by edition, item
+%% or legacy master product.

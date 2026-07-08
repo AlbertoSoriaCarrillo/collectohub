@@ -1,6 +1,6 @@
 # Database schema
 
-This document describes the PostgreSQL application schema created by the seven
+This document describes the PostgreSQL application schema created by the nine
 Liquibase SQL migrations currently included by
 `db/changelog/db.changelog-master.yaml`. It contains 19 application tables.
 Liquibase runtime tables are intentionally excluded.
@@ -12,7 +12,7 @@ Liquibase runtime tables are intentionally excluded.
 | Identity & Access | `users`, `roles`, `user_roles` | MVP 1 visible |
 | Catalog Knowledge Base | `product_categories`, `master_products`, `product_suggestions`, `publishers`, `catalog_franchises`, `catalog_series`, `catalog_items`, `catalog_item_editions`, `master_product_catalog_links` | MVP 1 catalog plus MVP 2 foundations |
 | User Collections | `collections`, `collection_items` | MVP 1 visible plus EPIC 36 editorial references |
-| Shops & Inventory | `shops`, `shop_members`, `shop_products` | Implemented legacy/future base |
+| Shops & Inventory | `shops`, `shop_members`, `shop_products` | EPIC 37 legacy/editorial inventory |
 | Matching | No table | Calculated from collections and inventory |
 | Commerce | `reservations` | Implemented legacy/future base |
 | Technical/Audit | `refresh_tokens` and audit columns | Authentication support |
@@ -271,7 +271,10 @@ and optional concrete editions. Existing consumers do not read this table yet.
 | Column | Type | Required | Description |
 | --- | --- | --- | --- |
 | `id` | `BIGINT IDENTITY` | Yes | Primary key. |
-| `master_product_id` | `BIGINT` | Yes | FK to `master_products.id`. |
+| `master_product_id` | `BIGINT` | No | Optional legacy FK to `master_products.id`. |
+| `catalog_item_id` | `BIGINT` | No | Preferred editorial FK to `catalog_items.id`. |
+| `catalog_item_edition_id` | `BIGINT` | No | Optional editorial FK to `catalog_item_editions.id`. |
+| `editorial_reference_source` | `VARCHAR(40)` | Yes | `LEGACY`, `VERIFIED_BRIDGE` or `MANUAL_EDITORIAL`. |
 | `catalog_item_id` | `BIGINT` | Yes | FK to `catalog_items.id`. |
 | `catalog_item_edition_id` | `BIGINT` | No | Optional FK to `catalog_item_editions.id`; service validates item ownership. |
 | `link_status` | `VARCHAR(30)` | Yes | `PROPOSED`, `VERIFIED` or `REJECTED`. |
@@ -458,9 +461,13 @@ FKs: `fk_shop_members_shop`, `fk_shop_members_user`. Unique constraint:
 | `notes` | `TEXT` | No | Internal/public notes supplied by the shop. |
 | audit set | shared columns | Mixed | Creation, update and soft-delete metadata. |
 
-FKs: `fk_shop_products_shop`, `fk_shop_products_master_product`. Indexes:
-`idx_shop_products_shop_id`, `idx_shop_products_master_product_id`. Checks:
-non-negative price and stock; positive limited-unit total when present.
+FKs: `fk_shop_products_shop`, `fk_shop_products_master_product`,
+`fk_shop_products_catalog_item`, `fk_shop_products_catalog_item_edition`.
+Indexes: `idx_shop_products_shop_id`, `idx_shop_products_master_product_id`,
+`idx_shop_products_catalog_item_id`, `idx_shop_products_catalog_item_edition_id`,
+`idx_shop_products_editorial_reference_source`. Checks require a master product
+or catalog item, require an item when an edition is present, constrain the
+reference source, preserve non-negative price/stock and positive limited units.
 
 ## Commerce
 
@@ -490,13 +497,13 @@ FKs: `fk_reservations_user`, `fk_reservations_shop`,
 
 ## Index inventory
 
-Liquibase declares 50 explicit indexes, including partial unique franchise,
+Liquibase declares 53 explicit indexes, including partial unique franchise,
 ISBN and EAN indexes:
 
 | Table | Indexes |
 | --- | --- |
 | `shops` | `idx_shops_owner_user_id(owner_user_id)` |
-| `shop_products` | `idx_shop_products_shop_id(shop_id)`, `idx_shop_products_master_product_id(master_product_id)` |
+| `shop_products` | `idx_shop_products_shop_id(shop_id)`, `idx_shop_products_master_product_id(master_product_id)`, `idx_shop_products_catalog_item_id(catalog_item_id)`, `idx_shop_products_catalog_item_edition_id(catalog_item_edition_id)`, `idx_shop_products_editorial_reference_source(editorial_reference_source)` |
 | `master_products` | `idx_master_products_isbn(isbn)`, `idx_master_products_ean(ean)`, `idx_master_products_name(name)`, `idx_master_products_franchise(franchise)` |
 | `collections` | `idx_collections_user_id(user_id)` |
 | `collection_items` | `idx_collection_items_collection_id(collection_id)`, `idx_collection_items_master_product_id(master_product_id)`, `idx_collection_items_catalog_item_id(catalog_item_id)`, `idx_collection_items_catalog_item_edition_id(catalog_item_edition_id)`, `idx_collection_items_editorial_reference_source(editorial_reference_source)` |
@@ -516,6 +523,7 @@ refresh-token hash.
 ## Matching without persistence
 
 There is no `recommendations` table. `RecommendationService` reads non-deleted
-`collection_items` in wanted/missing states, then matches their
-`master_product_id` values against visible, available `shop_products` with
-stock. The result and summary DTOs are calculated per request.
+`collection_items` in wanted/missing states, then matches visible, available
+`shop_products` with stock by exact edition, editorial item or legacy master
+product, in that priority order. The result and summary DTOs are calculated per
+request.

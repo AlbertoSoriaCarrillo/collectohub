@@ -9,9 +9,10 @@ creadores de contenido, apoyada en un catalogo comun de objetos coleccionables.
 
 El recorrido visible de MVP 1 permanece estable: explorar libros, comics y
 manga, crear colecciones, marcar lo que se tiene o busca y revisar faltantes.
-MVP 2 ya dispone de fundamentos backend para publishers, franquicias y series,
-sin UI nueva y sin romper `master_products` ni ese recorrido. Tiendas,
-inventario y reservas siguen como base tecnica legacy/futura.
+MVP 2 ya dispone de catalogo y frontend editorial, referencias editoriales en
+colecciones e inventario, y matching editorial basico, sin romper
+`master_products` ni el recorrido legacy. Las reservas siguen como base tecnica
+legacy/futura.
 
 ## Vision A Largo Plazo
 
@@ -28,8 +29,8 @@ marketplace, pagos o tiendas ya listos para usuario final.
 - MVP 1 cerrado como base tecnica/producto el 2026-06-29; checklist completo en
   `docs/07_MVP1_ACCEPTANCE_CHECKLIST.md`.
 - MVP 2 iniciado con el diseno de `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md` y
-  EPIC 31 a EPIC 33 implementadas: catalogo editorial y puente administrativo
-  de reconciliacion con `master_products`, sin cambiar consumidores legacy.
+  EPIC 31 a EPIC 37 implementadas: catalogo y frontend editorial, puente con
+  `master_products`, colecciones, inventario y matching editorial basico.
 - MVP funcional de backend y frontend.
 - Docker Compose local con PostgreSQL, backend y frontend validado.
 - Tests backend, tests frontend y E2E Playwright implementados.
@@ -272,8 +273,8 @@ formatos Markdown, Mermaid y CSV descargables.
 - EPIC 35 ya implemento la busqueda y los detalles editoriales publicos.
 - EPIC 36 ya implemento referencias editoriales graduales en colecciones,
   manteniendo el flujo legacy.
-- El siguiente paso tecnico es EPIC 37: inventario editorial y
-  matching por item/edicion.
+- EPIC 37 ya implemento inventario editorial y matching por item/edicion.
+- El siguiente paso tecnico es EPIC 38: creators y relaciones priorizadas.
 - Validar despues social basico y, en fases separadas, matching con tiendas,
   comercio real y herramientas para creadores.
 - Ejecutar E2E en CI con un job separado y estable.

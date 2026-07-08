@@ -1,8 +1,7 @@
 # CollectoHub MVP 2 editorial catalog technical design
 
-Estado: diseno tecnico aprobado en EPIC 30. EPIC 31 y 32 implementan el catalogo
-editorial; EPIC 33 implementa puente, propuestas y reconciliacion ADMIN. La
-fachada de compatibilidad ya esta implementada; la UI editorial sigue pendiente.
+Estado: diseno tecnico aprobado en EPIC 30. EPIC 31 a EPIC 37 estan
+implementadas; el siguiente tramo es EPIC 38.
 
 ## Estado de implementacion
 
@@ -747,6 +746,17 @@ alta/edicion permite ambos catalogos y el detalle conserva fallback legacy.
 
 Enlace de stock a edicion y reglas exact/flexible. Alertas, ubicacion y comercio
 siguen fuera de alcance.
+
+Estado: implementada el 2026-07-07 mediante Liquibase 009. `shop_products`
+incorpora `catalog_item_id`, `catalog_item_edition_id` y
+`editorial_reference_source`; `master_product_id` pasa a nullable y el backfill
+usa solo enlaces `master_product_catalog_links` activos y `VERIFIED`.
+
+El frontend de inventario permite seleccionar referencia legacy o editorial.
+Las recomendaciones priorizan `EDITION_EXACT`, despues `ITEM_EXACT` y finalmente
+`LEGACY_MASTER_PRODUCT`. `categoryCode` permanece como filtro legacy porque no
+existe una equivalencia segura con tipos editoriales. EPIC 37 no implementa
+reservas editoriales, marketplace ni pagos.
 
 ### EPIC 38 - Creators y relaciones priorizadas
 

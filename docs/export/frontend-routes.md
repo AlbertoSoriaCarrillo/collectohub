@@ -72,8 +72,8 @@ a `REDIRECT` fallback route.
 
 ## Navigation values
 
-EPIC 36 does not add routes. Existing collection create/edit/detail routes now
-support dual legacy and editorial references.
+EPIC 37 does not add routes. Existing inventory create/edit/detail routes now
+support dual legacy and editorial references; the total remains 32.
 
 - `PRIMARY`: visible in the main collector navigation.
 - `HEADER`: visible in the global anonymous header.
