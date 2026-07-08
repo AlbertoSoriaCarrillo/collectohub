@@ -1247,3 +1247,23 @@ Siguiente paso: crear el backend en la carpeta backend.
   migraciones, endpoints o rutas y no se inicia EPIC 38.
 - EPIC 37 queda cerrada. Siguiente tarea recomendada: EPIC 38, creators y
   relaciones priorizadas.
+
+## 2026-07-08 - EPIC 38A - Backend creators editoriales
+
+- Creada y registrada la migracion Liquibase 010 con las tablas `creators` y
+  `catalog_item_creators`, FKs, checks, indices y unicidades parciales.
+- Anadidos dominio, DTOs, repositorios y servicios para creators y creditos por
+  item con roles AUTHOR, WRITER, ARTIST, ILLUSTRATOR, TRANSLATOR, EDITOR y OTHER.
+- Creados 9 endpoints bajo `/api/catalog`: 5 para creators y 4 para creditos de
+  item. Las lecturas son publicas para contenido ACTIVE y las escrituras
+  requieren ADMIN.
+- Implementadas normalizacion de slug/pais, validacion de anos, deteccion de
+  duplicados, orden de creditos y borrado logico.
+- La fachada de detalle editorial no se amplia en esta fase; la integracion de
+  creators se reserva para EPIC 38B para mantener aislado el contrato agregado.
+- Anadidos tests de servicios, seguridad, contexto, parseo y migracion.
+- Ejecutado `cd backend && .\mvnw.cmd clean verify`: `BUILD SUCCESS`, 306 tests,
+  0 fallos, 0 errores y 0 saltados.
+- No se modifica frontend; no se implementan relaciones entre obras,
+  `catalog_relationships`, creators de serie, reservas, marketplace ni pagos.
+- Siguiente tarea recomendada: EPIC 38B.

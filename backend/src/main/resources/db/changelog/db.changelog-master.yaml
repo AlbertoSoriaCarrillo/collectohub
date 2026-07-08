@@ -24,3 +24,5 @@ databaseChangeLog:
       file: db/changelog/changes/008-add-editorial-references-to-collection-items.sql
   - include:
       file: db/changelog/changes/009-add-editorial-references-to-shop-products.sql
+  - include:
+      file: db/changelog/changes/010-create-catalog-creators.sql
