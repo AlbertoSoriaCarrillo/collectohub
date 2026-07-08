@@ -1200,3 +1200,25 @@ Siguiente paso: crear el backend en la carpeta backend.
 - No se modifica backend ni migraciones; no se implementa matching editorial,
   recomendaciones editoriales, reservas editoriales ni colecciones.
 - Siguiente tarea recomendada: EPIC 37C.
+
+## 2026-07-07 - EPIC 37C - Matching editorial en recomendaciones
+
+- Anadido matching por edicion exacta (`EDITION_EXACT`) y por item editorial
+  (`ITEM_EXACT`), manteniendo el fallback legacy por `masterProduct`
+  (`LEGACY_MASTER_PRODUCT`).
+- La deduplicacion por producto de tienda conserva la mejor coincidencia por
+  tipo de match, estado MISSING/WANTED, nombre de coleccion e ID de item.
+- Los repositorios de colecciones e inventario usan `left join` para admitir
+  referencias editoriales puras sin exigir `masterProduct`.
+- Ampliado el DTO de recomendaciones con referencias y metadatos editoriales,
+  `matchType` y fallbacks para nombre, franquicia, serie, volumen y cubierta.
+- Los filtros comerciales existentes se mantienen para legacy y editorial.
+  `categoryCode` sigue aplicandose solo cuando existe categoria master legacy,
+  sin inventar equivalencias con tipos de serie editorial.
+- Ampliados los tests backend para matching editorial puro, prioridades,
+  deduplicacion, fallbacks, filtros y summary sin categoria legacy.
+- Ejecutado `cd backend && .\mvnw.cmd clean verify`: `BUILD SUCCESS`, 292 tests,
+  0 fallos, 0 errores y 0 saltados.
+- No se modifica frontend ni migraciones; no se tocan reservas y no se
+  implementan marketplace, pagos, alertas ni ranking avanzado.
+- Siguiente tarea recomendada: EPIC 37D.

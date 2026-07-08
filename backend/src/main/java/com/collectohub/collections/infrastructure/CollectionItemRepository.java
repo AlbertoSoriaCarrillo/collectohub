@@ -20,8 +20,11 @@ public interface CollectionItemRepository extends JpaRepository<CollectionItem, 
             select item
             from CollectionItem item
             join fetch item.collection collection
-            join fetch item.masterProduct masterProduct
-            join fetch masterProduct.category
+            left join fetch item.masterProduct masterProduct
+            left join fetch masterProduct.category
+            left join fetch item.catalogItem catalogItem
+            left join fetch catalogItem.series
+            left join fetch item.catalogItemEdition
             where collection.user.id = :userId
               and collection.deletedAt is null
               and item.deletedAt is null

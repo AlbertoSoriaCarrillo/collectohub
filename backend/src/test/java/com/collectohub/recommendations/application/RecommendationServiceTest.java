@@ -3,16 +3,22 @@ package com.collectohub.recommendations.application;
 import com.collectohub.auth.security.AuthenticatedUser;
 import com.collectohub.catalog.application.InvalidCatalogFilterException;
 import com.collectohub.catalog.domain.MasterProduct;
+import com.collectohub.catalog.domain.CatalogFranchise;
+import com.collectohub.catalog.domain.CatalogItem;
+import com.collectohub.catalog.domain.CatalogItemEdition;
+import com.collectohub.catalog.domain.CatalogSeries;
 import com.collectohub.catalog.domain.ProductCategory;
 import com.collectohub.catalog.infrastructure.ProductCategoryRepository;
 import com.collectohub.collections.domain.Collection;
 import com.collectohub.collections.domain.CollectionItem;
 import com.collectohub.collections.domain.CollectionItemStatus;
+import com.collectohub.collections.domain.CollectionEditorialReferenceSource;
 import com.collectohub.collections.domain.CollectionVisibility;
 import com.collectohub.collections.infrastructure.CollectionItemRepository;
 import com.collectohub.inventory.domain.PhysicalCondition;
 import com.collectohub.inventory.domain.ShopProduct;
 import com.collectohub.inventory.domain.ShopProductCommercialStatus;
+import com.collectohub.inventory.domain.ShopProductEditorialReferenceSource;
 import com.collectohub.inventory.infrastructure.ShopProductRepository;
 import com.collectohub.shops.domain.Shop;
 import com.collectohub.users.domain.Role;
@@ -36,6 +42,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -82,7 +89,8 @@ class RecommendationServiceTest {
 
         assertThat(response.recommendations()).isEmpty();
         assertThat(response.totalRecommendations()).isZero();
-        verify(shopProductRepository, never()).findRecommendationCandidates(anySet(), any(), any(), any(), any(), any(), any(), any(), any());
+        verify(shopProductRepository, never()).findRecommendationCandidates(
+                anySet(), anySet(), anySet(), any(), any(), any(), any(), any(), any(), any(), any());
     }
 
     @Test
@@ -192,7 +200,8 @@ class RecommendationServiceTest {
         var response = recommendationService.myRecommendations(authenticatedUser(), null, null, null, null, null);
 
         assertThat(response.recommendations()).isEmpty();
-        verify(shopProductRepository, never()).findRecommendationCandidates(anySet(), any(), any(), any(), any(), any(), any(), any(), any());
+        verify(shopProductRepository, never()).findRecommendationCandidates(
+                anySet(), anySet(), anySet(), any(), any(), any(), any(), any(), any(), any(), any());
     }
 
     @Test
@@ -310,8 +319,120 @@ class RecommendationServiceTest {
         assertThat(response.recommendations().getFirst().matchedCollectionItemStatus()).isEqualTo("MISSING");
     }
 
+    @Test
+    void exactEditionMatchSupportsPureEditorialProductsAndResponseFallbacks() {
+        CatalogItem catalogItem = catalogItem(600L, "Dragon Ball volume one", "1");
+        CatalogItemEdition edition = edition(700L, catalogItem, "Spanish hardcover");
+        CollectionItem wanted = editorialCollectionItem(300L, catalogItem, edition, CollectionItemStatus.WANTED);
+        ShopProduct candidate = editorialShopProduct(900L, catalogItem, edition, BigDecimal.TEN);
+        when(collectionItemRepository.findRecommendationItemsForUser(42L, targetStatuses())).thenReturn(List.of(wanted));
+        whenCandidatesReturn(List.of(candidate));
+
+        var recommendation = recommendationService
+                .myRecommendations(authenticatedUser(), null, null, null, null, null)
+                .recommendations().getFirst();
+
+        assertThat(recommendation.matchType()).isEqualTo("EDITION_EXACT");
+        assertThat(recommendation.masterProductId()).isNull();
+        assertThat(recommendation.productName()).isEqualTo("Dragon Ball volume one");
+        assertThat(recommendation.franchise()).isEqualTo("Dragon Ball");
+        assertThat(recommendation.collectionName()).isEqualTo("Dragon Ball Super");
+        assertThat(recommendation.volumeNumber()).isEqualTo("1");
+        assertThat(recommendation.catalogItemId()).isEqualTo(600L);
+        assertThat(recommendation.catalogItemEditionId()).isEqualTo(700L);
+        assertThat(recommendation.editorialReferenceSource()).isEqualTo("MANUAL_EDITORIAL");
+    }
+
+    @Test
+    void itemMatchWorksWithoutEditionOrMasterProduct() {
+        CatalogItem catalogItem = catalogItem(600L, "Dragon Ball volume one", "1");
+        CollectionItem missing = editorialCollectionItem(300L, catalogItem, null, CollectionItemStatus.MISSING);
+        ShopProduct candidate = editorialShopProduct(900L, catalogItem, null, BigDecimal.TEN);
+        when(collectionItemRepository.findRecommendationItemsForUser(42L, targetStatuses())).thenReturn(List.of(missing));
+        whenCandidatesReturn(List.of(candidate));
+
+        var recommendation = recommendationService
+                .myRecommendations(authenticatedUser(), null, null, null, null, null)
+                .recommendations().getFirst();
+
+        assertThat(recommendation.matchType()).isEqualTo("ITEM_EXACT");
+        assertThat(recommendation.catalogItemTitle()).isEqualTo("Dragon Ball volume one");
+    }
+
+    @Test
+    void editionMatchWinsOverItemMatchEvenWhenItemStatusHasHigherPriority() {
+        CatalogItem catalogItem = catalogItem(600L, "Dragon Ball volume one", "1");
+        CatalogItemEdition edition = edition(700L, catalogItem, "Spanish hardcover");
+        CollectionItem itemMatch = editorialCollectionItem(300L, catalogItem, null, CollectionItemStatus.MISSING);
+        CollectionItem editionMatch = editorialCollectionItem(301L, catalogItem, edition, CollectionItemStatus.WANTED);
+        ShopProduct candidate = editorialShopProduct(900L, catalogItem, edition, BigDecimal.TEN);
+        when(collectionItemRepository.findRecommendationItemsForUser(42L, targetStatuses()))
+                .thenReturn(List.of(itemMatch, editionMatch));
+        whenCandidatesReturn(List.of(candidate, candidate));
+
+        var response = recommendationService.myRecommendations(authenticatedUser(), null, null, null, null, null);
+
+        assertThat(response.recommendations()).hasSize(1);
+        assertThat(response.recommendations().getFirst().matchType()).isEqualTo("EDITION_EXACT");
+        assertThat(response.recommendations().getFirst().matchedCollectionItemStatus()).isEqualTo("WANTED");
+    }
+
+    @Test
+    void itemMatchWinsOverLegacyMasterProductMatch() {
+        CatalogItem catalogItem = catalogItem(600L, "Dragon Ball volume one", "1");
+        CollectionItem legacy = collectionItem(300L, masterProduct, CollectionItemStatus.MISSING);
+        CollectionItem editorial = editorialCollectionItem(301L, catalogItem, null, CollectionItemStatus.WANTED);
+        ShopProduct candidate = withId(ShopProduct.create(
+                shop, masterProduct, catalogItem, null, ShopProductEditorialReferenceSource.VERIFIED_BRIDGE,
+                BigDecimal.TEN, "EUR", 2, ShopProductCommercialStatus.AVAILABLE,
+                PhysicalCondition.NEW, true, null, null, null, user.getId()), 900L);
+        when(collectionItemRepository.findRecommendationItemsForUser(42L, targetStatuses()))
+                .thenReturn(List.of(legacy, editorial));
+        whenCandidatesReturn(List.of(candidate));
+
+        var recommendation = recommendationService
+                .myRecommendations(authenticatedUser(), null, null, null, null, null)
+                .recommendations().getFirst();
+
+        assertThat(recommendation.matchType()).isEqualTo("ITEM_EXACT");
+        assertThat(recommendation.matchedCollectionItemStatus()).isEqualTo("WANTED");
+    }
+
+    @Test
+    void commercialFiltersStillApplyToEditorialCandidates() {
+        CatalogItem catalogItem = catalogItem(600L, "Dragon Ball volume one", "1");
+        CollectionItem missing = editorialCollectionItem(300L, catalogItem, null, CollectionItemStatus.MISSING);
+        ShopProduct candidate = editorialShopProduct(900L, catalogItem, null, new BigDecimal("12.00"));
+        when(collectionItemRepository.findRecommendationItemsForUser(42L, targetStatuses())).thenReturn(List.of(missing));
+        whenCandidatesReturn(List.of(candidate));
+
+        assertThat(recommendationService.myRecommendations(
+                authenticatedUser(), null, null, "EUR", "NEW", "500").recommendations()).hasSize(1);
+        assertThat(recommendationService.myRecommendations(
+                authenticatedUser(), null, null, "USD", null, null).recommendations()).isEmpty();
+        assertThat(recommendationService.myRecommendations(
+                authenticatedUser(), null, null, null, "GOOD", null).recommendations()).isEmpty();
+        assertThat(recommendationService.myRecommendations(
+                authenticatedUser(), null, null, null, null, "999").recommendations()).isEmpty();
+    }
+
+    @Test
+    void summarySupportsEditorialRecommendationsWithoutCategoryCode() {
+        CatalogItem catalogItem = catalogItem(600L, "Dragon Ball volume one", "1");
+        CollectionItem missing = editorialCollectionItem(300L, catalogItem, null, CollectionItemStatus.MISSING);
+        when(collectionItemRepository.findRecommendationItemsForUser(42L, targetStatuses())).thenReturn(List.of(missing));
+        whenCandidatesReturn(List.of(editorialShopProduct(900L, catalogItem, null, BigDecimal.TEN)));
+
+        var summary = recommendationService.mySummary(authenticatedUser(), null, null, null, null, null);
+
+        assertThat(summary.missingCollectionItems()).isEqualTo(1);
+        assertThat(summary.recommendedProducts()).isEqualTo(1);
+        assertThat(summary.matchedCategoryCodes()).isEmpty();
+    }
+
     private void whenCandidatesReturn(List<ShopProduct> candidates) {
-        when(shopProductRepository.findRecommendationCandidates(anySet(), any(), any(), any(), any(), any(), any(), any(), any()))
+        when(shopProductRepository.findRecommendationCandidates(
+                anySet(), anySet(), anySet(), any(), any(), any(), any(), any(), any(), any(), any()))
                 .thenReturn(candidates);
     }
 
@@ -413,6 +534,55 @@ class RecommendationServiceTest {
                 null,
                 user.getId()
         ), id);
+    }
+
+    private CollectionItem editorialCollectionItem(
+            Long id,
+            CatalogItem catalogItem,
+            CatalogItemEdition edition,
+            CollectionItemStatus status
+    ) {
+        return withId(CollectionItem.create(
+                collection, null, catalogItem, edition, CollectionEditorialReferenceSource.MANUAL_EDITORIAL,
+                status, null, null, null, null, null, user.getId()), id);
+    }
+
+    private ShopProduct editorialShopProduct(
+            Long id,
+            CatalogItem catalogItem,
+            CatalogItemEdition edition,
+            BigDecimal price
+    ) {
+        return withId(ShopProduct.create(
+                shop, null, catalogItem, edition, ShopProductEditorialReferenceSource.MANUAL_EDITORIAL,
+                price, "EUR", 2, ShopProductCommercialStatus.AVAILABLE, PhysicalCondition.NEW,
+                true, null, null, null, user.getId()), id);
+    }
+
+    private CatalogItem catalogItem(Long id, String title, String sequenceLabel) {
+        CatalogFranchise franchise = mock(CatalogFranchise.class);
+        when(franchise.getName()).thenReturn("Dragon Ball");
+        CatalogSeries series = mock(CatalogSeries.class);
+        when(series.getId()).thenReturn(550L);
+        when(series.getTitle()).thenReturn("Dragon Ball Super");
+        when(series.getFranchise()).thenReturn(franchise);
+        CatalogItem item = mock(CatalogItem.class);
+        when(item.getId()).thenReturn(id);
+        when(item.getTitle()).thenReturn(title);
+        when(item.getSequenceLabel()).thenReturn(sequenceLabel);
+        when(item.getSeries()).thenReturn(series);
+        when(item.isPubliclyVisible()).thenReturn(true);
+        return item;
+    }
+
+    private CatalogItemEdition edition(Long id, CatalogItem item, String name) {
+        CatalogItemEdition edition = mock(CatalogItemEdition.class);
+        when(edition.getId()).thenReturn(id);
+        when(edition.getCatalogItem()).thenReturn(item);
+        when(edition.getEditionName()).thenReturn(name);
+        when(edition.getCoverImageUrl()).thenReturn("https://example.test/editorial-cover.jpg");
+        when(edition.isPubliclyVisible()).thenReturn(true);
+        return edition;
     }
 
     private <T> T withId(T target, Long id) {

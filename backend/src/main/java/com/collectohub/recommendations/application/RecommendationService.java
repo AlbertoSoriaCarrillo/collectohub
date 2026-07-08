@@ -4,6 +4,7 @@ import com.collectohub.auth.security.AuthenticatedUser;
 import com.collectohub.catalog.application.InvalidCatalogFilterException;
 import com.collectohub.catalog.application.ProductCategoryNotFoundException;
 import com.collectohub.catalog.domain.MasterProductStatus;
+import com.collectohub.catalog.domain.CatalogSeries;
 import com.collectohub.catalog.infrastructure.ProductCategoryRepository;
 import com.collectohub.collections.domain.CollectionItem;
 import com.collectohub.collections.domain.CollectionItemStatus;
@@ -27,6 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -80,6 +82,7 @@ public class RecommendationService {
         List<RecommendedShopProductResponse> recommendations = buildRecommendations(targetItems, filters);
         List<String> matchedCategoryCodes = recommendations.stream()
                 .map(RecommendedShopProductResponse::categoryCode)
+                .filter(Objects::nonNull)
                 .distinct()
                 .sorted()
                 .toList();
@@ -110,21 +113,17 @@ public class RecommendationService {
             return List.of();
         }
 
-        Map<Long, CollectionItem> bestItemsByMasterProduct = targetItems.stream()
-                .filter(item -> item.getMasterProduct() != null)
-                .collect(Collectors.toMap(
-                        item -> item.getMasterProduct().getId(),
-                        item -> item,
-                        this::bestMatch,
-                        LinkedHashMap::new
-                ));
-
-        if (bestItemsByMasterProduct.isEmpty()) {
+        Set<Long> masterProductIds = ids(targetItems, ReferenceKind.MASTER_PRODUCT);
+        Set<Long> catalogItemIds = ids(targetItems, ReferenceKind.CATALOG_ITEM);
+        Set<Long> catalogItemEditionIds = ids(targetItems, ReferenceKind.CATALOG_ITEM_EDITION);
+        if (masterProductIds.isEmpty() && catalogItemIds.isEmpty() && catalogItemEditionIds.isEmpty()) {
             return List.of();
         }
 
         List<ShopProduct> candidates = shopProductRepository.findRecommendationCandidates(
-                bestItemsByMasterProduct.keySet(),
+                nonEmpty(masterProductIds),
+                nonEmpty(catalogItemIds),
+                nonEmpty(catalogItemEditionIds),
                 ShopProductCommercialStatus.AVAILABLE,
                 ShopStatus.ACTIVE,
                 MasterProductStatus.ACTIVE,
@@ -137,10 +136,12 @@ public class RecommendationService {
 
         return candidates.stream()
                 .filter(shopProduct -> isRecommendableCandidate(shopProduct, filters))
+                .map(shopProduct -> bestMatch(shopProduct, targetItems))
+                .flatMap(java.util.Optional::stream)
                 .collect(Collectors.toMap(
-                        ShopProduct::getId,
-                        shopProduct -> toResponse(shopProduct, bestItemsByMasterProduct.get(shopProduct.getMasterProduct().getId())),
-                        (first, ignored) -> first,
+                        match -> match.shopProduct().getId(),
+                        this::toResponse,
+                        this::betterMatch,
                         LinkedHashMap::new
                 ))
                 .values()
@@ -153,7 +154,7 @@ public class RecommendationService {
         return shopProduct.isPubliclyVisible()
                 && shopProduct.getStockQuantity() > 0
                 && shopProduct.getShop().isActive()
-                && shopProduct.getMasterProduct().isActive()
+                && hasPublicReference(shopProduct)
                 && matchesCategory(shopProduct, filters.categoryCode())
                 && matchesMaxPrice(shopProduct, filters.maxPrice())
                 && matchesCurrency(shopProduct, filters.currency())
@@ -163,7 +164,9 @@ public class RecommendationService {
 
     private boolean matchesCategory(ShopProduct shopProduct, String categoryCode) {
         return categoryCode == null
-                || categoryCode.equalsIgnoreCase(shopProduct.getMasterProduct().getCategory().getCode());
+                || (shopProduct.getMasterProduct() != null
+                    && shopProduct.getMasterProduct().isActive()
+                    && categoryCode.equalsIgnoreCase(shopProduct.getMasterProduct().getCategory().getCode()));
     }
 
     private boolean matchesMaxPrice(ShopProduct shopProduct, BigDecimal maxPrice) {
@@ -182,22 +185,44 @@ public class RecommendationService {
         return shopId == null || shopProduct.getShop().getId().equals(shopId);
     }
 
-    private RecommendedShopProductResponse toResponse(ShopProduct shopProduct, CollectionItem matchedItem) {
+    private RecommendedShopProductResponse toResponse(Match match) {
+        ShopProduct shopProduct = match.shopProduct();
+        CollectionItem matchedItem = match.collectionItem();
         var shop = shopProduct.getShop();
         var masterProduct = shopProduct.getMasterProduct();
+        var catalogItem = shopProduct.getCatalogItem();
+        var edition = shopProduct.getCatalogItemEdition();
+        var series = catalogItem == null ? null : catalogItem.getSeries();
         String matchedStatus = matchedItem.getCollectionStatus().name();
 
         return new RecommendedShopProductResponse(
                 shopProduct.getId(),
                 shop.getId(),
                 shop.getName(),
-                masterProduct.getId(),
-                masterProduct.getName(),
-                masterProduct.getCategory().getCode(),
-                masterProduct.getFranchise(),
-                masterProduct.getCollectionName(),
-                masterProduct.getVolumeNumber(),
-                masterProduct.getCoverImageUrl(),
+                masterProduct == null ? null : masterProduct.getId(),
+                firstNonBlank(masterProduct == null ? null : masterProduct.getName(), catalogItem == null ? null : catalogItem.getTitle()),
+                masterProduct == null ? null : masterProduct.getCategory().getCode(),
+                firstNonBlank(masterProduct == null ? null : masterProduct.getFranchise(), franchiseName(series)),
+                firstNonBlank(masterProduct == null ? null : masterProduct.getCollectionName(), series == null ? null : series.getTitle()),
+                firstNonBlank(masterProduct == null ? null : masterProduct.getVolumeNumber(), catalogItem == null ? null : catalogItem.getSequenceLabel()),
+                edition != null && edition.getCoverImageUrl() != null
+                        ? edition.getCoverImageUrl()
+                        : masterProduct == null ? null : masterProduct.getCoverImageUrl(),
+                catalogItem == null ? null : catalogItem.getId(),
+                catalogItem == null ? null : catalogItem.getTitle(),
+                catalogItem == null ? null : catalogItem.getSequenceLabel(),
+                series == null ? null : series.getId(),
+                series == null ? null : series.getTitle(),
+                edition == null ? null : edition.getId(),
+                edition == null ? null : edition.getEditionName(),
+                edition == null || edition.getFormat() == null ? null : edition.getFormat().name(),
+                edition == null ? null : edition.getIsbn(),
+                edition == null ? null : edition.getEan(),
+                edition == null ? null : edition.getCoverImageUrl(),
+                edition == null || edition.getPublisher() == null ? null : edition.getPublisher().getName(),
+                franchiseName(series),
+                shopProduct.getEditorialReferenceSource().name(),
+                match.matchType().name(),
                 shopProduct.getPriceAmount(),
                 shopProduct.getCurrency(),
                 shopProduct.getStockQuantity(),
@@ -210,23 +235,96 @@ public class RecommendationService {
         );
     }
 
-    private CollectionItem bestMatch(CollectionItem first, CollectionItem second) {
-        return collectionItemComparator().compare(first, second) <= 0 ? first : second;
+    private java.util.Optional<Match> bestMatch(ShopProduct shopProduct, List<CollectionItem> targetItems) {
+        return targetItems.stream()
+                .map(item -> match(shopProduct, item))
+                .flatMap(java.util.Optional::stream)
+                .min(matchComparator());
     }
 
-    private Comparator<CollectionItem> collectionItemComparator() {
+    private java.util.Optional<Match> match(ShopProduct shopProduct, CollectionItem item) {
+        if (item.getCatalogItemEdition() != null && shopProduct.getCatalogItemEdition() != null
+                && Objects.equals(item.getCatalogItemEdition().getId(), shopProduct.getCatalogItemEdition().getId())) {
+            return java.util.Optional.of(new Match(shopProduct, item, MatchType.EDITION_EXACT));
+        }
+        if (item.getCatalogItem() != null && shopProduct.getCatalogItem() != null
+                && Objects.equals(item.getCatalogItem().getId(), shopProduct.getCatalogItem().getId())) {
+            return java.util.Optional.of(new Match(shopProduct, item, MatchType.ITEM_EXACT));
+        }
+        if (item.getMasterProduct() != null && shopProduct.getMasterProduct() != null
+                && Objects.equals(item.getMasterProduct().getId(), shopProduct.getMasterProduct().getId())) {
+            return java.util.Optional.of(new Match(shopProduct, item, MatchType.LEGACY_MASTER_PRODUCT));
+        }
+        return java.util.Optional.empty();
+    }
+
+    private Set<Long> ids(List<CollectionItem> items, ReferenceKind kind) {
+        return items.stream()
+                .map(item -> switch (kind) {
+                    case MASTER_PRODUCT -> item.getMasterProduct() == null ? null : item.getMasterProduct().getId();
+                    case CATALOG_ITEM -> item.getCatalogItem() == null ? null : item.getCatalogItem().getId();
+                    case CATALOG_ITEM_EDITION -> item.getCatalogItemEdition() == null
+                            ? null : item.getCatalogItemEdition().getId();
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+    }
+
+    private Set<Long> nonEmpty(Set<Long> ids) {
+        return ids.isEmpty() ? Set.of(-1L) : ids;
+    }
+
+    private boolean hasPublicReference(ShopProduct shopProduct) {
+        boolean legacy = shopProduct.getMasterProduct() != null && shopProduct.getMasterProduct().isActive();
+        boolean item = shopProduct.getCatalogItem() != null && shopProduct.getCatalogItem().isPubliclyVisible();
+        boolean edition = shopProduct.getCatalogItemEdition() != null
+                && shopProduct.getCatalogItemEdition().isPubliclyVisible()
+                && shopProduct.getCatalogItem() != null
+                && Objects.equals(shopProduct.getCatalogItemEdition().getCatalogItem().getId(),
+                        shopProduct.getCatalogItem().getId());
+        return legacy || item || edition;
+    }
+
+    private String franchiseName(CatalogSeries series) {
+        return series == null || series.getFranchise() == null ? null : series.getFranchise().getName();
+    }
+
+    private String firstNonBlank(String preferred, String fallback) {
+        return preferred == null || preferred.isBlank() ? fallback : preferred;
+    }
+
+    private RecommendedShopProductResponse betterMatch(
+            RecommendedShopProductResponse first,
+            RecommendedShopProductResponse second
+    ) {
+        return responseMatchComparator().compare(first, second) <= 0 ? first : second;
+    }
+
+    private Comparator<Match> matchComparator() {
         return Comparator
-                .comparingInt((CollectionItem item) -> statusPriority(item.getCollectionStatus()))
-                .thenComparing(item -> item.getCollection().getName(), Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER))
-                .thenComparing(CollectionItem::getId, Comparator.nullsLast(Long::compareTo));
+                .comparingInt((Match match) -> match.matchType().priority)
+                .thenComparingInt(match -> statusPriority(match.collectionItem().getCollectionStatus()))
+                .thenComparing(match -> match.collectionItem().getCollection().getName(),
+                        Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER))
+                .thenComparing(match -> match.collectionItem().getId(), Comparator.nullsLast(Long::compareTo));
+    }
+
+    private Comparator<RecommendedShopProductResponse> responseMatchComparator() {
+        return Comparator
+                .comparingInt((RecommendedShopProductResponse response) -> matchPriority(response.matchType()))
+                .thenComparingInt(response -> statusPriority(response.matchedCollectionItemStatus()))
+                .thenComparing(RecommendedShopProductResponse::matchedCollectionName,
+                        Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER))
+                .thenComparing(RecommendedShopProductResponse::matchedCollectionId,
+                        Comparator.nullsLast(Long::compareTo));
     }
 
     private Comparator<RecommendedShopProductResponse> recommendationComparator() {
         return Comparator
                 .comparingInt((RecommendedShopProductResponse response) ->
                         statusPriority(response.matchedCollectionItemStatus()))
-                .thenComparing(RecommendedShopProductResponse::productName, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER))
                 .thenComparing(RecommendedShopProductResponse::priceAmount, Comparator.nullsLast(BigDecimal::compareTo))
+                .thenComparing(RecommendedShopProductResponse::productName, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER))
                 .thenComparing(RecommendedShopProductResponse::shopProductId, Comparator.nullsLast(Long::compareTo));
     }
 
@@ -236,6 +334,10 @@ public class RecommendationService {
 
     private int statusPriority(String status) {
         return CollectionItemStatus.MISSING.name().equals(status) ? 0 : 1;
+    }
+
+    private int matchPriority(String matchType) {
+        return MatchType.valueOf(matchType).priority;
     }
 
     private long countStatus(List<CollectionItem> targetItems, CollectionItemStatus status) {
@@ -345,5 +447,26 @@ public class RecommendationService {
             PhysicalCondition physicalCondition,
             Long shopId
     ) {
+    }
+
+    private record Match(ShopProduct shopProduct, CollectionItem collectionItem, MatchType matchType) {
+    }
+
+    private enum MatchType {
+        EDITION_EXACT(0),
+        ITEM_EXACT(1),
+        LEGACY_MASTER_PRODUCT(2);
+
+        private final int priority;
+
+        MatchType(int priority) {
+            this.priority = priority;
+        }
+    }
+
+    private enum ReferenceKind {
+        MASTER_PRODUCT,
+        CATALOG_ITEM,
+        CATALOG_ITEM_EDITION
     }
 }
