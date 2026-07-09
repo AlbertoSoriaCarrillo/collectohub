@@ -1,0 +1,77 @@
+.admin-editorial-shell {
+  display: grid;
+  gap: 22px;
+  margin: 0 auto;
+  max-width: 1120px;
+}
+
+.admin-hero {
+  display: grid;
+  gap: 8px;
+}
+
+.eyebrow {
+  color: var(--ch-primary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(2rem, 4vw, 3.4rem);
+}
+
+h2 {
+  font-size: 1.2rem;
+}
+
+.admin-hero p:not(.eyebrow) {
+  color: var(--ch-muted);
+  max-width: 720px;
+}
+
+.admin-notice,
+.crud-note,
+.section-card {
+  background: rgba(20, 29, 39, 0.86);
+  border: 1px solid var(--ch-border);
+  border-radius: var(--ch-radius-sm);
+  color: var(--ch-text);
+}
+
+.admin-notice mat-card-content,
+.section-card mat-card-content {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.admin-notice mat-icon {
+  color: var(--ch-primary);
+}
+
+.sections-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.sections-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+
+.section-card mat-icon {
+  color: var(--ch-warm);
+}
+
+.crud-note mat-card-content {
+  color: var(--ch-muted);
+}

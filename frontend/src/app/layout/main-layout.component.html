@@ -24,6 +24,20 @@
           </a>
         }
       }
+
+      @if (isAdmin()) {
+        @for (item of adminNavItems; track item.route) {
+          <a
+            mat-button
+            [routerLink]="item.route"
+            routerLinkActive="active-link"
+            data-testid="admin-editorial-nav-link"
+          >
+            <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+            <span>{{ item.labelKey | translate }}</span>
+          </a>
+        }
+      }
     </nav>
 
     <div class="header-actions">
@@ -55,6 +69,12 @@
             <mat-icon aria-hidden="true">person</mat-icon>
             <span>{{ 'layout.nav.profile' | translate }}</span>
           </a>
+          @if (isAdmin()) {
+            <a mat-menu-item routerLink="/admin/editorial" data-testid="user-menu-admin-editorial">
+              <mat-icon aria-hidden="true">admin_panel_settings</mat-icon>
+              <span>{{ 'layout.nav.adminEditorial' | translate }}</span>
+            </a>
+          }
           <button
             mat-menu-item
             type="button"
@@ -81,6 +101,20 @@
       @if (authService.isAuthenticated()) {
         @for (item of privateNavItems; track item.route) {
           <a mat-button [routerLink]="item.route" routerLinkActive="active-link">
+            <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+            <span>{{ item.labelKey | translate }}</span>
+          </a>
+        }
+      }
+
+      @if (isAdmin()) {
+        @for (item of adminNavItems; track item.route) {
+          <a
+            mat-button
+            [routerLink]="item.route"
+            routerLinkActive="active-link"
+            data-testid="admin-editorial-sidebar-link"
+          >
             <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
             <span>{{ item.labelKey | translate }}</span>
           </a>

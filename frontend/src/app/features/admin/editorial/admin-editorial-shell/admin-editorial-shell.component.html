@@ -1,0 +1,32 @@
+<section class="admin-editorial-shell">
+  <header class="admin-hero">
+    <p class="eyebrow">{{ 'layout.nav.adminEditorial' | translate }}</p>
+    <h1>{{ 'admin.editorial.title' | translate }}</h1>
+    <p>{{ 'admin.editorial.subtitle' | translate }}</p>
+  </header>
+
+  <mat-card class="admin-notice">
+    <mat-card-content>
+      <mat-icon aria-hidden="true">admin_panel_settings</mat-icon>
+      <span>{{ 'admin.editorial.adminOnly' | translate }}</span>
+    </mat-card-content>
+  </mat-card>
+
+  <section class="sections-panel" [attr.aria-label]="'admin.editorial.nextSectionsTitle' | translate">
+    <h2>{{ 'admin.editorial.nextSectionsTitle' | translate }}</h2>
+    <div class="sections-grid">
+      @for (section of sections; track section.labelKey) {
+        <mat-card class="section-card">
+          <mat-card-content>
+            <mat-icon aria-hidden="true">{{ section.icon }}</mat-icon>
+            <span>{{ section.labelKey | translate }}</span>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  </section>
+
+  <mat-card class="crud-note">
+    <mat-card-content>{{ 'admin.editorial.noCrudYet' | translate }}</mat-card-content>
+  </mat-card>
+</section>

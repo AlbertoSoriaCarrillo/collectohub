@@ -1419,3 +1419,34 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Validacion documental: `git diff --check` ejecutado sin errores.
 - No se modifica backend funcional, frontend funcional, migraciones, endpoints
   ni rutas Angular.
+
+## 2026-07-10 - EPIC 40A - Admin editorial shell y navegacion protegida
+
+- Creado guard funcional `adminGuard` como `CanActivateFn`, reutilizando
+  `AuthService`, redirigiendo usuarios anonimos a `/login` con `returnUrl` y
+  usuarios autenticados sin `ADMIN` a `/home`.
+- Creada ruta lazy `/admin/editorial` protegida por `[authGuard, adminGuard]`.
+- Creado shell standalone de admin editorial con secciones futuras de
+  publishers, franquicias, series, items, ediciones, creators, creditos,
+  relaciones y reconciliacion legacy.
+- Anadido enlace de navegacion admin en header, menu de usuario y sidebar solo
+  para usuarios con rol `ADMIN`.
+- Anadidas traducciones ES/EN para la navegacion y el shell admin.
+- Anadidos tests de guard, shell, navegacion visible solo para `ADMIN` y claves
+  i18n.
+- Ejecutado `cd frontend && npm.cmd ci`: correcto, 474 paquetes instalados y
+  475 auditados. Se mantienen avisos conocidos de `@angular/animations`,
+  scripts pendientes de aprobacion y 7 vulnerabilidades npm, sin ejecutar
+  `npm audit fix` ni `npm audit fix --force`.
+- Primer intento de `npm.cmd test -- --watch=false`: fallo por expectativa del
+  test nuevo en ES mientras el entorno de test renderizaba EN. Ajustado el spec
+  del shell sin cambiar logica funcional.
+- Ejecutado `cd frontend && npm.cmd test -- --watch=false`: 45 archivos y 125
+  tests correctos.
+- Ejecutado `cd frontend && npm.cmd run build`: correcto. Permanece el warning
+  conocido del bundle inicial de 604.55 kB frente al budget de 500 kB.
+- No se modifica backend, infra, migraciones, endpoints, CRUDs, formularios,
+  servicios admin, reservas, tiendas, inventario, recomendaciones, colecciones,
+  social ni marketplace.
+- No se inicia EPIC 40B.
+- Siguiente tarea recomendada: EPIC 40B - Admin publishers/franchises/series.

@@ -39,6 +39,13 @@ export class MainLayoutComponent {
     { labelKey: 'layout.nav.collections', route: '/collections', icon: 'collections_bookmark' },
     { labelKey: 'layout.nav.wanted', route: '/wanted', icon: 'bookmark_search' }
   ];
+  readonly adminNavItems: NavItem[] = [
+    {
+      labelKey: 'layout.nav.adminEditorial',
+      route: '/admin/editorial',
+      icon: 'admin_panel_settings'
+    }
+  ];
   readonly mobilePublicNavItems: NavItem[] = [
     { labelKey: 'layout.nav.home', route: '/home', icon: 'home' },
     { labelKey: 'layout.nav.catalog', route: '/catalog', icon: 'travel_explore' },
@@ -58,6 +65,10 @@ export class MainLayoutComponent {
       .slice(0, 2)
       .map((part) => part.charAt(0).toUpperCase())
       .join('');
+  }
+
+  isAdmin(): boolean {
+    return this.authService.isAuthenticated() && this.authService.hasRole('ADMIN');
   }
 
   logout(): void {

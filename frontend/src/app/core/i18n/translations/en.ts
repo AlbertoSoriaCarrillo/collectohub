@@ -94,6 +94,7 @@ export const en: TranslationDictionary = {
       collectionsShort: 'Collections',
       recommendations: 'Wanted',
       wanted: 'Wanted',
+      adminEditorial: 'Editorial admin',
       profile: 'Profile',
       reservations: 'My reservations',
       reservationsShort: 'Reservations'
@@ -318,6 +319,26 @@ export const en: TranslationDictionary = {
         PREQUEL: 'Prequel',
         SEQUEL: 'Sequel',
         RELATED: 'Related'
+      }
+    }
+  },
+  admin: {
+    editorial: {
+      title: 'Editorial admin',
+      subtitle: 'Internal editorial catalog management',
+      adminOnly: 'Only ADMIN users can access this area.',
+      nextSectionsTitle: 'Upcoming sections',
+      noCrudYet: 'CRUD forms will be implemented in the next EPICs.',
+      sections: {
+        publishers: 'Publishers',
+        franchises: 'Franchises',
+        series: 'Series',
+        items: 'Items',
+        editions: 'Editions',
+        creators: 'Creators',
+        credits: 'Credits',
+        relationships: 'Relationships',
+        reconciliation: 'Legacy reconciliation'
       }
     }
   },

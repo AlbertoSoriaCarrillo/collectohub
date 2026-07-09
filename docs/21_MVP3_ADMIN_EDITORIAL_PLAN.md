@@ -1,6 +1,6 @@
 # CollectoHub MVP 3 admin editorial plan
 
-Fecha de revision: 2026-07-09.
+Fecha de revision: 2026-07-10.
 
 ## 1. Objetivo de MVP3
 
@@ -131,7 +131,8 @@ EPIC 39C.
 
 ## 9. Orden recomendado de EPICs
 
-1. EPIC 40A - Admin editorial shell y navegacion protegida.
+1. EPIC 40A - Admin editorial shell y navegacion protegida. Completada el
+   2026-07-10.
 2. EPIC 40B - Admin publishers/franchises/series.
 3. EPIC 40C - Admin items/editions.
 4. EPIC 40D - Admin creators y creditos.
@@ -195,3 +196,8 @@ Alcance propuesto:
 
 EPIC 40A debe validar navegacion, permisos, layout y separacion del recorrido
 publico antes de anadir pantallas de mantenimiento editorial.
+
+Estado: EPIC 40A completada el 2026-07-10. La ruta `/admin/editorial`, el
+shell admin, el guard `ADMIN`, el enlace de navegacion condicionado y las
+traducciones ES/EN quedan implementados. No se crean CRUDs ni se inicia EPIC
+40B.

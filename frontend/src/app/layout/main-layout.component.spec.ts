@@ -11,11 +11,13 @@ describe('MainLayoutComponent', () => {
   const authService = {
     currentUser: computed(() => currentUser()),
     isAuthenticated: computed(() => Boolean(currentUser())),
+    hasRole: vi.fn((role: string) => currentUser()?.roles.includes(role) ?? false),
     logout: vi.fn()
   };
 
   beforeEach(async () => {
     currentUser.set(null);
+    authService.hasRole.mockImplementation((role: string) => currentUser()?.roles.includes(role) ?? false);
     authService.logout.mockClear();
 
     await TestBed.configureTestingModule({
@@ -41,6 +43,8 @@ describe('MainLayoutComponent', () => {
     expect(compiled.querySelector('[data-testid="language-selector"]')).toBeTruthy();
     expect(compiled.querySelector('[data-testid="register-link"]')).toBeFalsy();
     expect(compiled.querySelector('[data-testid="user-menu-button"]')).toBeFalsy();
+    expect(compiled.querySelector('[data-testid="admin-editorial-nav-link"]')).toBeFalsy();
+    expect(compiled.querySelector('[data-testid="admin-editorial-sidebar-link"]')).toBeFalsy();
     expect(visibleRoutes(compiled)).toContain('/catalog/editorial');
     expect(visibleRoutes(compiled)).not.toContain('/shops');
     expect(visibleRoutes(compiled)).not.toContain('/reservations');
@@ -62,9 +66,30 @@ describe('MainLayoutComponent', () => {
 
     expect(compiled.querySelector('[data-testid="user-menu-button"]')).toBeTruthy();
     expect(compiled.querySelector('[data-testid="login-header-link"]')).toBeFalsy();
+    expect(compiled.querySelector('[data-testid="admin-editorial-nav-link"]')).toBeFalsy();
+    expect(compiled.querySelector('[data-testid="admin-editorial-sidebar-link"]')).toBeFalsy();
     expect(visibleRoutes(compiled)).toContain('/catalog/editorial');
     expect(visibleRoutes(compiled)).not.toContain('/shops');
     expect(visibleRoutes(compiled)).not.toContain('/reservations');
+  });
+
+  it('shows the editorial admin link only for ADMIN users', () => {
+    currentUser.set({
+      id: 2,
+      email: 'admin@example.com',
+      displayName: 'Admin Example',
+      preferredInterfaceLanguage: 'es',
+      roles: ['USER', 'ADMIN']
+    });
+
+    const fixture = TestBed.createComponent(MainLayoutComponent);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(compiled.querySelector('[data-testid="admin-editorial-nav-link"]')).toBeTruthy();
+    expect(compiled.querySelector('[data-testid="admin-editorial-sidebar-link"]')).toBeTruthy();
+    expect(visibleRoutes(compiled)).toContain('/admin/editorial');
   });
 });
 

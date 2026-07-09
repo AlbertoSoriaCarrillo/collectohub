@@ -94,6 +94,7 @@ export const es: TranslationDictionary = {
       collectionsShort: 'Colecciones',
       recommendations: 'Buscados',
       wanted: 'Buscados',
+      adminEditorial: 'Admin editorial',
       profile: 'Perfil',
       reservations: 'Mis reservas',
       reservationsShort: 'Reservas'
@@ -318,6 +319,26 @@ export const es: TranslationDictionary = {
         PREQUEL: 'Precuela',
         SEQUEL: 'Secuela',
         RELATED: 'Relacionado'
+      }
+    }
+  },
+  admin: {
+    editorial: {
+      title: 'Admin editorial',
+      subtitle: 'Gestion interna del catalogo editorial',
+      adminOnly: 'Solo usuarios ADMIN pueden acceder a esta zona.',
+      nextSectionsTitle: 'Proximas secciones',
+      noCrudYet: 'Los formularios CRUD se implementaran en las siguientes EPICs.',
+      sections: {
+        publishers: 'Editoriales',
+        franchises: 'Franquicias',
+        series: 'Series',
+        items: 'Items',
+        editions: 'Ediciones',
+        creators: 'Creators',
+        credits: 'Creditos',
+        relationships: 'Relaciones',
+        reconciliation: 'Reconciliacion legacy'
       }
     }
   },
