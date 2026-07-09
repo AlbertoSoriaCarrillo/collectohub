@@ -19,6 +19,8 @@ La auditoria de cierre de MVP 2 esta en
 comun y adopcion gradual con limitaciones documentadas. Siguen fuera de MVP 2:
 frontend admin editorial, moderacion editorial, reservas editoriales,
 marketplace, pagos, alertas, pantalla de grafo avanzada, social y movil.
+Siguiente gran bloque: MVP 3 Admin editorial y carga real de datos. Social,
+tiendas, marketplace, pagos y movil quedan en fases posteriores.
 
 | Dominio | Estado actual |
 | --- | --- |
@@ -328,10 +330,11 @@ de aplicacion, 81 endpoints, 32 rutas Angular y 61 relaciones pantalla-backend.
 Los estados distinguen recorrido MVP 1, base legacy/futura, infraestructura,
 MVP 2 visible/foundation y redirecciones sin alterar codigo funcional.
 
-La siguiente tarea recomendada es **EPIC 39 - Cierre MVP2 editorial y
-preparacion de MVP3 Admin Editorial**. Debe cerrar formalmente MVP 2 y preparar
-el siguiente bloque administrativo sin iniciar todavia social, tiendas,
-marketplace, pagos ni movil. Auditoria:
+La siguiente tarea recomendada es **EPIC 39 - Cierre formal MVP2 y preparacion
+de MVP3 Admin Editorial**. Debe cerrar formalmente MVP 2 y preparar el siguiente
+bloque administrativo: MVP 3 Admin editorial y carga real de datos. Social queda
+desplazado a MVP 6; tiendas, marketplace, pagos y movil quedan en fases
+posteriores. Auditoria:
 `docs/20_MVP2_CLOSURE_REVIEW.md`.
 
 1. Preparar capturas reales para `docs/assets/screenshots/` y enlazarlas desde el README.

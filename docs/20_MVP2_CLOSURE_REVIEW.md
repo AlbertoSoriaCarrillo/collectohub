@@ -21,7 +21,8 @@ EPIC 39 - Cierre MVP2 editorial y preparacion de MVP3 Admin Editorial
 
 EPIC 39 debe ser una fase corta de cierre, estabilizacion documental y
 preparacion del siguiente bloque administrativo, no una implementacion funcional
-del admin editorial completo.
+del admin editorial completo. MVP 3 sera Admin editorial y carga real de datos;
+Social basico se desplaza a MVP 6.
 
 ## Capacidades auditadas
 
@@ -111,7 +112,8 @@ del admin editorial completo.
 ### Objetivo
 
 Cerrar formalmente MVP 2 editorial como `MVP2_CLOSED_WITH_LIMITATIONS` y
-preparar MVP3 Admin Editorial sin implementar todavia el panel administrativo.
+preparar MVP3 Admin Editorial y carga real de datos sin implementar todavia el
+panel administrativo.
 
 ### Alcance
 
@@ -126,7 +128,8 @@ preparar MVP3 Admin Editorial sin implementar todavia el panel administrativo.
 
 - Implementar admin editorial.
 - Crear endpoints, migraciones o rutas nuevas.
-- Iniciar social, tiendas, marketplace, pagos o movil.
+- Iniciar social, tiendas, marketplace, pagos o movil. Social basico pertenece
+  ahora a MVP 6.
 - Crear importadores, carga masiva o wiki colaborativa.
 
 ### Riesgos
@@ -138,9 +141,10 @@ preparar MVP3 Admin Editorial sin implementar todavia el panel administrativo.
 ### Orden recomendado
 
 1. Cerrar MVP 2 documentalmente.
-2. Preparar criterios y backlog de MVP3 Admin Editorial.
+2. Preparar criterios y backlog de MVP3 Admin Editorial y carga real de datos.
 3. Despues iniciar frontend/admin editorial acotado.
-4. Mantener social, tiendas, marketplace y pagos como fases posteriores.
+4. Mantener social basico en MVP 6 y tiendas, marketplace y pagos como fases
+   posteriores.
 
 ### Validaciones necesarias
 

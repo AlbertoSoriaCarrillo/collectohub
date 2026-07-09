@@ -46,49 +46,71 @@ Estado recomendado: `MVP2_CLOSED_WITH_LIMITATIONS`. MVP 2 puede cerrarse como
 biblioteca editorial comun y adopcion gradual, dejando fuera admin editorial,
 moderacion, carga masiva, marketplace, pagos, social y movil.
 
-Siguiente tarea: EPIC 39 - Cierre MVP2 editorial y preparacion de MVP3 Admin
+Siguiente tarea: EPIC 39 - Cierre formal MVP2 y preparacion de MVP3 Admin
 Editorial.
 
-## MVP 3 - Social basico
+MVP 3 ya no es Social basico. MVP 3 pasa a ser Admin editorial y carga real de
+datos. Social basico pasa a MVP 6. El cambio de orden evita saltar a
+social/comercio antes de tener gestion editorial mantenible.
+
+## MVP 3 - Admin editorial y carga real de datos
+
+- panel admin editorial para publishers, franquicias, series, items, ediciones,
+  creators y relaciones;
+- reconciliacion visual de enlaces `master_products`;
+- revision de borradores, duplicados y calidad de datos;
+- carga real de datos controlada.
+
+## MVP 4 - Colecciones finales de usuario
+
+- adopcion principal del catalogo editorial en colecciones;
+- seleccion refinada de item y edicion;
+- buscados/faltantes mejorados;
+- estabilidad E2E del recorrido coleccionista.
+
+## MVP 5 - Tiendas profesionales y reservas
+
+- perfil de tienda listo para usuario final;
+- inventario profesional con referencias editoriales;
+- reservas simples con reglas claras;
+- metricas basicas para tienda.
+
+## MVP 6 - Social basico
 
 - perfiles publicos;
 - follows;
 - actividad de colecciones compartidas;
-- posts simples;
-- comentarios;
-- likes;
-- resenas;
+- posts simples, comentarios, likes y resenas;
 - reportes, bloqueos y moderacion basica.
 
-## MVP 4 - Tiendas y matching
+## MVP 7 - Notificaciones, mensajeria y eventos
 
-- perfil de tienda listo para usuario final;
-- stock y disponibilidad fiables;
-- matching por identidad editorial;
-- alertas de coincidencia;
-- preferencias de precio, idioma, edicion, condicion y ubicacion;
-- demanda agregada con privacidad;
-- metricas basicas para tienda.
+- notificaciones internas;
+- email transaccional basico;
+- alertas;
+- mensajeria limitada y segura;
+- eventos simples.
 
-## MVP 5 - Comercio
+## MVP 8 - Marketplace inicial
 
-- reservas transaccionales y expiracion automatica;
+- escaparate inicial de ofertas;
+- matching con stock de tiendas;
+- comparacion basica;
+- solicitudes o reservas comerciales mejoradas.
+
+## MVP 9 - Pagos, pedidos, envios y legal comercial
+
 - carrito y pedidos;
 - pagos y conciliacion;
 - facturacion;
-- envios y devoluciones;
-- almacen;
-- comisiones y soporte operativo.
+- envios, devoluciones, comisiones y soporte.
 
-## MVP 6 - Creadores
+## MVP 10 - Producto comercial, movil, seguridad avanzada y produccion
 
-- perfiles de creador;
-- contenido avanzado y multimedia;
-- comunidades;
-- eventos;
-- suscripciones;
-- newsletters/notificaciones;
-- monetizacion con requisitos legales y de moderacion.
+- hardening de seguridad;
+- observabilidad y operacion;
+- movil o PWA avanzada;
+- herramientas avanzadas para creadores y comunidades.
 
 ## Reglas de backlog
 

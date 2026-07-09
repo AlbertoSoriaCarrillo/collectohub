@@ -63,6 +63,8 @@ Debe incluir perfiles publicos, posts, comentarios, follows y actividad.
 
 Estado futuro: el perfil actual es privado/basico para el usuario autenticado.
 No hay grafo social, feed, posts, comentarios, likes, moderacion ni bloqueos.
+Tras la reordenacion de MVPs, Social basico queda en MVP 6; antes se aborda
+MVP 3 Admin editorial y carga real de datos.
 
 ## 5. Shops & Inventory
 

@@ -110,9 +110,10 @@ La evolucion debe ser gradual:
 
 **Foco actual:** MVP 1 permanece cerrado como nucleo coleccionista y MVP 2 queda
 recomendado como cerrado con limitaciones tras implementar la biblioteca
-editorial comun y su adopcion gradual. La siguiente decision de producto debe
-preparar MVP3 Admin Editorial sin presentar todavia social, comercio o
-marketplace como capacidades disponibles.
+editorial comun y su adopcion gradual. El siguiente bloque es MVP 3 Admin
+editorial y carga real de datos. Social basico, comercio, marketplace y movil
+son fases posteriores, no capacidades disponibles ni el siguiente bloque
+inmediato.
 
 **Vision larga:** plataforma que conecta coleccionistas, catalogo, tiendas y
 creadores mediante conocimiento compartido, matching oferta/demanda y funciones

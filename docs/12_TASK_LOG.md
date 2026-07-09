@@ -1385,3 +1385,20 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Validacion documental: `git diff --check` ejecutado sin errores.
 - No se modifica backend funcional, frontend funcional, migraciones, endpoints
   ni rutas Angular. No se inicia EPIC 39 funcional.
+
+## 2026-07-09 - EPIC 39B - Alineacion roadmap producto
+
+- Roadmap de producto alineado a una secuencia de 10 MVPs tras el cierre de
+  MVP 2.
+- MVP 3 redefinido como Admin editorial y carga real de datos.
+- Social basico movido a MVP 6 para evitar saltar a social/comercio antes de
+  tener gestion editorial mantenible.
+- Backlog actualizado con EPIC 39 como cierre formal MVP2 y preparacion de MVP3
+  Admin Editorial.
+- Estado MVP actualizado para indicar MVP 2 cerrado con limitaciones y siguiente
+  gran bloque MVP 3 Admin editorial.
+- Closure review actualizado para dejar claro que MVP 3 sera Admin editorial y
+  Social basico queda en fase posterior.
+- Validacion documental: `git diff --check` ejecutado sin errores.
+- No se modifica backend funcional, frontend funcional, migraciones, endpoints
+  ni rutas Angular.

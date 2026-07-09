@@ -5,14 +5,15 @@ creadores de contenido, apoyada en un catalogo comun de objetos coleccionables.
 
 ## Foco Actual
 
-**MVP 2: diseno e implementacion gradual de un catalogo editorial solido.**
+**MVP 2 cerrado con limitaciones; siguiente bloque: MVP 3 Admin editorial y
+carga real de datos.**
 
 El recorrido visible de MVP 1 permanece estable: explorar libros, comics y
 manga, crear colecciones, marcar lo que se tiene o busca y revisar faltantes.
 MVP 2 ya dispone de catalogo y frontend editorial, referencias editoriales en
-colecciones e inventario, y matching editorial basico, sin romper
-`master_products` ni el recorrido legacy. Las reservas siguen como base tecnica
-legacy/futura.
+colecciones e inventario, matching editorial basico, creators y relaciones,
+sin romper `master_products` ni el recorrido legacy. Las reservas siguen como
+base tecnica legacy/futura.
 
 ## Vision A Largo Plazo
 
@@ -28,10 +29,10 @@ marketplace, pagos o tiendas ya listos para usuario final.
 
 - MVP 1 cerrado como base tecnica/producto el 2026-06-29; checklist completo en
   `docs/07_MVP1_ACCEPTANCE_CHECKLIST.md`.
-- MVP 2 iniciado con el diseno de `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md` y
-  EPIC 31 a EPIC 38 implementadas: catalogo y frontend editorial, puente con
-  `master_products`, colecciones, inventario, matching editorial basico,
-  creators y relaciones editoriales visibles en el detalle de catalogo.
+- MVP 2 cerrado con limitaciones tras EPIC 31 a EPIC 38: catalogo y frontend
+  editorial, puente con `master_products`, colecciones, inventario, matching
+  editorial basico, creators y relaciones editoriales visibles en el detalle de
+  catalogo.
 - MVP funcional de backend y frontend.
 - Docker Compose local con PostgreSQL, backend y frontend validado.
 - Tests backend, tests frontend y E2E Playwright implementados.
@@ -280,10 +281,12 @@ formatos Markdown, Mermaid y CSV descargables.
   su visualizacion en el detalle editorial.
 - MVP 2 queda recomendado como `MVP2_CLOSED_WITH_LIMITATIONS`; auditoria en
   `docs/20_MVP2_CLOSURE_REVIEW.md`.
-- El siguiente paso recomendado es EPIC 39: cierre MVP2 editorial y preparacion
-  de MVP3 Admin Editorial.
-- Validar despues social basico y, en fases separadas, matching con tiendas,
-  comercio real y herramientas para creadores.
+- El siguiente paso recomendado es EPIC 39: cierre formal MVP2 y preparacion de
+  MVP3 Admin Editorial y carga real de datos.
+- Social basico pasa a MVP 6; antes quedan MVP3 Admin Editorial, MVP4
+  colecciones finales y MVP5 tiendas profesionales/reservas.
+- Validar despues marketplace, pagos, producto comercial, movil y herramientas
+  avanzadas para creadores en fases separadas.
 - Ejecutar E2E en CI con un job separado y estable.
 - Revisar vulnerabilidades npm transitivas y estrategia de actualizacion.
 - Endurecer seguridad para produccion: cookies/refresh, CSRF segun estrategia,

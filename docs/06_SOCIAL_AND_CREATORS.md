@@ -2,10 +2,11 @@
 
 ## Secuencia de producto
 
-Social no es el MVP 1 completo. Primero se valida que catalogo y colecciones
-personales resuelven un problema real. Despues se anaden perfiles publicos y
-actividad; las herramientas para creadores y la monetizacion llegan en fases
-posteriores.
+Social no es el MVP 1 ni el bloque inmediato tras MVP 2. Primero se valida que
+catalogo y colecciones personales resuelven un problema real; despues se
+consolida la administracion editorial y la carga real de datos. Social basico
+queda desplazado a MVP 6. Las herramientas para creadores y la monetizacion
+llegan en fases posteriores.
 
 ## Estado actual
 
@@ -19,7 +20,7 @@ posteriores.
 El lenguaje visual o la expresion "red social/catalogo" describe una direccion
 de producto, no una red social ya implementada.
 
-## Social basico - MVP 3
+## Social basico - MVP 6
 
 Incluye:
 
@@ -35,7 +36,7 @@ Incluye:
 Su objetivo es mejorar descubrimiento y conversacion alrededor de colecciones y
 franquicias, no maximizar publicacion sin contexto.
 
-## Creadores y comunidades - MVP 6
+## Creadores y comunidades - fase posterior
 
 Incluye:
 
@@ -63,8 +64,9 @@ moderacion, derechos de contenido, pagos y soporte.
 - Monetizacion no se implementa antes de validar valor recurrente y obligaciones
   legales, fiscales y de plataforma.
 
-## Fuera de MVP 1
+## Fuera del bloque inmediato
 
 Feed, chat, posts, comentarios, likes, follows, comunidades, eventos,
 suscripciones y monetizacion quedan fuera del alcance actual. No deben anadirse
-como atajos mientras la fase activa sea el nucleo coleccionista.
+como atajos mientras la siguiente fase sea Admin editorial y carga real de
+datos.

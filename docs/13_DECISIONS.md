@@ -496,6 +496,16 @@ La siguiente fase recomendada es EPIC 39 - Cierre MVP2 editorial y preparacion
 de MVP3 Admin Editorial, sin iniciar todavia la implementacion funcional del
 admin editorial.
 
+## 2026-07-09 - Reordenacion de MVPs tras cierre MVP2
+
+Tras cerrar MVP2 como `MVP2_CLOSED_WITH_LIMITATIONS`, la siguiente fase pasa a
+ser MVP3 Admin editorial y carga real de datos. Social basico se desplaza a una
+fase posterior, concretamente MVP 6.
+
+Motivo: el catalogo editorial ya existe tecnicamente, pero necesita herramientas
+mantenibles de administracion, calidad de datos y carga real antes de escalar a
+social, tiendas, marketplace o pagos.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

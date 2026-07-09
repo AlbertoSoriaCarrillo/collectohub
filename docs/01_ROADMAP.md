@@ -10,8 +10,9 @@ implementacion del repositorio.
 ## Principio de secuencia
 
 El producto final es amplio, pero no se construye como un unico MVP. El orden
-separa validacion de usuario, calidad del catalogo, social, tiendas, matching,
-comercio y creadores para reducir riesgo y mantener un alcance verificable.
+separa validacion de usuario, calidad del catalogo, administracion editorial,
+colecciones finales, tiendas, social, comunicaciones, marketplace, comercio y
+produccion para reducir riesgo y mantener un alcance verificable.
 
 ## MVP 1 - Nucleo coleccionista
 
@@ -66,89 +67,161 @@ masiva, marketplace, pagos, social y movil quedan fuera de MVP 2.
 Diseno y cierre: `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md` y
 `docs/20_MVP2_CLOSURE_REVIEW.md`.
 
-## MVP 3 - Social basico
+## MVP 3 - Admin editorial y carga real de datos
 
-**Objetivo:** permitir que usuarios compartan actividad y contenido alrededor
-de sus colecciones.
+**Objetivo:** hacer mantenible el catalogo editorial ya creado, con herramientas
+de administracion, calidad de datos y carga real antes de escalar social o
+comercio.
+
+Incluye:
+
+- panel admin editorial para publishers, franquicias, series, items, ediciones,
+  creators y relaciones;
+- revision de borradores y registros archivados;
+- reconciliacion visual de enlaces `master_products`;
+- carga real de datos controlada;
+- criterios de calidad, duplicados y auditoria editorial;
+- datos demo/capturas editoriales mantenibles.
+
+No incluye social, marketplace, pagos, importadores masivos abiertos,
+colaboracion wiki publica ni produccion comercial.
+
+**Estado actual:** siguiente gran bloque recomendado tras cerrar MVP 2 con
+limitaciones. EPIC 39 debe cerrar formalmente MVP 2 y preparar este MVP sin
+implementar todavia el admin funcional.
+
+## MVP 4 - Colecciones finales de usuario
+
+**Objetivo:** completar la experiencia coleccionista sobre el catalogo editorial
+como fuente principal.
+
+Incluye:
+
+- migracion gradual de flujos principales desde `master_products` al catalogo
+  editorial;
+- seleccion refinada de item y edicion en colecciones;
+- mejoras de buscados/faltantes;
+- imagenes personales o URLs controladas si se decide;
+- filtros y ordenacion finales para biblioteca personal;
+- estabilidad E2E del recorrido coleccionista.
+
+No incluye social, tiendas profesionales, pagos, marketplace ni movil.
+
+**Estado actual:** parcialmente preparado por EPIC 36; no es el siguiente bloque
+inmediato hasta cerrar Admin Editorial.
+
+## MVP 5 - Tiendas profesionales y reservas
+
+**Objetivo:** convertir la base tecnica de tiendas, inventario y reservas en un
+flujo profesional mantenible.
+
+Incluye:
+
+- perfiles de tienda listos para usuario final;
+- inventario profesional con referencias editoriales;
+- reservas simples con reglas claras;
+- contacto controlado tienda/usuario;
+- metricas basicas de demanda;
+- permisos y panel de tienda revisados.
+
+No incluye pagos, pedidos completos, envios, facturacion ni marketplace abierto.
+Los modulos actuales son base tecnica parcial, no producto comercial completo.
+
+## MVP 6 - Social basico
+
+**Objetivo:** permitir que usuarios compartan actividad y contenido alrededor de
+colecciones y catalogo ya administrables.
 
 Incluye:
 
 - perfiles publicos;
-- seguir usuarios;
-- actividad;
+- follows;
+- actividad de colecciones compartidas;
 - posts simples;
 - comentarios;
 - likes;
 - resenas;
-- reportes y bloqueos basicos.
+- reportes, bloqueos y moderacion basica.
 
-Moderacion, privacidad y controles de abuso son requisitos de la fase, no
-mejoras opcionales posteriores.
+No incluye herramientas avanzadas de creadores, monetizacion, comunidades
+complejas, eventos, chat completo ni marketplace.
 
-## MVP 4 - Tiendas y matching oferta/demanda
+## MVP 7 - Notificaciones, mensajeria y eventos
 
-**Objetivo:** conectar automaticamente usuarios que buscan objetos con tiendas
-que los tienen.
-
-Incluye:
-
-- perfil de tienda;
-- inventario, stock, precio y disponibilidad;
-- buscados del usuario;
-- coincidencias automaticas;
-- reservas simples;
-- contacto tienda/usuario;
-- metricas basicas y agregadas.
-
-Los modulos actuales de tiendas, inventario, recomendaciones y reservas son una
-base tecnica parcial para esta fase, pero no equivalen al flujo final.
-
-## MVP 5 - Marketplace y gestion comercial
-
-**Objetivo:** permitir compra/venta real y gestion operativa de tienda.
+**Objetivo:** anadir comunicacion y recurrencia sin mezclarla con pagos o
+marketplace.
 
 Incluye:
 
-- carrito;
-- pedidos;
+- notificaciones internas;
+- email transaccional basico;
+- alertas de actividad o coincidencias;
+- mensajeria limitada y segura;
+- eventos o recordatorios simples.
+
+No incluye monetizacion, pagos, pedidos ni mensajeria avanzada sin moderacion.
+
+## MVP 8 - Marketplace inicial
+
+**Objetivo:** validar oferta/demanda visible sin procesar pagos dentro de la
+plataforma.
+
+Incluye:
+
+- escaparate inicial de ofertas;
+- matching con stock de tiendas;
+- comparacion basica;
+- solicitudes o reservas comerciales mejoradas;
+- reglas de visibilidad, abuso y confianza.
+
+No incluye pagos, pedidos completos, facturacion, envios ni conciliacion.
+
+## MVP 9 - Pagos, pedidos, envios y legal comercial
+
+**Objetivo:** convertir marketplace en operacion comercial real con seguridad y
+cumplimiento.
+
+Incluye:
+
+- carrito y pedidos;
 - pagos;
 - facturacion;
 - estados de pedido;
-- almacen;
-- envios;
-- devoluciones;
+- envios y devoluciones;
 - comisiones;
-- panel de tienda.
+- conciliacion, soporte y requisitos legales/fiscales.
 
-Esta fase requiere diseno transaccional, cumplimiento legal y fiscal,
-seguridad de pagos, conciliacion y soporte operativo antes de considerarse
-disponible.
+No incluye produccion a gran escala sin observabilidad, soporte y seguridad
+operacional maduras.
 
-## MVP 6 - Creadores y comunidades
+## MVP 10 - Producto comercial, movil, seguridad avanzada y produccion
 
-**Objetivo:** dar herramientas a usuarios que crean contenido y comunidades.
+**Objetivo:** preparar CollectoHub para una operacion comercial madura y
+multiplataforma.
 
 Incluye:
 
-- perfiles de creador;
-- publicaciones avanzadas y multimedia;
-- comunidades;
-- eventos;
-- suscripciones;
-- monetizacion;
-- newsletters o notificaciones.
+- hardening de seguridad;
+- observabilidad y operacion;
+- app movil o PWA avanzada;
+- internacionalizacion avanzada;
+- herramientas avanzadas para creadores y comunidades;
+- rendimiento, escalabilidad y soporte.
 
-La monetizacion solo se aborda despues de validar comunidad, moderacion y valor
-recurrente.
+No incluye nuevas lineas de producto sin validar las fases anteriores.
 
 ## Dependencias entre fases
 
 1. El nucleo coleccionista genera la senal de interes.
 2. El catalogo editorial mejora la calidad de esa senal.
-3. Social anade relaciones y contenido sobre objetos bien identificados.
-4. Matching conecta buscados con stock real.
-5. Comercio convierte coincidencias en operaciones seguras.
-6. Creadores y comunidades amplian contenido y recurrencia.
+3. Admin editorial hace mantenible la calidad y carga real de datos.
+4. Colecciones finales adoptan el catalogo editorial como experiencia principal.
+5. Tiendas y reservas conectan stock profesional con demanda.
+6. Social anade relaciones y contenido sobre objetos bien identificados.
+7. Notificaciones y mensajeria aumentan recurrencia y comunicacion.
+8. Marketplace valida oferta/demanda visible.
+9. Comercio convierte coincidencias en operaciones seguras.
+10. Producto comercial y movil amplian alcance y operacion.
 
 Puede mantenerse codigo tecnico adelantado a una fase posterior, pero no debe
 cambiar el foco visible ni los criterios de exito de la fase activa.
