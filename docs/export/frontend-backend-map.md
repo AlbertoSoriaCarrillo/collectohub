@@ -37,8 +37,10 @@ but no current routed component calls it.
 | `/catalog/editorial/items/:itemId` - `EditorialItemDetailComponent` | `EditorialCatalogService` | `GET /api/catalog/editorial/items/{itemId}/detail` | `MVP2_VISIBLE` |
 | `/catalog/editorial/editions/:editionId` - `EditorialEditionDetailComponent` | `EditorialCatalogService` | `GET /api/catalog/editorial/editions/{editionId}/detail` | `MVP2_VISIBLE` |
 
+`GET /api/catalog/editorial/items/{itemId}/detail` now returns editions,
+creators and relationships; the item detail renders all three when present.
 `EditorialCatalogService.getMasterProductLink()` models the ADMIN endpoint for
-future use, but no public route or component invokes or exposes it in EPIC 35.
+future use, but no public route or component invokes or exposes it.
 
 ## Collections
 

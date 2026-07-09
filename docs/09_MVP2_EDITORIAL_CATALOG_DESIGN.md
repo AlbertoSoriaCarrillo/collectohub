@@ -1,7 +1,8 @@
 # CollectoHub MVP 2 editorial catalog technical design
 
-Estado: diseno tecnico aprobado en EPIC 30. EPIC 31 a EPIC 37 estan
-implementadas; el siguiente tramo es EPIC 38.
+Estado: diseno tecnico aprobado en EPIC 30. EPIC 31 a EPIC 38 estan
+implementadas; la siguiente fase debe definirse tras revisar el alcance
+pendiente de MVP 2.
 
 ## Estado de implementacion
 
@@ -27,9 +28,17 @@ EPIC 33, completada el 2026-06-30, anade `master_product_catalog_links`,
 backfill idempotente que solo crea propuestas, reconciliacion ADMIN y siete
 endpoints protegidos. No modifica consumidores legacy.
 
-No modifica `master_products`, `collection_items`, `shop_products`, matching ni
-frontend. Los elementos aun no implementados de este documento siguen siendo
-diseno futuro.
+EPIC 38, completada el 2026-07-08, anade `creators`,
+`catalog_item_creators`, roles AUTHOR, WRITER, ARTIST, ILLUSTRATOR,
+TRANSLATOR, EDITOR y OTHER, creditos visibles en el detalle editorial de item,
+`catalog_item_relationships`, tipos ADAPTATION, REMAKE, REPRINT, SAME_WORK,
+SPIN_OFF, PREQUEL, SEQUEL y RELATED, y relationships visibles en el detalle
+editorial de item.
+
+Siguen sin implementarse frontend admin de creators, frontend admin de
+relaciones, pantalla de grafo, relaciones entre series, relaciones entre
+ediciones, moderacion editorial, reservas editoriales, marketplace, pagos y
+alertas.
 
 ## 1. Objetivo de MVP 2
 
@@ -79,8 +88,9 @@ dependen directa o indirectamente de ese contrato.
   relaciones avanzadas.
 - El coleccionista debe poder marcar una obra/volumen sin saber su edicion
   exacta. Obligar a elegir ISBN reduciria adopcion y calidad de datos.
-- Authors/creators entran despues de estabilizar items y ediciones. Adaptaciones,
-  precuelas, spin-offs y grafos de relaciones pueden esperar.
+- Authors/creators y relaciones entre items ya entraron tras estabilizar items
+  y ediciones. Grafos avanzados, moderacion y relaciones entre series o
+  ediciones pueden esperar.
 - No se debe presentar el catalogo como wiki colaborativa hasta tener revision,
   trazabilidad y moderacion.
 
@@ -337,8 +347,7 @@ valida en aplicacion con item, publisher, idioma, formato, nombre y fecha.
 
 ### creators y catalog_item_creators
 
-Necesarios para completar MVP 2, pero no para el primer corte de persistencia.
-Se implementan cuando item/edicion sean estables.
+Implementados en EPIC 38 tras estabilizar item/edicion.
 
 `creators` contiene identidad y nombre. `catalog_item_creators` enlaza item,
 creator, rol (`AUTHOR`, `WRITER`, `ARTIST`, `ILLUSTRATOR`, `TRANSLATOR`,
@@ -348,11 +357,12 @@ No se recomienda `catalog_series_creators` inicialmente: los creditos de serie
 se pueden derivar de sus items y el significado de un credito global es
 ambiguo. Se reconsidera con casos reales.
 
-### catalog_relationships
+### catalog_item_relationships
 
-Se documenta, pero queda fuera del nucleo MVP 2. Las relaciones `ADAPTATION`,
-`REMAKE`, `REPRINT`, `SAME_WORK`, `SPIN_OFF`, `PREQUEL`, `SEQUEL` y `RELATED`
-requieren definir direccion, simetria y moderacion antes de persistirlas.
+EPIC 38 implementa relaciones dirigidas entre `CatalogItem` con los tipos
+`ADAPTATION`, `REMAKE`, `REPRINT`, `SAME_WORK`, `SPIN_OFF`, `PREQUEL`,
+`SEQUEL` y `RELATED`. No se crean relaciones inversas automaticamente ni se
+modelan relaciones entre series o ediciones.
 
 ### Constraints e indices candidatos
 
@@ -588,10 +598,22 @@ GET  /api/catalog/creators
 GET  /api/catalog/creators/{id}
 POST /api/catalog/creators
 PUT  /api/catalog/creators/{id}
+DELETE /api/catalog/creators/{id}
+
+GET  /api/catalog/items/{itemId}/creators
+POST /api/catalog/items/{itemId}/creators
+PUT  /api/catalog/items/{itemId}/creators/{creditId}
+DELETE /api/catalog/items/{itemId}/creators/{creditId}
+
+GET    /api/catalog/items/{itemId}/relationships
+POST   /api/catalog/items/{itemId}/relationships
+GET    /api/catalog/items/{itemId}/relationships/{relationshipId}
+PUT    /api/catalog/items/{itemId}/relationships/{relationshipId}
+DELETE /api/catalog/items/{itemId}/relationships/{relationshipId}
 ```
 
-Creators y sus escrituras se activan en una subfase posterior. Los DTOs de
-detalle deben incluir creditos, no ciclos completos de relaciones JPA.
+Los DTOs de detalle incluyen creditos y relaciones agregadas, no ciclos
+completos de relaciones JPA.
 
 ### Compatibilidad
 
@@ -683,7 +705,7 @@ cuando URLs demo, colecciones e inventario ya no dependan de el.
 | Obligar a conocer edicion | Item requerido y edicion opcional en colecciones. |
 | Matching demasiado amplio | Motivos y niveles exact/flexible/series separados. |
 | Publisher incorrecto en serie | Publisher de edicion es autoritativo; el de serie solo metadata opcional. |
-| Sobrediseno de creators/relaciones | Diferirlos hasta estabilizar core y validar casos reales. |
+| Sobrediseno de creators/relaciones | Mantener EPIC 38 acotada a items, sin frontend admin, grafos, relaciones entre series/ediciones ni moderacion avanzada. |
 | Enum de tipos cerrado | Reservar tipos futuros, exponer solo BOOK/COMIC/MANGA ahora. |
 | Rendimiento de jerarquia | Paginacion, indices por FK/filtros y pruebas de planes. |
 | Permisos actuales de tienda | Mantener endpoint legacy, limitar escritura editorial nueva a ADMIN. |
@@ -760,8 +782,13 @@ reservas editoriales, marketplace ni pagos.
 
 ### EPIC 38 - Creators y relaciones priorizadas
 
-Creators y creditos de item. `catalog_relationships` solo se implementa si los
-casos de uso validados justifican direccion, tipos y moderacion.
+Creators, creditos de item y relaciones entre catalog items.
+
+Estado: implementada el 2026-07-08 mediante Liquibase 010 y 011. El backend
+expone creators, creditos de item y relaciones de item; el detalle editorial
+publico muestra creators y relationships. No incluye frontend admin, pantalla
+de grafo, relaciones entre series/ediciones, moderacion, reservas editoriales,
+marketplace, pagos ni alertas.
 
 ## 19. Criterios de salida de MVP 2
 
@@ -783,7 +810,7 @@ casos de uso validados justifican direccion, tipos y moderacion.
 6. Cuando congelar escrituras directas de `/api/master-products`.
 7. Estrategia de alias/traducciones de titulos posterior al par
    `title/original_title`.
-8. Si creators entra antes o despues de la primera UI editorial.
+8. Alcance exacto de EPIC 39 tras cerrar creators y relaciones priorizadas.
 
 Estas decisiones se resuelven en la sub-EPIC que las necesite; no bloquean el
 diseno de compatibilidad ni justifican implementar tablas en EPIC 30.

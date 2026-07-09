@@ -1340,3 +1340,34 @@ Siguiente paso: crear el backend en la carpeta backend.
 - No se implementan pantalla de grafo, pantalla admin de relaciones,
   marketplace, pagos, reservas ni social.
 - Siguiente tarea recomendada: EPIC 38E.
+
+## 2026-07-08 - EPIC 38E - Cierre documental y validacion integral
+
+- Actualizada la documentacion de estado para reflejar que EPIC 38 queda
+  cerrada: creators editoriales, creditos por item, relaciones entre items y
+  detalle editorial agregado estan implementados.
+- Actualizados los exports documentales con el inventario actual: 11
+  migraciones Liquibase, 22 tablas de aplicacion, 81 endpoints backend, 32 rutas
+  Angular y 61 relaciones frontend-backend documentadas.
+- Ejecutado `cd backend && .\mvnw.cmd clean verify`: `BUILD SUCCESS`, 322
+  tests, 0 fallos, 0 errores y 2 saltados.
+- Ejecutado `cd frontend && npm.cmd ci`: correcto, 474 paquetes instalados. Se
+  mantienen avisos conocidos de `@angular/animations` y scripts pendientes de
+  aprobacion, sin ejecutar `npm audit fix` ni `npm audit fix --force`.
+- Ejecutado `cd frontend && npm.cmd test -- --watch=false`: 43 archivos y 119
+  tests correctos.
+- Ejecutado `cd frontend && npm.cmd run build`: correcto. Permanece el warning
+  conocido del bundle inicial de 601.47 kB frente al budget de 500 kB.
+- Ejecutado `cd infra && docker compose down`: el primer intento fallo porque
+  Docker Desktop no estaba iniciado; tras arrancarlo, el comando funciono.
+- Ejecutado `cd infra && docker compose up --build -d`: imagenes backend y
+  frontend construidas, red creada, PostgreSQL healthy y contenedores backend y
+  frontend iniciados correctamente.
+- Validado `curl.exe http://localhost:8080/api/health`: HTTP 200 con respuesta
+  `{"status":"UP","service":"collectohub-backend"}`.
+- Ejecutado `cd infra && docker compose down`: contenedores frontend, backend y
+  PostgreSQL eliminados junto con la red, sin usar `-v` y sin borrar volumenes.
+- No se modifica backend funcional, frontend funcional, migraciones, endpoints
+  ni rutas Angular. No se inicia EPIC 39.
+- Siguiente tarea recomendada: definir EPIC 39 tras revisar el alcance restante
+  de MVP 2; candidata: cierre de adopcion gradual del catalogo editorial.

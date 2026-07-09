@@ -20,7 +20,7 @@ notably private collection reads.
 | `/catalog/:id` | `MasterProductDetailComponent` | Contextual | `MVP1_VISIBLE` | Public catalog detail. |
 | `/catalog/editorial` | `EditorialSearchComponent` | Primary | `MVP2_VISIBLE` | Public editorial search. |
 | `/catalog/editorial/series/:seriesId` | `EditorialSeriesDetailComponent` | Contextual | `MVP2_VISIBLE` | Series with active items and editions. |
-| `/catalog/editorial/items/:itemId` | `EditorialItemDetailComponent` | Contextual | `MVP2_VISIBLE` | Item with active editions. |
+| `/catalog/editorial/items/:itemId` | `EditorialItemDetailComponent` | Contextual | `MVP2_VISIBLE` | Item with active editions, creator credits and item relationships. |
 | `/catalog/editorial/editions/:editionId` | `EditorialEditionDetailComponent` | Contextual | `MVP2_VISIBLE` | Concrete edition and editorial context. |
 | `/collections/:collectionId` | `CollectionDetailComponent` | Contextual | `MVP1_VISIBLE` | Public collection or private owner view, enforced by backend. |
 
@@ -72,8 +72,9 @@ a `REDIRECT` fallback route.
 
 ## Navigation values
 
-EPIC 37 does not add routes. Existing inventory create/edit/detail routes now
-support dual legacy and editorial references; the total remains 32.
+EPIC 38 does not add routes. Existing editorial item detail now displays
+creators and relationships returned by the backend facade; the total remains
+32.
 
 - `PRIMARY`: visible in the main collector navigation.
 - `HEADER`: visible in the global anonymous header.

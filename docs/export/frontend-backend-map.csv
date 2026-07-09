@@ -54,7 +54,7 @@ frontend_route,component,angular_service,http_method,backend_endpoint,mvp_status
 "/catalog/:id","MasterProductDetailComponent","CatalogService","GET","/api/master-products/{id}","MVP1_VISIBLE","Loads public catalog detail."
 "/catalog/editorial","EditorialSearchComponent","EditorialCatalogService","GET","/api/catalog/editorial/search","MVP2_VISIBLE","Searches the public editorial facade with filters and pagination."
 "/catalog/editorial/series/:seriesId","EditorialSeriesDetailComponent","EditorialCatalogService","GET","/api/catalog/editorial/series/{seriesId}/detail","MVP2_VISIBLE","Loads an aggregated public series detail."
-"/catalog/editorial/items/:itemId","EditorialItemDetailComponent","EditorialCatalogService","GET","/api/catalog/editorial/items/{itemId}/detail","MVP2_VISIBLE","Loads an aggregated public item detail."
+"/catalog/editorial/items/:itemId","EditorialItemDetailComponent","EditorialCatalogService","GET","/api/catalog/editorial/items/{itemId}/detail","MVP2_VISIBLE","Loads an aggregated public item detail with editions, creators and relationships."
 "/catalog/editorial/editions/:editionId","EditorialEditionDetailComponent","EditorialCatalogService","GET","/api/catalog/editorial/editions/{editionId}/detail","MVP2_VISIBLE","Loads an aggregated public edition detail."
 "/","Redirect","None","N/A","No direct API call","REDIRECT","Redirects to /home."
 "/dashboard","Redirect","None","N/A","No direct API call","REDIRECT","Redirects to /home."

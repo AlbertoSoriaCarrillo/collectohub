@@ -82,6 +82,35 @@ erDiagram
         VARCHAR record_status
         TIMESTAMPTZ deleted_at
     }
+    CREATORS {
+        BIGINT id PK
+        VARCHAR name
+        VARCHAR slug UK
+        VARCHAR sort_name
+        VARCHAR country
+        INTEGER birth_year
+        INTEGER death_year
+        VARCHAR record_status
+        TIMESTAMPTZ deleted_at
+    }
+    CATALOG_ITEM_CREATORS {
+        BIGINT id PK
+        BIGINT catalog_item_id FK
+        BIGINT creator_id FK
+        VARCHAR credit_role
+        INTEGER credit_order
+        VARCHAR credit_label
+        TIMESTAMPTZ deleted_at
+    }
+    CATALOG_ITEM_RELATIONSHIPS {
+        BIGINT id PK
+        BIGINT source_catalog_item_id FK
+        BIGINT target_catalog_item_id FK
+        VARCHAR relationship_type
+        INTEGER relationship_order
+        VARCHAR record_status
+        TIMESTAMPTZ deleted_at
+    }
     MASTER_PRODUCT_CATALOG_LINKS {
         BIGINT id PK
         BIGINT master_product_id FK
@@ -184,6 +213,10 @@ erDiagram
     CATALOG_SERIES ||--o{ CATALOG_ITEMS : contains
     CATALOG_ITEMS ||--o{ CATALOG_ITEM_EDITIONS : publishes_as
     PUBLISHERS o|--o{ CATALOG_ITEM_EDITIONS : publishes
+    CATALOG_ITEMS ||--o{ CATALOG_ITEM_CREATORS : credits
+    CREATORS ||--o{ CATALOG_ITEM_CREATORS : credited_as
+    CATALOG_ITEMS ||--o{ CATALOG_ITEM_RELATIONSHIPS : source
+    CATALOG_ITEMS ||--o{ CATALOG_ITEM_RELATIONSHIPS : target
     MASTER_PRODUCTS ||--o{ MASTER_PRODUCT_CATALOG_LINKS : reconciles
     CATALOG_ITEMS ||--o{ MASTER_PRODUCT_CATALOG_LINKS : identifies
     CATALOG_ITEM_EDITIONS o|--o{ MASTER_PRODUCT_CATALOG_LINKS : specifies

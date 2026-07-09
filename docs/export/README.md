@@ -3,6 +3,8 @@
 This directory is a downloadable snapshot of the architecture implemented in
 the repository. It is derived from Liquibase changelogs, Spring controllers and
 DTOs, Angular routes, services and feature components as of 2026-07-07.
+EPIC 38 closure updates the documented snapshot to 2026-07-08 for creators and
+item relationships.
 
 ## Files
 
@@ -60,9 +62,11 @@ This snapshot is maintained manually. When the implementation changes:
   matching documentation update.
 - They do not replace Swagger/OpenAPI for interactive API exploration.
 - Liquibase's own `databasechangelog` and `databasechangeloglock` tables are
-  runtime infrastructure and are intentionally excluded from the 19
+  runtime infrastructure and are intentionally excluded from the 22
   application-table count.
 - Recommendations have no table: the backend matches collection and inventory
   references by edition, item or legacy master product.
-- EPIC 37 keeps 19 application tables, 67 endpoints and 32 routes, raises
-  Liquibase migrations to 9 and maps 61 frontend-backend relationships.
+- EPIC 38 raises the inventory to 11 Liquibase migrations, 22 application
+  tables, 81 endpoints and 32 routes. The frontend-backend map remains at 61
+  relationships because creators and relationships are consumed through the
+  existing editorial item-detail endpoint.

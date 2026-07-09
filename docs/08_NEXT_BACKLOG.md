@@ -36,13 +36,15 @@ compatibilidad. EPIC 31 implementa y valida ya el primer tramo. Orden:
 5. EPIC 35: frontend editorial. Completada el 2026-07-01.
 6. EPIC 36: referencias editoriales en colecciones. Completada el 2026-07-01.
 7. EPIC 37: inventario y matching por item/edicion. Completada el 2026-07-07.
-8. EPIC 38: creators y relaciones priorizadas.
+8. EPIC 38: creators y relaciones priorizadas. Completada el 2026-07-08.
 
-Creators pertenece a MVP 2, pero despues del nucleo. Relaciones entre obras se
-implementan solo con casos de uso validados. Fuente de diseno:
+Creators y relaciones priorizadas quedan implementados en backend, fachada y
+detalle frontend sin activar administracion visual avanzada. Fuente de diseno:
 `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
 
-Siguiente tarea: EPIC 38, creators y relaciones priorizadas.
+Siguiente tarea: definir EPIC 39 tras revisar el alcance pendiente de MVP 2.
+Candidata a valorar, sin iniciarla: EPIC 39 - cierre MVP 2 editorial /
+revision de adopcion gradual.
 
 ## MVP 3 - Social basico
 

@@ -1,6 +1,6 @@
 # CollectoHub MVP status
 
-Fecha de revision: 2026-07-07.
+Fecha de revision: 2026-07-08.
 
 ## Estado general
 
@@ -8,22 +8,23 @@ Este estado corresponde a **MVP 1 - Nucleo coleccionista**, no al producto
 final. La vision completa conecta coleccionistas, catalogo comun, tiendas y
 creadores, con matching, social y comercio desarrollados por fases.
 
-MVP 1 permanece cerrado y estable. MVP 2 ha completado EPIC 31 a EPIC 37:
-fundamentos editoriales, fachada y frontend editorial, referencias editoriales
-en colecciones e inventario, y matching editorial basico en recomendaciones.
-Siguen pendientes creators, relaciones priorizadas, reservas editoriales,
-marketplace, pagos y alertas.
+MVP 1 permanece cerrado y estable. MVP 2 ha completado EPIC 31 a EPIC 38:
+fundamentos editoriales, fachada editorial, frontend editorial, referencias
+editoriales en colecciones e inventario, matching editorial basico, creators
+editoriales y relaciones entre items. Siguen pendientes frontend admin
+editorial, moderacion editorial, reservas editoriales, marketplace, pagos,
+alertas y pantalla de grafo avanzada.
 
 | Dominio | Estado actual |
 | --- | --- |
 | Identity & Access | Implementado para MVP |
-| Catalog Knowledge Base | Parcial; fundamentos MVP 2, fachada de lectura y frontend editorial publico implementados |
+| Catalog Knowledge Base | Parcial; fundamentos MVP 2, fachada de lectura, frontend editorial publico, creators y relaciones de items implementados |
 | User Collections | Implementado con referencias legacy/editoriales duales desde EPIC 36 |
 | Social | Futuro |
 | Shops & Inventory | Inventario legacy/editorial implementado; fuera del recorrido principal |
 | Matching | Recomendaciones por edicion, item y fallback legacy |
 | Commerce | Reservas sin pago; resto futuro |
-| Content Creators | Futuro |
+| Content Creators | Base editorial de creators implementada; herramientas sociales/creador futuras |
 
 ## Cierre MVP 1 - 2026-06-29
 
@@ -129,10 +130,12 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 - PWA completa/offline avanzado.
 - Internacionalizacion avanzada, pluralizacion compleja o traducciones servidas desde backend.
 - Edicion real de perfil, cambio de password, avatar/upload.
-- Inventario por edicion y matching editorial. Las colecciones ya admiten
-  referencias a `catalog_items`/`catalog_item_editions`; la fachada backend, la
-  lectura ADMIN del puente y el frontend editorial publico tambien existen.
-- Autores/credits estructurados y relaciones avanzadas de catalogo entre obras.
+- Frontend admin editorial para alta/edicion visual de publishers, series,
+  items, editions, creators y relaciones.
+- Moderacion editorial, historial avanzado y revision colaborativa.
+- Reservas editoriales.
+- Marketplace, pagos y alertas.
+- Pantalla de grafo avanzada.
 - Perfiles publicos, follows, posts, comentarios, likes, resenas y moderacion.
 - Pedidos, carrito, pagos, facturas, envios, devoluciones y almacen comercial.
 - Herramientas funcionales para creadores, comunidades, eventos o monetizacion.
@@ -315,13 +318,14 @@ La revision de este archivo no encontro necesidad de cambios en esta fase.
 
 ## Siguientes pasos recomendados
 
-La referencia tecnica descargable de EPIC 29 queda versionada en
-`docs/export/`: 19 tablas de aplicacion, 67 endpoints, 32 rutas Angular y 61
-relaciones pantalla-backend. Los estados distinguen recorrido MVP 1, base
-legacy/futura, infraestructura y redirecciones sin alterar codigo funcional.
+La referencia tecnica descargable queda versionada en `docs/export/`: 22 tablas
+de aplicacion, 81 endpoints, 32 rutas Angular y 61 relaciones pantalla-backend.
+Los estados distinguen recorrido MVP 1, base legacy/futura, infraestructura,
+MVP 2 visible/foundation y redirecciones sin alterar codigo funcional.
 
-La siguiente tarea recomendada es **EPIC 38 - Creators y relaciones
-priorizadas**. Diseno: `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
+La siguiente tarea recomendada es definir **EPIC 39** tras revisar el alcance
+pendiente de MVP 2. Candidata: cierre MVP 2 editorial / revision de adopcion
+gradual. Diseno: `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
 
 1. Preparar capturas reales para `docs/assets/screenshots/` y enlazarlas desde el README.
 2. Revisar el rediseño visual en desktop y movil real, anadir capturas a `docs/assets/screenshots/`.

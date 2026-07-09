@@ -467,6 +467,21 @@ Las recomendaciones usan una estrategia de prioridad:
 segura entre categorias legacy y tipos editoriales. No se implementan reservas
 editoriales, pagos ni marketplace en EPIC 37.
 
+## 2026-07-08 - Creators editoriales asociados a items
+
+Los creditos editoriales se modelan mediante `creators` y
+`catalog_item_creators`. Los creditos se asocian a `CatalogItem`, no a series,
+para evitar creditos ambiguos de serie. Los roles iniciales son AUTHOR, WRITER,
+ARTIST, ILLUSTRATOR, TRANSLATOR, EDITOR y OTHER. La lectura publica solo expone
+creators ACTIVE y creditos no eliminados.
+
+## 2026-07-08 - Relaciones editoriales entre items
+
+Las relaciones editoriales se modelan entre `CatalogItem` mediante
+`catalog_item_relationships`. No se crean relaciones automaticas inversas ni
+relaciones entre series o ediciones. El detalle editorial puede mostrar
+relaciones entrantes y salientes con direccion INCOMING/OUTGOING.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

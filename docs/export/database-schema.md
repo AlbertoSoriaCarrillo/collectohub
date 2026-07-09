@@ -1,8 +1,8 @@
 # Database schema
 
-This document describes the PostgreSQL application schema created by the nine
+This document describes the PostgreSQL application schema created by the eleven
 Liquibase SQL migrations currently included by
-`db/changelog/db.changelog-master.yaml`. It contains 19 application tables.
+`db/changelog/db.changelog-master.yaml`. It contains 22 application tables.
 Liquibase runtime tables are intentionally excluded.
 
 ## Domain summary
@@ -10,7 +10,7 @@ Liquibase runtime tables are intentionally excluded.
 | Domain | Tables | Product status |
 | --- | --- | --- |
 | Identity & Access | `users`, `roles`, `user_roles` | MVP 1 visible |
-| Catalog Knowledge Base | `product_categories`, `master_products`, `product_suggestions`, `publishers`, `catalog_franchises`, `catalog_series`, `catalog_items`, `catalog_item_editions`, `master_product_catalog_links` | MVP 1 catalog plus MVP 2 foundations |
+| Catalog Knowledge Base | `product_categories`, `master_products`, `product_suggestions`, `publishers`, `catalog_franchises`, `catalog_series`, `catalog_items`, `catalog_item_editions`, `master_product_catalog_links`, `creators`, `catalog_item_creators`, `catalog_item_relationships` | MVP 1 catalog plus MVP 2 foundations, creators and item relationships |
 | User Collections | `collections`, `collection_items` | MVP 1 visible plus EPIC 36 editorial references |
 | Shops & Inventory | `shops`, `shop_members`, `shop_products` | EPIC 37 legacy/editorial inventory |
 | Matching | No table | Calculated from collections and inventory |
@@ -260,6 +260,76 @@ ISBN, EAN, format, language, country and year. Partial unique indexes
 `uk_catalog_item_editions_ean_active` apply to non-null identifiers while
 `deleted_at IS NULL`.
 
+### creators
+
+- Domain: Catalog Knowledge Base
+- Status: `MVP2_FOUNDATION`
+
+Editorial creator identity used for item-level credits.
+
+| Column | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `BIGINT IDENTITY` | Yes | Primary key. |
+| `name` | `VARCHAR(255)` | Yes | Display name. |
+| `slug` | `VARCHAR(255)` | Yes | Stable URL/search identifier, unique among non-deleted rows. |
+| `sort_name` | `VARCHAR(255)` | No | Optional sortable name. |
+| `biography` | `TEXT` | No | Optional public biography. |
+| `country` | `VARCHAR(2)` | No | Two-letter country code. |
+| `birth_year` | `INTEGER` | No | Non-negative birth year. |
+| `death_year` | `INTEGER` | No | Non-negative death year, not before birth year. |
+| `record_status` | `VARCHAR(30)` | Yes | `DRAFT`, `ACTIVE` or `ARCHIVED`; default `DRAFT`. |
+| audit set | shared columns | Mixed | Creation, update and soft-delete metadata. |
+
+Checks validate record status, years and country length. Indexes cover slug,
+record status and lowercased name. Partial unique index
+`uk_creators_slug_active` applies while `deleted_at IS NULL`.
+
+### catalog_item_creators
+
+- Domain: Catalog Knowledge Base
+- Status: `MVP2_FOUNDATION`
+
+Item-level editorial credits linking creators to catalog items.
+
+| Column | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `BIGINT IDENTITY` | Yes | Primary key. |
+| `catalog_item_id` | `BIGINT` | Yes | FK to `catalog_items.id`. |
+| `creator_id` | `BIGINT` | Yes | FK to `creators.id`. |
+| `credit_role` | `VARCHAR(40)` | Yes | `AUTHOR`, `WRITER`, `ARTIST`, `ILLUSTRATOR`, `TRANSLATOR`, `EDITOR` or `OTHER`. |
+| `credit_order` | `INTEGER` | Yes | Positive display order, default 1. |
+| `credit_label` | `VARCHAR(255)` | No | Optional contextual label. |
+| audit set | shared columns | Mixed | Creation, update and soft-delete metadata. |
+
+FKs: `fk_catalog_item_creators_item` and
+`fk_catalog_item_creators_creator`. Checks validate role and positive order.
+Partial unique index `uk_catalog_item_creators_active` prevents duplicate
+active item/creator/role credits.
+
+### catalog_item_relationships
+
+- Domain: Catalog Knowledge Base
+- Status: `MVP2_FOUNDATION`
+
+Directed editorial relationships between catalog items.
+
+| Column | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `BIGINT IDENTITY` | Yes | Primary key. |
+| `source_catalog_item_id` | `BIGINT` | Yes | FK to source `catalog_items.id`. |
+| `target_catalog_item_id` | `BIGINT` | Yes | FK to target `catalog_items.id`. |
+| `relationship_type` | `VARCHAR(40)` | Yes | `ADAPTATION`, `REMAKE`, `REPRINT`, `SAME_WORK`, `SPIN_OFF`, `PREQUEL`, `SEQUEL` or `RELATED`. |
+| `relationship_order` | `INTEGER` | Yes | Positive display order, default 1. |
+| `description` | `TEXT` | No | Optional public note. |
+| `record_status` | `VARCHAR(30)` | Yes | `DRAFT`, `ACTIVE` or `ARCHIVED`; default `DRAFT`. |
+| audit set | shared columns | Mixed | Creation, update and soft-delete metadata. |
+
+FKs: `fk_catalog_item_relationships_source` and
+`fk_catalog_item_relationships_target`. Checks prevent self-relations, validate
+order, status and type. Partial unique index
+`uk_catalog_item_relationships_active` prevents duplicate active
+source/target/type relationships. No inverse rows are created automatically.
+
 ### master_product_catalog_links
 
 - Domain: Catalog Knowledge Base
@@ -497,8 +567,8 @@ FKs: `fk_reservations_user`, `fk_reservations_shop`,
 
 ## Index inventory
 
-Liquibase declares 53 explicit indexes, including partial unique franchise,
-ISBN and EAN indexes:
+Liquibase declares 68 explicit indexes, including partial unique franchise,
+ISBN, EAN, creator and relationship indexes:
 
 | Table | Indexes |
 | --- | --- |
@@ -515,6 +585,9 @@ ISBN and EAN indexes:
 | `catalog_items` | `idx_catalog_items_series_id(series_id)`, `idx_catalog_items_record_status(record_status)`, `idx_catalog_items_title(lower(title))`, `idx_catalog_items_sort_order(sort_order)`, `idx_catalog_items_first_publication_year(first_publication_year)`, `idx_catalog_items_original_language(original_language)`, `idx_catalog_items_origin_country(origin_country)` |
 | `catalog_item_editions` | `idx_catalog_item_editions_catalog_item_id(catalog_item_id)`, `idx_catalog_item_editions_publisher_id(publisher_id)`, `idx_catalog_item_editions_record_status(record_status)`, `uk_catalog_item_editions_isbn_active(isbn)`, `uk_catalog_item_editions_ean_active(ean)`, `idx_catalog_item_editions_format(format)`, `idx_catalog_item_editions_language(language)`, `idx_catalog_item_editions_country(country)`, `idx_catalog_item_editions_publication_year(publication_year)` |
 | `master_product_catalog_links` | `idx_master_product_catalog_links_master_product_id(master_product_id)`, `idx_master_product_catalog_links_catalog_item_id(catalog_item_id)`, `idx_master_product_catalog_links_catalog_item_edition_id(catalog_item_edition_id)`, `idx_master_product_catalog_links_status(link_status)`, `idx_master_product_catalog_links_source(link_source)`, `idx_master_product_catalog_links_confidence(confidence_score)`, `uk_master_product_catalog_links_verified_master(master_product_id)` |
+| `creators` | `uk_creators_slug_active(slug)`, `idx_creators_slug(slug)`, `idx_creators_record_status(record_status)`, `idx_creators_name_lower(lower(name))` |
+| `catalog_item_creators` | `uk_catalog_item_creators_active(catalog_item_id, creator_id, credit_role)`, `idx_catalog_item_creators_item_id(catalog_item_id)`, `idx_catalog_item_creators_creator_id(creator_id)`, `idx_catalog_item_creators_role(credit_role)`, `idx_catalog_item_creators_order(credit_order)` |
+| `catalog_item_relationships` | `idx_catalog_item_relationships_source(source_catalog_item_id)`, `idx_catalog_item_relationships_target(target_catalog_item_id)`, `idx_catalog_item_relationships_type(relationship_type)`, `idx_catalog_item_relationships_status(record_status)`, `idx_catalog_item_relationships_order(relationship_order)`, `uk_catalog_item_relationships_active(source_catalog_item_id, target_catalog_item_id, relationship_type)` |
 
 PostgreSQL additionally creates indexes to enforce every primary key and the
 unique constraints on user email, role code, category code, shop membership and

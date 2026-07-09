@@ -26,7 +26,7 @@ path,component,auth_required,guard,module,visible_in_navigation,mvp_status,descr
 "/catalog","CatalogListComponent","NO","None","Catalog","PRIMARY","MVP1_VISIBLE","Public catalog search and filters."
 "/catalog/editorial","EditorialSearchComponent","NO","None","Editorial Catalog","PRIMARY","MVP2_VISIBLE","Searches public editorial series, items and editions."
 "/catalog/editorial/series/:seriesId","EditorialSeriesDetailComponent","NO","None","Editorial Catalog","CONTEXTUAL","MVP2_VISIBLE","Shows a public editorial series with active items and editions."
-"/catalog/editorial/items/:itemId","EditorialItemDetailComponent","NO","None","Editorial Catalog","CONTEXTUAL","MVP2_VISIBLE","Shows a public editorial item with active editions."
+"/catalog/editorial/items/:itemId","EditorialItemDetailComponent","NO","None","Editorial Catalog","CONTEXTUAL","MVP2_VISIBLE","Shows a public editorial item with active editions, creator credits and item relationships."
 "/catalog/editorial/editions/:editionId","EditorialEditionDetailComponent","NO","None","Editorial Catalog","CONTEXTUAL","MVP2_VISIBLE","Shows a concrete public edition and its editorial context."
 "/catalog/new","MasterProductCreateComponent","YES","authGuard","Catalog","CONTEXTUAL_ROLE","MVP1_VISIBLE","Catalog creation screen for ADMIN or SHOP_OWNER."
 "/catalog/:id","MasterProductDetailComponent","NO","None","Catalog","CONTEXTUAL","MVP1_VISIBLE","Public master-product detail."

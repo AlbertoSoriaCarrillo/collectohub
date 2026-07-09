@@ -5,7 +5,7 @@ Estado: contrato backend MVP consumido por el frontend Angular y validado en el 
 Esta guia documenta el contrato real expuesto por el backend actual. Todos los
 errores controlados usan el envelope `ErrorResponse`:
 
-La exportacion completa y filtrable de los 67 endpoints actuales esta en
+La exportacion completa y filtrable de los 81 endpoints actuales esta en
 `docs/export/backend-endpoints.md` y `docs/export/backend-endpoints.csv`.
 
 Desde EPIC 36, los bodies de alta y actualizacion de items de coleccion aceptan
@@ -18,6 +18,11 @@ Desde EPIC 37, el alta y actualizacion de productos de tienda acepta
 `masterProductId` o `catalogItemId` con `catalogItemEditionId` opcional. Las
 respuestas conservan campos legacy y anaden metadatos editoriales. Las
 recomendaciones incluyen `matchType` y datos editoriales sin crear endpoints.
+
+Desde EPIC 38, el catalogo editorial incorpora creators, creditos por item y
+relaciones entre items. `GET /api/catalog/editorial/items/{itemId}/detail`
+devuelve ahora `creators` y `relationships`, sin crear endpoints nuevos en las
+subfases de integracion visual 38B y 38D.
 
 ```json
 {
@@ -154,6 +159,20 @@ registros `ACTIVE` no eliminados. `recordStatus` es un filtro exclusivo de
 | GET | `/api/catalog/editorial/items/{itemId}/detail` | Publico | Cadena `ACTIVE` | No | `EditorialCatalogItemDetailResponse` | `404` |
 | GET | `/api/catalog/editorial/editions/{editionId}/detail` | Publico | Cadena `ACTIVE` | No | `EditorialCatalogEditionDetailResponse` | `404` |
 | GET | `/api/catalog/editorial/master-products/{masterProductId}/link` | Protegido | `ADMIN` | No | `EditorialLegacyBridgeResponse` | `401`, `403`, `404` |
+| GET | `/api/catalog/creators` | Publico/ADMIN | ACTIVE publico; ADMIN puede filtrar estado | `q`, `country`, `recordStatus`, paginacion | `PageResponse<CreatorResponse>` | `400`, `403` |
+| GET | `/api/catalog/creators/{id}` | Publico/ADMIN | ACTIVE publico; cualquier no eliminado para ADMIN | No | `CreatorResponse` | `404` |
+| POST | `/api/catalog/creators` | Protegido | `ADMIN` | `CreateCreatorRequest` | `CreatorResponse` | `400`, `401`, `403`, `409` |
+| PUT | `/api/catalog/creators/{id}` | Protegido | `ADMIN` | `UpdateCreatorRequest` | `CreatorResponse` | `400`, `401`, `403`, `404`, `409` |
+| DELETE | `/api/catalog/creators/{id}` | Protegido | `ADMIN` | No | Sin cuerpo | `401`, `403`, `404` |
+| GET | `/api/catalog/items/{itemId}/creators` | Publico/ADMIN | ACTIVE publico; ADMIN puede filtrar estado | `recordStatus` | Lista de `CatalogItemCreatorResponse` | `400`, `403`, `404` |
+| POST | `/api/catalog/items/{itemId}/creators` | Protegido | `ADMIN` | `CreateCatalogItemCreatorRequest` | `CatalogItemCreatorResponse` | `400`, `401`, `403`, `404`, `409` |
+| PUT | `/api/catalog/items/{itemId}/creators/{creditId}` | Protegido | `ADMIN` | `UpdateCatalogItemCreatorRequest` | `CatalogItemCreatorResponse` | `400`, `401`, `403`, `404`, `409` |
+| DELETE | `/api/catalog/items/{itemId}/creators/{creditId}` | Protegido | `ADMIN` | No | Sin cuerpo | `401`, `403`, `404` |
+| GET | `/api/catalog/items/{itemId}/relationships` | Publico/ADMIN | ACTIVE publico; ADMIN puede filtrar estado | `recordStatus` | Lista de `CatalogItemRelationshipResponse` | `400`, `403`, `404` |
+| POST | `/api/catalog/items/{itemId}/relationships` | Protegido | `ADMIN` | `CreateCatalogItemRelationshipRequest` | `CatalogItemRelationshipResponse` | `400`, `401`, `403`, `404`, `409` |
+| GET | `/api/catalog/items/{itemId}/relationships/{relationshipId}` | Publico/ADMIN | ACTIVE publico; ADMIN puede filtrar estado | `recordStatus` | `CatalogItemRelationshipResponse` | `400`, `403`, `404` |
+| PUT | `/api/catalog/items/{itemId}/relationships/{relationshipId}` | Protegido | `ADMIN` | `UpdateCatalogItemRelationshipRequest` | `CatalogItemRelationshipResponse` | `400`, `401`, `403`, `404`, `409` |
+| DELETE | `/api/catalog/items/{itemId}/relationships/{relationshipId}` | Protegido | `ADMIN` | No | Sin cuerpo | `401`, `403`, `404` |
 
 Enums iniciales:
 
@@ -166,9 +185,9 @@ Enums iniciales:
 Estos endpoints no modifican ni sustituyen `/api/master-products`.
 
 La fachada editorial agrega busqueda y detalle sin activar todavia
-`collection_items`, `shop_products`, recomendaciones ni reservas sobre el
-nuevo modelo. La consulta legacy devuelve primero el enlace `VERIFIED`; si no
-existe, un ADMIN puede consultar la propuesta mas reciente.
+`reservas` sobre el nuevo modelo. El detalle de item agrega `editions`,
+`creators` y `relationships`. La consulta legacy devuelve primero el enlace
+`VERIFIED`; si no existe, un ADMIN puede consultar la propuesta mas reciente.
 
 ## Inventario de tienda
 

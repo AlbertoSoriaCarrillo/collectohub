@@ -2,7 +2,7 @@
 
 Source of truth reviewed: Spring MVC controllers, `SecurityConfig`, request and
 response DTOs, and application-service authorization. This inventory contains
-67 application endpoints. Framework-generated Swagger/OpenAPI paths are public
+81 application endpoints. Framework-generated Swagger/OpenAPI paths are public
 but are not counted as application endpoints.
 
 Authentication is stateless JWT. `PROTECTED` requires a valid Bearer token;
@@ -86,12 +86,30 @@ and expose only `ACTIVE`, non-deleted records by default. An authenticated
 | `POST /api/catalog/master-product-links/backfill` | `MasterProductCatalogLinkController` | `ADMIN` | None | `BackfillMasterProductCatalogLinksResponse` |
 | `GET /api/catalog/editorial/search` | `EditorialCatalogFacadeController` | Public ACTIVE; link results require `ADMIN` | Editorial filters and pagination | `PageResponse<EditorialCatalogSearchItemResponse>` |
 | `GET /api/catalog/editorial/series/{seriesId}/detail` | `EditorialCatalogFacadeController` | Public ACTIVE chain | Path `seriesId` | `EditorialCatalogSeriesDetailResponse` |
-| `GET /api/catalog/editorial/items/{itemId}/detail` | `EditorialCatalogFacadeController` | Public ACTIVE chain | Path `itemId` | `EditorialCatalogItemDetailResponse` |
+| `GET /api/catalog/editorial/items/{itemId}/detail` | `EditorialCatalogFacadeController` | Public ACTIVE chain | Path `itemId` | `EditorialCatalogItemDetailResponse` with editions, creators and relationships |
 | `GET /api/catalog/editorial/editions/{editionId}/detail` | `EditorialCatalogFacadeController` | Public ACTIVE chain | Path `editionId` | `EditorialCatalogEditionDetailResponse` |
 | `GET /api/catalog/editorial/master-products/{masterProductId}/link` | `EditorialCatalogFacadeController` | `ADMIN` | Path `masterProductId` | `EditorialLegacyBridgeResponse` |
+| `GET /api/catalog/creators` | `CreatorController` | Public ACTIVE; ADMIN status filter | Creator filters and pagination | `PageResponse<CreatorResponse>` |
+| `GET /api/catalog/creators/{id}` | `CreatorController` | Public ACTIVE or ADMIN | Path `id`; optional `recordStatus` | `CreatorResponse` |
+| `POST /api/catalog/creators` | `CreatorController` | `ADMIN` | `CreateCreatorRequest` | `CreatorResponse` |
+| `PUT /api/catalog/creators/{id}` | `CreatorController` | `ADMIN` | `UpdateCreatorRequest` | `CreatorResponse` |
+| `DELETE /api/catalog/creators/{id}` | `CreatorController` | `ADMIN` | Path `id` | No content |
+| `GET /api/catalog/items/{itemId}/creators` | `CatalogItemCreatorController` | Public ACTIVE; ADMIN status filter | Path `itemId`; optional `recordStatus` | `List<CatalogItemCreatorResponse>` |
+| `POST /api/catalog/items/{itemId}/creators` | `CatalogItemCreatorController` | `ADMIN` | `CreateCatalogItemCreatorRequest` | `CatalogItemCreatorResponse` |
+| `PUT /api/catalog/items/{itemId}/creators/{creditId}` | `CatalogItemCreatorController` | `ADMIN` | `UpdateCatalogItemCreatorRequest` | `CatalogItemCreatorResponse` |
+| `DELETE /api/catalog/items/{itemId}/creators/{creditId}` | `CatalogItemCreatorController` | `ADMIN` | Path `itemId`, `creditId` | No content |
+| `GET /api/catalog/items/{itemId}/relationships` | `CatalogItemRelationshipController` | Public ACTIVE; ADMIN status filter | Path `itemId`; optional `recordStatus` | `List<CatalogItemRelationshipResponse>` |
+| `POST /api/catalog/items/{itemId}/relationships` | `CatalogItemRelationshipController` | `ADMIN` | `CreateCatalogItemRelationshipRequest` | `CatalogItemRelationshipResponse` |
+| `GET /api/catalog/items/{itemId}/relationships/{relationshipId}` | `CatalogItemRelationshipController` | Public ACTIVE; ADMIN status filter | Path `itemId`, `relationshipId`; optional `recordStatus` | `CatalogItemRelationshipResponse` |
+| `PUT /api/catalog/items/{itemId}/relationships/{relationshipId}` | `CatalogItemRelationshipController` | `ADMIN` | `UpdateCatalogItemRelationshipRequest` | `CatalogItemRelationshipResponse` |
+| `DELETE /api/catalog/items/{itemId}/relationships/{relationshipId}` | `CatalogItemRelationshipController` | `ADMIN` | Path `itemId`, `relationshipId` | No content |
 
 Writes may return 400 for validation/lifecycle rules, 401 without a token, 403
 without `ADMIN`, 404 for missing dependencies, and 409 for duplicate identity.
+Public creator and relationship reads expose only ACTIVE, non-deleted records
+with public item chains. The editorial item detail aggregates active editions,
+public creator credits and public relationships without adding separate
+frontend-facing facade endpoints.
 
 ## Collections
 

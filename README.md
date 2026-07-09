@@ -29,8 +29,9 @@ marketplace, pagos o tiendas ya listos para usuario final.
 - MVP 1 cerrado como base tecnica/producto el 2026-06-29; checklist completo en
   `docs/07_MVP1_ACCEPTANCE_CHECKLIST.md`.
 - MVP 2 iniciado con el diseno de `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md` y
-  EPIC 31 a EPIC 37 implementadas: catalogo y frontend editorial, puente con
-  `master_products`, colecciones, inventario y matching editorial basico.
+  EPIC 31 a EPIC 38 implementadas: catalogo y frontend editorial, puente con
+  `master_products`, colecciones, inventario, matching editorial basico,
+  creators y relaciones editoriales visibles en el detalle de catalogo.
 - MVP funcional de backend y frontend.
 - Docker Compose local con PostgreSQL, backend y frontend validado.
 - Tests backend, tests frontend y E2E Playwright implementados.
@@ -274,7 +275,10 @@ formatos Markdown, Mermaid y CSV descargables.
 - EPIC 36 ya implemento referencias editoriales graduales en colecciones,
   manteniendo el flujo legacy.
 - EPIC 37 ya implemento inventario editorial y matching por item/edicion.
-- El siguiente paso tecnico es EPIC 38: creators y relaciones priorizadas.
+- EPIC 38 ya implemento creators, creditos por item, relaciones entre items y
+  su visualizacion en el detalle editorial.
+- La siguiente fase pendiente debe definirse tras revisar el alcance restante
+  de MVP 2.
 - Validar despues social basico y, en fases separadas, matching con tiendas,
   comercio real y herramientas para creadores.
 - Ejecutar E2E en CI con un job separado y estable.
