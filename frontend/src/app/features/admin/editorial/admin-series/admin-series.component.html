@@ -1,0 +1,182 @@
+<section class="admin-entity-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">{{ 'layout.nav.adminEditorial' | translate }}</p>
+      <h1>{{ 'admin.editorial.series.title' | translate }}</h1>
+      <p>{{ 'admin.editorial.series.subtitle' | translate }}</p>
+    </div>
+    <button mat-stroked-button type="button" (click)="load()" data-testid="admin-series-refresh">
+      <mat-icon aria-hidden="true">refresh</mat-icon>
+      {{ 'admin.editorial.actions.refresh' | translate }}
+    </button>
+  </header>
+
+  <mat-card class="panel-card">
+    <mat-card-content>
+      <form class="filters series-filters" [formGroup]="filters" (ngSubmit)="search()" novalidate>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'admin.editorial.actions.search' | translate }}</mat-label>
+          <input matInput formControlName="q" data-testid="admin-series-search" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'admin.editorial.fields.status' | translate }}</mat-label>
+          <mat-select formControlName="recordStatus" data-testid="admin-series-status-filter">
+            <mat-option value="">{{ 'common.all' | translate }}</mat-option>
+            @for (status of statuses; track status) {
+              <mat-option [value]="status">{{ 'admin.editorial.status.' + status | translate }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'admin.editorial.fields.type' | translate }}</mat-label>
+          <mat-select formControlName="type" data-testid="admin-series-type-filter">
+            <mat-option value="">{{ 'common.all' | translate }}</mat-option>
+            @for (type of types; track type) {
+              <mat-option [value]="type">{{ 'admin.editorial.seriesType.' + type | translate }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'admin.editorial.fields.publicationStatus' | translate }}</mat-label>
+          <mat-select formControlName="publicationStatus">
+            <mat-option value="">{{ 'common.all' | translate }}</mat-option>
+            @for (status of publicationStatuses; track status) {
+              <mat-option [value]="status">{{ 'admin.editorial.publicationStatus.' + status | translate }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <button mat-flat-button color="primary" type="submit">
+          {{ 'admin.editorial.actions.search' | translate }}
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="content-grid">
+    <mat-card class="panel-card">
+      <mat-card-header>
+        <mat-card-title>{{ 'admin.editorial.sections.series' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (loading()) {
+          <mat-spinner diameter="32"></mat-spinner>
+        } @else if (errorKey()) {
+          <p class="state-error" role="alert">{{ errorKey()! | translate }}</p>
+        } @else if (!series().length) {
+          <p class="muted">{{ 'admin.editorial.messages.empty' | translate }}</p>
+        } @else {
+          <div class="entity-list">
+            @for (entry of series(); track entry.id) {
+              <button class="entity-row" type="button" (click)="startEdit(entry)">
+                <span>
+                  <strong>{{ entry.title }}</strong>
+                  <small>{{ entry.franchiseName || ('common.noFranchise' | translate) }}</small>
+                </span>
+                <span class="status-pill">{{ 'admin.editorial.status.' + entry.recordStatus | translate }}</span>
+              </button>
+            }
+          </div>
+        }
+        <div class="pagination">
+          <button mat-button type="button" (click)="previous()" [disabled]="page() === 0">
+            {{ 'admin.editorial.actions.previous' | translate }}
+          </button>
+          <span>Page {{ page() + 1 }} / {{ totalPages() || 1 }}</span>
+          <button mat-button type="button" (click)="next()" [disabled]="page() + 1 >= totalPages()">
+            {{ 'admin.editorial.actions.next' | translate }}
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="panel-card">
+      <mat-card-header>
+        <mat-card-title>
+          {{ (editing() ? 'admin.editorial.actions.edit' : 'admin.editorial.actions.create') | translate }}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form class="entity-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.title' | translate }}</mat-label>
+            <input matInput formControlName="title" data-testid="admin-series-title" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.originalTitle' | translate }}</mat-label>
+            <input matInput formControlName="originalTitle" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.franchiseId' | translate }}</mat-label>
+            <input matInput type="number" formControlName="franchiseId" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.primaryPublisherId' | translate }}</mat-label>
+            <input matInput type="number" formControlName="primaryPublisherId" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.type' | translate }}</mat-label>
+            <mat-select formControlName="type">
+              @for (type of types; track type) {
+                <mat-option [value]="type">{{ 'admin.editorial.seriesType.' + type | translate }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.publicationStatus' | translate }}</mat-label>
+            <mat-select formControlName="publicationStatus">
+              @for (status of publicationStatuses; track status) {
+                <mat-option [value]="status">{{ 'admin.editorial.publicationStatus.' + status | translate }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.originCountry' | translate }}</mat-label>
+            <input matInput maxlength="2" formControlName="originCountry" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.originalLanguage' | translate }}</mat-label>
+            <input matInput formControlName="originalLanguage" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.startYear' | translate }}</mat-label>
+            <input matInput type="number" formControlName="startYear" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.endYear' | translate }}</mat-label>
+            <input matInput type="number" formControlName="endYear" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.status' | translate }}</mat-label>
+            <mat-select formControlName="recordStatus">
+              @for (status of statuses; track status) {
+                <mat-option [value]="status">{{ 'admin.editorial.status.' + status | translate }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.description' | translate }}</mat-label>
+            <textarea matInput rows="4" formControlName="description"></textarea>
+          </mat-form-field>
+
+          @if (form.hasError('yearRange')) {
+            <p class="state-error" role="alert">endYear must be greater than or equal to startYear.</p>
+          }
+          @if (messageKey()) {
+            <p class="state-success">{{ messageKey()! | translate }}</p>
+          }
+          @if (errorKey()) {
+            <p class="state-error" role="alert">{{ errorKey()! | translate }}</p>
+          }
+          <div class="form-actions">
+            <button mat-flat-button color="primary" type="submit" [disabled]="saving()" data-testid="admin-series-submit">
+              {{ 'admin.editorial.actions.save' | translate }}
+            </button>
+            <button mat-button type="button" (click)="cancel()">
+              {{ 'admin.editorial.actions.cancel' | translate }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</section>

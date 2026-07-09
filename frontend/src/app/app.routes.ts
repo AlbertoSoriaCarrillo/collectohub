@@ -168,6 +168,30 @@ export const routes: Routes = [
           ).then((m) => m.AdminEditorialShellComponent)
       },
       {
+        path: 'admin/editorial/publishers',
+        canActivate: [authGuard, adminGuard],
+        loadComponent: () =>
+          import('./features/admin/editorial/admin-publishers/admin-publishers.component').then(
+            (m) => m.AdminPublishersComponent
+          )
+      },
+      {
+        path: 'admin/editorial/franchises',
+        canActivate: [authGuard, adminGuard],
+        loadComponent: () =>
+          import('./features/admin/editorial/admin-franchises/admin-franchises.component').then(
+            (m) => m.AdminFranchisesComponent
+          )
+      },
+      {
+        path: 'admin/editorial/series',
+        canActivate: [authGuard, adminGuard],
+        loadComponent: () =>
+          import('./features/admin/editorial/admin-series/admin-series.component').then(
+            (m) => m.AdminSeriesComponent
+          )
+      },
+      {
         path: 'reservations',
         canActivate: [authGuard],
         loadComponent: () =>

@@ -133,7 +133,7 @@ EPIC 39C.
 
 1. EPIC 40A - Admin editorial shell y navegacion protegida. Completada el
    2026-07-10.
-2. EPIC 40B - Admin publishers/franchises/series.
+2. EPIC 40B - Admin publishers/franchises/series. Completada el 2026-07-10.
 3. EPIC 40C - Admin items/editions.
 4. EPIC 40D - Admin creators y creditos.
 5. EPIC 40E - Admin relationships.
@@ -201,3 +201,9 @@ Estado: EPIC 40A completada el 2026-07-10. La ruta `/admin/editorial`, el
 shell admin, el guard `ADMIN`, el enlace de navegacion condicionado y las
 traducciones ES/EN quedan implementados. No se crean CRUDs ni se inicia EPIC
 40B.
+
+Estado: EPIC 40B completada el 2026-07-10. Quedan implementadas las rutas
+admin `/admin/editorial/publishers`, `/admin/editorial/franchises` y
+`/admin/editorial/series`, el servicio frontend admin, busqueda, filtros,
+listado, create/update y cambio de `recordStatus` para entidades base. No se
+inician items/editions, creators, relationships ni reconciliacion legacy.

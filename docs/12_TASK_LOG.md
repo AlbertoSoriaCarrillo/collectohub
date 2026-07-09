@@ -1450,3 +1450,39 @@ Siguiente paso: crear el backend en la carpeta backend.
   social ni marketplace.
 - No se inicia EPIC 40B.
 - Siguiente tarea recomendada: EPIC 40B - Admin publishers/franchises/series.
+
+## 2026-07-10 - EPIC 40B - Admin publishers/franchises/series
+
+- Creados modelos frontend admin para `CatalogRecordStatus`, `CatalogSeriesType`,
+  `CatalogPublicationStatus`, `PageResponse`, publishers, franchises y series.
+- Creado `EditorialAdminService` con busqueda, detalle, create y update para
+  publishers, franchises y series, usando `/api/catalog`.
+- Creadas rutas admin protegidas por `[authGuard, adminGuard]`:
+  `/admin/editorial/publishers`, `/admin/editorial/franchises` y
+  `/admin/editorial/series`.
+- Actualizado el shell admin para enlazar publishers, franchises y series; el
+  resto de secciones sigue sin CRUD funcional.
+- Creadas pantallas admin de publishers, franchises y series con busqueda,
+  filtro por `recordStatus`, listado, create, update y cambio de estado
+  `DRAFT` / `ACTIVE` / `ARCHIVED`.
+- Anadidas validaciones visuales: nombre/titulo obligatorios, pais de 2 letras,
+  slug de franchise, IDs numericos simples para series y rango de anos
+  `endYear >= startYear`.
+- Anadidas traducciones ES/EN para acciones, campos, estados, tipos, estados de
+  publicacion y mensajes.
+- Anadidos/actualizados tests de servicio admin, rutas, shell, i18n y pantallas
+  admin de publishers/franchises/series.
+- Ejecutado `cd frontend && npm.cmd ci`: correcto, 474 paquetes instalados y
+  475 auditados. Se mantienen avisos conocidos de `@angular/animations`,
+  scripts pendientes de aprobacion y 7 vulnerabilidades npm, sin ejecutar
+  `npm audit fix` ni `npm audit fix --force`.
+- Ejecutado `cd frontend && npm.cmd test -- --watch=false`: 49 archivos y 142
+  tests correctos.
+- Ejecutado `cd frontend && npm.cmd run build`: correcto. Permanece el warning
+  conocido del bundle inicial de 607.47 kB frente al budget de 500 kB.
+- No se modifica backend funcional, backend tests, migraciones, infra,
+  endpoints ni docs/export.
+- No se implementan items/editions, creators, credits, relationships,
+  reconciliacion master-product-links, social, tiendas, marketplace, pagos ni
+  movil.
+- Siguiente tarea recomendada: EPIC 40C - Admin items/editions.

@@ -329,6 +329,68 @@ export const en: TranslationDictionary = {
       adminOnly: 'Only ADMIN users can access this area.',
       nextSectionsTitle: 'Upcoming sections',
       noCrudYet: 'CRUD forms will be implemented in the next EPICs.',
+      publishers: {
+        title: 'Publishers',
+        subtitle: 'Search, create and maintain editorial publishers.'
+      },
+      franchises: {
+        title: 'Franchises',
+        subtitle: 'Search, create and maintain catalog franchises.'
+      },
+      series: {
+        title: 'Series',
+        subtitle: 'Search, create and maintain editorial series.'
+      },
+      actions: {
+        search: 'Search',
+        create: 'Create',
+        edit: 'Edit',
+        save: 'Save',
+        cancel: 'Cancel',
+        previous: 'Previous',
+        next: 'Next',
+        refresh: 'Refresh'
+      },
+      fields: {
+        name: 'Name',
+        country: 'Country',
+        slug: 'Slug',
+        description: 'Description',
+        status: 'Status',
+        title: 'Title',
+        originalTitle: 'Original title',
+        type: 'Type',
+        publicationStatus: 'Publication status',
+        franchiseId: 'Franchise ID',
+        primaryPublisherId: 'Primary publisher ID',
+        originCountry: 'Origin country',
+        originalLanguage: 'Original language',
+        startYear: 'Start year',
+        endYear: 'End year'
+      },
+      status: {
+        DRAFT: 'Draft',
+        ACTIVE: 'Active',
+        ARCHIVED: 'Archived'
+      },
+      seriesType: {
+        BOOK: 'Book',
+        COMIC: 'Comic',
+        MANGA: 'Manga'
+      },
+      publicationStatus: {
+        ONGOING: 'Ongoing',
+        COMPLETED: 'Completed',
+        CANCELLED: 'Cancelled',
+        HIATUS: 'Hiatus',
+        UNKNOWN: 'Unknown'
+      },
+      messages: {
+        saved: 'Saved successfully.',
+        loadError: 'The records could not be loaded.',
+        saveError: 'The record could not be saved.',
+        empty: 'No records match those filters.'
+      },
       sections: {
         publishers: 'Publishers',
         franchises: 'Franchises',

@@ -329,6 +329,68 @@ export const es: TranslationDictionary = {
       adminOnly: 'Solo usuarios ADMIN pueden acceder a esta zona.',
       nextSectionsTitle: 'Proximas secciones',
       noCrudYet: 'Los formularios CRUD se implementaran en las siguientes EPICs.',
+      publishers: {
+        title: 'Editoriales',
+        subtitle: 'Busca, crea y mantiene editoriales del catalogo.'
+      },
+      franchises: {
+        title: 'Franquicias',
+        subtitle: 'Busca, crea y mantiene franquicias del catalogo.'
+      },
+      series: {
+        title: 'Series',
+        subtitle: 'Busca, crea y mantiene series editoriales.'
+      },
+      actions: {
+        search: 'Buscar',
+        create: 'Crear',
+        edit: 'Editar',
+        save: 'Guardar',
+        cancel: 'Cancelar',
+        previous: 'Anterior',
+        next: 'Siguiente',
+        refresh: 'Recargar'
+      },
+      fields: {
+        name: 'Nombre',
+        country: 'Pais',
+        slug: 'Slug',
+        description: 'Descripcion',
+        status: 'Estado',
+        title: 'Titulo',
+        originalTitle: 'Titulo original',
+        type: 'Tipo',
+        publicationStatus: 'Estado de publicacion',
+        franchiseId: 'ID franquicia',
+        primaryPublisherId: 'ID editorial principal',
+        originCountry: 'Pais de origen',
+        originalLanguage: 'Idioma original',
+        startYear: 'Ano inicio',
+        endYear: 'Ano fin'
+      },
+      status: {
+        DRAFT: 'Borrador',
+        ACTIVE: 'Activo',
+        ARCHIVED: 'Archivado'
+      },
+      seriesType: {
+        BOOK: 'Libro',
+        COMIC: 'Comic',
+        MANGA: 'Manga'
+      },
+      publicationStatus: {
+        ONGOING: 'En curso',
+        COMPLETED: 'Completada',
+        CANCELLED: 'Cancelada',
+        HIATUS: 'Pausada',
+        UNKNOWN: 'Desconocida'
+      },
+      messages: {
+        saved: 'Guardado correctamente.',
+        loadError: 'No se pudieron cargar los registros.',
+        saveError: 'No se pudo guardar el registro.',
+        empty: 'No hay registros con esos filtros.'
+      },
       sections: {
         publishers: 'Editoriales',
         franchises: 'Franquicias',

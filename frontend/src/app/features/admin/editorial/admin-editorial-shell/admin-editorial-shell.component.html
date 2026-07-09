@@ -16,12 +16,23 @@
     <h2>{{ 'admin.editorial.nextSectionsTitle' | translate }}</h2>
     <div class="sections-grid">
       @for (section of sections; track section.labelKey) {
-        <mat-card class="section-card">
-          <mat-card-content>
-            <mat-icon aria-hidden="true">{{ section.icon }}</mat-icon>
-            <span>{{ section.labelKey | translate }}</span>
-          </mat-card-content>
-        </mat-card>
+        @if (section.route) {
+          <a class="section-card section-link" [routerLink]="section.route">
+            <mat-card>
+              <mat-card-content>
+                <mat-icon aria-hidden="true">{{ section.icon }}</mat-icon>
+                <span>{{ section.labelKey | translate }}</span>
+              </mat-card-content>
+            </mat-card>
+          </a>
+        } @else {
+          <mat-card class="section-card">
+            <mat-card-content>
+              <mat-icon aria-hidden="true">{{ section.icon }}</mat-icon>
+              <span>{{ section.labelKey | translate }}</span>
+            </mat-card-content>
+          </mat-card>
+        }
       }
     </div>
   </section>

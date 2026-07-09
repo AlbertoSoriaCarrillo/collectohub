@@ -1,12 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideRouter } from '@angular/router';
 import { AdminEditorialShellComponent } from './admin-editorial-shell.component';
 
 describe('AdminEditorialShellComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AdminEditorialShellComponent],
-      providers: [provideAnimationsAsync('noop')]
+      providers: [provideAnimationsAsync('noop'), provideRouter([])]
     }).compileComponents();
   });
 
@@ -37,5 +38,21 @@ describe('AdminEditorialShellComponent', () => {
     expect(compiled.textContent).toContain(
       'CRUD forms will be implemented in the next EPICs.'
     );
+  });
+
+  it('links base entities and keeps future sections without CRUD links', () => {
+    const fixture = TestBed.createComponent(AdminEditorialShellComponent);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const links = Array.from(compiled.querySelectorAll('a')).map((link) =>
+      link.getAttribute('href')
+    );
+
+    expect(links).toContain('/admin/editorial/publishers');
+    expect(links).toContain('/admin/editorial/franchises');
+    expect(links).toContain('/admin/editorial/series');
+    expect(links).not.toContain('/admin/editorial/items');
+    expect(links).not.toContain('/admin/editorial/editions');
   });
 });

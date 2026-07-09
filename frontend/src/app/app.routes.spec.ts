@@ -1,4 +1,5 @@
 import { routes } from './app.routes';
+import { adminGuard } from './core/guards/admin.guard';
 import { authGuard } from './core/guards/auth.guard';
 
 describe('app routes', () => {
@@ -57,6 +58,10 @@ describe('app routes', () => {
     const reservations = children.find((route) => route.path === 'reservations');
     const reservationDetail = children.find((route) => route.path === 'reservations/:reservationId');
     const shopReservations = children.find((route) => route.path === 'shops/:shopId/reservations');
+    const adminEditorial = children.find((route) => route.path === 'admin/editorial');
+    const adminPublishers = children.find((route) => route.path === 'admin/editorial/publishers');
+    const adminFranchises = children.find((route) => route.path === 'admin/editorial/franchises');
+    const adminSeries = children.find((route) => route.path === 'admin/editorial/series');
 
     expect(home?.canActivate).toBeUndefined();
     expect(catalog?.canActivate).toBeUndefined();
@@ -82,5 +87,9 @@ describe('app routes', () => {
     expect(reservations?.canActivate).toContain(authGuard);
     expect(reservationDetail?.canActivate).toContain(authGuard);
     expect(shopReservations?.canActivate).toContain(authGuard);
+    expect(adminEditorial?.canActivate).toEqual([authGuard, adminGuard]);
+    expect(adminPublishers?.canActivate).toEqual([authGuard, adminGuard]);
+    expect(adminFranchises?.canActivate).toEqual([authGuard, adminGuard]);
+    expect(adminSeries?.canActivate).toEqual([authGuard, adminGuard]);
   });
 });
