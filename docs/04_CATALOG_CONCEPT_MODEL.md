@@ -86,16 +86,24 @@ sus identidades.
 ## Encaje con el modelo actual
 
 El modelo actual dispone de `product_categories`, `master_products`,
-`collections` y `collection_items`.
+`publishers`, `catalog_franchises`, `catalog_series`, `catalog_items`,
+`catalog_item_editions`, `creators`, `catalog_item_creators`,
+`catalog_item_relationships`, `collections` y `collection_items`.
 
-- `master_products` actua hoy como item generico de catalogo.
-- `franchise` y `collection_name` son atributos planos, no entidades propias.
-- `collections` y `collection_items` ya representan la parte personal.
+- `master_products` actua hoy como contrato legacy compatible.
+- `franchise` y `collection_name` permanecen como atributos planos legacy.
+- `catalog_franchises`, `catalog_series`, `catalog_items` y
+  `catalog_item_editions` representan la identidad editorial nueva.
+- `creators` y `catalog_item_creators` representan creditos por item.
+- `catalog_item_relationships` representa relaciones dirigidas entre items.
+- `collections` y `collection_items` representan la parte personal y admiten
+  referencias legacy o editoriales.
 
-MVP 2 debe evolucionar la parte comun con franquicias, series, items, ediciones,
-publishers y creators, conservando una migracion clara desde los productos
-maestros existentes. El diseno fisico, puente de compatibilidad y plan por
-sub-EPICs estan en `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
+MVP 2 ya evoluciono la parte comun con franquicias, series, items, ediciones,
+publishers, creators y relaciones, conservando compatibilidad con los productos
+maestros existentes. El diseno fisico, puente de compatibilidad y auditoria de
+cierre estan en `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md` y
+`docs/20_MVP2_CLOSURE_REVIEW.md`.
 
 ## Reglas conceptuales
 

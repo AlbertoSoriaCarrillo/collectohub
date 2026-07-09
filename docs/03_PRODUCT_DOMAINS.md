@@ -13,7 +13,7 @@
 | Dominio | Responsabilidad | Estado |
 | --- | --- | --- |
 | Identity & Access | Usuarios, login, roles y permisos | Implementado |
-| Catalog Knowledge Base | Conocimiento comun de objetos coleccionables | Parcial; MVP 2 en diseno tecnico |
+| Catalog Knowledge Base | Conocimiento comun de objetos coleccionables | Implementado para MVP 2 con limitaciones documentadas |
 | User Collections | Colecciones e items personales | Implementado para MVP 1 |
 | Social | Perfiles publicos, posts, follows y actividad | Futuro |
 | Shops & Inventory | Tiendas, miembros, stock, precios y disponibilidad | Parcial |
@@ -34,15 +34,17 @@ de sesion, OAuth, 2FA, recuperacion de cuenta y administracion avanzada.
 Debe incluir franquicias, colecciones de catalogo, items de catalogo, autores,
 editoriales, tipos de objeto y relaciones.
 
-Estado parcial: existen categorias y `master_products`, con busqueda y detalle,
-pero franquicia y coleccion son atributos planos. No hay entidades editoriales
-para autores, editoriales, ramas de franquicia o relaciones entre obras.
+Estado MVP 2: implementado con limitaciones. Existen categorias y
+`master_products` como contrato legacy, y tambien publishers, franquicias,
+series, items, ediciones, creators, creditos por item y relaciones entre items
+como biblioteca editorial comun. El puente `master_product_catalog_links`
+mantiene compatibilidad con consumidores legacy.
 
-EPIC 30 define el siguiente paso sin implementarlo: publishers, franchises,
-series, items y editions como modelo nuevo, enlazado a `master_products` por un
-puente de compatibilidad. Creators se incorpora despues de estabilizar el
-nucleo; relaciones avanzadas se difieren hasta validar casos reales. Diseno:
-`docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
+La adopcion gradual ya alcanza colecciones, inventario y matching basico. Siguen
+fuera de MVP 2 el frontend admin editorial, moderacion avanzada, carga masiva,
+wiki colaborativa, marketplace, pagos, social y movil. Diseno y cierre:
+`docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md` y
+`docs/20_MVP2_CLOSURE_REVIEW.md`.
 
 ## 3. User Collections
 

@@ -236,6 +236,7 @@ Capturas recomendadas:
 - Flujo manual por API: `docs/17_MANUAL_TESTING_FLOW.md`.
 - Demo desde UI: `docs/18_DEMO_FLOW.md`.
 - Estado MVP: `docs/19_MVP_STATUS.md`.
+- Auditoria cierre MVP 2: `docs/20_MVP2_CLOSURE_REVIEW.md`.
 - Despliegue local: `docs/20_DEPLOYMENT_LOCAL.md`.
 - E2E Playwright: `docs/21_E2E_TESTING.md`.
 - Revision portfolio/entrevista: `docs/22_PORTFOLIO_REVIEW.md`.
@@ -277,8 +278,10 @@ formatos Markdown, Mermaid y CSV descargables.
 - EPIC 37 ya implemento inventario editorial y matching por item/edicion.
 - EPIC 38 ya implemento creators, creditos por item, relaciones entre items y
   su visualizacion en el detalle editorial.
-- La siguiente fase pendiente debe definirse tras revisar el alcance restante
-  de MVP 2.
+- MVP 2 queda recomendado como `MVP2_CLOSED_WITH_LIMITATIONS`; auditoria en
+  `docs/20_MVP2_CLOSURE_REVIEW.md`.
+- El siguiente paso recomendado es EPIC 39: cierre MVP2 editorial y preparacion
+  de MVP3 Admin Editorial.
 - Validar despues social basico y, en fases separadas, matching con tiendas,
   comercio real y herramientas para creadores.
 - Ejecutar E2E en CI con un job separado y estable.

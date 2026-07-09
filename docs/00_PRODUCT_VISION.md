@@ -108,8 +108,11 @@ La evolucion debe ser gradual:
 
 ## Foco actual frente a vision larga
 
-**Foco actual:** MVP 1, gestion de colecciones personales usando un catalogo
-comun, con autenticacion, perfil basico, buscados, ES/EN y UI responsive.
+**Foco actual:** MVP 1 permanece cerrado como nucleo coleccionista y MVP 2 queda
+recomendado como cerrado con limitaciones tras implementar la biblioteca
+editorial comun y su adopcion gradual. La siguiente decision de producto debe
+preparar MVP3 Admin Editorial sin presentar todavia social, comercio o
+marketplace como capacidades disponibles.
 
 **Vision larga:** plataforma que conecta coleccionistas, catalogo, tiendas y
 creadores mediante conocimiento compartido, matching oferta/demanda y funciones

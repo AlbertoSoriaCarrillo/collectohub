@@ -482,6 +482,20 @@ Las relaciones editoriales se modelan entre `CatalogItem` mediante
 relaciones entre series o ediciones. El detalle editorial puede mostrar
 relaciones entrantes y salientes con direccion INCOMING/OUTGOING.
 
+## 2026-07-09 - Criterio de cierre MVP2 editorial
+
+MVP2 se considera `MVP2_CLOSED_WITH_LIMITATIONS` porque ya implementa la
+biblioteca comun editorial definida para la fase: publishers, franquicias,
+series, items, ediciones, creators, relaciones entre items, puente legacy,
+fachada publica y adopcion gradual por colecciones, inventario y matching.
+
+Las funcionalidades de administracion editorial, carga masiva, moderacion,
+marketplace, pagos, alertas, social y movil quedan fuera de MVP2.
+
+La siguiente fase recomendada es EPIC 39 - Cierre MVP2 editorial y preparacion
+de MVP3 Admin Editorial, sin iniciar todavia la implementacion funcional del
+admin editorial.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

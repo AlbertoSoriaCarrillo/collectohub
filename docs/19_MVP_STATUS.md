@@ -1,6 +1,6 @@
 # CollectoHub MVP status
 
-Fecha de revision: 2026-07-08.
+Fecha de revision: 2026-07-09.
 
 ## Estado general
 
@@ -11,9 +11,14 @@ creadores, con matching, social y comercio desarrollados por fases.
 MVP 1 permanece cerrado y estable. MVP 2 ha completado EPIC 31 a EPIC 38:
 fundamentos editoriales, fachada editorial, frontend editorial, referencias
 editoriales en colecciones e inventario, matching editorial basico, creators
-editoriales y relaciones entre items. Siguen pendientes frontend admin
-editorial, moderacion editorial, reservas editoriales, marketplace, pagos,
-alertas y pantalla de grafo avanzada.
+editoriales y relaciones entre items.
+
+La auditoria de cierre de MVP 2 esta en
+`docs/20_MVP2_CLOSURE_REVIEW.md`. Estado recomendado:
+`MVP2_CLOSED_WITH_LIMITATIONS`. MVP 2 queda cerrado como biblioteca editorial
+comun y adopcion gradual con limitaciones documentadas. Siguen fuera de MVP 2:
+frontend admin editorial, moderacion editorial, reservas editoriales,
+marketplace, pagos, alertas, pantalla de grafo avanzada, social y movil.
 
 | Dominio | Estado actual |
 | --- | --- |
@@ -323,9 +328,11 @@ de aplicacion, 81 endpoints, 32 rutas Angular y 61 relaciones pantalla-backend.
 Los estados distinguen recorrido MVP 1, base legacy/futura, infraestructura,
 MVP 2 visible/foundation y redirecciones sin alterar codigo funcional.
 
-La siguiente tarea recomendada es definir **EPIC 39** tras revisar el alcance
-pendiente de MVP 2. Candidata: cierre MVP 2 editorial / revision de adopcion
-gradual. Diseno: `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
+La siguiente tarea recomendada es **EPIC 39 - Cierre MVP2 editorial y
+preparacion de MVP3 Admin Editorial**. Debe cerrar formalmente MVP 2 y preparar
+el siguiente bloque administrativo sin iniciar todavia social, tiendas,
+marketplace, pagos ni movil. Auditoria:
+`docs/20_MVP2_CLOSURE_REVIEW.md`.
 
 1. Preparar capturas reales para `docs/assets/screenshots/` y enlazarlas desde el README.
 2. Revisar el rediseño visual en desktop y movil real, anadir capturas a `docs/assets/screenshots/`.

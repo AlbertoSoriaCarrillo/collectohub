@@ -39,12 +39,15 @@ compatibilidad. EPIC 31 implementa y valida ya el primer tramo. Orden:
 8. EPIC 38: creators y relaciones priorizadas. Completada el 2026-07-08.
 
 Creators y relaciones priorizadas quedan implementados en backend, fachada y
-detalle frontend sin activar administracion visual avanzada. Fuente de diseno:
-`docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
+detalle frontend sin activar administracion visual avanzada. La auditoria de
+cierre esta en `docs/20_MVP2_CLOSURE_REVIEW.md`.
 
-Siguiente tarea: definir EPIC 39 tras revisar el alcance pendiente de MVP 2.
-Candidata a valorar, sin iniciarla: EPIC 39 - cierre MVP 2 editorial /
-revision de adopcion gradual.
+Estado recomendado: `MVP2_CLOSED_WITH_LIMITATIONS`. MVP 2 puede cerrarse como
+biblioteca editorial comun y adopcion gradual, dejando fuera admin editorial,
+moderacion, carga masiva, marketplace, pagos, social y movil.
+
+Siguiente tarea: EPIC 39 - Cierre MVP2 editorial y preparacion de MVP3 Admin
+Editorial.
 
 ## MVP 3 - Social basico
 

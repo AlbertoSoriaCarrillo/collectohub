@@ -57,10 +57,14 @@ Incluye:
 La migracion desde `master_products` debe preservar compatibilidad y distinguir
 claramente catalogo, coleccion personal e inventario.
 
-**Estado actual:** diseno tecnico completado en EPIC 30, sin implementacion de
-tablas ni endpoints. La estrategia aprobada propone un modelo nuevo con puente
-de compatibilidad y ocho sub-EPICs descritas en
-`docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md`.
+**Estado actual:** EPIC 31 a EPIC 38 implementadas y validadas. La auditoria de
+cierre recomienda `MVP2_CLOSED_WITH_LIMITATIONS`: el catalogo editorial comun,
+el puente de compatibilidad y la adopcion gradual por colecciones, inventario y
+matching estan implementados, mientras que admin editorial, moderacion, carga
+masiva, marketplace, pagos, social y movil quedan fuera de MVP 2.
+
+Diseno y cierre: `docs/09_MVP2_EDITORIAL_CATALOG_DESIGN.md` y
+`docs/20_MVP2_CLOSURE_REVIEW.md`.
 
 ## MVP 3 - Social basico
 

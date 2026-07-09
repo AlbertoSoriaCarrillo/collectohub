@@ -1371,3 +1371,17 @@ Siguiente paso: crear el backend en la carpeta backend.
   ni rutas Angular. No se inicia EPIC 39.
 - Siguiente tarea recomendada: definir EPIC 39 tras revisar el alcance restante
   de MVP 2; candidata: cierre de adopcion gradual del catalogo editorial.
+
+## 2026-07-09 - EPIC 39A - Auditoria de cierre MVP2
+
+- Creado `docs/20_MVP2_CLOSURE_REVIEW.md` con auditoria de capacidades,
+  evidencias, riesgos, deuda tecnica/documental, limitaciones y propuesta de
+  siguiente fase.
+- Estado recomendado de MVP 2: `MVP2_CLOSED_WITH_LIMITATIONS`.
+- Siguiente EPIC propuesta: EPIC 39 - Cierre MVP2 editorial y preparacion de
+  MVP3 Admin Editorial.
+- Actualizados README, roadmap, dominios, modelo conceptual, backlog, estado
+  MVP y decisiones para alinear la documentacion con EPIC 31 a EPIC 38.
+- Validacion documental: `git diff --check` ejecutado sin errores.
+- No se modifica backend funcional, frontend funcional, migraciones, endpoints
+  ni rutas Angular. No se inicia EPIC 39 funcional.
