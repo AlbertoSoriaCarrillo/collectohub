@@ -238,6 +238,7 @@ Capturas recomendadas:
 - Demo desde UI: `docs/18_DEMO_FLOW.md`.
 - Estado MVP: `docs/19_MVP_STATUS.md`.
 - Auditoria cierre MVP 2: `docs/20_MVP2_CLOSURE_REVIEW.md`.
+- Plan MVP 3 Admin Editorial: `docs/21_MVP3_ADMIN_EDITORIAL_PLAN.md`.
 - Despliegue local: `docs/20_DEPLOYMENT_LOCAL.md`.
 - E2E Playwright: `docs/21_E2E_TESTING.md`.
 - Revision portfolio/entrevista: `docs/22_PORTFOLIO_REVIEW.md`.
@@ -283,6 +284,9 @@ formatos Markdown, Mermaid y CSV descargables.
   `docs/20_MVP2_CLOSURE_REVIEW.md`.
 - El siguiente paso recomendado es EPIC 39: cierre formal MVP2 y preparacion de
   MVP3 Admin Editorial y carga real de datos.
+- MVP3 queda planificado en `docs/21_MVP3_ADMIN_EDITORIAL_PLAN.md`; la primera
+  fase funcional recomendada es EPIC 40A - Admin editorial shell y navegacion
+  protegida.
 - Social basico pasa a MVP 6; antes quedan MVP3 Admin Editorial, MVP4
   colecciones finales y MVP5 tiendas profesionales/reservas.
 - Validar despues marketplace, pagos, producto comercial, movil y herramientas

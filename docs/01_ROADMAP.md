@@ -88,7 +88,8 @@ colaboracion wiki publica ni produccion comercial.
 
 **Estado actual:** siguiente gran bloque recomendado tras cerrar MVP 2 con
 limitaciones. EPIC 39 debe cerrar formalmente MVP 2 y preparar este MVP sin
-implementar todavia el admin funcional.
+implementar todavia el admin funcional. Plan de entrada:
+`docs/21_MVP3_ADMIN_EDITORIAL_PLAN.md`.
 
 ## MVP 4 - Colecciones finales de usuario
 

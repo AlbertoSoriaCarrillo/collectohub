@@ -506,6 +506,15 @@ Motivo: el catalogo editorial ya existe tecnicamente, pero necesita herramientas
 mantenibles de administracion, calidad de datos y carga real antes de escalar a
 social, tiendas, marketplace o pagos.
 
+## 2026-07-09 - Entrada a MVP3 Admin Editorial
+
+MVP3 empieza por un shell admin protegido antes de implementar CRUDs. El motivo
+es validar navegacion, permisos, layout y separacion del recorrido publico antes
+de anadir pantallas de mantenimiento editorial.
+
+El orden recomendado es: shell admin, entidades base, items/ediciones, creators,
+relaciones, reconciliacion y datos demo.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

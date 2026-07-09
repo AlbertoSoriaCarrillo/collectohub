@@ -1402,3 +1402,20 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Validacion documental: `git diff --check` ejecutado sin errores.
 - No se modifica backend funcional, frontend funcional, migraciones, endpoints
   ni rutas Angular.
+
+## 2026-07-09 - EPIC 39C - Plan de entrada MVP3 Admin Editorial
+
+- Creado `docs/21_MVP3_ADMIN_EDITORIAL_PLAN.md`.
+- Alcance MVP3 definido: admin editorial, carga real de datos, calidad,
+  busqueda/filtros admin, validaciones visuales, duplicados basicos,
+  reconciliacion y datos demo editoriales.
+- Fuera de alcance definido: social, tiendas como flujo principal, marketplace,
+  pagos, movil, wiki publica, importadores masivos abiertos, IA, scraping,
+  moderacion comunitaria avanzada y grafo avanzado.
+- Orden de EPICs MVP3 definido: EPIC 40A a EPIC 40G.
+- EPIC 40A propuesta como primera fase funcional: Admin editorial shell y
+  navegacion protegida.
+- Backlog actualizado, estado MVP actualizado y decisiones actualizadas.
+- Validacion documental: `git diff --check` ejecutado sin errores.
+- No se modifica backend funcional, frontend funcional, migraciones, endpoints
+  ni rutas Angular.
