@@ -6,6 +6,7 @@ public record EditorialCatalogItemDetailResponse(
         EditorialCatalogDetailResponse catalog,
         CatalogItemResponse item,
         List<CatalogItemEditionResponse> editions,
-        List<EditorialCatalogCreatorCreditResponse> creators
+        List<EditorialCatalogCreatorCreditResponse> creators,
+        List<CatalogItemRelationshipResponse> relationships
 ) {
 }

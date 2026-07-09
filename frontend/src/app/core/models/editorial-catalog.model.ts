@@ -1,6 +1,16 @@
 export type EditorialCatalogResultType = 'SERIES' | 'ITEM' | 'EDITION' | 'MASTER_PRODUCT_LINK';
 export type EditorialPublicResultType = Exclude<EditorialCatalogResultType, 'MASTER_PRODUCT_LINK'>;
 export type EditorialSeriesType = 'BOOK' | 'COMIC' | 'MANGA';
+export type EditorialCatalogRelationshipType =
+  | 'ADAPTATION'
+  | 'REMAKE'
+  | 'REPRINT'
+  | 'SAME_WORK'
+  | 'SPIN_OFF'
+  | 'PREQUEL'
+  | 'SEQUEL'
+  | 'RELATED';
+export type EditorialCatalogRelationshipDirection = 'OUTGOING' | 'INCOMING';
 
 export interface PageResponse<T> {
   content: T[];
@@ -134,11 +144,28 @@ export interface EditorialCatalogCreatorCreditResponse {
   creditLabel: string | null;
 }
 
+export interface EditorialCatalogItemRelationshipResponse {
+  id: number;
+  sourceCatalogItemId: number;
+  sourceCatalogItemTitle: string;
+  sourceCatalogSeriesId: number;
+  sourceCatalogSeriesTitle: string;
+  targetCatalogItemId: number;
+  targetCatalogItemTitle: string;
+  targetCatalogSeriesId: number;
+  targetCatalogSeriesTitle: string;
+  relationshipType: EditorialCatalogRelationshipType;
+  relationshipOrder: number;
+  description: string | null;
+  direction: EditorialCatalogRelationshipDirection;
+}
+
 export interface EditorialCatalogItemDetail {
   catalog: EditorialCatalogDetail;
   item: EditorialItem;
   editions: EditorialEdition[];
   creators?: EditorialCatalogCreatorCreditResponse[];
+  relationships?: EditorialCatalogItemRelationshipResponse[];
 }
 
 export interface EditorialCatalogSeriesDetail {

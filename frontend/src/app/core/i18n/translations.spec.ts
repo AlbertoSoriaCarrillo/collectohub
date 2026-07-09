@@ -26,6 +26,12 @@ describe('translation dictionaries', () => {
     expect(keys).toContain('editorial.creators.title');
     expect(keys).toContain('editorial.creators.roles.AUTHOR');
     expect(keys).toContain('editorial.creators.roles.TRANSLATOR');
+    expect(keys).toContain('editorial.relationships.title');
+    expect(keys).toContain('editorial.relationships.direction.OUTGOING');
+    expect(keys).toContain('editorial.relationships.direction.INCOMING');
+    expect(keys).toContain('editorial.relationships.types.ADAPTATION');
+    expect(keys).toContain('editorial.relationships.types.SEQUEL');
+    expect(keys).toContain('editorial.relationships.types.SAME_WORK');
     expect(leafKeys(TRANSLATIONS.en)).toEqual(keys);
   });
 });

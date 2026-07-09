@@ -1312,3 +1312,31 @@ Siguiente paso: crear el backend en la carpeta backend.
 - No se implementan reservas, marketplace, pagos, social ni relaciones entre
   series o ediciones.
 - Siguiente tarea recomendada: EPIC 38D.
+
+## 2026-07-08 - EPIC 38D - Relaciones en detalle editorial
+
+- Ampliado `GET /api/catalog/editorial/items/{itemId}/detail` con
+  `relationships`, reutilizando el servicio publico de relaciones para devolver
+  solo relaciones ACTIVE/no eliminadas entre items publicos.
+- El detalle editorial mantiene creators y editions y devuelve `relationships`
+  como lista vacia cuando no existen relaciones publicas.
+- El frontend de detalle de item muestra relaciones despues de creditos y antes
+  de ediciones, con tipo, direccion, item relacionado, serie relacionada,
+  descripcion opcional y enlace al item relacionado correcto.
+- Anadidos modelos TypeScript para tipos/direcciones de relationships e i18n
+  ES/EN para tipos y direcciones.
+- Anadidos/actualizados tests backend de fachada y tests frontend del detalle de
+  item, incluyendo relationships presentes, vacios, undefined, tipos,
+  direcciones y enlaces OUTGOING/INCOMING.
+- Ejecutado `cd backend && .\mvnw.cmd clean verify`: `BUILD SUCCESS`, 322
+  tests, 0 fallos, 0 errores y 2 saltados.
+- Ejecutado `cd frontend && npm.cmd ci`: correcto, 474 paquetes instalados. Se
+  mantienen avisos conocidos de `@angular/animations` y scripts pendientes de
+  aprobacion, sin ejecutar `npm audit fix` ni `npm audit fix --force`.
+- Ejecutado `npm.cmd test -- --watch=false`: 43 archivos y 119 tests correctos.
+- Ejecutado `npm.cmd run build`: correcto. Permanece el warning conocido del
+  bundle inicial de 601.47 kB frente al budget de 500 kB.
+- No se crean migraciones, tablas, endpoints ni rutas Angular nuevas.
+- No se implementan pantalla de grafo, pantalla admin de relaciones,
+  marketplace, pagos, reservas ni social.
+- Siguiente tarea recomendada: EPIC 38E.

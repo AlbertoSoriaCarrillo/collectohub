@@ -48,6 +48,7 @@ public class EditorialCatalogFacadeService {
     private final CatalogItemEditionRepository editionRepository;
     private final MasterProductCatalogLinkRepository linkRepository;
     private final CatalogItemCreatorService creatorService;
+    private final CatalogItemRelationshipService relationshipService;
 
     public EditorialCatalogFacadeService(
             EditorialCatalogFacadeRepository facadeRepository,
@@ -55,7 +56,8 @@ public class EditorialCatalogFacadeService {
             CatalogItemRepository itemRepository,
             CatalogItemEditionRepository editionRepository,
             MasterProductCatalogLinkRepository linkRepository,
-            CatalogItemCreatorService creatorService
+            CatalogItemCreatorService creatorService,
+            CatalogItemRelationshipService relationshipService
     ) {
         this.facadeRepository = facadeRepository;
         this.seriesRepository = seriesRepository;
@@ -63,6 +65,7 @@ public class EditorialCatalogFacadeService {
         this.editionRepository = editionRepository;
         this.linkRepository = linkRepository;
         this.creatorService = creatorService;
+        this.relationshipService = relationshipService;
     }
 
     @Transactional(readOnly = true)
@@ -215,7 +218,8 @@ public class EditorialCatalogFacadeService {
                 editions,
                 creatorService.listPublic(item.getId()).stream()
                         .map(EditorialCatalogCreatorCreditResponse::from)
-                        .toList()
+                        .toList(),
+                relationshipService.listRelationships(item.getId(), null, null)
         );
     }
 

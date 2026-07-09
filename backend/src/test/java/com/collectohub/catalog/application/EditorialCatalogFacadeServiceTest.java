@@ -16,6 +16,7 @@ import com.collectohub.catalog.domain.MasterProductCatalogLinkStatus;
 import com.collectohub.catalog.dto.EditorialCatalogItemDetailResponse;
 import com.collectohub.catalog.dto.EditorialCatalogSearchItemResponse;
 import com.collectohub.catalog.dto.CatalogItemCreatorResponse;
+import com.collectohub.catalog.dto.CatalogItemRelationshipResponse;
 import com.collectohub.shared.dto.PageResponse;
 import com.collectohub.catalog.infrastructure.CatalogItemEditionRepository;
 import com.collectohub.catalog.infrastructure.CatalogItemRepository;
@@ -52,13 +53,15 @@ class EditorialCatalogFacadeServiceTest {
     @Mock private CatalogItemEditionRepository editionRepository;
     @Mock private MasterProductCatalogLinkRepository linkRepository;
     @Mock private CatalogItemCreatorService creatorService;
+    @Mock private CatalogItemRelationshipService relationshipService;
 
     private EditorialCatalogFacadeService service;
 
     @BeforeEach
     void setUp() {
         service = new EditorialCatalogFacadeService(
-                facadeRepository, seriesRepository, itemRepository, editionRepository, linkRepository, creatorService);
+                facadeRepository, seriesRepository, itemRepository, editionRepository, linkRepository, creatorService,
+                relationshipService);
     }
 
     @Test
@@ -118,6 +121,7 @@ class EditorialCatalogFacadeServiceTest {
         assertThat(response.editions()).hasSize(1);
         assertThat(response.editions().getFirst().editionName()).isEqualTo("Paperback");
         assertThat(response.creators()).isEmpty();
+        assertThat(response.relationships()).isEmpty();
     }
 
     @Test
@@ -137,6 +141,38 @@ class EditorialCatalogFacadeServiceTest {
         assertThat(response.creators()).extracting("creatorName")
                 .containsExactly("Yasuhiro Nightow", "Justin Burns");
         assertThat(response.creators().get(1).creditLabel()).isEqualTo("English translation");
+    }
+
+    @Test
+    void itemDetailContainsPublicRelationshipsFromRelationshipService() {
+        CatalogSeries series = series(CatalogRecordStatus.ACTIVE);
+        CatalogItem item = item(series, CatalogRecordStatus.ACTIVE);
+        when(itemRepository.findByIdAndDeletedAtIsNull(2L)).thenReturn(Optional.of(item));
+        when(editionRepository.findAllByCatalogItem_IdAndRecordStatusAndDeletedAtIsNullOrderByPublicationYearAscIdAsc(
+                item.getId(), CatalogRecordStatus.ACTIVE)).thenReturn(List.of());
+        when(relationshipService.listRelationships(item.getId(), null, null)).thenReturn(List.of(
+                relationship(30L, 2L, "Volume 1", 1L, "Trigun", 4L, "Volume 2", 1L, "Trigun", "SEQUEL", 1, "Next volume", "OUTGOING"),
+                relationship(31L, 5L, "Original one-shot", 6L, "Trigun Origins", 2L, "Volume 1", 1L, "Trigun", "SAME_WORK", 2, null, "INCOMING")
+        ));
+
+        EditorialCatalogItemDetailResponse response = service.getItemDetail(2L);
+
+        assertThat(response.relationships()).extracting(CatalogItemRelationshipResponse::direction)
+                .containsExactly("OUTGOING", "INCOMING");
+        assertThat(response.relationships()).extracting(CatalogItemRelationshipResponse::relationshipType)
+                .containsExactly("SEQUEL", "SAME_WORK");
+    }
+
+    @Test
+    void itemDetailReturnsEmptyRelationshipsWhenNoneExist() {
+        CatalogSeries series = series(CatalogRecordStatus.ACTIVE);
+        CatalogItem item = item(series, CatalogRecordStatus.ACTIVE);
+        when(itemRepository.findByIdAndDeletedAtIsNull(2L)).thenReturn(Optional.of(item));
+        when(editionRepository.findAllByCatalogItem_IdAndRecordStatusAndDeletedAtIsNullOrderByPublicationYearAscIdAsc(
+                item.getId(), CatalogRecordStatus.ACTIVE)).thenReturn(List.of());
+        when(relationshipService.listRelationships(item.getId(), null, null)).thenReturn(List.of());
+
+        assertThat(service.getItemDetail(2L).relationships()).isEmpty();
     }
 
     @Test
@@ -199,6 +235,27 @@ class EditorialCatalogFacadeServiceTest {
         return MasterProductCatalogLink.create(
                 masterProduct, catalogItem, null, status, MasterProductCatalogLinkSource.MANUAL,
                 BigDecimal.ONE, "Reviewed", null, 1L);
+    }
+
+    private CatalogItemRelationshipResponse relationship(
+            Long id,
+            Long sourceItemId,
+            String sourceItemTitle,
+            Long sourceSeriesId,
+            String sourceSeriesTitle,
+            Long targetItemId,
+            String targetItemTitle,
+            Long targetSeriesId,
+            String targetSeriesTitle,
+            String type,
+            Integer order,
+            String description,
+            String direction
+    ) {
+        return new CatalogItemRelationshipResponse(
+                id, sourceItemId, sourceItemTitle, sourceSeriesId, sourceSeriesTitle,
+                targetItemId, targetItemTitle, targetSeriesId, targetSeriesTitle,
+                type, order, description, "ACTIVE", direction);
     }
 
     private AuthenticatedUser user(String role) {

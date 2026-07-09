@@ -7,7 +7,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
-import { EditorialCatalogItemDetail } from '../../../core/models/editorial-catalog.model';
+import {
+  EditorialCatalogItemDetail,
+  EditorialCatalogItemRelationshipResponse
+} from '../../../core/models/editorial-catalog.model';
 import { EditorialCatalogService } from '../../../core/services/editorial-catalog.service';
 
 @Component({
@@ -39,5 +42,23 @@ export class EditorialItemDetailComponent implements OnInit {
         next: (detail) => this.detail.set(detail),
         error: () => this.errorMessage.set(this.languageService.translate('editorial.notFound'))
       });
+  }
+
+  relationshipItemId(relationship: EditorialCatalogItemRelationshipResponse): number {
+    return relationship.direction === 'OUTGOING'
+      ? relationship.targetCatalogItemId
+      : relationship.sourceCatalogItemId;
+  }
+
+  relationshipItemTitle(relationship: EditorialCatalogItemRelationshipResponse): string {
+    return relationship.direction === 'OUTGOING'
+      ? relationship.targetCatalogItemTitle
+      : relationship.sourceCatalogItemTitle;
+  }
+
+  relationshipSeriesTitle(relationship: EditorialCatalogItemRelationshipResponse): string {
+    return relationship.direction === 'OUTGOING'
+      ? relationship.targetCatalogSeriesTitle
+      : relationship.sourceCatalogSeriesTitle;
   }
 }

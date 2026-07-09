@@ -64,6 +64,34 @@
       </section>
     }
 
+    @if (data.relationships?.length) {
+      <section class="relationships-section" data-testid="editorial-relationships">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">{{ 'editorial.relationships.title' | translate }}</p>
+            <h2>{{ 'editorial.relationships.title' | translate }}</h2>
+          </div>
+        </div>
+        <div class="relationship-list">
+          @for (relationship of data.relationships; track relationship.id) {
+            <a class="relationship-link" [routerLink]="['/catalog/editorial/items', relationshipItemId(relationship)]">
+              <mat-card class="relationship-card">
+                <mat-card-content>
+                  <div class="relationship-header">
+                    <span class="result-type">{{ 'editorial.relationships.types.' + relationship.relationshipType | translate }}</span>
+                    <span class="relationship-direction">{{ 'editorial.relationships.direction.' + relationship.direction | translate }}</span>
+                  </div>
+                  <h3>{{ relationshipItemTitle(relationship) }}</h3>
+                  <p class="muted">{{ relationshipSeriesTitle(relationship) }}</p>
+                  @if (relationship.description) { <p class="relationship-description">{{ relationship.description }}</p> }
+                </mat-card-content>
+              </mat-card>
+            </a>
+          }
+        </div>
+      </section>
+    }
+
     <section class="editions-section">
       <div class="section-heading">
         <div><p class="eyebrow">{{ 'editorial.editions' | translate }}</p><h2>{{ 'editorial.availableEditions' | translate }}</h2></div>

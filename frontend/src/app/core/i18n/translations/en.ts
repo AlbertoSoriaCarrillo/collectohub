@@ -302,6 +302,23 @@ export const en: TranslationDictionary = {
         AUTHOR: 'Author', WRITER: 'Writer', ARTIST: 'Artist', ILLUSTRATOR: 'Illustrator',
         TRANSLATOR: 'Translator', EDITOR: 'Editor', OTHER: 'Other'
       }
+    },
+    relationships: {
+      title: 'Relationships',
+      direction: {
+        OUTGOING: 'Related from this item',
+        INCOMING: 'Related to this item'
+      },
+      types: {
+        ADAPTATION: 'Adaptation',
+        REMAKE: 'Remake',
+        REPRINT: 'Reprint',
+        SAME_WORK: 'Same work',
+        SPIN_OFF: 'Spin-off',
+        PREQUEL: 'Prequel',
+        SEQUEL: 'Sequel',
+        RELATED: 'Related'
+      }
     }
   },
   inventory: {

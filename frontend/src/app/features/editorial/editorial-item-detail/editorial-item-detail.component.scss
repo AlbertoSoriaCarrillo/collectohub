@@ -8,6 +8,11 @@
   gap: 12px;
 }
 
+.relationships-section {
+  display: grid;
+  gap: 12px;
+}
+
 .creator-list dd {
   align-items: baseline;
   display: flex;
@@ -37,4 +42,42 @@
 .edition-layout h3 {
   margin-top: 5px;
   overflow-wrap: anywhere;
+}
+
+.relationship-list {
+  display: grid;
+  gap: 12px;
+}
+
+.relationship-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.relationship-card {
+  border-radius: 8px;
+}
+
+.relationship-header {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  justify-content: space-between;
+}
+
+.relationship-direction {
+  color: var(--ch-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.relationship-card h3 {
+  margin: 8px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.relationship-description {
+  color: var(--ch-text);
+  margin: 10px 0 0;
 }
