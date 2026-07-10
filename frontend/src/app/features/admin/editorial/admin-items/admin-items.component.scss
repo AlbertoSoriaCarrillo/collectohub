@@ -1,0 +1,17 @@
+@use '../admin-publishers/admin-publishers.component.scss';
+
+.item-filters {
+  grid-template-columns: 130px minmax(180px, 1fr) 150px 150px 130px 130px auto;
+}
+
+@media (max-width: 1100px) {
+  .item-filters {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .item-filters {
+    grid-template-columns: 1fr;
+  }
+}

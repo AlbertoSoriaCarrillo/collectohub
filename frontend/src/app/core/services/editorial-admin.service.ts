@@ -4,15 +4,23 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   CatalogFranchiseResponse,
+  CatalogItemEditionResponse,
+  CatalogItemResponse,
   CatalogSeriesResponse,
   CreateCatalogFranchiseRequest,
+  CreateCatalogItemEditionRequest,
+  CreateCatalogItemRequest,
   CreateCatalogSeriesRequest,
   CreatePublisherRequest,
+  EditorialAdminEditionSearchParams,
+  EditorialAdminItemSearchParams,
   EditorialAdminSearchParams,
   EditorialAdminSeriesSearchParams,
   PageResponse,
   PublisherResponse,
   UpdateCatalogFranchiseRequest,
+  UpdateCatalogItemEditionRequest,
+  UpdateCatalogItemRequest,
   UpdateCatalogSeriesRequest,
   UpdatePublisherRequest
 } from '../models/editorial-admin.model';
@@ -89,8 +97,65 @@ export class EditorialAdminService {
     return this.http.put<CatalogSeriesResponse>(`${this.baseUrl}/series/${id}`, request);
   }
 
+  searchItems(
+    seriesId: number,
+    params: EditorialAdminItemSearchParams = {}
+  ): Observable<PageResponse<CatalogItemResponse>> {
+    return this.http.get<PageResponse<CatalogItemResponse>>(
+      `${this.baseUrl}/series/${seriesId}/items`,
+      { params: this.toParams(params, 'sortOrder,asc') }
+    );
+  }
+
+  getItem(id: number): Observable<CatalogItemResponse> {
+    return this.http.get<CatalogItemResponse>(`${this.baseUrl}/items/${id}`);
+  }
+
+  createItem(seriesId: number, request: CreateCatalogItemRequest): Observable<CatalogItemResponse> {
+    return this.http.post<CatalogItemResponse>(`${this.baseUrl}/series/${seriesId}/items`, request);
+  }
+
+  updateItem(id: number, request: UpdateCatalogItemRequest): Observable<CatalogItemResponse> {
+    return this.http.put<CatalogItemResponse>(`${this.baseUrl}/items/${id}`, request);
+  }
+
+  searchEditions(
+    itemId: number,
+    params: EditorialAdminEditionSearchParams = {}
+  ): Observable<PageResponse<CatalogItemEditionResponse>> {
+    return this.http.get<PageResponse<CatalogItemEditionResponse>>(
+      `${this.baseUrl}/items/${itemId}/editions`,
+      { params: this.toParams(params, 'publicationYear,asc') }
+    );
+  }
+
+  getEdition(id: number): Observable<CatalogItemEditionResponse> {
+    return this.http.get<CatalogItemEditionResponse>(`${this.baseUrl}/editions/${id}`);
+  }
+
+  createEdition(
+    itemId: number,
+    request: CreateCatalogItemEditionRequest
+  ): Observable<CatalogItemEditionResponse> {
+    return this.http.post<CatalogItemEditionResponse>(
+      `${this.baseUrl}/items/${itemId}/editions`,
+      request
+    );
+  }
+
+  updateEdition(
+    id: number,
+    request: UpdateCatalogItemEditionRequest
+  ): Observable<CatalogItemEditionResponse> {
+    return this.http.put<CatalogItemEditionResponse>(`${this.baseUrl}/editions/${id}`, request);
+  }
+
   private toParams(
-    params: EditorialAdminSearchParams | EditorialAdminSeriesSearchParams,
+    params:
+      | EditorialAdminSearchParams
+      | EditorialAdminSeriesSearchParams
+      | EditorialAdminItemSearchParams
+      | EditorialAdminEditionSearchParams,
     defaultSort: string
   ): HttpParams {
     const withDefaults = {

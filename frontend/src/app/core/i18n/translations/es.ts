@@ -341,6 +341,14 @@ export const es: TranslationDictionary = {
         title: 'Series',
         subtitle: 'Busca, crea y mantiene series editoriales.'
       },
+      items: {
+        title: 'Items',
+        subtitle: 'Busca, crea y mantiene items de una serie.'
+      },
+      editions: {
+        title: 'Ediciones',
+        subtitle: 'Busca, crea y mantiene ediciones de items.'
+      },
       actions: {
         search: 'Buscar',
         create: 'Crear',
@@ -366,7 +374,23 @@ export const es: TranslationDictionary = {
         originCountry: 'Pais de origen',
         originalLanguage: 'Idioma original',
         startYear: 'Ano inicio',
-        endYear: 'Ano fin'
+        endYear: 'Ano fin',
+        seriesId: 'ID serie',
+        itemId: 'ID item',
+        publisherId: 'ID editorial',
+        sequenceLabel: 'Etiqueta de secuencia',
+        sortOrder: 'Orden',
+        firstPublicationDate: 'Primera publicacion',
+        firstPublicationYear: 'Ano primera publicacion',
+        isbn: 'ISBN',
+        ean: 'EAN',
+        format: 'Formato',
+        editionName: 'Nombre de edicion',
+        publicationDate: 'Fecha publicacion',
+        publicationYear: 'Ano publicacion',
+        language: 'Idioma',
+        pageCount: 'Paginas',
+        coverImageUrl: 'URL portada'
       },
       status: {
         DRAFT: 'Borrador',
@@ -385,11 +409,24 @@ export const es: TranslationDictionary = {
         HIATUS: 'Pausada',
         UNKNOWN: 'Desconocida'
       },
+      editionFormat: {
+        HARDCOVER: 'Tapa dura',
+        PAPERBACK: 'Rustica',
+        SOFTCOVER: 'Tapa blanda',
+        DIGITAL: 'Digital',
+        OMNIBUS: 'Omnibus',
+        BOX_SET: 'Cofre',
+        SINGLE_ISSUE: 'Grapa',
+        OTHER: 'Otro'
+      },
       messages: {
         saved: 'Guardado correctamente.',
         loadError: 'No se pudieron cargar los registros.',
         saveError: 'No se pudo guardar el registro.',
-        empty: 'No hay registros con esos filtros.'
+        empty: 'No hay registros con esos filtros.',
+        contextRequired: 'Indica el ID padre requerido para cargar registros.',
+        invalidYearRange: 'Revisa el rango de anos.',
+        invalidUrl: 'Usa una URL http o https.'
       },
       sections: {
         publishers: 'Editoriales',

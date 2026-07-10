@@ -51,7 +51,7 @@ Editorial.
 
 EPIC 39C cierra la preparacion de MVP3 mediante
 `docs/21_MVP3_ADMIN_EDITORIAL_PLAN.md`. Siguiente tarea funcional:
-EPIC 40C - Admin items/editions.
+EPIC 40D - Admin creators y creditos.
 
 MVP 3 ya no es Social basico. MVP 3 pasa a ser Admin editorial y carga real de
 datos. Social basico pasa a MVP 6. El cambio de orden evita saltar a
@@ -70,7 +70,7 @@ Orden recomendado MVP3:
 1. EPIC 40A - Admin editorial shell y navegacion protegida. Completada el
    2026-07-10.
 2. EPIC 40B - Admin publishers/franchises/series. Completada el 2026-07-10.
-3. EPIC 40C - Admin items/editions.
+3. EPIC 40C - Admin items/editions. Completada el 2026-07-10.
 4. EPIC 40D - Admin creators y creditos.
 5. EPIC 40E - Admin relationships.
 6. EPIC 40F - Admin master product links/reconciliation.

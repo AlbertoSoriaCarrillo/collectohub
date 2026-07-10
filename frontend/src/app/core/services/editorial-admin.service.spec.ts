@@ -105,6 +105,96 @@ describe('EditorialAdminService', () => {
     service.updateSeries(9, request).subscribe();
     expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/series/9').request.method).toBe('PUT');
   });
+
+  it('searches, creates and updates items without empty params', () => {
+    service.searchItems(4, {
+      q: 'chapter',
+      publicationYear: 1988,
+      language: '',
+      country: 'JP',
+      recordStatus: 'ACTIVE'
+    }).subscribe();
+
+    const search = httpTestingController.expectOne((candidate) =>
+      candidate.url === 'http://localhost:8080/api/catalog/series/4/items' &&
+      candidate.params.get('q') === 'chapter' &&
+      candidate.params.get('publicationYear') === '1988' &&
+      candidate.params.get('country') === 'JP' &&
+      candidate.params.get('recordStatus') === 'ACTIVE' &&
+      candidate.params.get('sort') === 'sortOrder,asc' &&
+      !candidate.params.has('language')
+    );
+    expect(search.request.method).toBe('GET');
+    search.flush(emptyPage());
+
+    const request = {
+      title: 'Chapter 1',
+      originalTitle: null,
+      sequenceLabel: '1',
+      sortOrder: 1,
+      description: null,
+      firstPublicationDate: null,
+      firstPublicationYear: 1988,
+      originalLanguage: 'ja',
+      originCountry: 'JP',
+      recordStatus: 'DRAFT' as const
+    };
+
+    service.createItem(4, request).subscribe();
+    expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/series/4/items').request.method).toBe('POST');
+
+    service.updateItem(10, request).subscribe();
+    expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/items/10').request.method).toBe('PUT');
+  });
+
+  it('searches, creates and updates editions without empty params', () => {
+    service.searchEditions(5, {
+      publisherId: 2,
+      isbn: ' 123 ',
+      ean: '',
+      format: 'PAPERBACK',
+      language: 'es',
+      country: 'ES',
+      publicationYear: 1999,
+      recordStatus: 'ACTIVE'
+    }).subscribe();
+
+    const search = httpTestingController.expectOne((candidate) =>
+      candidate.url === 'http://localhost:8080/api/catalog/items/5/editions' &&
+      candidate.params.get('publisherId') === '2' &&
+      candidate.params.get('isbn') === '123' &&
+      candidate.params.get('format') === 'PAPERBACK' &&
+      candidate.params.get('language') === 'es' &&
+      candidate.params.get('country') === 'ES' &&
+      candidate.params.get('publicationYear') === '1999' &&
+      candidate.params.get('recordStatus') === 'ACTIVE' &&
+      candidate.params.get('sort') === 'publicationYear,asc' &&
+      !candidate.params.has('ean')
+    );
+    expect(search.request.method).toBe('GET');
+    search.flush(emptyPage());
+
+    const request = {
+      publisherId: 2,
+      isbn: '123',
+      ean: null,
+      format: 'PAPERBACK' as const,
+      editionName: 'First',
+      publicationDate: null,
+      publicationYear: 1999,
+      language: 'es',
+      country: 'ES',
+      pageCount: 200,
+      coverImageUrl: 'https://example.test/cover.jpg',
+      recordStatus: 'ACTIVE' as const
+    };
+
+    service.createEdition(5, request).subscribe();
+    expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/items/5/editions').request.method).toBe('POST');
+
+    service.updateEdition(11, request).subscribe();
+    expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/editions/11').request.method).toBe('PUT');
+  });
 });
 
 function emptyPage() {

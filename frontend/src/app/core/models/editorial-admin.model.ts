@@ -6,6 +6,15 @@ export type CatalogPublicationStatus =
   | 'CANCELLED'
   | 'HIATUS'
   | 'UNKNOWN';
+export type CatalogItemEditionFormat =
+  | 'HARDCOVER'
+  | 'PAPERBACK'
+  | 'SOFTCOVER'
+  | 'DIGITAL'
+  | 'OMNIBUS'
+  | 'BOX_SET'
+  | 'SINGLE_ISSUE'
+  | 'OTHER';
 
 export interface PageResponse<T> {
   content: T[];
@@ -90,6 +99,77 @@ export interface CreateCatalogSeriesRequest {
 
 export interface UpdateCatalogSeriesRequest extends CreateCatalogSeriesRequest {}
 
+export interface CatalogItemResponse {
+  id: number;
+  seriesId: number;
+  seriesTitle: string;
+  title: string;
+  originalTitle: string | null;
+  sequenceLabel: string | null;
+  sortOrder: number | null;
+  description: string | null;
+  firstPublicationDate: string | null;
+  firstPublicationYear: number | null;
+  originalLanguage: string | null;
+  originCountry: string | null;
+  recordStatus: CatalogRecordStatus;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface CreateCatalogItemRequest {
+  title: string;
+  originalTitle: string | null;
+  sequenceLabel: string | null;
+  sortOrder: number | null;
+  description: string | null;
+  firstPublicationDate: string | null;
+  firstPublicationYear: number | null;
+  originalLanguage: string | null;
+  originCountry: string | null;
+  recordStatus: CatalogRecordStatus;
+}
+
+export interface UpdateCatalogItemRequest extends CreateCatalogItemRequest {}
+
+export interface CatalogItemEditionResponse {
+  id: number;
+  catalogItemId: number;
+  catalogItemTitle: string;
+  publisherId: number | null;
+  publisherName: string | null;
+  isbn: string | null;
+  ean: string | null;
+  format: CatalogItemEditionFormat;
+  editionName: string | null;
+  publicationDate: string | null;
+  publicationYear: number | null;
+  language: string | null;
+  country: string | null;
+  pageCount: number | null;
+  coverImageUrl: string | null;
+  recordStatus: CatalogRecordStatus;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface CreateCatalogItemEditionRequest {
+  publisherId: number | null;
+  isbn: string | null;
+  ean: string | null;
+  format: CatalogItemEditionFormat;
+  editionName: string | null;
+  publicationDate: string | null;
+  publicationYear: number | null;
+  language: string | null;
+  country: string | null;
+  pageCount: number | null;
+  coverImageUrl: string | null;
+  recordStatus: CatalogRecordStatus;
+}
+
+export interface UpdateCatalogItemEditionRequest extends CreateCatalogItemEditionRequest {}
+
 export interface EditorialAdminSearchParams {
   q?: string | null;
   recordStatus?: CatalogRecordStatus | null;
@@ -105,4 +185,20 @@ export interface EditorialAdminSeriesSearchParams extends EditorialAdminSearchPa
   publisherId?: number | null;
   language?: string | null;
   country?: string | null;
+}
+
+export interface EditorialAdminItemSearchParams extends EditorialAdminSearchParams {
+  publicationYear?: number | null;
+  language?: string | null;
+  country?: string | null;
+}
+
+export interface EditorialAdminEditionSearchParams extends EditorialAdminSearchParams {
+  publisherId?: number | null;
+  isbn?: string | null;
+  ean?: string | null;
+  format?: CatalogItemEditionFormat | null;
+  language?: string | null;
+  country?: string | null;
+  publicationYear?: number | null;
 }

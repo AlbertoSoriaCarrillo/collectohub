@@ -341,6 +341,14 @@ export const en: TranslationDictionary = {
         title: 'Series',
         subtitle: 'Search, create and maintain editorial series.'
       },
+      items: {
+        title: 'Items',
+        subtitle: 'Search, create and maintain catalog items for a series.'
+      },
+      editions: {
+        title: 'Editions',
+        subtitle: 'Search, create and maintain item editions.'
+      },
       actions: {
         search: 'Search',
         create: 'Create',
@@ -366,7 +374,23 @@ export const en: TranslationDictionary = {
         originCountry: 'Origin country',
         originalLanguage: 'Original language',
         startYear: 'Start year',
-        endYear: 'End year'
+        endYear: 'End year',
+        seriesId: 'Series ID',
+        itemId: 'Item ID',
+        publisherId: 'Publisher ID',
+        sequenceLabel: 'Sequence label',
+        sortOrder: 'Sort order',
+        firstPublicationDate: 'First publication date',
+        firstPublicationYear: 'First publication year',
+        isbn: 'ISBN',
+        ean: 'EAN',
+        format: 'Format',
+        editionName: 'Edition name',
+        publicationDate: 'Publication date',
+        publicationYear: 'Publication year',
+        language: 'Language',
+        pageCount: 'Page count',
+        coverImageUrl: 'Cover image URL'
       },
       status: {
         DRAFT: 'Draft',
@@ -385,11 +409,24 @@ export const en: TranslationDictionary = {
         HIATUS: 'Hiatus',
         UNKNOWN: 'Unknown'
       },
+      editionFormat: {
+        HARDCOVER: 'Hardcover',
+        PAPERBACK: 'Paperback',
+        SOFTCOVER: 'Softcover',
+        DIGITAL: 'Digital',
+        OMNIBUS: 'Omnibus',
+        BOX_SET: 'Box set',
+        SINGLE_ISSUE: 'Single issue',
+        OTHER: 'Other'
+      },
       messages: {
         saved: 'Saved successfully.',
         loadError: 'The records could not be loaded.',
         saveError: 'The record could not be saved.',
-        empty: 'No records match those filters.'
+        empty: 'No records match those filters.',
+        contextRequired: 'Enter the required parent ID to load records.',
+        invalidYearRange: 'Review the year range.',
+        invalidUrl: 'Use an http or https URL.'
       },
       sections: {
         publishers: 'Publishers',

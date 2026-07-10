@@ -192,6 +192,22 @@ export const routes: Routes = [
           )
       },
       {
+        path: 'admin/editorial/items',
+        canActivate: [authGuard, adminGuard],
+        loadComponent: () =>
+          import('./features/admin/editorial/admin-items/admin-items.component').then(
+            (m) => m.AdminItemsComponent
+          )
+      },
+      {
+        path: 'admin/editorial/editions',
+        canActivate: [authGuard, adminGuard],
+        loadComponent: () =>
+          import('./features/admin/editorial/admin-editions/admin-editions.component').then(
+            (m) => m.AdminEditionsComponent
+          )
+      },
+      {
         path: 'reservations',
         canActivate: [authGuard],
         loadComponent: () =>

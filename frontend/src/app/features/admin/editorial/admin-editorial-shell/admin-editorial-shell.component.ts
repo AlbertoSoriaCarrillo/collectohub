@@ -33,8 +33,16 @@ export class AdminEditorialShellComponent {
       icon: 'view_list',
       route: '/admin/editorial/series'
     },
-    { labelKey: 'admin.editorial.sections.items', icon: 'menu_book' },
-    { labelKey: 'admin.editorial.sections.editions', icon: 'auto_stories' },
+    {
+      labelKey: 'admin.editorial.sections.items',
+      icon: 'menu_book',
+      route: '/admin/editorial/items'
+    },
+    {
+      labelKey: 'admin.editorial.sections.editions',
+      icon: 'auto_stories',
+      route: '/admin/editorial/editions'
+    },
     { labelKey: 'admin.editorial.sections.creators', icon: 'groups' },
     { labelKey: 'admin.editorial.sections.credits', icon: 'badge' },
     { labelKey: 'admin.editorial.sections.relationships', icon: 'account_tree' },
