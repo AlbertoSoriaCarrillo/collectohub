@@ -548,6 +548,16 @@ export const es: TranslationDictionary = {
         creatorChangeRequiresRecreate:
           'Para cambiar el creator, elimina este credito y crea uno nuevo.'
       },
+      quality: {
+        possibleDuplicate: 'Posible duplicado en los resultados cargados.',
+        duplicateName: 'Ya hay un nombre coincidente cargado.',
+        duplicateSlug: 'Ya hay un slug coincidente cargado.',
+        duplicateCredit: 'Ya existe un credito similar para este item.',
+        duplicateRelationship: 'Ya existe una relacion similar en el listado cargado.',
+        duplicateMasterLink: 'Ya existe un enlace de producto maestro similar cargado.',
+        reviewBeforeSaving: 'Revisa el registro existente antes de guardar.',
+        nonBlockingWarning: 'Este aviso no impide guardar.'
+      },
       sections: {
         publishers: 'Editoriales',
         franchises: 'Franquicias',

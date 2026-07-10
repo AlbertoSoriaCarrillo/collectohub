@@ -48,7 +48,7 @@ ADMIN. Auditoria: `docs/22_MVP3_ADMIN_UX_AUDIT.md`.
 | Docker | Daemon no disponible. | Sin smoke compose reciente. | Reintentar localmente. |
 | Datos reales | No hay carga productiva. | Catalogo de demostracion. | Calidad de datos posterior. |
 | Roles | Solo `ADMIN` editorial. | Sin flujos especializados. | Decidir hardening. |
-| Calidad | Sin metricas ni reglas avanzadas. | Duplicados complejos posibles. | EPIC 42A. |
+| Calidad | EPIC 42A documenta calidad basica y warnings; faltan reglas backend fuertes, datos reales y E2E futuro. | Duplicados complejos posibles. | EPIC 42B. |
 
 ## Decision recomendada
 

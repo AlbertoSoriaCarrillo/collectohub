@@ -251,3 +251,8 @@ Estado: EPIC 41B completada el 2026-07-10. EPIC 40A-40G y 41A conforman el
 primer bloque parcial implementado; cierre: `docs/23_MVP3_PARTIAL_CLOSURE.md`.
 MVP3 no esta cerrado por completo. Siguiente recomendacion: EPIC 41C - E2E
 basico Admin Editorial y validacion con datos demo.
+
+Estado: EPIC 42A completada el 2026-07-10. Calidad editorial basica documentada
+en `docs/24_EDITORIAL_DATA_QUALITY.md`; no cambia backend ni constraints.
+Siguiente recomendacion: EPIC 42B - Hardening admin editorial y validaciones
+backend selectivas.

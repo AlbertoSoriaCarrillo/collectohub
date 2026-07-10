@@ -86,6 +86,11 @@ EPIC 41B - Cierre documental/exportable MVP3 parcial. Completada el
 2026-07-10. Siguiente tarea recomendada: EPIC 41C - E2E basico Admin Editorial
 y validacion con datos demo.
 
+Decision: los E2E se posponen hasta recorridos mas maduros. EPIC 42A - Calidad
+de datos editorial y reglas anti-duplicados. Completada el 2026-07-10.
+Siguiente tarea recomendada: EPIC 42B - Hardening admin editorial y
+validaciones backend selectivas.
+
 ## MVP 4 - Colecciones finales de usuario
 
 - adopcion principal del catalogo editorial en colecciones;

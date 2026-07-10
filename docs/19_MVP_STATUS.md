@@ -348,6 +348,10 @@ EPIC 41B queda completada: el cierre parcial esta en
 `docs/23_MVP3_PARTIAL_CLOSURE.md`. MVP3 sigue abierto; la siguiente tarea
 recomendada es EPIC 41C - E2E basico Admin Editorial y validacion con datos demo.
 
+EPIC 42A documenta reglas de calidad editorial y prepara warnings visuales no
+bloqueantes. Los E2E se posponen para una fase mas madura; siguiente tarea:
+EPIC 42B - Hardening admin editorial y validaciones backend selectivas.
+
 1. Preparar capturas reales para `docs/assets/screenshots/` y enlazarlas desde el README.
 2. Revisar el rediseño visual en desktop y movil real, anadir capturas a `docs/assets/screenshots/`.
 3. Revisar vulnerabilidades npm transitivas y compatibilidad de versiones Angular/Node antes de compartir el entorno.

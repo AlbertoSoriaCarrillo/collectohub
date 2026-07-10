@@ -1671,3 +1671,16 @@ Siguiente paso: crear el backend en la carpeta backend.
 - El snapshot de base de datos permanece sin cambios: no hay migraciones nuevas.
 - Ejecutado `git diff --check`; sin backend funcional, endpoints, rutas nuevas
   ni MVP4. Siguiente tarea: EPIC 41C - E2E basico Admin Editorial y datos demo.
+
+## 2026-07-10 - EPIC 42A - Calidad de datos editorial y reglas anti-duplicados
+
+- Creado `docs/24_EDITORIAL_DATA_QUALITY.md` con reglas de normalizacion,
+  riesgos y checks manuales para cada entidad editorial.
+- Anadidas claves i18n ES/EN para warnings no bloqueantes de posibles
+  duplicados. No se fuerza deteccion automatica sobre resultados paginados o
+  contextuales incompletos para evitar avisos fragiles.
+- El frontend ya normaliza textos opcionales, pais y datos de formulario donde
+  corresponde; no se cambian contratos ni reglas backend.
+- Sin backend funcional, migraciones, endpoints, rutas, E2E, Playwright ni MVP4.
+- Siguiente tarea recomendada: EPIC 42B - Hardening admin editorial y
+  validaciones backend selectivas.
