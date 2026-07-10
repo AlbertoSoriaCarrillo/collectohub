@@ -26,6 +26,8 @@ import {
   EditorialAdminSearchParams,
   EditorialAdminSeriesSearchParams,
   EditorialLegacyBridgeResponse,
+  EditorialDataQualityReportResponse,
+  EditorialDataQualityScope,
   MasterProductCatalogLinkResponse,
   MasterProductCatalogLinkSearchParams,
   PageResponse,
@@ -305,6 +307,12 @@ export class EditorialAdminService {
     return this.http.get<EditorialLegacyBridgeResponse>(
       `${this.baseUrl}/editorial/master-products/${masterProductId}/link`
     );
+  }
+
+  getEditorialDataQualityReport(scope: EditorialDataQualityScope = 'ALL', limit = 50): Observable<EditorialDataQualityReportResponse> {
+    return this.http.get<EditorialDataQualityReportResponse>(`${this.baseUrl}/admin/data-quality/report`, {
+      params: new HttpParams().set('scope', scope).set('limit', String(limit))
+    });
   }
 
   private toParams(

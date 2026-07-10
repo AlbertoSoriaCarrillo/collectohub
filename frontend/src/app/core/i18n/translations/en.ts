@@ -443,6 +443,11 @@ export const en: TranslationDictionary = {
           BACKFILL: 'Backfill'
         }
       },
+      dataQuality: {
+        title: 'Data quality', subtitle: 'Review exact duplicate risks without changing catalog data.', scopeLabel: 'Scope', refresh: 'Refresh report', totalChecks: 'Checks', totalFindings: 'Findings', empty: 'No findings for this scope.', error: 'The data quality report could not be loaded.',
+        severity: { LOW: 'Low', MEDIUM: 'Medium', HIGH: 'High' },
+        scope: { ALL: 'All', PUBLISHERS: 'Publishers', FRANCHISES: 'Franchises', SERIES: 'Series', ITEMS: 'Items', EDITIONS: 'Editions', CREATORS: 'Creators', MASTER_LINKS: 'Master links' }
+      },
       actions: {
         search: 'Search',
         create: 'Create',
@@ -568,6 +573,7 @@ export const en: TranslationDictionary = {
         credits: 'Credits',
         relationships: 'Relationships',
         reconciliation: 'Legacy reconciliation'
+        ,dataQuality: 'Data quality'
       }
     }
   },

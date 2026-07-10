@@ -62,6 +62,7 @@ export class AdminEditorialShellComponent {
       labelKey: 'admin.editorial.sections.reconciliation',
       icon: 'sync_alt',
       route: '/admin/editorial/master-product-links'
-    }
+    },
+    { labelKey: 'admin.editorial.sections.dataQuality', icon: 'fact_check', route: '/admin/editorial/data-quality' }
   ];
 }

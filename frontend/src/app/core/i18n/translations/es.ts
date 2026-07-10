@@ -443,6 +443,11 @@ export const es: TranslationDictionary = {
           BACKFILL: 'Backfill'
         }
       },
+      dataQuality: {
+        title: 'Calidad de datos', subtitle: 'Revisa riesgos de duplicado exacto sin modificar datos del catalogo.', scopeLabel: 'Alcance', refresh: 'Actualizar informe', totalChecks: 'Checks', totalFindings: 'Hallazgos', empty: 'No hay hallazgos para este alcance.', error: 'No se pudo cargar el informe de calidad.',
+        severity: { LOW: 'Baja', MEDIUM: 'Media', HIGH: 'Alta' },
+        scope: { ALL: 'Todo', PUBLISHERS: 'Publishers', FRANCHISES: 'Franchises', SERIES: 'Series', ITEMS: 'Items', EDITIONS: 'Ediciones', CREATORS: 'Creators', MASTER_LINKS: 'Enlaces maestros' }
+      },
       actions: {
         search: 'Buscar',
         create: 'Crear',
@@ -568,6 +573,7 @@ export const es: TranslationDictionary = {
         credits: 'Creditos',
         relationships: 'Relaciones',
         reconciliation: 'Reconciliacion legacy'
+        ,dataQuality: 'Calidad de datos'
       }
     }
   },

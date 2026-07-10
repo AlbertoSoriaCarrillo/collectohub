@@ -1697,3 +1697,13 @@ Siguiente paso: crear el backend en la carpeta backend.
   fuzzy matching, aliases, metricas y constraints/migraciones futuras.
 - Sin migraciones, endpoints, rutas, E2E, Playwright ni MVP4. Siguiente tarea:
   EPIC 42C - Calidad editorial avanzada y reporte de duplicados.
+
+## 2026-07-10 - EPIC 42C - Calidad editorial avanzada y reporte de duplicados
+
+- Anadido endpoint ADMIN de solo lectura `/api/catalog/admin/data-quality/report`
+  con `scope` y limite acotado a 200, sin auto-fix, merge ni escritura.
+- Anadidos DTOs, servicio backend y pantalla `/admin/editorial/data-quality`.
+- Checks iniciales: nombres de creators duplicados y multiples enlaces VERIFIED
+  por master product. Los checks restantes quedan para ampliacion posterior.
+- Compilacion backend correcta con tests omitidos y build frontend correcto; sin
+  migraciones, E2E, Playwright ni MVP4.

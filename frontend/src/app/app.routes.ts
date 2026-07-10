@@ -240,6 +240,11 @@ export const routes: Routes = [
           ).then((m) => m.AdminMasterProductLinksComponent)
       },
       {
+        path: 'admin/editorial/data-quality',
+        canActivate: [authGuard, adminGuard],
+        loadComponent: () => import('./features/admin/editorial/admin-data-quality/admin-data-quality.component').then((m) => m.AdminDataQualityComponent)
+      },
+      {
         path: 'reservations',
         canActivate: [authGuard],
         loadComponent: () =>

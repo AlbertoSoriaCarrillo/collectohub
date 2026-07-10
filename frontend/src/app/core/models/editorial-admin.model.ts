@@ -338,6 +338,13 @@ export interface EditorialLegacyBridgeResponse {
   catalogItemEditionLabel: string | null;
 }
 
+export type EditorialDataQualityScope = 'ALL' | 'PUBLISHERS' | 'FRANCHISES' | 'SERIES' | 'ITEMS' | 'EDITIONS' | 'CREATORS' | 'MASTER_LINKS';
+export type EditorialDataQualitySeverity = 'LOW' | 'MEDIUM' | 'HIGH';
+export type EditorialDataQualityEntityType = 'PUBLISHER' | 'FRANCHISE' | 'SERIES' | 'ITEM' | 'EDITION' | 'CREATOR' | 'MASTER_LINK';
+export interface EditorialDataQualityFindingResponse { groupKey: string; displayValue: string; recordIds: number[]; recordLabels: string[]; recommendation: string; }
+export interface EditorialDataQualityCheckResponse { key: string; entityType: EditorialDataQualityEntityType; severity: EditorialDataQualitySeverity; title: string; description: string; totalFindings: number; findings: EditorialDataQualityFindingResponse[]; }
+export interface EditorialDataQualityReportResponse { generatedAt: string; scope: EditorialDataQualityScope; totalChecks: number; totalFindings: number; checks: EditorialDataQualityCheckResponse[]; }
+
 export interface EditorialAdminSearchParams {
   q?: string | null;
   recordStatus?: CatalogRecordStatus | null;
