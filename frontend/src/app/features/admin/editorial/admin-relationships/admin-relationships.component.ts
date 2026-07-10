@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
+import { LanguageService } from '../../../../core/i18n/language.service';
 import {
   CatalogItemResponse,
   CatalogRecordStatus,
@@ -36,6 +37,7 @@ import { EditorialAdminService } from '../../../../core/services/editorial-admin
 export class AdminRelationshipsComponent {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly service = inject(EditorialAdminService);
+  private readonly languageService = inject(LanguageService);
 
   readonly statuses: CatalogRecordStatus[] = ['DRAFT', 'ACTIVE', 'ARCHIVED'];
   readonly types: EditorialAdminRelationshipType[] = [
@@ -191,7 +193,7 @@ export class AdminRelationshipsComponent {
   deleteSelected(): void {
     const source = this.selectedSource();
     const current = this.editing();
-    if (!source || !current || !window.confirm('Delete relationship?')) {
+    if (!source || !current || !window.confirm(this.languageService.translate('admin.editorial.relationships.deleteConfirm'))) {
       return;
     }
 

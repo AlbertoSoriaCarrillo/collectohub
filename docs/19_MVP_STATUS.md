@@ -339,9 +339,10 @@ MVP 2 visible/foundation y redirecciones sin alterar codigo funcional.
 
 MVP 2 queda cerrado con limitaciones y MVP3 Admin Editorial cuenta ya con un
 primer bloque parcial validado: EPIC 40A-40G. La siguiente tarea recomendada es
-**EPIC 41A - Auditoria UX/Admin editorial y bugs de usabilidad**, antes de
-ampliar el producto. Social, tiendas, marketplace, pagos y movil continúan en
-fases posteriores.
+**EPIC 41B - Cierre documental/exportable MVP3 parcial**. EPIC 41A ya aplico
+una auditoria UX inicial a las pantallas admin y corrigio confirmaciones sin
+i18n. Social, tiendas, marketplace, pagos y movil continúan en fases
+posteriores.
 
 1. Preparar capturas reales para `docs/assets/screenshots/` y enlazarlas desde el README.
 2. Revisar el rediseño visual en desktop y movil real, anadir capturas a `docs/assets/screenshots/`.

@@ -86,6 +86,9 @@ describe('translation dictionaries', () => {
     expect(keys).toContain('admin.editorial.masterLinks.backfillConfirm');
     expect(keys).toContain('admin.editorial.masterLinks.status.VERIFIED');
     expect(keys).toContain('admin.editorial.masterLinks.source.TITLE_AND_PUBLISHER');
+    expect(keys).toContain('admin.editorial.relationships.deleteConfirm');
+    expect(keys).toContain('admin.editorial.messages.confirmDeleteCreator');
+    expect(keys).toContain('admin.editorial.messages.confirmDeleteCredit');
     expect(keys).toContain('admin.editorial.actions.search');
     expect(keys).toContain('admin.editorial.actions.create');
     expect(keys).toContain('admin.editorial.actions.edit');

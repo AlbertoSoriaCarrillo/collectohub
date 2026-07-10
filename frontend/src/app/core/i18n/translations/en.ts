@@ -376,6 +376,7 @@ export const en: TranslationDictionary = {
         noSource: 'Select a source item to load relationships.',
         sameItemWarning: 'Source and target items must be different.',
         deleted: 'Relationship deleted successfully.',
+        deleteConfirm: 'Delete this relationship?',
         saved: 'Relationship saved successfully.',
         types: {
           ADAPTATION: 'Adaptation',
@@ -534,6 +535,8 @@ export const en: TranslationDictionary = {
       messages: {
         saved: 'Saved successfully.',
         loadError: 'The records could not be loaded.',
+        confirmDeleteCreator: 'Delete this creator?',
+        confirmDeleteCredit: 'Delete this credit?',
         saveError: 'The record could not be saved.',
         empty: 'No records match those filters.',
         contextRequired: 'Enter the required parent ID to load records.',

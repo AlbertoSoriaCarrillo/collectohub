@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
+import { LanguageService } from '../../../../core/i18n/language.service';
 import {
   BackfillMasterProductCatalogLinksResponse,
   EditorialLegacyBridgeResponse,
@@ -37,6 +38,7 @@ import { EditorialAdminService } from '../../../../core/services/editorial-admin
 export class AdminMasterProductLinksComponent {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly service = inject(EditorialAdminService);
+  private readonly languageService = inject(LanguageService);
 
   readonly statuses: MasterProductCatalogLinkStatus[] = ['PROPOSED', 'VERIFIED', 'REJECTED'];
   readonly sources: MasterProductCatalogLinkSource[] = [
@@ -157,21 +159,21 @@ export class AdminMasterProductLinksComponent {
   }
 
   verify(link: MasterProductCatalogLinkResponse): void {
-    if (!window.confirm('Verify this proposed link?')) {
+    if (!window.confirm(this.languageService.translate('admin.editorial.masterLinks.verifyConfirm'))) {
       return;
     }
     this.updateLinkState(() => this.service.verifyMasterProductLink(link.id), 'verified');
   }
 
   reject(link: MasterProductCatalogLinkResponse): void {
-    if (!window.confirm('Reject this proposed link?')) {
+    if (!window.confirm(this.languageService.translate('admin.editorial.masterLinks.rejectConfirm'))) {
       return;
     }
     this.updateLinkState(() => this.service.rejectMasterProductLink(link.id), 'rejected');
   }
 
   backfill(): void {
-    if (!window.confirm('Create proposed links from the legacy catalog?')) {
+    if (!window.confirm(this.languageService.translate('admin.editorial.masterLinks.backfillConfirm'))) {
       return;
     }
     this.saving.set(true);

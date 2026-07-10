@@ -78,9 +78,9 @@ Orden recomendado MVP3:
 7. EPIC 40G - Datos demo editoriales y validacion integral MVP3 parcial.
    Completada el 2026-07-10.
 
-Siguiente tarea recomendada: EPIC 41A - Auditoria UX/Admin editorial y bugs de
-usabilidad. Antes de ampliar producto, conviene revisar consistencia visual,
-flujos y deuda de usabilidad de las pantallas admin.
+EPIC 41A - Auditoria UX/Admin editorial y bugs de usabilidad. Completada el
+2026-07-10. Siguiente tarea recomendada: EPIC 41B - Cierre
+documental/exportable MVP3 parcial.
 
 ## MVP 4 - Colecciones finales de usuario
 

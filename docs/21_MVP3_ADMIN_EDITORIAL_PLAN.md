@@ -241,3 +241,8 @@ validado parcialmente con rutas ADMIN, datos demo mantenibles por API y
 validaciones locales. No se considera cerrado como producto final; queda
 pendiente decidir el siguiente bloque. La siguiente tarea recomendada es EPIC
 41A - Auditoria UX/Admin editorial y bugs de usabilidad.
+
+Estado: EPIC 41A completada el 2026-07-10. La auditoria inicial esta en
+`docs/22_MVP3_ADMIN_UX_AUDIT.md`; corrige confirmaciones sin i18n y valida
+rutas, navegacion ADMIN, estados y formularios existentes. Siguiente tarea
+recomendada: EPIC 41B - Cierre documental/exportable MVP3 parcial.

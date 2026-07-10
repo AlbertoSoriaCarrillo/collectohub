@@ -15,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
+import { LanguageService } from '../../../../core/i18n/language.service';
 import {
   CatalogRecordStatus,
   CreatorResponse
@@ -40,6 +41,7 @@ import { EditorialAdminService } from '../../../../core/services/editorial-admin
 export class AdminCreatorsComponent implements OnInit {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly service = inject(EditorialAdminService);
+  private readonly languageService = inject(LanguageService);
 
   readonly statuses: CatalogRecordStatus[] = ['DRAFT', 'ACTIVE', 'ARCHIVED'];
   readonly creators = signal<CreatorResponse[]>([]);
@@ -183,7 +185,7 @@ export class AdminCreatorsComponent implements OnInit {
 
   deleteSelected(): void {
     const current = this.editing();
-    if (!current || !window.confirm('Delete creator?')) {
+    if (!current || !window.confirm(this.languageService.translate('admin.editorial.messages.confirmDeleteCreator'))) {
       return;
     }
 

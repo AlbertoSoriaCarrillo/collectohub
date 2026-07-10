@@ -376,6 +376,7 @@ export const es: TranslationDictionary = {
         noSource: 'Selecciona un item origen para cargar relaciones.',
         sameItemWarning: 'El item origen y destino deben ser distintos.',
         deleted: 'Relacion eliminada correctamente.',
+        deleteConfirm: 'Eliminar esta relacion?',
         saved: 'Relacion guardada correctamente.',
         types: {
           ADAPTATION: 'Adaptacion',
@@ -534,6 +535,8 @@ export const es: TranslationDictionary = {
       messages: {
         saved: 'Guardado correctamente.',
         loadError: 'No se pudieron cargar los registros.',
+        confirmDeleteCreator: 'Eliminar este creator?',
+        confirmDeleteCredit: 'Eliminar este credito?',
         saveError: 'No se pudo guardar el registro.',
         empty: 'No hay registros con esos filtros.',
         contextRequired: 'Indica el ID padre requerido para cargar registros.',

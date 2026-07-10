@@ -1644,3 +1644,21 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Sin social, tiendas, marketplace, pagos ni movil.
 - MVP3 Admin Editorial queda validado parcialmente; siguiente tarea recomendada:
   EPIC 41A - Auditoria UX/Admin editorial y bugs de usabilidad.
+
+## 2026-07-10 - EPIC 41A - Auditoria UX/Admin editorial y bugs de usabilidad
+
+- Creada la auditoria `docs/22_MVP3_ADMIN_UX_AUDIT.md` para las diez pantallas
+  admin de MVP3.
+- Corregidas confirmaciones hardcodeadas de creators, credits, relationships y
+  master product links; ahora usan i18n ES/EN.
+- Revisados shell, layout, rutas protegidas, visibilidad solo ADMIN, estados
+  vacios/carga/error y validaciones existentes.
+- Actualizados tests de traducciones; los tests de layout ya cubren anonimo,
+  usuario normal y ADMIN.
+- Ejecutados frontend `npm.cmd ci`, `npm.cmd test -- --watch=false` y
+  `npm.cmd run build`. El backend no se reejecuto en esta auditoria sin cambios
+  funcionales; conserva la validacion verde documentada en EPIC 40G.
+- Docker no pudo validarse si Docker Desktop no expone el daemon local.
+- Sin backend funcional, migraciones, endpoints nuevos, rutas nuevas ni MVP4.
+- Siguiente tarea recomendada: EPIC 41B - Cierre documental/exportable MVP3
+  parcial.

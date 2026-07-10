@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
+import { LanguageService } from '../../../../core/i18n/language.service';
 import {
   CatalogItemCreatorResponse,
   CreatorCreditRole
@@ -34,6 +35,7 @@ import { EditorialAdminService } from '../../../../core/services/editorial-admin
 export class AdminCreditsComponent implements OnInit {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly service = inject(EditorialAdminService);
+  private readonly languageService = inject(LanguageService);
 
   readonly roles: CreatorCreditRole[] = [
     'AUTHOR',
@@ -156,7 +158,7 @@ export class AdminCreditsComponent implements OnInit {
   deleteSelected(): void {
     const itemId = this.optionalNumber(this.contextForm.controls.itemId.value);
     const current = this.editing();
-    if (!itemId || !current || !window.confirm('Delete credit?')) {
+    if (!itemId || !current || !window.confirm(this.languageService.translate('admin.editorial.messages.confirmDeleteCredit'))) {
       return;
     }
 
