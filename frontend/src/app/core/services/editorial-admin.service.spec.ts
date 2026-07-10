@@ -253,6 +253,33 @@ describe('EditorialAdminService', () => {
     service.deleteItemCreatorCredit(10, 30).subscribe();
     expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/items/10/creators/30').request.method).toBe('DELETE');
   });
+
+  it('lists, creates, updates and deletes item relationships', () => {
+    service.getItemRelationships(10, 'ACTIVE').subscribe();
+    const list = httpTestingController.expectOne((candidate) =>
+      candidate.url === 'http://localhost:8080/api/catalog/items/10/relationships' &&
+      candidate.params.get('recordStatus') === 'ACTIVE'
+    );
+    expect(list.request.method).toBe('GET');
+    list.flush([]);
+
+    const request = {
+      targetCatalogItemId: 11,
+      relationshipType: 'SEQUEL' as const,
+      relationshipOrder: 1,
+      description: null,
+      recordStatus: 'ACTIVE' as const
+    };
+
+    service.createItemRelationship(10, request).subscribe();
+    expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/items/10/relationships').request.method).toBe('POST');
+
+    service.updateItemRelationship(10, 40, request).subscribe();
+    expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/items/10/relationships/40').request.method).toBe('PUT');
+
+    service.deleteItemRelationship(10, 40).subscribe();
+    expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/items/10/relationships/40').request.method).toBe('DELETE');
+  });
 });
 
 function emptyPage() {

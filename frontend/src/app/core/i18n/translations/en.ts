@@ -357,6 +357,41 @@ export const en: TranslationDictionary = {
         title: 'Credits',
         subtitle: 'Manage creator credits for a catalog item.'
       },
+      relationships: {
+        title: 'Relationships',
+        subtitle: 'Manage editorial relationships between catalog items.',
+        sourceItem: 'Source item',
+        targetItem: 'Target item',
+        selectSourceFirst: 'Select a source item before saving.',
+        searchSource: 'Search source item',
+        searchTarget: 'Search target item',
+        type: 'Relationship type',
+        order: 'Order',
+        description: 'Description',
+        status: 'Status',
+        create: 'Create relationship',
+        edit: 'Edit relationship',
+        delete: 'Delete relationship',
+        empty: 'This source item has no relationships with those filters.',
+        noSource: 'Select a source item to load relationships.',
+        sameItemWarning: 'Source and target items must be different.',
+        deleted: 'Relationship deleted successfully.',
+        saved: 'Relationship saved successfully.',
+        types: {
+          ADAPTATION: 'Adaptation',
+          REMAKE: 'Remake',
+          REPRINT: 'Reprint',
+          SAME_WORK: 'Same work',
+          SPIN_OFF: 'Spin-off',
+          PREQUEL: 'Prequel',
+          SEQUEL: 'Sequel',
+          RELATED: 'Related'
+        },
+        direction: {
+          OUTGOING: 'Outgoing',
+          INCOMING: 'Incoming'
+        }
+      },
       actions: {
         search: 'Search',
         create: 'Create',

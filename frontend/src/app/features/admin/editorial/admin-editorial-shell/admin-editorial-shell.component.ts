@@ -53,7 +53,11 @@ export class AdminEditorialShellComponent {
       icon: 'badge',
       route: '/admin/editorial/credits'
     },
-    { labelKey: 'admin.editorial.sections.relationships', icon: 'account_tree' },
+    {
+      labelKey: 'admin.editorial.sections.relationships',
+      icon: 'account_tree',
+      route: '/admin/editorial/relationships'
+    },
     { labelKey: 'admin.editorial.sections.reconciliation', icon: 'sync_alt' }
   ];
 }

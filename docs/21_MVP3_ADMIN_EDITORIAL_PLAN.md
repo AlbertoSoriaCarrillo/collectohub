@@ -137,7 +137,7 @@ EPIC 39C.
 2. EPIC 40B - Admin publishers/franchises/series. Completada el 2026-07-10.
 3. EPIC 40C - Admin items/editions. Completada el 2026-07-10.
 4. EPIC 40D - Admin creators y creditos. Completada el 2026-07-10.
-5. EPIC 40E - Admin relationships.
+5. EPIC 40E - Admin relationships. Completada el 2026-07-10.
 6. EPIC 40F - Admin master product links/reconciliation.
 7. EPIC 40G - Datos demo editoriales y validacion integral MVP3 parcial.
 
@@ -220,3 +220,10 @@ admin `/admin/editorial/creators` y `/admin/editorial/credits`, modelos y
 servicio frontend para creators y creditos por item, busqueda/filtros/listado,
 create/update/delete y validaciones visuales. No se inician relationships,
 reconciliacion legacy, imports ni cambios backend.
+
+Estado: EPIC 40E completada el 2026-07-10. Queda implementada la ruta admin
+`/admin/editorial/relationships`, modelos y servicio frontend para relaciones
+entre items, pantalla admin con seleccion de item origen/destino, filtro por
+estado, listado, create/update/delete y validaciones visuales. No se inicia
+reconciliacion legacy, grafo avanzado, relaciones automaticas inversas ni
+cambios backend.

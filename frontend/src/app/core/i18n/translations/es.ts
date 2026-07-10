@@ -357,6 +357,41 @@ export const es: TranslationDictionary = {
         title: 'Creditos',
         subtitle: 'Gestiona creditos de creators por item.'
       },
+      relationships: {
+        title: 'Relaciones',
+        subtitle: 'Gestiona relaciones editoriales entre items del catalogo.',
+        sourceItem: 'Item origen',
+        targetItem: 'Item destino',
+        selectSourceFirst: 'Selecciona un item origen antes de guardar.',
+        searchSource: 'Buscar item origen',
+        searchTarget: 'Buscar item destino',
+        type: 'Tipo de relacion',
+        order: 'Orden',
+        description: 'Descripcion',
+        status: 'Estado',
+        create: 'Crear relacion',
+        edit: 'Editar relacion',
+        delete: 'Eliminar relacion',
+        empty: 'Este item origen no tiene relaciones con esos filtros.',
+        noSource: 'Selecciona un item origen para cargar relaciones.',
+        sameItemWarning: 'El item origen y destino deben ser distintos.',
+        deleted: 'Relacion eliminada correctamente.',
+        saved: 'Relacion guardada correctamente.',
+        types: {
+          ADAPTATION: 'Adaptacion',
+          REMAKE: 'Remake',
+          REPRINT: 'Reimpresion',
+          SAME_WORK: 'Misma obra',
+          SPIN_OFF: 'Spin-off',
+          PREQUEL: 'Precuela',
+          SEQUEL: 'Secuela',
+          RELATED: 'Relacionado'
+        },
+        direction: {
+          OUTGOING: 'Saliente',
+          INCOMING: 'Entrante'
+        }
+      },
       actions: {
         search: 'Buscar',
         create: 'Crear',

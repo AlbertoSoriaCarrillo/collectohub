@@ -23,6 +23,16 @@ export type CreatorCreditRole =
   | 'TRANSLATOR'
   | 'EDITOR'
   | 'OTHER';
+export type EditorialAdminRelationshipType =
+  | 'ADAPTATION'
+  | 'REMAKE'
+  | 'REPRINT'
+  | 'SAME_WORK'
+  | 'SPIN_OFF'
+  | 'PREQUEL'
+  | 'SEQUEL'
+  | 'RELATED';
+export type EditorialAdminRelationshipDirection = 'OUTGOING' | 'INCOMING';
 
 export interface PageResponse<T> {
   content: T[];
@@ -226,6 +236,34 @@ export interface UpdateCatalogItemCreatorRequest {
   creditOrder: number;
   creditLabel: string | null;
 }
+
+export interface EditorialAdminItemRelationshipResponse {
+  id: number;
+  sourceCatalogItemId: number;
+  sourceCatalogItemTitle: string;
+  sourceCatalogSeriesId: number;
+  sourceCatalogSeriesTitle: string;
+  targetCatalogItemId: number;
+  targetCatalogItemTitle: string;
+  targetCatalogSeriesId: number;
+  targetCatalogSeriesTitle: string;
+  relationshipType: EditorialAdminRelationshipType;
+  relationshipOrder: number;
+  description: string | null;
+  recordStatus: CatalogRecordStatus;
+  direction: EditorialAdminRelationshipDirection;
+}
+
+export interface CreateEditorialAdminItemRelationshipRequest {
+  targetCatalogItemId: number;
+  relationshipType: EditorialAdminRelationshipType;
+  relationshipOrder: number;
+  description: string | null;
+  recordStatus: CatalogRecordStatus;
+}
+
+export interface UpdateEditorialAdminItemRelationshipRequest
+  extends CreateEditorialAdminItemRelationshipRequest {}
 
 export interface EditorialAdminSearchParams {
   q?: string | null;

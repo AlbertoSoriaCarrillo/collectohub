@@ -224,6 +224,14 @@ export const routes: Routes = [
           )
       },
       {
+        path: 'admin/editorial/relationships',
+        canActivate: [authGuard, adminGuard],
+        loadComponent: () =>
+          import(
+            './features/admin/editorial/admin-relationships/admin-relationships.component'
+          ).then((m) => m.AdminRelationshipsComponent)
+      },
+      {
         path: 'reservations',
         canActivate: [authGuard],
         loadComponent: () =>

@@ -1,0 +1,22 @@
+@use '../admin-publishers/admin-publishers.component.scss';
+
+.relationship-context {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.compact-filters {
+  grid-template-columns: minmax(120px, 160px) minmax(160px, 1fr) auto;
+}
+
+.relationship-row {
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .relationship-context,
+  .compact-filters {
+    grid-template-columns: 1fr;
+  }
+}

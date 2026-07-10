@@ -1,0 +1,204 @@
+<section class="admin-entity-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">{{ 'layout.nav.adminEditorial' | translate }}</p>
+      <h1>{{ 'admin.editorial.relationships.title' | translate }}</h1>
+      <p>{{ 'admin.editorial.relationships.subtitle' | translate }}</p>
+    </div>
+    <button mat-stroked-button type="button" (click)="loadRelationships()">
+      <mat-icon aria-hidden="true">refresh</mat-icon>
+      {{ 'admin.editorial.actions.refresh' | translate }}
+    </button>
+  </header>
+
+  <div class="relationship-context">
+    <mat-card class="panel-card">
+      <mat-card-header>
+        <mat-card-title>{{ 'admin.editorial.relationships.sourceItem' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form class="filters compact-filters" [formGroup]="sourceSearch" (ngSubmit)="searchSourceItems()" novalidate>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.seriesId' | translate }}</mat-label>
+            <input matInput type="number" formControlName="seriesId" data-testid="admin-relationships-source-series" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.relationships.searchSource' | translate }}</mat-label>
+            <input matInput formControlName="q" />
+          </mat-form-field>
+          <button mat-flat-button color="primary" type="submit">
+            {{ 'admin.editorial.actions.search' | translate }}
+          </button>
+        </form>
+        <div class="entity-list">
+          @for (item of sourceResults(); track item.id) {
+            <button class="entity-row" type="button" (click)="selectSource(item)">
+              <span>
+                <strong>{{ item.title }}</strong>
+                <small>{{ item.seriesTitle }} #{{ item.id }}</small>
+              </span>
+              <span class="status-pill">{{ 'admin.editorial.status.' + item.recordStatus | translate }}</span>
+            </button>
+          }
+        </div>
+        @if (selectedSource()) {
+          <p class="state-success">
+            {{ 'admin.editorial.relationships.sourceItem' | translate }}:
+            {{ selectedSource()!.title }} #{{ selectedSource()!.id }}
+          </p>
+        } @else {
+          <p class="muted">{{ 'admin.editorial.relationships.noSource' | translate }}</p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="panel-card">
+      <mat-card-header>
+        <mat-card-title>{{ 'admin.editorial.relationships.targetItem' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form class="filters compact-filters" [formGroup]="targetSearch" (ngSubmit)="searchTargetItems()" novalidate>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.seriesId' | translate }}</mat-label>
+            <input matInput type="number" formControlName="seriesId" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.relationships.searchTarget' | translate }}</mat-label>
+            <input matInput formControlName="q" />
+          </mat-form-field>
+          <button mat-flat-button color="primary" type="submit">
+            {{ 'admin.editorial.actions.search' | translate }}
+          </button>
+        </form>
+        <div class="entity-list">
+          @for (item of targetResults(); track item.id) {
+            <button class="entity-row" type="button" (click)="selectTarget(item)">
+              <span>
+                <strong>{{ item.title }}</strong>
+                <small>{{ item.seriesTitle }} #{{ item.id }}</small>
+              </span>
+              <span class="status-pill">{{ 'admin.editorial.status.' + item.recordStatus | translate }}</span>
+            </button>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-card class="panel-card">
+    <mat-card-content>
+      <form class="filters" [formGroup]="filters" (ngSubmit)="loadRelationships()" novalidate>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'admin.editorial.relationships.status' | translate }}</mat-label>
+          <mat-select formControlName="recordStatus" data-testid="admin-relationships-status-filter">
+            <mat-option value="">{{ 'common.all' | translate }}</mat-option>
+            @for (status of statuses; track status) {
+              <mat-option [value]="status">{{ 'admin.editorial.status.' + status | translate }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <button mat-flat-button color="primary" type="submit">
+          {{ 'admin.editorial.actions.search' | translate }}
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="content-grid">
+    <mat-card class="panel-card">
+      <mat-card-header>
+        <mat-card-title>{{ 'admin.editorial.sections.relationships' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (loadingRelationships()) {
+          <mat-spinner diameter="32"></mat-spinner>
+        } @else if (errorKey()) {
+          <p class="state-error" role="alert">{{ errorKey()! | translate }}</p>
+        } @else if (messageKey() && !relationships().length) {
+          <p class="muted">{{ messageKey()! | translate }}</p>
+        } @else if (!relationships().length) {
+          <p class="muted">{{ 'admin.editorial.relationships.empty' | translate }}</p>
+        } @else {
+          <div class="entity-list">
+            @for (relationship of relationships(); track relationship.id) {
+              <button class="entity-row relationship-row" type="button" (click)="startEdit(relationship)">
+                <span>
+                  <strong>{{ relationship.sourceCatalogItemTitle }} -> {{ relationship.targetCatalogItemTitle }}</strong>
+                  <small>
+                    {{ 'admin.editorial.relationships.types.' + relationship.relationshipType | translate }}
+                    · {{ 'admin.editorial.relationships.direction.' + relationship.direction | translate }}
+                    · #{{ relationship.relationshipOrder }}
+                  </small>
+                  @if (relationship.description) {
+                    <small>{{ relationship.description }}</small>
+                  }
+                </span>
+                <span class="status-pill">{{ 'admin.editorial.status.' + relationship.recordStatus | translate }}</span>
+              </button>
+            }
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="panel-card">
+      <mat-card-header>
+        <mat-card-title>
+          {{ (editing() ? 'admin.editorial.relationships.edit' : 'admin.editorial.relationships.create') | translate }}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form class="entity-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+          <p class="muted">{{ 'admin.editorial.relationships.sameItemWarning' | translate }}</p>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.relationships.targetItem' | translate }}</mat-label>
+            <input matInput type="number" formControlName="targetCatalogItemId" data-testid="admin-relationships-target-id" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.relationships.type' | translate }}</mat-label>
+            <mat-select formControlName="relationshipType">
+              @for (type of types; track type) {
+                <mat-option [value]="type">{{ 'admin.editorial.relationships.types.' + type | translate }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.relationships.order' | translate }}</mat-label>
+            <input matInput type="number" formControlName="relationshipOrder" data-testid="admin-relationships-order" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.relationships.status' | translate }}</mat-label>
+            <mat-select formControlName="recordStatus">
+              @for (status of statuses; track status) {
+                <mat-option [value]="status">{{ 'admin.editorial.status.' + status | translate }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.relationships.description' | translate }}</mat-label>
+            <textarea matInput rows="4" formControlName="description"></textarea>
+          </mat-form-field>
+          @if (messageKey()) {
+            <p class="state-success">{{ messageKey()! | translate }}</p>
+          }
+          @if (errorKey()) {
+            <p class="state-error" role="alert">{{ errorKey()! | translate }}</p>
+          }
+          <div class="form-actions">
+            <button mat-flat-button color="primary" type="submit" [disabled]="saving()" data-testid="admin-relationships-submit">
+              {{ 'admin.editorial.actions.save' | translate }}
+            </button>
+            <button mat-button type="button" (click)="cancel()">
+              {{ 'admin.editorial.actions.cancel' | translate }}
+            </button>
+            @if (editing()) {
+              <button mat-button color="warn" type="button" (click)="deleteSelected()" [disabled]="saving()">
+                {{ 'admin.editorial.relationships.delete' | translate }}
+              </button>
+            }
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</section>

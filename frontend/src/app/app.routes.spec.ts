@@ -66,6 +66,9 @@ describe('app routes', () => {
     const adminEditions = children.find((route) => route.path === 'admin/editorial/editions');
     const adminCreators = children.find((route) => route.path === 'admin/editorial/creators');
     const adminCredits = children.find((route) => route.path === 'admin/editorial/credits');
+    const adminRelationships = children.find(
+      (route) => route.path === 'admin/editorial/relationships'
+    );
 
     expect(home?.canActivate).toBeUndefined();
     expect(catalog?.canActivate).toBeUndefined();
@@ -99,5 +102,6 @@ describe('app routes', () => {
     expect(adminEditions?.canActivate).toEqual([authGuard, adminGuard]);
     expect(adminCreators?.canActivate).toEqual([authGuard, adminGuard]);
     expect(adminCredits?.canActivate).toEqual([authGuard, adminGuard]);
+    expect(adminRelationships?.canActivate).toEqual([authGuard, adminGuard]);
   });
 });

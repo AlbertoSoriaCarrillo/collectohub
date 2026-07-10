@@ -1559,3 +1559,42 @@ Siguiente paso: crear el backend en la carpeta backend.
 - No se implementan relationships, reconciliacion master-product-links, imports,
   social, tiendas, marketplace, pagos ni movil.
 - Siguiente tarea recomendada: EPIC 40E - Admin relationships.
+
+## 2026-07-10 - EPIC 40E - Admin editorial relationships
+
+- Anadidos modelos frontend admin para `EditorialAdminRelationshipType`,
+  `EditorialAdminRelationshipDirection`, response y requests de relaciones
+  editoriales entre items.
+- Ampliado `EditorialAdminService` con `getItemRelationships`,
+  `createItemRelationship`, `updateItemRelationship` y
+  `deleteItemRelationship`, usando endpoints existentes bajo
+  `/api/catalog/items/{itemId}/relationships`.
+- Creada ruta admin protegida por `[authGuard, adminGuard]`:
+  `/admin/editorial/relationships`.
+- Actualizado el shell admin para enlazar relationships; reconciliation sigue
+  sin CRUD funcional.
+- Creada pantalla admin relationships con busqueda/seleccion de item origen y
+  destino, listado de relaciones por item origen, filtro por estado, create,
+  update, delete, loading state, empty state y errores backend.
+- Anadidas validaciones visuales para source obligatorio, target obligatorio,
+  `relationshipOrder > 0`, tipo requerido, estado requerido y aviso de que
+  source y target deben ser distintos.
+- Anadidas traducciones ES/EN para relationships, tipos, direcciones, campos y
+  mensajes.
+- Anadidos/actualizados tests de servicio admin, rutas, shell, i18n y pantalla
+  admin relationships.
+- Ejecutado `cd frontend && npm.cmd ci`: correcto, 474 paquetes instalados y
+  475 auditados. Se mantienen avisos conocidos de `@angular/animations`,
+  scripts pendientes de aprobacion y 7 vulnerabilidades npm, sin ejecutar
+  `npm audit fix` ni `npm audit fix --force`.
+- Ejecutado `cd frontend && npm.cmd test -- --watch=false`: 54 archivos y 168
+  tests correctos.
+- Ejecutado `cd frontend && npm.cmd run build`: correcto. Permanece el warning
+  conocido del bundle inicial de 613.64 kB frente al budget de 500 kB.
+- No se modifica backend funcional, backend tests, migraciones, infra,
+  endpoints ni docs/export.
+- No se implementan endpoints nuevos, grafo avanzado, relaciones automaticas
+  inversas, relaciones entre series, relaciones entre ediciones, reconciliacion
+  legacy, master product links admin, social, tiendas, marketplace, pagos ni
+  movil.
+- Siguiente tarea recomendada: EPIC 40F - Admin master product links/reconciliation.

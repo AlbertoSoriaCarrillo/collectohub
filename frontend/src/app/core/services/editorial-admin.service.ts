@@ -8,6 +8,7 @@ import {
   CatalogItemCreatorResponse,
   CatalogItemResponse,
   CatalogSeriesResponse,
+  CreateEditorialAdminItemRelationshipRequest,
   CreateCatalogItemCreatorRequest,
   CreateCatalogFranchiseRequest,
   CreateCatalogItemEditionRequest,
@@ -18,11 +19,13 @@ import {
   CreatorResponse,
   EditorialAdminCreatorSearchParams,
   EditorialAdminEditionSearchParams,
+  EditorialAdminItemRelationshipResponse,
   EditorialAdminItemSearchParams,
   EditorialAdminSearchParams,
   EditorialAdminSeriesSearchParams,
   PageResponse,
   PublisherResponse,
+  UpdateEditorialAdminItemRelationshipRequest,
   UpdateCatalogItemCreatorRequest,
   UpdateCatalogFranchiseRequest,
   UpdateCatalogItemEditionRequest,
@@ -210,6 +213,48 @@ export class EditorialAdminService {
 
   deleteItemCreatorCredit(itemId: number, creditId: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/items/${itemId}/creators/${creditId}`);
+  }
+
+  getItemRelationships(
+    itemId: number,
+    recordStatus?: string | null
+  ): Observable<EditorialAdminItemRelationshipResponse[]> {
+    let params = new HttpParams();
+    const normalized = recordStatus?.trim();
+    if (normalized) {
+      params = params.set('recordStatus', normalized);
+    }
+    return this.http.get<EditorialAdminItemRelationshipResponse[]>(
+      `${this.baseUrl}/items/${itemId}/relationships`,
+      { params }
+    );
+  }
+
+  createItemRelationship(
+    itemId: number,
+    request: CreateEditorialAdminItemRelationshipRequest
+  ): Observable<EditorialAdminItemRelationshipResponse> {
+    return this.http.post<EditorialAdminItemRelationshipResponse>(
+      `${this.baseUrl}/items/${itemId}/relationships`,
+      request
+    );
+  }
+
+  updateItemRelationship(
+    itemId: number,
+    relationshipId: number,
+    request: UpdateEditorialAdminItemRelationshipRequest
+  ): Observable<EditorialAdminItemRelationshipResponse> {
+    return this.http.put<EditorialAdminItemRelationshipResponse>(
+      `${this.baseUrl}/items/${itemId}/relationships/${relationshipId}`,
+      request
+    );
+  }
+
+  deleteItemRelationship(itemId: number, relationshipId: number): Observable<void> {
+    return this.http.delete<void>(
+      `${this.baseUrl}/items/${itemId}/relationships/${relationshipId}`
+    );
   }
 
   private toParams(
