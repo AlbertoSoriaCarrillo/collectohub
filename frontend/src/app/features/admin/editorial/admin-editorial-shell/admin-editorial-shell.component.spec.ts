@@ -40,7 +40,7 @@ describe('AdminEditorialShellComponent', () => {
     );
   });
 
-  it('links base entities and keeps future sections without CRUD links', () => {
+  it('links all completed editorial admin sections', () => {
     const fixture = TestBed.createComponent(AdminEditorialShellComponent);
     fixture.detectChanges();
 
@@ -57,6 +57,6 @@ describe('AdminEditorialShellComponent', () => {
     expect(links).toContain('/admin/editorial/creators');
     expect(links).toContain('/admin/editorial/credits');
     expect(links).toContain('/admin/editorial/relationships');
-    expect(links).not.toContain('/admin/editorial/reconciliation');
+    expect(links).toContain('/admin/editorial/master-product-links');
   });
 });

@@ -81,6 +81,11 @@ describe('translation dictionaries', () => {
     expect(keys).toContain('admin.editorial.relationships.types.RELATED');
     expect(keys).toContain('admin.editorial.relationships.direction.OUTGOING');
     expect(keys).toContain('admin.editorial.relationships.direction.INCOMING');
+    expect(keys).toContain('admin.editorial.masterLinks.title');
+    expect(keys).toContain('admin.editorial.masterLinks.masterProductId');
+    expect(keys).toContain('admin.editorial.masterLinks.backfillConfirm');
+    expect(keys).toContain('admin.editorial.masterLinks.status.VERIFIED');
+    expect(keys).toContain('admin.editorial.masterLinks.source.TITLE_AND_PUBLISHER');
     expect(keys).toContain('admin.editorial.actions.search');
     expect(keys).toContain('admin.editorial.actions.create');
     expect(keys).toContain('admin.editorial.actions.edit');

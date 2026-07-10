@@ -3,12 +3,14 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
+  BackfillMasterProductCatalogLinksResponse,
   CatalogFranchiseResponse,
   CatalogItemEditionResponse,
   CatalogItemCreatorResponse,
   CatalogItemResponse,
   CatalogSeriesResponse,
   CreateEditorialAdminItemRelationshipRequest,
+  CreateMasterProductCatalogLinkRequest,
   CreateCatalogItemCreatorRequest,
   CreateCatalogFranchiseRequest,
   CreateCatalogItemEditionRequest,
@@ -23,9 +25,13 @@ import {
   EditorialAdminItemSearchParams,
   EditorialAdminSearchParams,
   EditorialAdminSeriesSearchParams,
+  EditorialLegacyBridgeResponse,
+  MasterProductCatalogLinkResponse,
+  MasterProductCatalogLinkSearchParams,
   PageResponse,
   PublisherResponse,
   UpdateEditorialAdminItemRelationshipRequest,
+  UpdateMasterProductCatalogLinkRequest,
   UpdateCatalogItemCreatorRequest,
   UpdateCatalogFranchiseRequest,
   UpdateCatalogItemEditionRequest,
@@ -257,13 +263,58 @@ export class EditorialAdminService {
     );
   }
 
+  searchMasterProductLinks(
+    params: MasterProductCatalogLinkSearchParams = {}
+  ): Observable<PageResponse<MasterProductCatalogLinkResponse>> {
+    return this.http.get<PageResponse<MasterProductCatalogLinkResponse>>(
+      `${this.baseUrl}/master-product-links`,
+      { params: this.toParams(params, 'createdAt,desc') }
+    );
+  }
+
+  getMasterProductLink(id: number): Observable<MasterProductCatalogLinkResponse> {
+    return this.http.get<MasterProductCatalogLinkResponse>(`${this.baseUrl}/master-product-links/${id}`);
+  }
+
+  createMasterProductLink(
+    request: CreateMasterProductCatalogLinkRequest
+  ): Observable<MasterProductCatalogLinkResponse> {
+    return this.http.post<MasterProductCatalogLinkResponse>(`${this.baseUrl}/master-product-links`, request);
+  }
+
+  updateMasterProductLink(
+    id: number,
+    request: UpdateMasterProductCatalogLinkRequest
+  ): Observable<MasterProductCatalogLinkResponse> {
+    return this.http.put<MasterProductCatalogLinkResponse>(`${this.baseUrl}/master-product-links/${id}`, request);
+  }
+
+  verifyMasterProductLink(id: number): Observable<MasterProductCatalogLinkResponse> {
+    return this.http.put<MasterProductCatalogLinkResponse>(`${this.baseUrl}/master-product-links/${id}/verify`, {});
+  }
+
+  rejectMasterProductLink(id: number): Observable<MasterProductCatalogLinkResponse> {
+    return this.http.put<MasterProductCatalogLinkResponse>(`${this.baseUrl}/master-product-links/${id}/reject`, {});
+  }
+
+  backfillMasterProductLinks(): Observable<BackfillMasterProductCatalogLinksResponse> {
+    return this.http.post<BackfillMasterProductCatalogLinksResponse>(`${this.baseUrl}/master-product-links/backfill`, {});
+  }
+
+  getEditorialLegacyBridge(masterProductId: number): Observable<EditorialLegacyBridgeResponse> {
+    return this.http.get<EditorialLegacyBridgeResponse>(
+      `${this.baseUrl}/editorial/master-products/${masterProductId}/link`
+    );
+  }
+
   private toParams(
     params:
       | EditorialAdminSearchParams
       | EditorialAdminSeriesSearchParams
       | EditorialAdminItemSearchParams
       | EditorialAdminEditionSearchParams
-      | EditorialAdminCreatorSearchParams,
+      | EditorialAdminCreatorSearchParams
+      | MasterProductCatalogLinkSearchParams,
     defaultSort: string
   ): HttpParams {
     const withDefaults = {

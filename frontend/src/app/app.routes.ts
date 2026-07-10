@@ -232,6 +232,14 @@ export const routes: Routes = [
           ).then((m) => m.AdminRelationshipsComponent)
       },
       {
+        path: 'admin/editorial/master-product-links',
+        canActivate: [authGuard, adminGuard],
+        loadComponent: () =>
+          import(
+            './features/admin/editorial/admin-master-product-links/admin-master-product-links.component'
+          ).then((m) => m.AdminMasterProductLinksComponent)
+      },
+      {
         path: 'reservations',
         canActivate: [authGuard],
         loadComponent: () =>

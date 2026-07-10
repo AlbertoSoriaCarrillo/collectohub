@@ -1,0 +1,61 @@
+<section class="admin-entity-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">{{ 'layout.nav.adminEditorial' | translate }}</p>
+      <h1>{{ 'admin.editorial.masterLinks.title' | translate }}</h1>
+      <p>{{ 'admin.editorial.masterLinks.subtitle' | translate }}</p>
+    </div>
+    <button mat-stroked-button type="button" (click)="backfill()" [disabled]="saving()">
+      <mat-icon aria-hidden="true">sync</mat-icon>
+      {{ 'admin.editorial.masterLinks.backfill' | translate }}
+    </button>
+  </header>
+
+  <mat-card class="panel-card">
+    <mat-card-header><mat-card-title>{{ 'admin.editorial.masterLinks.filtersTitle' | translate }}</mat-card-title></mat-card-header>
+    <mat-card-content>
+      <form class="filters master-link-filters" [formGroup]="filters" (ngSubmit)="loadLinks()" novalidate>
+        <mat-form-field appearance="outline"><mat-label>{{ 'admin.editorial.masterLinks.masterProductId' | translate }}</mat-label><input matInput type="number" formControlName="masterProductId" data-testid="master-link-filter-master-id" /></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>{{ 'admin.editorial.masterLinks.catalogItemId' | translate }}</mat-label><input matInput type="number" formControlName="catalogItemId" /></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>{{ 'admin.editorial.masterLinks.catalogItemEditionId' | translate }}</mat-label><input matInput type="number" formControlName="catalogItemEditionId" /></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>{{ 'admin.editorial.masterLinks.linkStatus' | translate }}</mat-label><mat-select formControlName="linkStatus"><mat-option value="">{{ 'common.all' | translate }}</mat-option>@for (status of statuses; track status) {<mat-option [value]="status">{{ 'admin.editorial.masterLinks.status.' + status | translate }}</mat-option>}</mat-select></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>{{ 'admin.editorial.masterLinks.linkSource' | translate }}</mat-label><mat-select formControlName="linkSource"><mat-option value="">{{ 'common.all' | translate }}</mat-option>@for (source of sources; track source) {<mat-option [value]="source">{{ 'admin.editorial.masterLinks.source.' + source | translate }}</mat-option>}</mat-select></mat-form-field>
+        <button mat-flat-button color="primary" type="submit">{{ 'admin.editorial.masterLinks.search' | translate }}</button>
+        <button mat-button type="button" (click)="lookupBridge()">{{ 'admin.editorial.masterLinks.lookupBridge' | translate }}</button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  @if (backfillResult()) {
+    <mat-card class="panel-card backfill-result"><mat-card-content><strong>{{ 'admin.editorial.masterLinks.backfillTitle' | translate }}</strong><span>{{ 'admin.editorial.masterLinks.scanned' | translate }}: {{ backfillResult()!.scanned }}</span><span>{{ 'admin.editorial.masterLinks.proposed' | translate }}: {{ backfillResult()!.proposed }}</span><span>{{ 'admin.editorial.masterLinks.skipped' | translate }}: {{ backfillResult()!.skipped }}</span><span>{{ 'admin.editorial.masterLinks.ambiguous' | translate }}: {{ backfillResult()!.ambiguous }}</span></mat-card-content></mat-card>
+  }
+  @if (bridgeLoading()) { <mat-spinner diameter="28"></mat-spinner> }
+  @if (bridge()) {
+    <mat-card class="panel-card"><mat-card-header><mat-card-title>{{ 'admin.editorial.masterLinks.bridgeTitle' | translate }}</mat-card-title></mat-card-header><mat-card-content><p><strong>{{ bridge()!.masterProductName }}</strong> #{{ bridge()!.masterProductId }}</p><p>{{ bridge()!.catalogItemTitle }} #{{ bridge()!.catalogItemId }} @if (bridge()!.catalogItemEditionLabel) { - {{ bridge()!.catalogItemEditionLabel }} }</p><p>{{ 'admin.editorial.masterLinks.linkStatus' | translate }}: {{ 'admin.editorial.masterLinks.status.' + bridge()!.linkStatus | translate }}</p></mat-card-content></mat-card>
+  }
+
+  <div class="content-grid">
+    <mat-card class="panel-card"><mat-card-header><mat-card-title>{{ 'admin.editorial.masterLinks.title' | translate }}</mat-card-title></mat-card-header><mat-card-content>
+      @if (loading()) { <mat-spinner diameter="32"></mat-spinner> }
+      @else if (errorKey()) { <p class="state-error" role="alert">{{ errorKey()! | translate }}</p> }
+      @else if (!links().length) { <p class="muted">{{ 'admin.editorial.masterLinks.empty' | translate }}</p> }
+      @else { <div class="entity-list">@for (link of links(); track link.id) {<article class="entity-row master-link-row"><span><strong>{{ link.masterProductName }} #{{ link.masterProductId }}</strong><small>{{ link.catalogItemTitle }} #{{ link.catalogItemId }} @if (link.catalogItemEditionLabel) { - {{ link.catalogItemEditionLabel }} }</small><small>{{ 'admin.editorial.masterLinks.source.' + link.linkSource | translate }} @if (link.confidenceScore !== null) { - {{ link.confidenceScore }} }</small></span><span><span class="status-pill">{{ 'admin.editorial.masterLinks.status.' + link.linkStatus | translate }}</span><button mat-icon-button type="button" (click)="startEdit(link)" [attr.aria-label]="'admin.editorial.masterLinks.edit' | translate"><mat-icon>edit</mat-icon></button><button mat-icon-button type="button" (click)="verify(link)" [disabled]="saving()" [attr.aria-label]="'admin.editorial.masterLinks.verify' | translate"><mat-icon>verified</mat-icon></button><button mat-icon-button type="button" (click)="reject(link)" [disabled]="saving()" [attr.aria-label]="'admin.editorial.masterLinks.reject' | translate"><mat-icon>block</mat-icon></button></span></article>}</div> }
+    </mat-card-content></mat-card>
+
+    <mat-card class="panel-card"><mat-card-header><mat-card-title>{{ (editing() ? 'admin.editorial.masterLinks.editTitle' : 'admin.editorial.masterLinks.formTitle') | translate }}</mat-card-title></mat-card-header><mat-card-content>
+      <form class="entity-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <mat-form-field appearance="outline"><mat-label>{{ 'admin.editorial.masterLinks.masterProductId' | translate }}</mat-label><input matInput type="number" formControlName="masterProductId" data-testid="master-link-master-id" /></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>{{ 'admin.editorial.masterLinks.catalogItemId' | translate }}</mat-label><input matInput type="number" formControlName="catalogItemId" data-testid="master-link-item-id" /></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>{{ 'admin.editorial.masterLinks.catalogItemEditionId' | translate }}</mat-label><input matInput type="number" formControlName="catalogItemEditionId" /></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>{{ 'admin.editorial.masterLinks.linkStatus' | translate }}</mat-label><mat-select formControlName="linkStatus">@for (status of statuses; track status) {<mat-option [value]="status">{{ 'admin.editorial.masterLinks.status.' + status | translate }}</mat-option>}</mat-select></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>{{ 'admin.editorial.masterLinks.linkSource' | translate }}</mat-label><mat-select formControlName="linkSource">@for (source of sources; track source) {<mat-option [value]="source">{{ 'admin.editorial.masterLinks.source.' + source | translate }}</mat-option>}</mat-select></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>{{ 'admin.editorial.masterLinks.confidenceScore' | translate }}</mat-label><input matInput type="number" min="0" max="1" step="0.0001" formControlName="confidenceScore" data-testid="master-link-confidence" /></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>{{ 'admin.editorial.masterLinks.matchReason' | translate }}</mat-label><textarea matInput rows="3" formControlName="matchReason"></textarea></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>{{ 'admin.editorial.masterLinks.reviewNote' | translate }}</mat-label><textarea matInput rows="3" formControlName="reviewNote"></textarea></mat-form-field>
+        @if (messageKey()) { <p class="state-success">{{ messageKey()! | translate }}</p> }
+        @if (errorKey()) { <p class="state-error" role="alert">{{ errorKey()! | translate }}</p> }
+        <div class="form-actions"><button mat-flat-button color="primary" type="submit" [disabled]="saving()" data-testid="master-link-submit">{{ 'admin.editorial.masterLinks.save' | translate }}</button><button mat-button type="button" (click)="cancel()">{{ 'admin.editorial.masterLinks.cancel' | translate }}</button></div>
+      </form>
+    </mat-card-content></mat-card>
+  </div>
+</section>

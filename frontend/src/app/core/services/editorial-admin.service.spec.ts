@@ -280,6 +280,52 @@ describe('EditorialAdminService', () => {
     service.deleteItemRelationship(10, 40).subscribe();
     expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/items/10/relationships/40').request.method).toBe('DELETE');
   });
+
+  it('manages master product catalog links and their editorial bridge', () => {
+    service.searchMasterProductLinks({
+      masterProductId: 7,
+      catalogItemId: 10,
+      catalogItemEditionId: 11,
+      linkStatus: 'PROPOSED',
+      linkSource: 'ISBN'
+    }).subscribe();
+    const search = httpTestingController.expectOne((candidate) =>
+      candidate.url === 'http://localhost:8080/api/catalog/master-product-links' &&
+      candidate.params.get('masterProductId') === '7' &&
+      candidate.params.get('catalogItemId') === '10' &&
+      candidate.params.get('catalogItemEditionId') === '11' &&
+      candidate.params.get('linkStatus') === 'PROPOSED' &&
+      candidate.params.get('linkSource') === 'ISBN' &&
+      candidate.params.get('sort') === 'createdAt,desc'
+    );
+    expect(search.request.method).toBe('GET');
+    search.flush(emptyPage());
+
+    service.getMasterProductLink(4).subscribe();
+    expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/master-product-links/4').request.method).toBe('GET');
+
+    const create = {
+      masterProductId: 7, catalogItemId: 10, catalogItemEditionId: null,
+      linkStatus: 'PROPOSED' as const, linkSource: 'MANUAL' as const,
+      confidenceScore: null, matchReason: null, reviewNote: null
+    };
+    service.createMasterProductLink(create).subscribe();
+    expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/master-product-links').request.method).toBe('POST');
+
+    const update = { ...create };
+    delete (update as Partial<typeof create>).masterProductId;
+    service.updateMasterProductLink(4, update).subscribe();
+    expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/master-product-links/4').request.method).toBe('PUT');
+
+    service.verifyMasterProductLink(4).subscribe();
+    expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/master-product-links/4/verify').request.method).toBe('PUT');
+    service.rejectMasterProductLink(4).subscribe();
+    expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/master-product-links/4/reject').request.method).toBe('PUT');
+    service.backfillMasterProductLinks().subscribe();
+    expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/master-product-links/backfill').request.method).toBe('POST');
+    service.getEditorialLegacyBridge(7).subscribe();
+    expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/editorial/master-products/7/link').request.method).toBe('GET');
+  });
 });
 
 function emptyPage() {

@@ -265,6 +265,79 @@ export interface CreateEditorialAdminItemRelationshipRequest {
 export interface UpdateEditorialAdminItemRelationshipRequest
   extends CreateEditorialAdminItemRelationshipRequest {}
 
+export type MasterProductCatalogLinkStatus = 'PROPOSED' | 'VERIFIED' | 'REJECTED';
+export type MasterProductCatalogLinkSource =
+  | 'MANUAL'
+  | 'ISBN'
+  | 'EAN'
+  | 'TITLE'
+  | 'TITLE_AND_VOLUME'
+  | 'TITLE_AND_PUBLISHER'
+  | 'BACKFILL';
+
+export interface MasterProductCatalogLinkResponse {
+  id: number;
+  masterProductId: number;
+  masterProductName: string;
+  catalogItemId: number;
+  catalogItemTitle: string;
+  catalogItemEditionId: number | null;
+  catalogItemEditionLabel: string | null;
+  linkStatus: MasterProductCatalogLinkStatus;
+  linkSource: MasterProductCatalogLinkSource;
+  confidenceScore: number | null;
+  matchReason: string | null;
+  reviewNote: string | null;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface CreateMasterProductCatalogLinkRequest {
+  masterProductId: number;
+  catalogItemId: number;
+  catalogItemEditionId: number | null;
+  linkStatus: MasterProductCatalogLinkStatus;
+  linkSource: MasterProductCatalogLinkSource;
+  confidenceScore: number | null;
+  matchReason: string | null;
+  reviewNote: string | null;
+}
+
+export interface UpdateMasterProductCatalogLinkRequest
+  extends Omit<CreateMasterProductCatalogLinkRequest, 'masterProductId'> {}
+
+export interface MasterProductCatalogLinkSearchParams {
+  masterProductId?: number | null;
+  catalogItemId?: number | null;
+  catalogItemEditionId?: number | null;
+  linkStatus?: MasterProductCatalogLinkStatus | '' | null;
+  linkSource?: MasterProductCatalogLinkSource | '' | null;
+  page?: number;
+  size?: number;
+  sort?: string;
+}
+
+export interface BackfillMasterProductCatalogLinksResponse {
+  scanned: number;
+  proposed: number;
+  skipped: number;
+  ambiguous: number;
+}
+
+export interface EditorialLegacyBridgeResponse {
+  linkId: number;
+  masterProductId: number;
+  masterProductName: string;
+  linkStatus: MasterProductCatalogLinkStatus;
+  linkSource: MasterProductCatalogLinkSource;
+  confidenceScore: number | null;
+  matchReason: string | null;
+  catalogItemId: number;
+  catalogItemTitle: string;
+  catalogItemEditionId: number | null;
+  catalogItemEditionLabel: string | null;
+}
+
 export interface EditorialAdminSearchParams {
   q?: string | null;
   recordStatus?: CatalogRecordStatus | null;

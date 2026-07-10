@@ -58,6 +58,10 @@ export class AdminEditorialShellComponent {
       icon: 'account_tree',
       route: '/admin/editorial/relationships'
     },
-    { labelKey: 'admin.editorial.sections.reconciliation', icon: 'sync_alt' }
+    {
+      labelKey: 'admin.editorial.sections.reconciliation',
+      icon: 'sync_alt',
+      route: '/admin/editorial/master-product-links'
+    }
   ];
 }

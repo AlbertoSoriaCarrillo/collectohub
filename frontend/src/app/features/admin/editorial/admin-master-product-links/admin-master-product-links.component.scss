@@ -1,0 +1,38 @@
+@use '../admin-publishers/admin-publishers.component.scss';
+
+.master-link-filters {
+  grid-template-columns: repeat(5, minmax(130px, 1fr)) auto auto;
+}
+
+.backfill-result mat-card-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.master-link-row {
+  align-items: center;
+}
+
+.master-link-row > span:last-child {
+  align-items: center;
+  display: flex;
+  gap: 4px;
+}
+
+@media (max-width: 1100px) {
+  .master-link-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .master-link-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .master-link-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

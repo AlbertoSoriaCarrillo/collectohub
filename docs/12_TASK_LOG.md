@@ -1598,3 +1598,18 @@ Siguiente paso: crear el backend en la carpeta backend.
   legacy, master product links admin, social, tiendas, marketplace, pagos ni
   movil.
 - Siguiente tarea recomendada: EPIC 40F - Admin master product links/reconciliation.
+
+## 2026-07-10 - EPIC 40F - Admin master product links/reconciliation
+
+- Creada la ruta protegida `/admin/editorial/master-product-links`.
+- Creada la pantalla admin de enlaces entre `master_products` y catalogo editorial.
+- Anadidos modelos, servicio frontend, bridge lookup, verify/reject y backfill
+  con confirmacion explicita.
+- Anadidos filtros por master product, item, edition, estado y fuente; create y
+  update con validaciones visuales de IDs positivos y confianza entre 0 y 1.
+- Anadido i18n ES/EN y tests frontend de servicio, ruta, shell y componente.
+- Ejecutados `npm.cmd ci`, `npm.cmd test -- --watch=false` y `npm.cmd run build`.
+- Sin backend funcional, migraciones ni endpoints nuevos.
+- Sin importadores abiertos, IA, scraping ni reconciliacion automatica avanzada.
+- Siguiente tarea recomendada: EPIC 40G - Datos demo editoriales y validacion
+  integral MVP3 parcial.

@@ -138,7 +138,7 @@ EPIC 39C.
 3. EPIC 40C - Admin items/editions. Completada el 2026-07-10.
 4. EPIC 40D - Admin creators y creditos. Completada el 2026-07-10.
 5. EPIC 40E - Admin relationships. Completada el 2026-07-10.
-6. EPIC 40F - Admin master product links/reconciliation.
+6. EPIC 40F - Admin master product links/reconciliation. Completada el 2026-07-10.
 7. EPIC 40G - Datos demo editoriales y validacion integral MVP3 parcial.
 
 El orden prioriza primero el shell admin, despues entidades base, luego
@@ -227,3 +227,10 @@ entre items, pantalla admin con seleccion de item origen/destino, filtro por
 estado, listado, create/update/delete y validaciones visuales. No se inicia
 reconciliacion legacy, grafo avanzado, relaciones automaticas inversas ni
 cambios backend.
+
+Estado: EPIC 40F completada el 2026-07-10. Queda implementada la ruta admin
+`/admin/editorial/master-product-links`, modelos y servicio frontend para el
+bridge legacy, pantalla de reconciliacion con filtros, create/update,
+verify/reject, backfill confirmado y consulta de bridge por producto maestro.
+No se implementan cambios backend, migraciones, importadores abiertos, IA ni
+scraping.
