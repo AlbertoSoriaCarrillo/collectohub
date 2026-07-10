@@ -3,8 +3,9 @@
 This directory is a downloadable snapshot of the architecture implemented in
 the repository. It is derived from Liquibase changelogs, Spring controllers and
 DTOs, Angular routes, services and feature components as of 2026-07-07.
-EPIC 38 closure updates the documented snapshot to 2026-07-08 for creators and
-item relationships.
+EPIC 41B updates the documented snapshot to 2026-07-10 for MVP3 Admin
+Editorial routes and their existing backend operations. The database snapshot
+remains unchanged: no migration was created in MVP3 Admin Editorial.
 
 ## Files
 

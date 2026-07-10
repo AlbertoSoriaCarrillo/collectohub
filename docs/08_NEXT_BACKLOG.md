@@ -82,6 +82,10 @@ EPIC 41A - Auditoria UX/Admin editorial y bugs de usabilidad. Completada el
 2026-07-10. Siguiente tarea recomendada: EPIC 41B - Cierre
 documental/exportable MVP3 parcial.
 
+EPIC 41B - Cierre documental/exportable MVP3 parcial. Completada el
+2026-07-10. Siguiente tarea recomendada: EPIC 41C - E2E basico Admin Editorial
+y validacion con datos demo.
+
 ## MVP 4 - Colecciones finales de usuario
 
 - adopcion principal del catalogo editorial en colecciones;

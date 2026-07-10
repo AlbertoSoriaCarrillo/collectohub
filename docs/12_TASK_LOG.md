@@ -1662,3 +1662,12 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Sin backend funcional, migraciones, endpoints nuevos, rutas nuevas ni MVP4.
 - Siguiente tarea recomendada: EPIC 41B - Cierre documental/exportable MVP3
   parcial.
+
+## 2026-07-10 - EPIC 41B - Cierre documental/exportable MVP3 parcial
+
+- Creado `docs/23_MVP3_PARTIAL_CLOSURE.md`; estado MVP, plan y backlog
+  alineados con EPIC 40A-40G y 41A completadas.
+- Actualizados exports de README, rutas y mapa frontend-backend para MVP3 ADMIN.
+- El snapshot de base de datos permanece sin cambios: no hay migraciones nuevas.
+- Ejecutado `git diff --check`; sin backend funcional, endpoints, rutas nuevas
+  ni MVP4. Siguiente tarea: EPIC 41C - E2E basico Admin Editorial y datos demo.

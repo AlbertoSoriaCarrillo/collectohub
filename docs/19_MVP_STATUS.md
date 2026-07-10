@@ -344,6 +344,10 @@ una auditoria UX inicial a las pantallas admin y corrigio confirmaciones sin
 i18n. Social, tiendas, marketplace, pagos y movil continúan en fases
 posteriores.
 
+EPIC 41B queda completada: el cierre parcial esta en
+`docs/23_MVP3_PARTIAL_CLOSURE.md`. MVP3 sigue abierto; la siguiente tarea
+recomendada es EPIC 41C - E2E basico Admin Editorial y validacion con datos demo.
+
 1. Preparar capturas reales para `docs/assets/screenshots/` y enlazarlas desde el README.
 2. Revisar el rediseño visual en desktop y movil real, anadir capturas a `docs/assets/screenshots/`.
 3. Revisar vulnerabilidades npm transitivas y compatibilidad de versiones Angular/Node antes de compartir el entorno.

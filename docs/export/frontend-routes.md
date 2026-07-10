@@ -39,6 +39,24 @@ notably private collection reads.
 
 ## Redirects
 
+## MVP3 Admin Editorial
+
+All routes below require `authGuard` and `adminGuard` and are exposed from the
+ADMIN-only editorial shell.
+
+| Path | Component | Navigation | Status | Description |
+| --- | --- | --- | --- | --- |
+| `/admin/editorial` | `AdminEditorialShellComponent` | Header/admin shell | `MVP3_ADMIN_PARTIAL` | Editorial admin navigation. |
+| `/admin/editorial/publishers` | `AdminPublishersComponent` | Shell | `MVP3_ADMIN_PARTIAL` | Publisher maintenance. |
+| `/admin/editorial/franchises` | `AdminFranchisesComponent` | Shell | `MVP3_ADMIN_PARTIAL` | Franchise maintenance. |
+| `/admin/editorial/series` | `AdminSeriesComponent` | Shell | `MVP3_ADMIN_PARTIAL` | Series maintenance. |
+| `/admin/editorial/items` | `AdminItemsComponent` | Shell | `MVP3_ADMIN_PARTIAL` | Item maintenance. |
+| `/admin/editorial/editions` | `AdminEditionsComponent` | Shell | `MVP3_ADMIN_PARTIAL` | Edition maintenance. |
+| `/admin/editorial/creators` | `AdminCreatorsComponent` | Shell | `MVP3_ADMIN_PARTIAL` | Creator maintenance. |
+| `/admin/editorial/credits` | `AdminCreditsComponent` | Shell | `MVP3_ADMIN_PARTIAL` | Item credits. |
+| `/admin/editorial/relationships` | `AdminRelationshipsComponent` | Shell | `MVP3_ADMIN_PARTIAL` | Item relationships. |
+| `/admin/editorial/master-product-links` | `AdminMasterProductLinksComponent` | Shell | `MVP3_ADMIN_PARTIAL` | Legacy reconciliation. |
+
 | Path | Destination | Reason |
 | --- | --- | --- |
 | `/` | `/home` | Default application entry. |

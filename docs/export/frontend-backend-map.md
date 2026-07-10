@@ -120,6 +120,15 @@ All rows in this section are `LEGACY_FUTURE`.
 
 ## Redirects and fallback
 
+## MVP3 Admin Editorial
+
+`EditorialAdminService` powers all ADMIN-only routes. Publishers, franchises,
+series, items and editions use their existing search/get/create/update API
+operations; creators and credits also use DELETE; relationships use
+GET/POST/PUT/DELETE by source item; master-product-links use search/get/create/
+update, verify, reject, backfill and editorial legacy bridge lookup. No endpoint
+or backend contract was created for these screens.
+
 | Route | Component | Backend relationship | Status |
 | --- | --- | --- | --- |
 | `/` | Redirect | No direct API call | `REDIRECT` |
