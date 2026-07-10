@@ -50,8 +50,9 @@ Siguiente tarea: EPIC 39 - Cierre formal MVP2 y preparacion de MVP3 Admin
 Editorial.
 
 EPIC 39C cierra la preparacion de MVP3 mediante
-`docs/21_MVP3_ADMIN_EDITORIAL_PLAN.md`. Siguiente tarea funcional:
-EPIC 40G - Datos demo editoriales y validacion integral MVP3 parcial.
+`docs/21_MVP3_ADMIN_EDITORIAL_PLAN.md`. EPIC 40A-40G completa el primer bloque
+parcial de administracion editorial y validacion local. Siguiente tarea
+recomendada: EPIC 41A - Auditoria UX/Admin editorial y bugs de usabilidad.
 
 MVP 3 ya no es Social basico. MVP 3 pasa a ser Admin editorial y carga real de
 datos. Social basico pasa a MVP 6. El cambio de orden evita saltar a
@@ -75,6 +76,11 @@ Orden recomendado MVP3:
 5. EPIC 40E - Admin relationships. Completada el 2026-07-10.
 6. EPIC 40F - Admin master product links/reconciliation. Completada el 2026-07-10.
 7. EPIC 40G - Datos demo editoriales y validacion integral MVP3 parcial.
+   Completada el 2026-07-10.
+
+Siguiente tarea recomendada: EPIC 41A - Auditoria UX/Admin editorial y bugs de
+usabilidad. Antes de ampliar producto, conviene revisar consistencia visual,
+flujos y deuda de usabilidad de las pantallas admin.
 
 ## MVP 4 - Colecciones finales de usuario
 

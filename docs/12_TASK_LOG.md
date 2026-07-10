@@ -1613,3 +1613,34 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Sin importadores abiertos, IA, scraping ni reconciliacion automatica avanzada.
 - Siguiente tarea recomendada: EPIC 40G - Datos demo editoriales y validacion
   integral MVP3 parcial.
+
+## 2026-07-10 - EPIC 40G - Datos demo editoriales y validacion integral MVP3 parcial
+
+- Creado `scripts/demo/create-editorial-admin-demo-data.ps1`, con parametros
+  para API, cuenta ADMIN, sufijo y `MasterProductId` opcional. Usa solamente
+  endpoints existentes, reintenta conflictos 409 por busqueda y no persiste
+  tokens ni credenciales.
+- El script cubre publisher, franchise, series, dos items, edition, creator,
+  creator credit, relationship y master product link opcional. Guarda un
+  resumen local ignorado en `.last-editorial-admin-demo-data.json`.
+- Validada sintaxis y flujo seguro mediante `-WhatIf`; no se ejecuto contra la
+  API porque `localhost:8080` no estaba levantado y no habia una cuenta ADMIN
+  local disponible durante esta validacion.
+- Documentadas las diez rutas ADMIN de MVP3, de `/admin/editorial` a
+  `/admin/editorial/master-product-links`.
+- Ejecutado `cd frontend && npm.cmd ci`: correcto, 474 paquetes instalados y
+  475 auditados. Persisten los avisos conocidos de scripts pendientes,
+  `@angular/animations` y 7 vulnerabilidades npm, sin aplicar fixes automaticos.
+- Ejecutado `cd frontend && npm.cmd test -- --watch=false`: 55 archivos y 174
+  tests correctos.
+- Ejecutado `cd frontend && npm.cmd run build`: correcto; persiste el warning
+  conocido del bundle inicial de 617.05 kB frente al budget de 500 kB.
+- Ejecutado `cd backend && .\mvnw.cmd clean verify`: `BUILD SUCCESS`, 322
+  tests, 0 fallos, 0 errores y 2 omitidos.
+- Docker no pudo validarse: Docker Desktop no exponia el daemon
+  `dockerDesktopLinuxEngine`; no se ejecutaron `up` ni operaciones sobre
+  volumenes.
+- Sin backend funcional, migraciones, endpoints nuevos ni docs/export.
+- Sin social, tiendas, marketplace, pagos ni movil.
+- MVP3 Admin Editorial queda validado parcialmente; siguiente tarea recomendada:
+  EPIC 41A - Auditoria UX/Admin editorial y bugs de usabilidad.

@@ -61,3 +61,4 @@ frontend/playwright-report/
 
 # Local demo data
 scripts/demo/.last-demo-data.json
+scripts/demo/.last-editorial-admin-demo-data.json

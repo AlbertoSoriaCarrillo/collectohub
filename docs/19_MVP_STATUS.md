@@ -1,6 +1,6 @@
 # CollectoHub MVP status
 
-Fecha de revision: 2026-07-09.
+Fecha de revision: 2026-07-10.
 
 ## Estado general
 
@@ -22,9 +22,12 @@ marketplace, pagos, alertas, pantalla de grafo avanzada, social y movil.
 Siguiente gran bloque: MVP 3 Admin editorial y carga real de datos. Social,
 tiendas, marketplace, pagos y movil quedan en fases posteriores.
 
-MVP 3 esta planificado en `docs/21_MVP3_ADMIN_EDITORIAL_PLAN.md`. La siguiente
-tarea funcional recomendada es EPIC 40A - Admin editorial shell y navegacion
-protegida.
+MVP 3 tiene validado un primer bloque parcial: EPIC 40A-40G entrega shell
+protegido para `ADMIN`, gestion de entidades editoriales, relaciones,
+reconciliacion legacy, datos demo por API y validacion local. No queda cerrado
+como producto final: siguen pendientes una auditoria UX/admin, calidad de datos
+y decisiones de siguiente bloque. La siguiente tarea recomendada es EPIC 41A -
+Auditoria UX/Admin editorial y bugs de usabilidad.
 
 | Dominio | Estado actual |
 | --- | --- |
@@ -334,14 +337,11 @@ de aplicacion, 81 endpoints, 32 rutas Angular y 61 relaciones pantalla-backend.
 Los estados distinguen recorrido MVP 1, base legacy/futura, infraestructura,
 MVP 2 visible/foundation y redirecciones sin alterar codigo funcional.
 
-La siguiente tarea recomendada es **EPIC 39 - Cierre formal MVP2 y preparacion
-de MVP3 Admin Editorial**. Debe cerrar formalmente MVP 2 y preparar el siguiente
-bloque administrativo: MVP 3 Admin editorial y carga real de datos. Social queda
-desplazado a MVP 6; tiendas, marketplace, pagos y movil quedan en fases
-posteriores. Auditoria: `docs/20_MVP2_CLOSURE_REVIEW.md`.
-
-MVP 3 queda planificado en `docs/21_MVP3_ADMIN_EDITORIAL_PLAN.md`. La siguiente
-tarea funcional es **EPIC 40A - Admin editorial shell y navegacion protegida**.
+MVP 2 queda cerrado con limitaciones y MVP3 Admin Editorial cuenta ya con un
+primer bloque parcial validado: EPIC 40A-40G. La siguiente tarea recomendada es
+**EPIC 41A - Auditoria UX/Admin editorial y bugs de usabilidad**, antes de
+ampliar el producto. Social, tiendas, marketplace, pagos y movil continúan en
+fases posteriores.
 
 1. Preparar capturas reales para `docs/assets/screenshots/` y enlazarlas desde el README.
 2. Revisar el rediseño visual en desktop y movil real, anadir capturas a `docs/assets/screenshots/`.

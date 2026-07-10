@@ -76,7 +76,7 @@ No se implementan cambios de permisos en esta fase documental.
 
 ## 6. Pantallas admin necesarias
 
-Rutas propuestas para EPICs funcionales posteriores:
+Rutas implementadas y protegidas para el primer bloque de MVP3:
 
 ```text
 /admin/editorial
@@ -91,8 +91,8 @@ Rutas propuestas para EPICs funcionales posteriores:
 /admin/editorial/master-product-links
 ```
 
-Estas rutas no existen todavia y deben crearse gradualmente. El shell admin debe
-separarse del recorrido publico para no contaminar `Home`, `Catalogo`,
+Estas rutas estan protegidas por autenticacion y rol `ADMIN`. El shell admin se
+mantiene separado del recorrido publico para no contaminar `Home`, `Catalogo`,
 `Colecciones`, `Buscados` y `Perfil`.
 
 ## 7. Endpoints existentes reutilizables
@@ -140,6 +140,7 @@ EPIC 39C.
 5. EPIC 40E - Admin relationships. Completada el 2026-07-10.
 6. EPIC 40F - Admin master product links/reconciliation. Completada el 2026-07-10.
 7. EPIC 40G - Datos demo editoriales y validacion integral MVP3 parcial.
+   Completada el 2026-07-10.
 
 El orden prioriza primero el shell admin, despues entidades base, luego
 items/editions, creators, relaciones, reconciliacion y finalmente demo/validacion.
@@ -234,3 +235,9 @@ bridge legacy, pantalla de reconciliacion con filtros, create/update,
 verify/reject, backfill confirmado y consulta de bridge por producto maestro.
 No se implementan cambios backend, migraciones, importadores abiertos, IA ni
 scraping.
+
+Estado: EPIC 40A-40G completadas el 2026-07-10. MVP3 Admin Editorial queda
+validado parcialmente con rutas ADMIN, datos demo mantenibles por API y
+validaciones locales. No se considera cerrado como producto final; queda
+pendiente decidir el siguiente bloque. La siguiente tarea recomendada es EPIC
+41A - Auditoria UX/Admin editorial y bugs de usabilidad.

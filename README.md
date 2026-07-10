@@ -5,8 +5,8 @@ creadores de contenido, apoyada en un catalogo comun de objetos coleccionables.
 
 ## Foco Actual
 
-**MVP 2 cerrado con limitaciones; siguiente bloque: MVP 3 Admin editorial y
-carga real de datos.**
+**MVP 2 cerrado con limitaciones; primer bloque de MVP 3 Admin editorial
+validado parcialmente.**
 
 El recorrido visible de MVP 1 permanece estable: explorar libros, comics y
 manga, crear colecciones, marcar lo que se tiene o busca y revisar faltantes.
@@ -199,6 +199,20 @@ Si PowerShell bloquea scripts locales:
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\demo\create-demo-data.ps1
 ```
 
+Para cargar datos de prueba del bloque Admin Editorial con una cuenta `ADMIN`:
+
+```powershell
+.\scripts\demo\create-editorial-admin-demo-data.ps1 `
+  -ApiBaseUrl "http://localhost:8080" `
+  -AdminEmail "admin@collectohub.local" `
+  -AdminPassword "admin123" `
+  -DemoSuffix "local"
+```
+
+El enlace con un producto maestro legacy es opcional: proporciona un
+`-MasterProductId` positivo cuando exista. Para comprobar el script sin hacer
+llamadas a la API usa `-WhatIf`.
+
 ## Demo / Screenshots
 
 No hay capturas reales versionadas todavia. Las futuras imagenes de portfolio se
@@ -285,8 +299,10 @@ formatos Markdown, Mermaid y CSV descargables.
 - El siguiente paso recomendado es EPIC 39: cierre formal MVP2 y preparacion de
   MVP3 Admin Editorial y carga real de datos.
 - MVP3 queda planificado en `docs/21_MVP3_ADMIN_EDITORIAL_PLAN.md`; la primera
-  fase funcional recomendada es EPIC 40A - Admin editorial shell y navegacion
-  protegida.
+  tanda administrativa EPIC 40A-40G queda implementada y validada
+  parcialmente.
+- El siguiente paso recomendado es EPIC 41A: auditoria UX/Admin editorial y
+  bugs de usabilidad, antes de ampliar el producto.
 - Social basico pasa a MVP 6; antes quedan MVP3 Admin Editorial, MVP4
   colecciones finales y MVP5 tiendas profesionales/reservas.
 - Validar despues marketplace, pagos, producto comercial, movil y herramientas
