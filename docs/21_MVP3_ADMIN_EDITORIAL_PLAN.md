@@ -256,3 +256,7 @@ Estado: EPIC 42A completada el 2026-07-10. Calidad editorial basica documentada
 en `docs/24_EDITORIAL_DATA_QUALITY.md`; no cambia backend ni constraints.
 Siguiente recomendacion: EPIC 42B - Hardening admin editorial y validaciones
 backend selectivas.
+
+Estado: EPIC 42B completada el 2026-07-10. Hardening selectivo sin schema ni
+endpoints nuevos; siguiente recomendacion: EPIC 42C - Calidad editorial avanzada
+y reporte de duplicados.

@@ -91,6 +91,9 @@ de datos editorial y reglas anti-duplicados. Completada el 2026-07-10.
 Siguiente tarea recomendada: EPIC 42B - Hardening admin editorial y
 validaciones backend selectivas.
 
+EPIC 42B completada el 2026-07-10. Siguiente tarea recomendada: EPIC 42C -
+Calidad editorial avanzada y reporte de duplicados.
+
 ## MVP 4 - Colecciones finales de usuario
 
 - adopcion principal del catalogo editorial en colecciones;

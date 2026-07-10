@@ -32,3 +32,20 @@ memoria: no se anaden llamadas HTTP ni contratos.
 Faltan reglas fuertes backend, datos reales, metricas de catalogo, roles
 editoriales separados y E2E futuros. La siguiente evolucion recomendada es
 EPIC 42B - Hardening admin editorial y validaciones backend selectivas.
+
+## Reglas ya endurecidas en backend
+
+- Credits: unicidad activa por item, creator y rol, incluida la exclusion del
+  propio registro al actualizar.
+- Relationships: source y target distintos, orden positivo por DTO y unicidad
+  activa por source, target y tipo.
+- Master product links: IDs y confianza validados por DTO, enlace exacto por
+  estado y un solo VERIFIED activo por master product.
+- Creators: slug normalizado unico y, desde EPIC 42B, nombre exacto unico sin
+  distincion de mayusculas entre registros no eliminados.
+
+## Reglas pendientes para futuras EPICs
+
+Publishers, franchises, series, items y editions requieren decisiones con datos
+reales, normalizacion y posiblemente constraints/migraciones. Siguen pendientes
+fuzzy matching, aliases, metricas y reportes de duplicados.

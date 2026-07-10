@@ -9,4 +9,6 @@ public interface CreatorRepository extends JpaRepository<Creator, Long>, JpaSpec
     Optional<Creator> findBySlugAndDeletedAtIsNull(String slug);
     boolean existsBySlugAndDeletedAtIsNull(String slug);
     boolean existsBySlugAndDeletedAtIsNullAndIdNot(String slug, Long id);
+    boolean existsByNameIgnoreCaseAndDeletedAtIsNull(String name);
+    boolean existsByNameIgnoreCaseAndDeletedAtIsNullAndIdNot(String name, Long id);
 }

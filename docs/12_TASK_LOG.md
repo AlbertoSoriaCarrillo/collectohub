@@ -1684,3 +1684,16 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Sin backend funcional, migraciones, endpoints, rutas, E2E, Playwright ni MVP4.
 - Siguiente tarea recomendada: EPIC 42B - Hardening admin editorial y
   validaciones backend selectivas.
+
+## 2026-07-10 - EPIC 42B - Hardening admin editorial y validaciones backend selectivas
+
+- Auditadas validaciones existentes: credits, relationships y master product
+  links ya cubrian duplicados activos, update con exclusion y conflictos 409.
+- Anadida unicidad de nombre de creator sin distincion de mayusculas en create
+  y update, junto a test unitario de conflicto.
+- Ejecutado `backend && .\mvnw.cmd clean verify`: `BUILD SUCCESS`, 323 tests,
+  0 fallos, 0 errores y 0 omitidos.
+- Pendientes sin forzar: reglas de publishers/franchises/series/items/editions,
+  fuzzy matching, aliases, metricas y constraints/migraciones futuras.
+- Sin migraciones, endpoints, rutas, E2E, Playwright ni MVP4. Siguiente tarea:
+  EPIC 42C - Calidad editorial avanzada y reporte de duplicados.

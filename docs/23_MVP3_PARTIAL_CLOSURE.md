@@ -50,6 +50,10 @@ ADMIN. Auditoria: `docs/22_MVP3_ADMIN_UX_AUDIT.md`.
 | Roles | Solo `ADMIN` editorial. | Sin flujos especializados. | Decidir hardening. |
 | Calidad | EPIC 42A documenta calidad basica y warnings; faltan reglas backend fuertes, datos reales y E2E futuro. | Duplicados complejos posibles. | EPIC 42B. |
 
+EPIC 42B anade hardening selectivo para creators y confirma las protecciones ya
+existentes de credits, relationships y master links. No constituye cierre total
+de calidad: siguen pendientes reglas complejas, datos reales y E2E futuro.
+
 ## Decision recomendada
 
 Siguiente EPIC: **EPIC 41C - E2E basico Admin Editorial y validacion con datos

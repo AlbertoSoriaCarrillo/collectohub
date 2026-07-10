@@ -47,7 +47,7 @@ public class CreatorService {
         Values values = values(request.name(), request.slug(), request.sortName(), request.biography(),
                 request.country(), request.birthYear(), request.deathYear(),
                 request.recordStatus() == null ? CatalogRecordStatus.DRAFT : request.recordStatus());
-        ensureSlug(values.slug(), null);
+        ensureUnique(values.name(), values.slug(), null);
         return CreatorResponse.from(repository.save(Creator.create(values.name(), values.slug(), values.sortName(),
                 values.biography(), values.country(), values.birthYear(), values.deathYear(), values.status(), user.id())));
     }
@@ -59,7 +59,7 @@ public class CreatorService {
         Values values = values(request.name(), request.slug(), request.sortName(), request.biography(),
                 request.country(), request.birthYear(), request.deathYear(),
                 request.recordStatus() == null ? creator.getRecordStatus() : request.recordStatus());
-        ensureSlug(values.slug(), id);
+        ensureUnique(values.name(), values.slug(), id);
         creator.update(values.name(), values.slug(), values.sortName(), values.biography(), values.country(),
                 values.birthYear(), values.deathYear(), values.status(), user.id());
         return CreatorResponse.from(creator);
@@ -94,7 +94,11 @@ public class CreatorService {
                 .toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]+", "-").replaceAll("(^-|-$)", "");
     }
 
-    private void ensureSlug(String slug, Long excludedId) {
+    private void ensureUnique(String name, String slug, Long excludedId) {
+        boolean duplicateName = excludedId == null
+                ? repository.existsByNameIgnoreCaseAndDeletedAtIsNull(name)
+                : repository.existsByNameIgnoreCaseAndDeletedAtIsNullAndIdNot(name, excludedId);
+        if (duplicateName) throw new DuplicateEditorialCatalogException("creator", "name already exists");
         boolean duplicate = excludedId == null ? repository.existsBySlugAndDeletedAtIsNull(slug)
                 : repository.existsBySlugAndDeletedAtIsNullAndIdNot(slug, excludedId);
         if (duplicate) throw new DuplicateEditorialCatalogException("creator", "slug already exists");

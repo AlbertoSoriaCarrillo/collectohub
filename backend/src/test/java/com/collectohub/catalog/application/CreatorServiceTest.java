@@ -38,6 +38,20 @@ class CreatorServiceTest {
                 .isInstanceOf(DuplicateEditorialCatalogException.class);
     }
 
+    @Test void duplicateNormalizedNameIsRejectedOnCreateAndUpdate() {
+        when(repository.existsByNameIgnoreCaseAndDeletedAtIsNull("Akira Toriyama")).thenReturn(true);
+        assertThatThrownBy(() -> service.create(admin, new CreateCreatorRequest(
+                "  Akira Toriyama  ", null, null, null, null, null, null, null)))
+                .isInstanceOf(DuplicateEditorialCatalogException.class);
+
+        Creator creator = creator(10L, CatalogRecordStatus.ACTIVE);
+        when(repository.findByIdAndDeletedAtIsNull(10L)).thenReturn(Optional.of(creator));
+        when(repository.existsByNameIgnoreCaseAndDeletedAtIsNullAndIdNot("Akira Toriyama", 10L)).thenReturn(true);
+        assertThatThrownBy(() -> service.update(10L, admin, new UpdateCreatorRequest(
+                "Akira Toriyama", "akira-t", null, null, null, null, null, null)))
+                .isInstanceOf(DuplicateEditorialCatalogException.class);
+    }
+
     @Test void invalidLifeYearsAreRejected() {
         assertThatThrownBy(() -> service.create(admin, new CreateCreatorRequest(
                 "Creator", null, null, null, null, 2000, 1990, null)))
