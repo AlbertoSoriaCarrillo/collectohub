@@ -54,7 +54,9 @@ describe('AdminEditorialShellComponent', () => {
     expect(links).toContain('/admin/editorial/series');
     expect(links).toContain('/admin/editorial/items');
     expect(links).toContain('/admin/editorial/editions');
-    expect(links).not.toContain('/admin/editorial/creators');
+    expect(links).toContain('/admin/editorial/creators');
+    expect(links).toContain('/admin/editorial/credits');
     expect(links).not.toContain('/admin/editorial/relationships');
+    expect(links).not.toContain('/admin/editorial/reconciliation');
   });
 });

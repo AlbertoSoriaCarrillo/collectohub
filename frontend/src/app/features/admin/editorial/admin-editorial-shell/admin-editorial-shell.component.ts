@@ -43,8 +43,16 @@ export class AdminEditorialShellComponent {
       icon: 'auto_stories',
       route: '/admin/editorial/editions'
     },
-    { labelKey: 'admin.editorial.sections.creators', icon: 'groups' },
-    { labelKey: 'admin.editorial.sections.credits', icon: 'badge' },
+    {
+      labelKey: 'admin.editorial.sections.creators',
+      icon: 'groups',
+      route: '/admin/editorial/creators'
+    },
+    {
+      labelKey: 'admin.editorial.sections.credits',
+      icon: 'badge',
+      route: '/admin/editorial/credits'
+    },
     { labelKey: 'admin.editorial.sections.relationships', icon: 'account_tree' },
     { labelKey: 'admin.editorial.sections.reconciliation', icon: 'sync_alt' }
   ];

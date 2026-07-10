@@ -195,6 +195,64 @@ describe('EditorialAdminService', () => {
     service.updateEdition(11, request).subscribe();
     expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/editions/11').request.method).toBe('PUT');
   });
+
+  it('searches, creates, updates and deletes creators without empty params', () => {
+    service.searchCreators({ q: '  otomo  ', recordStatus: 'ACTIVE', sort: '' }).subscribe();
+
+    const search = httpTestingController.expectOne((candidate) =>
+      candidate.url === 'http://localhost:8080/api/catalog/creators' &&
+      candidate.params.get('q') === 'otomo' &&
+      candidate.params.get('recordStatus') === 'ACTIVE' &&
+      candidate.params.get('page') === '0' &&
+      candidate.params.get('size') === '20' &&
+      !candidate.params.has('sort')
+    );
+    expect(search.request.method).toBe('GET');
+    search.flush(emptyPage());
+
+    const request = {
+      name: 'Katsuhiro Otomo',
+      slug: 'katsuhiro-otomo',
+      sortName: 'Otomo, Katsuhiro',
+      biography: null,
+      country: 'JP',
+      birthYear: 1954,
+      deathYear: null,
+      recordStatus: 'ACTIVE' as const
+    };
+
+    service.createCreator(request).subscribe();
+    expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/creators').request.method).toBe('POST');
+
+    service.updateCreator(12, request).subscribe();
+    expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/creators/12').request.method).toBe('PUT');
+
+    service.deleteCreator(12).subscribe();
+    expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/creators/12').request.method).toBe('DELETE');
+  });
+
+  it('lists, creates, updates and deletes item creator credits', () => {
+    service.listItemCreatorCredits(10).subscribe();
+    expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/items/10/creators').request.method).toBe('GET');
+
+    service.createItemCreatorCredit(10, {
+      creatorId: 12,
+      creditRole: 'AUTHOR',
+      creditOrder: 1,
+      creditLabel: null
+    }).subscribe();
+    expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/items/10/creators').request.method).toBe('POST');
+
+    service.updateItemCreatorCredit(10, 30, {
+      creditRole: 'ARTIST',
+      creditOrder: 2,
+      creditLabel: 'Pencils'
+    }).subscribe();
+    expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/items/10/creators/30').request.method).toBe('PUT');
+
+    service.deleteItemCreatorCredit(10, 30).subscribe();
+    expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/items/10/creators/30').request.method).toBe('DELETE');
+  });
 });
 
 function emptyPage() {

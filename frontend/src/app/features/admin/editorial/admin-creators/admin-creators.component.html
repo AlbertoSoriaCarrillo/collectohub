@@ -1,0 +1,144 @@
+<section class="admin-entity-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">{{ 'layout.nav.adminEditorial' | translate }}</p>
+      <h1>{{ 'admin.editorial.creators.title' | translate }}</h1>
+      <p>{{ 'admin.editorial.creators.subtitle' | translate }}</p>
+    </div>
+    <button mat-stroked-button type="button" (click)="load()">
+      <mat-icon aria-hidden="true">refresh</mat-icon>
+      {{ 'admin.editorial.actions.refresh' | translate }}
+    </button>
+  </header>
+
+  <mat-card class="panel-card">
+    <mat-card-content>
+      <form class="filters" [formGroup]="filters" (ngSubmit)="search()" novalidate>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'admin.editorial.actions.search' | translate }}</mat-label>
+          <input matInput formControlName="q" data-testid="admin-creators-search" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'admin.editorial.fields.status' | translate }}</mat-label>
+          <mat-select formControlName="recordStatus" data-testid="admin-creators-status-filter">
+            <mat-option value="">{{ 'common.all' | translate }}</mat-option>
+            @for (status of statuses; track status) {
+              <mat-option [value]="status">{{ 'admin.editorial.status.' + status | translate }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <button mat-flat-button color="primary" type="submit">
+          {{ 'admin.editorial.actions.search' | translate }}
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="content-grid">
+    <mat-card class="panel-card">
+      <mat-card-header>
+        <mat-card-title>{{ 'admin.editorial.sections.creators' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (loading()) {
+          <mat-spinner diameter="32"></mat-spinner>
+        } @else if (errorKey()) {
+          <p class="state-error" role="alert">{{ errorKey()! | translate }}</p>
+        } @else if (!creators().length) {
+          <p class="muted">{{ 'admin.editorial.messages.empty' | translate }}</p>
+        } @else {
+          <div class="entity-list">
+            @for (creator of creators(); track creator.id) {
+              <button class="entity-row" type="button" (click)="startEdit(creator)">
+                <span>
+                  <strong>{{ creator.name }}</strong>
+                  <small>{{ creator.slug }}</small>
+                </span>
+                <span class="status-pill">{{ 'admin.editorial.status.' + creator.recordStatus | translate }}</span>
+              </button>
+            }
+          </div>
+        }
+        <div class="pagination">
+          <button mat-button type="button" (click)="previous()" [disabled]="page() === 0">
+            {{ 'admin.editorial.actions.previous' | translate }}
+          </button>
+          <span>Page {{ page() + 1 }} / {{ totalPages() || 1 }}</span>
+          <button mat-button type="button" (click)="next()" [disabled]="page() + 1 >= totalPages()">
+            {{ 'admin.editorial.actions.next' | translate }}
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="panel-card">
+      <mat-card-header>
+        <mat-card-title>
+          {{ (editing() ? 'admin.editorial.actions.edit' : 'admin.editorial.actions.create') | translate }}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form class="entity-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.name' | translate }}</mat-label>
+            <input matInput formControlName="name" data-testid="admin-creators-name" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.slug' | translate }}</mat-label>
+            <input matInput formControlName="slug" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.sortName' | translate }}</mat-label>
+            <input matInput formControlName="sortName" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.country' | translate }}</mat-label>
+            <input matInput maxlength="2" formControlName="country" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.birthYear' | translate }}</mat-label>
+            <input matInput type="number" formControlName="birthYear" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.deathYear' | translate }}</mat-label>
+            <input matInput type="number" formControlName="deathYear" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.status' | translate }}</mat-label>
+            <mat-select formControlName="recordStatus">
+              @for (status of statuses; track status) {
+                <mat-option [value]="status">{{ 'admin.editorial.status.' + status | translate }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.biography' | translate }}</mat-label>
+            <textarea matInput rows="4" formControlName="biography"></textarea>
+          </mat-form-field>
+          @if (form.hasError('yearRange')) {
+            <p class="state-error" role="alert">{{ 'admin.editorial.messages.invalidYearRange' | translate }}</p>
+          }
+          @if (messageKey()) {
+            <p class="state-success">{{ messageKey()! | translate }}</p>
+          }
+          @if (errorKey()) {
+            <p class="state-error" role="alert">{{ errorKey()! | translate }}</p>
+          }
+          <div class="form-actions">
+            <button mat-flat-button color="primary" type="submit" [disabled]="saving()" data-testid="admin-creators-submit">
+              {{ 'admin.editorial.actions.save' | translate }}
+            </button>
+            <button mat-button type="button" (click)="cancel()">
+              {{ 'admin.editorial.actions.cancel' | translate }}
+            </button>
+            @if (editing()) {
+              <button mat-button type="button" (click)="deleteSelected()" data-testid="admin-creators-delete">
+                {{ 'admin.editorial.actions.delete' | translate }}
+              </button>
+            }
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</section>

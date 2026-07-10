@@ -349,6 +349,14 @@ export const en: TranslationDictionary = {
         title: 'Editions',
         subtitle: 'Search, create and maintain item editions.'
       },
+      creators: {
+        title: 'Creators',
+        subtitle: 'Search, create and maintain editorial creators.'
+      },
+      credits: {
+        title: 'Credits',
+        subtitle: 'Manage creator credits for a catalog item.'
+      },
       actions: {
         search: 'Search',
         create: 'Create',
@@ -357,7 +365,8 @@ export const en: TranslationDictionary = {
         cancel: 'Cancel',
         previous: 'Previous',
         next: 'Next',
-        refresh: 'Refresh'
+        refresh: 'Refresh',
+        delete: 'Delete'
       },
       fields: {
         name: 'Name',
@@ -390,7 +399,16 @@ export const en: TranslationDictionary = {
         publicationYear: 'Publication year',
         language: 'Language',
         pageCount: 'Page count',
-        coverImageUrl: 'Cover image URL'
+        coverImageUrl: 'Cover image URL',
+        creatorId: 'Creator ID',
+        creatorName: 'Creator',
+        sortName: 'Sort name',
+        biography: 'Biography',
+        birthYear: 'Birth year',
+        deathYear: 'Death year',
+        creditRole: 'Credit role',
+        creditOrder: 'Credit order',
+        creditLabel: 'Credit label'
       },
       status: {
         DRAFT: 'Draft',
@@ -419,6 +437,15 @@ export const en: TranslationDictionary = {
         SINGLE_ISSUE: 'Single issue',
         OTHER: 'Other'
       },
+      creatorRole: {
+        AUTHOR: 'Author',
+        WRITER: 'Writer',
+        ARTIST: 'Artist',
+        ILLUSTRATOR: 'Illustrator',
+        TRANSLATOR: 'Translator',
+        EDITOR: 'Editor',
+        OTHER: 'Other'
+      },
       messages: {
         saved: 'Saved successfully.',
         loadError: 'The records could not be loaded.',
@@ -426,7 +453,12 @@ export const en: TranslationDictionary = {
         empty: 'No records match those filters.',
         contextRequired: 'Enter the required parent ID to load records.',
         invalidYearRange: 'Review the year range.',
-        invalidUrl: 'Use an http or https URL.'
+        invalidUrl: 'Use an http or https URL.',
+        deleteError: 'The record could not be deleted.',
+        deleted: 'Deleted successfully.',
+        confirmDelete: 'Confirm deletion before continuing.',
+        creatorChangeRequiresRecreate:
+          'To change the creator, delete this credit and create a new one.'
       },
       sections: {
         publishers: 'Publishers',

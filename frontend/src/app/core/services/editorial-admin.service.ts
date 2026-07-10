@@ -5,23 +5,30 @@ import { environment } from '../../../environments/environment';
 import {
   CatalogFranchiseResponse,
   CatalogItemEditionResponse,
+  CatalogItemCreatorResponse,
   CatalogItemResponse,
   CatalogSeriesResponse,
+  CreateCatalogItemCreatorRequest,
   CreateCatalogFranchiseRequest,
   CreateCatalogItemEditionRequest,
   CreateCatalogItemRequest,
   CreateCatalogSeriesRequest,
+  CreateCreatorRequest,
   CreatePublisherRequest,
+  CreatorResponse,
+  EditorialAdminCreatorSearchParams,
   EditorialAdminEditionSearchParams,
   EditorialAdminItemSearchParams,
   EditorialAdminSearchParams,
   EditorialAdminSeriesSearchParams,
   PageResponse,
   PublisherResponse,
+  UpdateCatalogItemCreatorRequest,
   UpdateCatalogFranchiseRequest,
   UpdateCatalogItemEditionRequest,
   UpdateCatalogItemRequest,
   UpdateCatalogSeriesRequest,
+  UpdateCreatorRequest,
   UpdatePublisherRequest
 } from '../models/editorial-admin.model';
 
@@ -150,12 +157,68 @@ export class EditorialAdminService {
     return this.http.put<CatalogItemEditionResponse>(`${this.baseUrl}/editions/${id}`, request);
   }
 
+  searchCreators(
+    params: EditorialAdminCreatorSearchParams = {}
+  ): Observable<PageResponse<CreatorResponse>> {
+    return this.http.get<PageResponse<CreatorResponse>>(`${this.baseUrl}/creators`, {
+      params: this.toParams(params, 'name,asc')
+    });
+  }
+
+  getCreator(id: number): Observable<CreatorResponse> {
+    return this.http.get<CreatorResponse>(`${this.baseUrl}/creators/${id}`);
+  }
+
+  createCreator(request: CreateCreatorRequest): Observable<CreatorResponse> {
+    return this.http.post<CreatorResponse>(`${this.baseUrl}/creators`, request);
+  }
+
+  updateCreator(id: number, request: UpdateCreatorRequest): Observable<CreatorResponse> {
+    return this.http.put<CreatorResponse>(`${this.baseUrl}/creators/${id}`, request);
+  }
+
+  deleteCreator(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/creators/${id}`);
+  }
+
+  listItemCreatorCredits(itemId: number): Observable<CatalogItemCreatorResponse[]> {
+    return this.http.get<CatalogItemCreatorResponse[]>(
+      `${this.baseUrl}/items/${itemId}/creators`
+    );
+  }
+
+  createItemCreatorCredit(
+    itemId: number,
+    request: CreateCatalogItemCreatorRequest
+  ): Observable<CatalogItemCreatorResponse> {
+    return this.http.post<CatalogItemCreatorResponse>(
+      `${this.baseUrl}/items/${itemId}/creators`,
+      request
+    );
+  }
+
+  updateItemCreatorCredit(
+    itemId: number,
+    creditId: number,
+    request: UpdateCatalogItemCreatorRequest
+  ): Observable<CatalogItemCreatorResponse> {
+    return this.http.put<CatalogItemCreatorResponse>(
+      `${this.baseUrl}/items/${itemId}/creators/${creditId}`,
+      request
+    );
+  }
+
+  deleteItemCreatorCredit(itemId: number, creditId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/items/${itemId}/creators/${creditId}`);
+  }
+
   private toParams(
     params:
       | EditorialAdminSearchParams
       | EditorialAdminSeriesSearchParams
       | EditorialAdminItemSearchParams
-      | EditorialAdminEditionSearchParams,
+      | EditorialAdminEditionSearchParams
+      | EditorialAdminCreatorSearchParams,
     defaultSort: string
   ): HttpParams {
     const withDefaults = {

@@ -1520,3 +1520,42 @@ Siguiente paso: crear el backend en la carpeta backend.
 - No se implementan creators, credits, relationships, reconciliacion
   master-product-links, social, tiendas, marketplace, pagos ni movil.
 - Siguiente tarea recomendada: EPIC 40D - Admin creators y creditos.
+
+## 2026-07-10 - EPIC 40D - Admin creators y creditos
+
+- Ampliados modelos frontend admin con `CreatorCreditRole`, creators, creditos
+  por item y parametros de busqueda para creators.
+- Ampliado `EditorialAdminService` con busqueda, detalle, create, update y
+  delete para creators, y listado, create, update y delete de creditos por item,
+  usando endpoints existentes bajo `/api/catalog`.
+- Creadas rutas admin protegidas por `[authGuard, adminGuard]`:
+  `/admin/editorial/creators` y `/admin/editorial/credits`.
+- Actualizado el shell admin para enlazar creators y creditos; relationships y
+  reconciliation siguen sin CRUD funcional.
+- Creada pantalla admin de creators con busqueda, filtro por `recordStatus`,
+  listado, create, update, delete y cambio de estado `DRAFT` / `ACTIVE` /
+  `ARCHIVED`.
+- Creada pantalla admin de creditos por item con contexto `catalogItemId`,
+  listado, create, update y delete de roles `AUTHOR`, `WRITER`, `ARTIST`,
+  `ILLUSTRATOR`, `TRANSLATOR`, `EDITOR` y `OTHER`.
+- Anadidas validaciones visuales para nombre obligatorio, slug opcional,
+  pais de 2 letras, anos de vida no negativos, `deathYear >= birthYear`,
+  `creatorId` obligatorio y `creditOrder` positivo.
+- Anadidas traducciones ES/EN para creators, creditos, roles, campos y mensajes.
+- Anadidos/actualizados tests de servicio admin, rutas, shell, i18n y pantallas
+  admin de creators/creditos.
+- Primer intento de `cd frontend && npm.cmd test -- --watch=false` dentro del
+  sandbox: fallo por `Acceso denegado` al resolver ficheros SCSS y specs.
+- Ejecutado `cd frontend && npm.cmd ci`: correcto, 474 paquetes instalados. Se
+  mantienen avisos conocidos de `@angular/animations` y scripts pendientes de
+  aprobacion, sin ejecutar `npm audit fix` ni `npm audit fix --force`.
+- Ejecutado `cd frontend && npm.cmd test -- --watch=false` fuera del sandbox:
+  53 archivos y 162 tests correctos.
+- Ejecutado `cd frontend && npm.cmd run build` fuera del sandbox: correcto.
+  Permanece el warning conocido del bundle inicial de 611.63 kB frente al
+  budget de 500 kB.
+- No se modifica backend funcional, backend tests, migraciones, infra,
+  endpoints ni docs/export.
+- No se implementan relationships, reconciliacion master-product-links, imports,
+  social, tiendas, marketplace, pagos ni movil.
+- Siguiente tarea recomendada: EPIC 40E - Admin relationships.

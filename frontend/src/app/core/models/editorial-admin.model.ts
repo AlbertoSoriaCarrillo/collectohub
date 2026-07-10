@@ -15,6 +15,14 @@ export type CatalogItemEditionFormat =
   | 'BOX_SET'
   | 'SINGLE_ISSUE'
   | 'OTHER';
+export type CreatorCreditRole =
+  | 'AUTHOR'
+  | 'WRITER'
+  | 'ARTIST'
+  | 'ILLUSTRATOR'
+  | 'TRANSLATOR'
+  | 'EDITOR'
+  | 'OTHER';
 
 export interface PageResponse<T> {
   content: T[];
@@ -170,6 +178,55 @@ export interface CreateCatalogItemEditionRequest {
 
 export interface UpdateCatalogItemEditionRequest extends CreateCatalogItemEditionRequest {}
 
+export interface CreatorResponse {
+  id: number;
+  name: string;
+  slug: string;
+  sortName: string | null;
+  biography: string | null;
+  country: string | null;
+  birthYear: number | null;
+  deathYear: number | null;
+  recordStatus: CatalogRecordStatus;
+}
+
+export interface CreateCreatorRequest {
+  name: string;
+  slug: string | null;
+  sortName: string | null;
+  biography: string | null;
+  country: string | null;
+  birthYear: number | null;
+  deathYear: number | null;
+  recordStatus: CatalogRecordStatus;
+}
+
+export interface UpdateCreatorRequest extends CreateCreatorRequest {}
+
+export interface CatalogItemCreatorResponse {
+  id: number;
+  catalogItemId: number;
+  creatorId: number;
+  creatorName: string;
+  creatorSlug: string;
+  creditRole: CreatorCreditRole;
+  creditOrder: number;
+  creditLabel: string | null;
+}
+
+export interface CreateCatalogItemCreatorRequest {
+  creatorId: number;
+  creditRole: CreatorCreditRole;
+  creditOrder: number;
+  creditLabel: string | null;
+}
+
+export interface UpdateCatalogItemCreatorRequest {
+  creditRole: CreatorCreditRole;
+  creditOrder: number;
+  creditLabel: string | null;
+}
+
 export interface EditorialAdminSearchParams {
   q?: string | null;
   recordStatus?: CatalogRecordStatus | null;
@@ -202,3 +259,5 @@ export interface EditorialAdminEditionSearchParams extends EditorialAdminSearchP
   country?: string | null;
   publicationYear?: number | null;
 }
+
+export interface EditorialAdminCreatorSearchParams extends EditorialAdminSearchParams {}

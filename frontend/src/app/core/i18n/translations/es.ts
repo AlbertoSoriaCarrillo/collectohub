@@ -349,6 +349,14 @@ export const es: TranslationDictionary = {
         title: 'Ediciones',
         subtitle: 'Busca, crea y mantiene ediciones de items.'
       },
+      creators: {
+        title: 'Creators',
+        subtitle: 'Busca, crea y mantiene creators editoriales.'
+      },
+      credits: {
+        title: 'Creditos',
+        subtitle: 'Gestiona creditos de creators por item.'
+      },
       actions: {
         search: 'Buscar',
         create: 'Crear',
@@ -357,7 +365,8 @@ export const es: TranslationDictionary = {
         cancel: 'Cancelar',
         previous: 'Anterior',
         next: 'Siguiente',
-        refresh: 'Recargar'
+        refresh: 'Recargar',
+        delete: 'Eliminar'
       },
       fields: {
         name: 'Nombre',
@@ -390,7 +399,16 @@ export const es: TranslationDictionary = {
         publicationYear: 'Ano publicacion',
         language: 'Idioma',
         pageCount: 'Paginas',
-        coverImageUrl: 'URL portada'
+        coverImageUrl: 'URL portada',
+        creatorId: 'ID creator',
+        creatorName: 'Creator',
+        sortName: 'Nombre de orden',
+        biography: 'Biografia',
+        birthYear: 'Ano nacimiento',
+        deathYear: 'Ano fallecimiento',
+        creditRole: 'Rol de credito',
+        creditOrder: 'Orden de credito',
+        creditLabel: 'Etiqueta de credito'
       },
       status: {
         DRAFT: 'Borrador',
@@ -419,6 +437,15 @@ export const es: TranslationDictionary = {
         SINGLE_ISSUE: 'Grapa',
         OTHER: 'Otro'
       },
+      creatorRole: {
+        AUTHOR: 'Autor',
+        WRITER: 'Guionista',
+        ARTIST: 'Artista',
+        ILLUSTRATOR: 'Ilustrador',
+        TRANSLATOR: 'Traductor',
+        EDITOR: 'Editor',
+        OTHER: 'Otro'
+      },
       messages: {
         saved: 'Guardado correctamente.',
         loadError: 'No se pudieron cargar los registros.',
@@ -426,7 +453,12 @@ export const es: TranslationDictionary = {
         empty: 'No hay registros con esos filtros.',
         contextRequired: 'Indica el ID padre requerido para cargar registros.',
         invalidYearRange: 'Revisa el rango de anos.',
-        invalidUrl: 'Usa una URL http o https.'
+        invalidUrl: 'Usa una URL http o https.',
+        deleteError: 'No se pudo eliminar el registro.',
+        deleted: 'Eliminado correctamente.',
+        confirmDelete: 'Confirma el borrado antes de continuar.',
+        creatorChangeRequiresRecreate:
+          'Para cambiar el creator, elimina este credito y crea uno nuevo.'
       },
       sections: {
         publishers: 'Editoriales',

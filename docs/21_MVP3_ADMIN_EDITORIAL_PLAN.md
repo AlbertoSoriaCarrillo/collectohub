@@ -86,6 +86,7 @@ Rutas propuestas para EPICs funcionales posteriores:
 /admin/editorial/items
 /admin/editorial/editions
 /admin/editorial/creators
+/admin/editorial/credits
 /admin/editorial/relationships
 /admin/editorial/master-product-links
 ```
@@ -135,7 +136,7 @@ EPIC 39C.
    2026-07-10.
 2. EPIC 40B - Admin publishers/franchises/series. Completada el 2026-07-10.
 3. EPIC 40C - Admin items/editions. Completada el 2026-07-10.
-4. EPIC 40D - Admin creators y creditos.
+4. EPIC 40D - Admin creators y creditos. Completada el 2026-07-10.
 5. EPIC 40E - Admin relationships.
 6. EPIC 40F - Admin master product links/reconciliation.
 7. EPIC 40G - Datos demo editoriales y validacion integral MVP3 parcial.
@@ -213,3 +214,9 @@ admin `/admin/editorial/items` y `/admin/editorial/editions`, modelos y servicio
 frontend para items y editions, busqueda/filtros/listado/create/update y cambio
 de `recordStatus`. No se inician creators, credits, relationships ni
 reconciliacion legacy.
+
+Estado: EPIC 40D completada el 2026-07-10. Quedan implementadas las rutas
+admin `/admin/editorial/creators` y `/admin/editorial/credits`, modelos y
+servicio frontend para creators y creditos por item, busqueda/filtros/listado,
+create/update/delete y validaciones visuales. No se inician relationships,
+reconciliacion legacy, imports ni cambios backend.

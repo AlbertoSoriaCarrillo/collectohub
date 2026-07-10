@@ -1,0 +1,116 @@
+<section class="admin-entity-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">{{ 'layout.nav.adminEditorial' | translate }}</p>
+      <h1>{{ 'admin.editorial.credits.title' | translate }}</h1>
+      <p>{{ 'admin.editorial.credits.subtitle' | translate }}</p>
+    </div>
+    <button mat-stroked-button type="button" (click)="load()">
+      <mat-icon aria-hidden="true">refresh</mat-icon>
+      {{ 'admin.editorial.actions.refresh' | translate }}
+    </button>
+  </header>
+
+  <mat-card class="panel-card">
+    <mat-card-content>
+      <form class="filters credit-context" [formGroup]="contextForm" (ngSubmit)="load()" novalidate>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'admin.editorial.fields.itemId' | translate }}</mat-label>
+          <input matInput type="number" formControlName="itemId" data-testid="admin-credits-item-id" />
+        </mat-form-field>
+        <button mat-flat-button color="primary" type="submit">
+          {{ 'admin.editorial.actions.search' | translate }}
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="content-grid">
+    <mat-card class="panel-card">
+      <mat-card-header>
+        <mat-card-title>{{ 'admin.editorial.sections.credits' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (loading()) {
+          <mat-spinner diameter="32"></mat-spinner>
+        } @else if (errorKey()) {
+          <p class="state-error" role="alert">{{ errorKey()! | translate }}</p>
+        } @else if (messageKey() && !credits().length) {
+          <p class="muted">{{ messageKey()! | translate }}</p>
+        } @else if (!credits().length) {
+          <p class="muted">{{ 'admin.editorial.messages.empty' | translate }}</p>
+        } @else {
+          <div class="entity-list">
+            @for (credit of credits(); track credit.id) {
+              <button class="entity-row" type="button" (click)="startEdit(credit)">
+                <span>
+                  <strong>{{ credit.creatorName }}</strong>
+                  <small>#{{ credit.creatorId }} - {{ 'admin.editorial.creatorRole.' + credit.creditRole | translate }}</small>
+                </span>
+                <span class="status-pill">{{ credit.creditOrder }}</span>
+              </button>
+            }
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="panel-card">
+      <mat-card-header>
+        <mat-card-title>
+          {{ (editing() ? 'admin.editorial.actions.edit' : 'admin.editorial.actions.create') | translate }}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (editing()) {
+          <p class="muted">
+            {{ 'admin.editorial.fields.creatorName' | translate }}:
+            {{ editing()!.creatorName }} (#{{ editing()!.creatorId }})
+          </p>
+          <p class="muted">{{ 'admin.editorial.messages.creatorChangeRequiresRecreate' | translate }}</p>
+        }
+        <form class="entity-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.creatorId' | translate }}</mat-label>
+            <input matInput type="number" formControlName="creatorId" data-testid="admin-credits-creator-id" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.creditRole' | translate }}</mat-label>
+            <mat-select formControlName="creditRole">
+              @for (role of roles; track role) {
+                <mat-option [value]="role">{{ 'admin.editorial.creatorRole.' + role | translate }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.creditOrder' | translate }}</mat-label>
+            <input matInput type="number" formControlName="creditOrder" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'admin.editorial.fields.creditLabel' | translate }}</mat-label>
+            <input matInput formControlName="creditLabel" />
+          </mat-form-field>
+          @if (messageKey()) {
+            <p class="state-success">{{ messageKey()! | translate }}</p>
+          }
+          @if (errorKey()) {
+            <p class="state-error" role="alert">{{ errorKey()! | translate }}</p>
+          }
+          <div class="form-actions">
+            <button mat-flat-button color="primary" type="submit" [disabled]="saving()" data-testid="admin-credits-submit">
+              {{ 'admin.editorial.actions.save' | translate }}
+            </button>
+            <button mat-button type="button" (click)="cancel()">
+              {{ 'admin.editorial.actions.cancel' | translate }}
+            </button>
+            @if (editing()) {
+              <button mat-button type="button" (click)="deleteSelected()" data-testid="admin-credits-delete">
+                {{ 'admin.editorial.actions.delete' | translate }}
+              </button>
+            }
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</section>
