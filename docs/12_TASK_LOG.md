@@ -1707,3 +1707,14 @@ Siguiente paso: crear el backend en la carpeta backend.
   por master product. Los checks restantes quedan para ampliacion posterior.
 - Compilacion backend correcta con tests omitidos y build frontend correcto; sin
   migraciones, E2E, Playwright ni MVP4.
+
+## 2026-07-10 - EPIC 42C-FIX - Completar reporte de calidad editorial
+
+- Corregido el label i18n de scope para usar `scopeLabel`; mantenidas las claves
+  `scope.*` para las opciones.
+- Anadidos tests frontend de ruta protegida, llamada GET con scope/limit e i18n.
+- El reporte mantiene checks exactos de creators y enlaces VERIFIED; publishers,
+  franchises, series, items y editions quedan pendientes de queries agregadas
+  dedicadas para no cargar tablas completas de forma fragil.
+- Ejecutado `npm.cmd test -- --watch=false`: 55 archivos y 175 tests correctos.
+- Sin migraciones, escritura, auto-fix, merge, borrado, E2E, Playwright ni MVP4.

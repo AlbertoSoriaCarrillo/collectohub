@@ -72,6 +72,7 @@ describe('app routes', () => {
     const adminMasterProductLinks = children.find(
       (route) => route.path === 'admin/editorial/master-product-links'
     );
+    const adminDataQuality = children.find((route) => route.path === 'admin/editorial/data-quality');
 
     expect(home?.canActivate).toBeUndefined();
     expect(catalog?.canActivate).toBeUndefined();
@@ -107,5 +108,6 @@ describe('app routes', () => {
     expect(adminCredits?.canActivate).toEqual([authGuard, adminGuard]);
     expect(adminRelationships?.canActivate).toEqual([authGuard, adminGuard]);
     expect(adminMasterProductLinks?.canActivate).toEqual([authGuard, adminGuard]);
+    expect(adminDataQuality?.canActivate).toEqual([authGuard, adminGuard]);
   });
 });

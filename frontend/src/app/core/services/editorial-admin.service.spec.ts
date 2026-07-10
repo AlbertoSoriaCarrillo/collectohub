@@ -326,6 +326,13 @@ describe('EditorialAdminService', () => {
     service.getEditorialLegacyBridge(7).subscribe();
     expect(httpTestingController.expectOne('http://localhost:8080/api/catalog/editorial/master-products/7/link').request.method).toBe('GET');
   });
+
+  it('gets the admin data quality report with scope and limit', () => {
+    service.getEditorialDataQualityReport('CREATORS', 25).subscribe();
+    const request = httpTestingController.expectOne((candidate) => candidate.url === 'http://localhost:8080/api/catalog/admin/data-quality/report' && candidate.params.get('scope') === 'CREATORS' && candidate.params.get('limit') === '25');
+    expect(request.request.method).toBe('GET');
+    request.flush({ generatedAt: '2026-01-01T00:00:00Z', scope: 'CREATORS', totalChecks: 1, totalFindings: 0, checks: [] });
+  });
 });
 
 function emptyPage() {
