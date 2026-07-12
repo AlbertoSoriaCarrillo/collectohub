@@ -118,7 +118,7 @@ public class CollectionService {
     public CollectionResponse getCollection(AuthenticatedUser authenticatedUser, Long collectionId) {
         Collection collection = findActiveCollection(collectionId);
         ensureCanRead(authenticatedUser, collection);
-        return CollectionResponse.from(collection, itemResponses(collectionId));
+        return CollectionResponse.from(collection, itemResponses(collectionId, isOwner(authenticatedUser, collection)));
     }
 
     @Transactional
@@ -139,7 +139,7 @@ public class CollectionService {
                 category,
                 authenticatedUser.id()
         );
-        return CollectionResponse.from(collection, itemResponses(collectionId));
+        return CollectionResponse.from(collection, itemResponses(collectionId, true));
     }
 
     @Transactional
@@ -225,7 +225,7 @@ public class CollectionService {
     public List<CollectionItemResponse> listItems(AuthenticatedUser authenticatedUser, Long collectionId) {
         Collection collection = findActiveCollection(collectionId);
         ensureCanRead(authenticatedUser, collection);
-        return itemResponses(collectionId);
+        return itemResponses(collectionId, isOwner(authenticatedUser, collection));
     }
 
     private User currentUser(AuthenticatedUser authenticatedUser) {
@@ -410,9 +410,13 @@ public class CollectionService {
         throw new CollectionNotFoundException(collection.getId());
     }
 
-    private List<CollectionItemResponse> itemResponses(Long collectionId) {
+    private boolean isOwner(AuthenticatedUser authenticatedUser, Collection collection) {
+        return authenticatedUser != null && collection.isOwnedBy(authenticatedUser.id());
+    }
+
+    private List<CollectionItemResponse> itemResponses(Long collectionId, boolean includePrivateFields) {
         return collectionItemRepository.findByCollection_IdAndDeletedAtIsNullOrderByIdAsc(collectionId).stream()
-                .map(CollectionItemResponse::from)
+                .map(item -> CollectionItemResponse.from(item, includePrivateFields))
                 .toList();
     }
 

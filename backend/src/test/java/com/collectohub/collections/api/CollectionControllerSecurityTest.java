@@ -386,6 +386,7 @@ class CollectionControllerSecurityTest {
                 null,
                 null,
                 "LEGACY",
+                "LEGACY_UNRESOLVED",
                 status,
                 "LIKE_NEW",
                 "1",

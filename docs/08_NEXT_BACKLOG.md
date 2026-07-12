@@ -99,9 +99,8 @@ roles editoriales separados de ADMIN queda completada el 2026-07-12. El diseno
 recomienda `EDITORIAL_ADMIN` sin implementarlo todavia. Siguiente tarea:
 EPIC 43B, 43C y 43D quedan completadas el 2026-07-12. `EDITORIAL_ADMIN` se
 provisiona solo mediante operacion controlada, sin autoasignacion ni interfaz
-publica. EPIC 44A - Diseno y auditoria de MVP4 Colecciones finales de usuario
-queda completada. Siguiente tarea: EPIC 44B - Contrato backend de collection
-items y compatibilidad editorial.
+publica. EPIC 44A y EPIC 44B quedan completadas. Siguiente tarea: EPIC 44C -
+Flujo frontend de creacion y edicion de colecciones.
 
 ## MVP 4 - Colecciones finales de usuario
 

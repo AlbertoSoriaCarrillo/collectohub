@@ -551,6 +551,12 @@ se conserva temporalmente para compatibilidad legacy. Los datos personales no
 se mueven al catalogo editorial; los items manuales requeriran una via marcada
 separada, sin permitir modificar el catalogo global.
 
+## 2026-07-12 - Privacidad de collection items
+
+La privacidad se resuelve en backend por propiedad de la coleccion, no por rol
+editorial: notas y fecha de adquisicion se sanitizan para lectores publicos y
+se mantienen para el propietario. `referenceKind` es calculado y no persiste.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

@@ -1,6 +1,7 @@
 package com.collectohub.collections.dto;
 
 import com.collectohub.collections.domain.CollectionItem;
+import com.collectohub.collections.domain.CollectionItemReferenceKind;
 
 import java.time.LocalDate;
 
@@ -27,6 +28,7 @@ public record CollectionItemResponse(
         String catalogPublisherName,
         String catalogFranchiseName,
         String editorialReferenceSource,
+        String referenceKind,
         String collectionStatus,
         String physicalCondition,
         String unitNumber,
@@ -36,6 +38,10 @@ public record CollectionItemResponse(
 ) {
 
     public static CollectionItemResponse from(CollectionItem item) {
+        return from(item, true);
+    }
+
+    public static CollectionItemResponse from(CollectionItem item, boolean includePrivateFields) {
         var masterProduct = item.getMasterProduct();
         var catalogItem = item.getCatalogItem();
         var edition = item.getCatalogItemEdition();
@@ -66,12 +72,24 @@ public record CollectionItemResponse(
                 publisher == null ? null : publisher.getName(),
                 series == null || series.getFranchise() == null ? null : series.getFranchise().getName(),
                 item.getEditorialReferenceSource().name(),
+                referenceKind(item).name(),
                 item.getCollectionStatus().name(),
                 item.getPhysicalCondition() == null ? null : item.getPhysicalCondition().name(),
                 item.getUnitNumber(),
                 item.getTotalLimitedUnits(),
-                item.getNotes(),
-                item.getAcquiredAt()
+                includePrivateFields ? item.getNotes() : null,
+                includePrivateFields ? item.getAcquiredAt() : null
         );
+    }
+
+    private static CollectionItemReferenceKind referenceKind(CollectionItem item) {
+        if (item.getCatalogItem() != null) {
+            return item.getEditorialReferenceSource().name().equals("VERIFIED_BRIDGE")
+                    ? CollectionItemReferenceKind.VERIFIED_BRIDGE
+                    : CollectionItemReferenceKind.DIRECT_CATALOG;
+        }
+        return item.getMasterProduct() != null
+                ? CollectionItemReferenceKind.LEGACY_UNRESOLVED
+                : CollectionItemReferenceKind.INVALID_REFERENCE;
     }
 }

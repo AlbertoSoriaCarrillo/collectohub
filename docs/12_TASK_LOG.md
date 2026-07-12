@@ -1,5 +1,20 @@
 # Registro de avance
 
+## 2026-07-12 - EPIC 44B - Contrato backend de collection items y compatibilidad editorial
+
+- Consolidado `catalogItemId` como identidad editorial directa con edition
+  opcional validada; `masterProductId` legacy y referencia dual compatible se
+  conservan sin backfill.
+- Anadido `referenceKind` calculado y aditivo; bridge VERIFIED conserva su
+  clasificacion sin reescribir filas.
+- Corregida privacidad backend: notas y fecha de adquisicion solo se devuelven
+  al propietario; lecturas PUBLIC quedan sanitizadas.
+- Ejecutado `backend && .\\mvnw.cmd clean verify`: BUILD SUCCESS, 335 tests,
+  0 fallos, 0 errores y 0 omitidos.
+- Sin frontend, migraciones, endpoints nuevos, items manuales, cambios de
+  OWNED/WANTED/MISSING, E2E ni Playwright. Siguiente tarea: EPIC 44C - Flujo
+  frontend de creacion y edicion de colecciones.
+
 ## 2026-07-12 - EPIC 44A - Diseno y auditoria de MVP4 Colecciones finales de usuario
 
 - Auditados backend, frontend, modelo de datos, referencias editoriales y

@@ -89,7 +89,7 @@ public class CollectionController {
 
     @PostMapping("/{collectionId}/items")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Add a master product to a collection")
+    @Operation(summary = "Add a canonical catalog item, optional edition, or legacy master product to a collection")
     public CollectionItemResponse addItem(
             @AuthenticationPrincipal AuthenticatedUser user,
             @PathVariable Long collectionId,
@@ -99,7 +99,7 @@ public class CollectionController {
     }
 
     @GetMapping("/{collectionId}/items")
-    @Operation(summary = "List items from a readable collection")
+    @Operation(summary = "List collection items; public reads omit private notes and acquisition dates")
     public List<CollectionItemResponse> listItems(
             @AuthenticationPrincipal AuthenticatedUser user,
             @PathVariable Long collectionId

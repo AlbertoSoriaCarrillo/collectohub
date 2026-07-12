@@ -202,3 +202,10 @@ serie ordenada. E2E/Playwright siguen pospuestos hasta un recorrido maduro.
 - Tipo de coleccion y compatibilidad con taxonomia editorial.
 - Exclusiones manuales de missing y comportamiento de items archivados.
 - Momento de retirar el estado MISSING persistido.
+
+## Estado posterior a EPIC 44B
+
+EPIC 44B implementa la identidad editorial directa, la compatibilidad legacy,
+`referenceKind` calculado y la sanitizacion de campos personales en backend.
+No implementa items manuales, transiciones de estado, missing calculado ni
+frontend. La siguiente tarea es EPIC 44C.
