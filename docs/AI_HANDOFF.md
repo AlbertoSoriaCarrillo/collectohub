@@ -208,18 +208,18 @@ Resumen relevante:
 Último commit verificado:
 
 ```text
-859d0a5
-docs: add AI project handoff
+09f37ad3db0afd878e7e13232f1aa0877ed04895
+feat: complete collection create and edit flow
 ```
 
-EPIC 44C está completada localmente con validaciones frontend, control de
-propiedad, vaciado explícito de campos opcionales, i18n y pruebas. El commit de
-cierre debe verificarse en GitHub antes de darla por publicada.
+EPIC 44C está publicada. EPIC 44D está implementada en el cambio actual con
+selección editorial item -> edición, pendiente de verificar su commit en
+GitHub.
 
 Siguiente tarea esperada:
 
 ```text
-EPIC 44D - Alta desde catálogo y selección de edición
+EPIC 44E - Items manuales y enlace posterior al catálogo
 ```
 
 La IA debe volver a comprobar GitHub antes de asumir que este estado sigue vigente.
@@ -253,6 +253,7 @@ Decisiones cerradas:
 17. Durante MVP4, las copias físicas se representan inicialmente como entradas separadas; `quantity` sigue abierto.
 18. La edición frontend compara siempre `collection.userId` con el usuario autenticado; los roles administrativos no sustituyen la propiedad.
 19. Crear usa `null` para opcionales vacíos; editar usa `""` para solicitar el vaciado de `description` o `categoryCode`.
+20. La alta catalogada usa `catalogItemId` y una edición opcional obtenida solo del detalle del item; no envía enlaces legacy implícitos.
 
 ## 11. Clasificación actual de referencias de collection items
 
@@ -280,7 +281,7 @@ Orden previsto:
 2. EPIC 44B - Contrato backend y compatibilidad editorial. Completada.
 3. EPIC 44B-FIX - Tests y documentación. Completada.
 4. EPIC 44C - Flujo frontend de creación y edición de colecciones. Completada.
-5. EPIC 44D - Alta desde catálogo y selección de edición.
+5. EPIC 44D - Alta desde catálogo y selección de edición. Implementada localmente; pendiente de verificar su commit publicado.
 6. EPIC 44E - Items manuales y enlace posterior al catálogo.
 7. EPIC 44F - OWNED, WANTED y faltantes calculados.
 8. EPIC 44G - Detalle final, filtros, ordenación y progreso.

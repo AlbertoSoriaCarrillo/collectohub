@@ -65,6 +65,15 @@ export class CollectionDetailComponent implements OnInit {
   }
 
   referenceLabel(item: CollectionItemResponse): string {
+    if (item.referenceKind) {
+      const key = {
+        DIRECT_CATALOG: 'collections.directCatalogReference',
+        VERIFIED_BRIDGE: 'collections.verifiedBridge',
+        LEGACY_UNRESOLVED: 'collections.legacyUnresolvedReference',
+        INVALID_REFERENCE: 'collections.invalidReference'
+      }[item.referenceKind];
+      return this.languageService.translate(key);
+    }
     const key = item.editorialReferenceSource === 'VERIFIED_BRIDGE'
       ? 'collections.verifiedBridge'
       : item.editorialReferenceSource === 'MANUAL_EDITORIAL'

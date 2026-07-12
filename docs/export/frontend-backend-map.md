@@ -53,9 +53,13 @@ future use, but no public route or component invokes or exposes it.
 | `/collections/new` - `CollectionCreateComponent` | `CollectionService` | `POST /api/collections` | Create. |
 | `/collections/:collectionId/edit` - `CollectionEditComponent` | `CollectionService` | `GET /api/collections/{collectionId}` | Load. |
 | `/collections/:collectionId/edit` - `CollectionEditComponent` | `CatalogService` | `GET /api/product-categories` | Form options. |
+| `/collections/:collectionId/edit` - `CollectionEditComponent` | `AuthService` | `GET /api/users/me` | Conditional owner resolution when the session user is not cached. |
 | `/collections/:collectionId/edit` - `CollectionEditComponent` | `CollectionService` | `PUT /api/collections/{collectionId}` | Update. |
+| `/collections/:collectionId/items/new` - `CollectionItemCreateComponent` | `CollectionService` | `GET /api/collections/{collectionId}` | Load collection and confirm owner before any search. |
+| `/collections/:collectionId/items/new` - `CollectionItemCreateComponent` | `AuthService` | `GET /api/users/me` | Conditional owner resolution. |
 | `/collections/:collectionId/items/new` - `CollectionItemCreateComponent` | `CatalogService` | `GET /api/master-products` | Candidate search. |
 | `/collections/:collectionId/items/new` - `CollectionItemCreateComponent` | `EditorialCatalogService` | `GET /api/catalog/editorial/search` | Editorial item/edition search. |
+| `/collections/:collectionId/items/new` - `CollectionItemCreateComponent` | `EditorialCatalogService` | `GET /api/catalog/editorial/items/{itemId}/detail` | Load selected item and its optional editions. |
 | `/collections/:collectionId/items/new` - `CollectionItemCreateComponent` | `CollectionService` | `POST /api/collections/{collectionId}/items` | Add item. |
 | `/collections/:collectionId/items/:itemId/edit` - `CollectionItemEditComponent` | `CollectionService` | `GET /api/collections/{collectionId}/items` | Select item. |
 | `/collections/:collectionId/items/:itemId/edit` - `CollectionItemEditComponent` | `EditorialCatalogService` | `GET /api/catalog/editorial/search` | Optional editorial reference replacement. |
@@ -65,8 +69,9 @@ future use, but no public route or component invokes or exposes it.
 | `/collections/:collectionId` - `CollectionDetailComponent` | `AuthService` | `GET /api/users/me` | Conditional owner resolution. |
 | `/collections/:collectionId` - `CollectionDetailComponent` | `CollectionService` | `DELETE /api/collections/{collectionId}/items/{itemId}` | Owner action. |
 
-Legacy collection calls remain `MVP1_VISIBLE`; the two editorial search calls
-are `MVP2_VISIBLE`.
+Legacy collection calls remain `MVP1_VISIBLE`; the editorial search and item
+detail calls are `MVP2_VISIBLE`. The create flow uses the editorial catalog as
+the primary reference and keeps master products as explicit compatibility.
 
 ## Wanted/Recommendations
 

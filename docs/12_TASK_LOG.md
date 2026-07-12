@@ -1,5 +1,25 @@
 # Registro de avance
 
+## 2026-07-13 - EPIC 44D - Alta desde catalogo y seleccion de edicion
+
+- Implementado flujo catalogo editorial como via principal: busqueda
+  item/edition deduplicada por item, detalle publico del item y edicion opcional
+  limitada a sus propias ediciones.
+- Conservada la compatibilidad legacy como modo secundario explicito. El payload
+  editorial envia solo `catalogItemId` y la edition opcional, sin enlazar
+  automaticamente `linkedMasterProductId`.
+- Anadida comprobacion frontend de propiedad antes de mostrar formulario,
+  buscar o enviar POST; los roles administrativos ajenos no la sustituyen.
+- Anadido `referenceKind` opcional al modelo frontend y priorizado en la etiqueta
+  del detalle. Actualizados mapa frontend-backend y exports, incluyendo la
+  resolucion condicional de propietario de EPIC 44C.
+- Ejecutados `npm.cmd ci` (474 paquetes), `npm.cmd test -- --watch=false`
+  (58 archivos y 205 tests correctos) y `npm.cmd run build` correcto. Persiste
+  el warning conocido del bundle inicial: 622.59 kB frente al budget de 500 kB.
+- Sin backend, migraciones, rutas o endpoints nuevos, items manuales, cambios
+  OWNED/WANTED/MISSING, E2E ni Playwright. Siguiente tarea: EPIC 44E - Items
+  manuales y enlace posterior al catalogo.
+
 ## 2026-07-13 - EPIC 44C - Flujo frontend de creacion y edicion de colecciones
 
 - Endurecidas las validaciones de nombre, descripcion y visibilidad en crear y

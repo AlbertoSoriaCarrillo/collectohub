@@ -64,6 +64,17 @@ form {
   gap: 12px;
 }
 
+.status-text,
+.privacy-help,
+.selected-reference p {
+  color: #9fb0c1;
+}
+
+.selected-reference {
+  display: grid;
+  gap: 8px;
+}
+
 @media (max-width: 640px) {
   .page-header,
   .form-actions,

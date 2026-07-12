@@ -11,6 +11,11 @@ export type CollectionItemStatus =
   | 'TRADABLE';
 
 export type CollectionEditorialReferenceSource = 'LEGACY' | 'VERIFIED_BRIDGE' | 'MANUAL_EDITORIAL';
+export type CollectionItemReferenceKind =
+  | 'DIRECT_CATALOG'
+  | 'VERIFIED_BRIDGE'
+  | 'LEGACY_UNRESOLVED'
+  | 'INVALID_REFERENCE';
 
 export interface CollectionItemResponse {
   id: number;
@@ -35,6 +40,7 @@ export interface CollectionItemResponse {
   catalogPublisherName?: string | null;
   catalogFranchiseName?: string | null;
   editorialReferenceSource?: CollectionEditorialReferenceSource;
+  referenceKind?: CollectionItemReferenceKind;
   collectionStatus: CollectionItemStatus;
   physicalCondition: PhysicalCondition | null;
   unitNumber: string | null;

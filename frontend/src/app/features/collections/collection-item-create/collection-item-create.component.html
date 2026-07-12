@@ -9,139 +9,89 @@
     }
   </header>
 
-  <mat-card class="form-card">
-    <mat-card-content>
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'collections.reference' | translate }}</mat-label>
-        <mat-select [formControl]="form.controls.referenceMode" data-testid="collection-reference-mode">
-          <mat-option value="LEGACY">{{ 'collections.legacyReference' | translate }}</mat-option>
-          <mat-option value="EDITORIAL">{{ 'collections.editorialReference' | translate }}</mat-option>
-        </mat-select>
-      </mat-form-field>
+  @if (loading() || ownerLoading()) {
+    <p class="status-text">{{ 'collections.loadingForm' | translate }}</p>
+  }
+  @if (errorMessage()) { <p class="form-error" role="alert">{{ errorMessage() }}</p> }
 
-      @if (form.controls.referenceMode.value === 'LEGACY') {
-      <form class="search-form" [formGroup]="productSearch" (ngSubmit)="searchProducts()" novalidate>
+  @if (accessDenied()) {
+    <mat-card class="form-card"><mat-card-content>
+      <p class="form-error" role="alert">{{ 'collections.addItemNotAllowed' | translate }}</p>
+      <a mat-button routerLink="/collections">{{ 'actions.backToCollections' | translate }}</a>
+    </mat-card-content></mat-card>
+  }
+
+  @if (collection() && !loading() && !ownerLoading() && isOwner()) {
+    <mat-card class="form-card"><mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate data-testid="collection-item-create-form">
         <mat-form-field appearance="outline">
-          <mat-label>{{ 'inventory.masterProductSearch' | translate }}</mat-label>
-          <input
-            matInput
-            type="search"
-            formControlName="name"
-            data-testid="collection-item-search-master-product"
-          />
-        </mat-form-field>
-        <button
-          mat-stroked-button
-          type="submit"
-          [disabled]="searching()"
-          data-testid="collection-item-search-submit"
-        >
-          {{ searching() ? ('actions.searching' | translate) : ('actions.search' | translate) }}
-        </button>
-      </form>
-      } @else {
-        <form class="search-form" [formGroup]="editorialSearch" (ngSubmit)="searchEditorial()" novalidate>
-          <mat-form-field appearance="outline">
-            <mat-label>{{ 'collections.searchEditorial' | translate }}</mat-label>
-            <input matInput type="search" formControlName="q" data-testid="collection-item-search-editorial" />
-          </mat-form-field>
-          <button mat-stroked-button type="submit" [disabled]="searching()">
-            {{ searching() ? ('actions.searching' | translate) : ('actions.search' | translate) }}
-          </button>
-        </form>
-        <mat-form-field class="wide" appearance="outline">
-          <mat-label>{{ 'collections.selectEditorialItem' | translate }}</mat-label>
-          <mat-select data-testid="collection-item-editorial-result"
-            [value]="selectedEditorial()" (selectionChange)="selectEditorial($event.value)">
-            @for (result of editorialResults(); track result.resultType + '-' + (result.editionId || result.itemId)) {
-              <mat-option [value]="result">
-                {{ result.itemTitle }} @if (result.editionName) { - {{ result.editionName }} }
-              </mat-option>
-            }
+          <mat-label>{{ 'collections.reference' | translate }}</mat-label>
+          <mat-select [formControl]="form.controls.referenceMode" (selectionChange)="changeReferenceMode($event.value)" data-testid="collection-reference-mode">
+            <mat-option value="EDITORIAL">{{ 'collections.editorialCatalogMode' | translate }}</mat-option>
+            <mat-option value="LEGACY">{{ 'collections.legacyCompatibility' | translate }}</mat-option>
           </mat-select>
         </mat-form-field>
-      }
 
-      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-        <div class="form-grid">
-          @if (form.controls.referenceMode.value === 'LEGACY') {
-          <mat-form-field class="wide" appearance="outline">
-            <mat-label>{{ 'inventory.masterProduct' | translate }}</mat-label>
-            <mat-select formControlName="masterProductId" data-testid="collection-item-master-product">
-              @for (product of products(); track product.id) {
-                <mat-option [value]="product.id">
-                  {{ product.name }} - {{ product.franchise || product.category.name }}
-                </mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+        @if (form.controls.referenceMode.value === 'EDITORIAL') {
+          <form class="search-form" [formGroup]="editorialSearch" (ngSubmit)="searchEditorial()" novalidate>
+            <mat-form-field appearance="outline"><mat-label>{{ 'collections.searchEditorialCatalog' | translate }}</mat-label>
+              <input matInput type="search" formControlName="q" data-testid="collection-item-search-editorial" />
+            </mat-form-field>
+            <button mat-stroked-button type="submit" [disabled]="searching()">{{ searching() ? ('actions.searching' | translate) : ('actions.search' | translate) }}</button>
+          </form>
+          @if (!searching() && editorialResults().length === 0) { <p class="status-text">{{ 'collections.editorialSearchHint' | translate }}</p> }
+          @if (editorialResults().length > 0) {
+            <mat-form-field class="wide" appearance="outline"><mat-label>{{ 'collections.selectCatalogItem' | translate }}</mat-label>
+              <mat-select [value]="selectedCatalogItem()" (selectionChange)="selectCatalogItem($event.value)" data-testid="collection-item-editorial-result">
+                @for (candidate of editorialResults(); track candidate.itemId) {
+                  <mat-option [value]="candidate">{{ candidate.itemTitle }} @if (candidate.seriesTitle) { - {{ candidate.seriesTitle }} } @if (candidate.editionName) { ({{ candidate.editionName }}) }</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
           }
-
-          <mat-form-field appearance="outline">
-            <mat-label>{{ 'collections.itemStatus' | translate }}</mat-label>
-            <mat-select formControlName="collectionStatus" data-testid="collection-item-status">
-              @for (status of statuses; track status) {
-                <mat-option [value]="status">{{ 'enums.collectionStatus.' + status | translate }}</mat-option>
+          @if (detailLoading()) { <p class="status-text">{{ 'collections.loadingEditions' | translate }}</p> }
+          @if (selectedCatalogItemDetail(); as detail) {
+            <section class="selected-reference" data-testid="selected-catalog-item">
+              <h2>{{ 'collections.selectedCatalogItem' | translate }}</h2>
+              <p>{{ detail.item.title }} @if (detail.catalog.series) { - {{ detail.catalog.series.title }} }</p>
+              @if (detail.editions.length === 0) { <p class="status-text" data-testid="no-editions">{{ 'collections.noEditionsAvailable' | translate }}</p> }
+              @if (detail.editions.length > 0) {
+                <mat-form-field class="wide" appearance="outline"><mat-label>{{ 'collections.selectEdition' | translate }}</mat-label>
+                  <mat-select [value]="selectedEditionId()" (selectionChange)="selectEdition($event.value)" data-testid="collection-item-edition">
+                    <mat-option [value]="null">{{ 'collections.noSpecificEdition' | translate }}</mat-option>
+                    @for (edition of detail.editions; track edition.id) {
+                      <mat-option [value]="edition.id">{{ edition.editionName || detail.item.title }} - {{ edition.format }} @if (edition.publisherName) { - {{ edition.publisherName }} }</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
               }
-            </mat-select>
-            @if (
-              form.controls.collectionStatus.hasError('required') &&
-              form.controls.collectionStatus.touched
-            ) {
-              <mat-error>{{ 'collections.selectStatus' | translate }}</mat-error>
-            }
+            </section>
+          }
+        } @else {
+          <form class="search-form" [formGroup]="productSearch" (ngSubmit)="searchProducts()" novalidate>
+            <mat-form-field appearance="outline"><mat-label>{{ 'inventory.masterProductSearch' | translate }}</mat-label>
+              <input matInput type="search" formControlName="name" />
+            </mat-form-field>
+            <button mat-stroked-button type="submit" [disabled]="searching()">{{ searching() ? ('actions.searching' | translate) : ('actions.search' | translate) }}</button>
+          </form>
+          <mat-form-field class="wide" appearance="outline"><mat-label>{{ 'collections.selectLegacyProduct' | translate }}</mat-label>
+            <mat-select formControlName="masterProductId">@for (product of products(); track product.id) { <mat-option [value]="product.id">{{ product.name }}</mat-option> }</mat-select>
           </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>{{ 'inventory.physicalCondition' | translate }}</mat-label>
-            <mat-select formControlName="physicalCondition">
-              <mat-option value="">{{ 'collections.noCondition' | translate }}</mat-option>
-              @for (condition of conditions; track condition) {
-                <mat-option [value]="condition">{{ 'enums.physicalCondition.' + condition | translate }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>{{ 'common.unit' | translate }}</mat-label>
-            <input matInput formControlName="unitNumber" />
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>{{ 'collections.limitedUnitsTotal' | translate }}</mat-label>
-            <input matInput type="number" min="1" formControlName="totalLimitedUnits" />
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>{{ 'collections.acquiredDate' | translate }}</mat-label>
-            <input matInput type="date" formControlName="acquiredAt" />
-          </mat-form-field>
-
-          <mat-form-field class="wide" appearance="outline">
-            <mat-label>{{ 'common.notes' | translate }}</mat-label>
-            <textarea matInput rows="4" formControlName="notes"></textarea>
-          </mat-form-field>
-        </div>
-
-        @if (errorMessage()) {
-          <p class="form-error" role="alert">{{ errorMessage() }}</p>
         }
 
-        <div class="form-actions">
-          <button
-            mat-flat-button
-            color="primary"
-            type="submit"
-            [disabled]="loading()"
-            data-testid="add-collection-item-submit"
-          >
-            {{ loading() ? ('collections.addingItem' | translate) : ('collections.addItem' | translate) }}
-          </button>
-          @if (collectionId(); as id) {
-            <a mat-button [routerLink]="['/collections', id]">{{ 'actions.cancel' | translate }}</a>
-          }
+        <div class="form-grid">
+          <mat-form-field appearance="outline"><mat-label>{{ 'collections.itemStatus' | translate }}</mat-label><mat-select formControlName="collectionStatus">@for (status of statuses; track status) { <mat-option [value]="status">{{ 'enums.collectionStatus.' + status | translate }}</mat-option> }</mat-select>
+            @if (form.controls.collectionStatus.hasError('required') && form.controls.collectionStatus.touched) { <mat-error>{{ 'collections.selectStatus' | translate }}</mat-error> }
+          </mat-form-field>
+          <mat-form-field appearance="outline"><mat-label>{{ 'inventory.physicalCondition' | translate }}</mat-label><mat-select formControlName="physicalCondition"><mat-option value="">{{ 'collections.noCondition' | translate }}</mat-option>@for (condition of conditions; track condition) { <mat-option [value]="condition">{{ 'enums.physicalCondition.' + condition | translate }}</mat-option> }</mat-select></mat-form-field>
+          <mat-form-field appearance="outline"><mat-label>{{ 'collections.unitNumber' | translate }}</mat-label><input matInput formControlName="unitNumber" />@if (form.controls.unitNumber.hasError('maxlength') && form.controls.unitNumber.touched) { <mat-error>{{ 'validation.unitNumberTooLong' | translate }}</mat-error> }</mat-form-field>
+          <mat-form-field appearance="outline"><mat-label>{{ 'collections.limitedUnitsTotal' | translate }}</mat-label><input matInput type="number" formControlName="totalLimitedUnits" />@if (form.controls.totalLimitedUnits.hasError('min') && form.controls.totalLimitedUnits.touched) { <mat-error>{{ 'validation.invalidTotalLimitedUnits' | translate }}</mat-error> }</mat-form-field>
         </div>
+        <mat-form-field appearance="outline"><mat-label>{{ 'common.notes' | translate }}</mat-label><textarea matInput rows="4" formControlName="notes"></textarea>@if (form.controls.notes.hasError('maxlength') && form.controls.notes.touched) { <mat-error>{{ 'validation.notesTooLong' | translate }}</mat-error> }</mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>{{ 'collections.acquiredDate' | translate }}</mat-label><input matInput type="date" formControlName="acquiredAt" /></mat-form-field>
+        <p class="privacy-help">{{ 'collections.personalDataPrivate' | translate }}</p>
+        <div class="form-actions"><button mat-flat-button color="primary" type="submit" [disabled]="saving() || detailLoading()" data-testid="add-collection-item-submit">{{ saving() ? ('collections.addingItem' | translate) : ('collections.addItem' | translate) }}</button><a mat-button [routerLink]="['/collections', collectionId()!]">{{ 'actions.cancel' | translate }}</a></div>
       </form>
-    </mat-card-content>
-  </mat-card>
+    </mat-card-content></mat-card>
+  }
 </section>

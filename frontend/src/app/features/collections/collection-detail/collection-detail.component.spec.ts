@@ -89,4 +89,19 @@ describe('CollectionDetailComponent', () => {
     expect(component.itemTitle({ ...item, catalogItemTitle: 'Editorial title' })).toBe('Editorial title');
     expect(component.itemTitle(item)).toBe('One Piece 1');
   });
+
+  it('uses referenceKind before the legacy source fallback', () => {
+    const component = TestBed.createComponent(CollectionDetailComponent).componentInstance;
+
+    expect(component.referenceLabel({ ...item, referenceKind: 'DIRECT_CATALOG' })).toMatch(/directa|direct/i);
+    expect(component.referenceLabel({ ...item, referenceKind: 'VERIFIED_BRIDGE' })).toMatch(/verificado|verified/i);
+    expect(component.referenceLabel({ ...item, referenceKind: 'LEGACY_UNRESOLVED' })).toMatch(/legacy/i);
+  });
+
+  it('keeps selected edition metadata optional in the rendered item model', () => {
+    const component = TestBed.createComponent(CollectionDetailComponent).componentInstance;
+
+    expect(component.itemTitle({ ...item, catalogItemTitle: 'Editorial item', catalogItemEditionName: 'Edition' })).toBe('Editorial item');
+    expect(component.itemTitle({ ...item, catalogItemEditionName: null })).toBe('One Piece 1');
+  });
 });

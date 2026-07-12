@@ -17,6 +17,10 @@ EPIC 44B and 44B-FIX update only the contract of existing collection item
 operations: canonical editorial references, legacy compatibility, calculated
 `referenceKind` and owner-only personal fields. No endpoints, routes or
 database schema were added.
+EPIC 44C and EPIC 44D update the 2026-07-13 frontend snapshot: collection
+owner resolution, editorial item-to-edition selection and legacy compatibility
+reuse existing operations. The frontend-backend map now contains 76
+relationships, 70 direct API calls and 6 routes without a direct call.
 
 ## Files
 
