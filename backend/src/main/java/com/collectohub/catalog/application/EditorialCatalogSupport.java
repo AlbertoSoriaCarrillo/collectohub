@@ -9,17 +9,18 @@ import org.springframework.security.access.AccessDeniedException;
 import java.util.Locale;
 import java.util.Set;
 
-final class EditorialCatalogSupport {
+public final class EditorialCatalogSupport {
 
     private static final String ADMIN_ROLE = "ADMIN";
+    private static final String EDITORIAL_ADMIN_ROLE = "EDITORIAL_ADMIN";
     private static final int MAX_PAGE_SIZE = 100;
 
     private EditorialCatalogSupport() {
     }
 
-    static void ensureAdmin(AuthenticatedUser user) {
-        if (!isAdmin(user)) {
-            throw new AccessDeniedException("Only administrators can manage the editorial catalog");
+    static void ensureEditorialAdmin(AuthenticatedUser user) {
+        if (!isEditorialAdmin(user)) {
+            throw new AccessDeniedException("Only editorial administrators can manage the editorial catalog");
         }
     }
 
@@ -27,12 +28,16 @@ final class EditorialCatalogSupport {
         return user != null && user.roles().contains(ADMIN_ROLE);
     }
 
+    static boolean isEditorialAdmin(AuthenticatedUser user) {
+        return user != null && (user.roles().contains(ADMIN_ROLE) || user.roles().contains(EDITORIAL_ADMIN_ROLE));
+    }
+
     static CatalogRecordStatus resolveRecordStatus(AuthenticatedUser user, String requestedStatus) {
         if (requestedStatus == null || requestedStatus.isBlank()) {
             return CatalogRecordStatus.ACTIVE;
         }
-        if (!isAdmin(user)) {
-            throw new AccessDeniedException("recordStatus filter requires ADMIN authority");
+        if (!isEditorialAdmin(user)) {
+            throw new AccessDeniedException("recordStatus filter requires editorial administrator authority");
         }
         return parseEnum(requestedStatus, CatalogRecordStatus.class, "recordStatus");
     }

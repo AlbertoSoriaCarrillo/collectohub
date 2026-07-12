@@ -28,14 +28,14 @@ public class CatalogItemRelationshipService {
             String requestedStatus) {
         CatalogItem item = findItem(itemId);
         CatalogRecordStatus status = EditorialCatalogSupport.resolveRecordStatus(user, requestedStatus);
-        if (!EditorialCatalogSupport.isAdmin(user) && !item.isPubliclyVisible()) {
+        if (!EditorialCatalogSupport.isEditorialAdmin(user) && !item.isPubliclyVisible()) {
             throw new CatalogItemNotFoundException(itemId);
         }
         return Stream.concat(
                         repository.findBySourceCatalogItem_IdAndDeletedAtIsNullOrderByRelationshipOrderAscIdAsc(itemId).stream(),
                         repository.findByTargetCatalogItem_IdAndDeletedAtIsNullOrderByRelationshipOrderAscIdAsc(itemId).stream())
                 .filter(relationship -> relationship.getRecordStatus() == status)
-                .filter(relationship -> EditorialCatalogSupport.isAdmin(user) || publiclyVisible(relationship))
+                .filter(relationship -> EditorialCatalogSupport.isEditorialAdmin(user) || publiclyVisible(relationship))
                 .sorted(relationshipComparator(itemId))
                 .map(relationship -> CatalogItemRelationshipResponse.from(relationship, itemId))
                 .toList();
@@ -48,7 +48,7 @@ public class CatalogItemRelationshipService {
         CatalogRecordStatus status = EditorialCatalogSupport.resolveRecordStatus(user, requestedStatus);
         CatalogItemRelationship relationship = findRelationship(itemId, relationshipId);
         if (relationship.getRecordStatus() != status
-                || !EditorialCatalogSupport.isAdmin(user) && (!item.isPubliclyVisible() || !publiclyVisible(relationship))) {
+                || !EditorialCatalogSupport.isEditorialAdmin(user) && (!item.isPubliclyVisible() || !publiclyVisible(relationship))) {
             throw new CatalogItemRelationshipNotFoundException(relationshipId);
         }
         return CatalogItemRelationshipResponse.from(relationship, itemId);
@@ -57,7 +57,7 @@ public class CatalogItemRelationshipService {
     @Transactional
     public CatalogItemRelationshipResponse create(Long sourceItemId, AuthenticatedUser user,
             CreateCatalogItemRelationshipRequest request) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         CatalogItem source = findItem(sourceItemId);
         CatalogItem target = findItem(request.targetCatalogItemId());
         ensureDifferent(source, target);
@@ -72,7 +72,7 @@ public class CatalogItemRelationshipService {
     @Transactional
     public CatalogItemRelationshipResponse update(Long sourceItemId, Long relationshipId, AuthenticatedUser user,
             UpdateCatalogItemRelationshipRequest request) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         findItem(sourceItemId);
         CatalogItemRelationship relationship = findRelationshipAsSource(sourceItemId, relationshipId);
         CatalogItem target = request.targetCatalogItemId() == null
@@ -87,7 +87,7 @@ public class CatalogItemRelationshipService {
 
     @Transactional
     public void delete(Long sourceItemId, Long relationshipId, AuthenticatedUser user) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         findItem(sourceItemId);
         findRelationshipAsSource(sourceItemId, relationshipId).softDelete(user.id());
     }

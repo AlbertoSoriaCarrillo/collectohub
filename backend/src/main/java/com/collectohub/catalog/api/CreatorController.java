@@ -25,12 +25,12 @@ public class CreatorController {
     }
     @GetMapping("/{id}") public CreatorResponse get(@PathVariable Long id,
             @AuthenticationPrincipal AuthenticatedUser user) { return service.get(id, user); }
-    @PostMapping @ResponseStatus(HttpStatus.CREATED) @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping @ResponseStatus(HttpStatus.CREATED) @EditorialAdminRequired
     public CreatorResponse create(@AuthenticationPrincipal AuthenticatedUser user,
                                   @Valid @RequestBody CreateCreatorRequest request) { return service.create(user, request); }
-    @PutMapping("/{id}") @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/{id}") @EditorialAdminRequired
     public CreatorResponse update(@PathVariable Long id, @AuthenticationPrincipal AuthenticatedUser user,
                                   @Valid @RequestBody UpdateCreatorRequest request) { return service.update(id, user, request); }
-    @DeleteMapping("/{id}") @ResponseStatus(HttpStatus.NO_CONTENT) @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("/{id}") @ResponseStatus(HttpStatus.NO_CONTENT) @EditorialAdminRequired
     public void delete(@PathVariable Long id, @AuthenticationPrincipal AuthenticatedUser user) { service.delete(id, user); }
 }

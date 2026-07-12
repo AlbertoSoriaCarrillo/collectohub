@@ -108,6 +108,15 @@ class EditorialCatalogFacadeControllerSecurityTest {
     }
 
     @Test
+    void editorialAdminCanReadVerifiedLegacyLink() throws Exception {
+        when(facadeService.getLegacyLink(eq(8L), any())).thenReturn(bridgeResponse());
+
+        mockMvc.perform(get("/api/catalog/editorial/master-products/8/link")
+                        .header("Authorization", "Bearer " + editorialAdminToken()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void invalidPaginationReturnsBadRequest() throws Exception {
         when(facadeService.search(
                 nullable(AuthenticatedUser.class), any(), any(), any(), any(), any(), any(), any(), any(), any(),
@@ -148,6 +157,12 @@ class EditorialCatalogFacadeControllerSecurityTest {
 
     private String userToken() {
         return jwtService.generateAccessToken(TestSecurityConfiguration.testUser("user@example.com", "USER"));
+    }
+
+    private String editorialAdminToken() {
+        return jwtService.generateAccessToken(TestSecurityConfiguration.testUser(
+                "editorial-admin@example.com", "EDITORIAL_ADMIN"
+        ));
     }
 
     @TestConfiguration

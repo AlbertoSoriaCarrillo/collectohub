@@ -123,57 +123,57 @@ Deteccion de duplicados:
 Los listados usan `PageResponse` con `content`, `page`, `size`,
 `totalElements`, `totalPages`, `first` y `last`. Por defecto solo exponen
 registros `ACTIVE` no eliminados. `recordStatus` es un filtro exclusivo de
-`ADMIN`; la escritura editorial nueva no admite `SHOP_OWNER`.
+`ADMIN or EDITORIAL_ADMIN`; la escritura editorial nueva no admite `SHOP_OWNER`.
 
 | Metodo | Path | Acceso | Permiso | Body/Filtros | Respuesta | Errores |
 | --- | --- | --- | --- | --- | --- | --- |
-| GET | `/api/catalog/publishers` | Publico | ACTIVE; ADMIN puede filtrar estado | `q`, `recordStatus`, `page`, `size`, `sort` | `PageResponse<PublisherResponse>` | `400`, `403` |
-| GET | `/api/catalog/publishers/{id}` | Publico/ADMIN | ACTIVE publico; cualquier no eliminado para ADMIN | No | `PublisherResponse` | `404` |
-| POST | `/api/catalog/publishers` | Protegido | `ADMIN` | `CreatePublisherRequest` | `PublisherResponse` | `400`, `401`, `403`, `409` |
-| PUT | `/api/catalog/publishers/{id}` | Protegido | `ADMIN` | `UpdatePublisherRequest` | `PublisherResponse` | `400`, `401`, `403`, `404`, `409` |
-| GET | `/api/catalog/franchises` | Publico | ACTIVE; ADMIN puede filtrar estado | `q`, `recordStatus`, `page`, `size`, `sort` | `PageResponse<CatalogFranchiseResponse>` | `400`, `403` |
-| GET | `/api/catalog/franchises/{id}` | Publico/ADMIN | ACTIVE publico; cualquier no eliminado para ADMIN | No | `CatalogFranchiseResponse` | `404` |
-| POST | `/api/catalog/franchises` | Protegido | `ADMIN` | `CreateCatalogFranchiseRequest` | `CatalogFranchiseResponse` | `400`, `401`, `403`, `409` |
-| PUT | `/api/catalog/franchises/{id}` | Protegido | `ADMIN` | `UpdateCatalogFranchiseRequest` | `CatalogFranchiseResponse` | `400`, `401`, `403`, `404`, `409` |
-| GET | `/api/catalog/series` | Publico | ACTIVE; ADMIN puede filtrar estado | `q`, `franchiseId`, `type`, `publicationStatus`, `publisherId`, `language`, `country`, `recordStatus`, paginacion | `PageResponse<CatalogSeriesResponse>` | `400`, `403` |
-| GET | `/api/catalog/series/{id}` | Publico/ADMIN | ACTIVE publico; cualquier no eliminado para ADMIN | No | `CatalogSeriesResponse` | `404` |
-| POST | `/api/catalog/series` | Protegido | `ADMIN` | `CreateCatalogSeriesRequest` | `CatalogSeriesResponse` | `400`, `401`, `403`, `404`, `409` |
-| PUT | `/api/catalog/series/{id}` | Protegido | `ADMIN` | `UpdateCatalogSeriesRequest` | `CatalogSeriesResponse` | `400`, `401`, `403`, `404`, `409` |
-| GET | `/api/catalog/series/{seriesId}/items` | Publico/ADMIN | ACTIVE publico; ADMIN puede filtrar estado | `q`, `publicationYear`, `language`, `country`, `recordStatus`, paginacion | `PageResponse<CatalogItemResponse>` | `400`, `403`, `404` |
-| GET | `/api/catalog/items/{id}` | Publico/ADMIN | ACTIVE con serie ACTIVE; cualquier no eliminado para ADMIN | No | `CatalogItemResponse` | `404` |
-| POST | `/api/catalog/series/{seriesId}/items` | Protegido | `ADMIN` | `CreateCatalogItemRequest` | `CatalogItemResponse` | `400`, `401`, `403`, `404`, `409` |
-| PUT | `/api/catalog/items/{id}` | Protegido | `ADMIN` | `UpdateCatalogItemRequest` | `CatalogItemResponse` | `400`, `401`, `403`, `404`, `409` |
-| GET | `/api/catalog/items/{itemId}/editions` | Publico/ADMIN | ACTIVE con item/serie ACTIVE; ADMIN puede filtrar estado | `publisherId`, `isbn`, `ean`, `format`, `language`, `country`, `publicationYear`, `recordStatus`, paginacion | `PageResponse<CatalogItemEditionResponse>` | `400`, `403`, `404` |
-| GET | `/api/catalog/editions/{id}` | Publico/ADMIN | Cadena ACTIVE publica; cualquier no eliminada para ADMIN | No | `CatalogItemEditionResponse` | `404` |
-| POST | `/api/catalog/items/{itemId}/editions` | Protegido | `ADMIN` | `CreateCatalogItemEditionRequest` | `CatalogItemEditionResponse` | `400`, `401`, `403`, `404`, `409` |
-| PUT | `/api/catalog/editions/{id}` | Protegido | `ADMIN` | `UpdateCatalogItemEditionRequest` | `CatalogItemEditionResponse` | `400`, `401`, `403`, `404`, `409` |
-| GET | `/api/catalog/master-product-links` | Protegido | `ADMIN` | Filtros de master product, item, edition, status/source y paginacion | `PageResponse<MasterProductCatalogLinkResponse>` | `400`, `401`, `403` |
-| GET | `/api/catalog/admin/data-quality/report` | Protegido | `ADMIN` | `scope`, `limit` (1..200) | `EditorialDataQualityReportResponse` | `400`, `401`, `403`; solo lectura, sin auto-fix ni merge |
-| GET | `/api/catalog/master-product-links/{id}` | Protegido | `ADMIN` | No | `MasterProductCatalogLinkResponse` | `401`, `403`, `404` |
-| POST | `/api/catalog/master-product-links` | Protegido | `ADMIN` | `CreateMasterProductCatalogLinkRequest` | `MasterProductCatalogLinkResponse` | `400`, `401`, `403`, `404`, `409` |
-| PUT | `/api/catalog/master-product-links/{id}` | Protegido | `ADMIN` | `UpdateMasterProductCatalogLinkRequest` | `MasterProductCatalogLinkResponse` | `400`, `401`, `403`, `404`, `409` |
-| PUT | `/api/catalog/master-product-links/{id}/verify` | Protegido | `ADMIN` | No | `MasterProductCatalogLinkResponse` | `401`, `403`, `404`, `409` |
-| PUT | `/api/catalog/master-product-links/{id}/reject` | Protegido | `ADMIN` | No | `MasterProductCatalogLinkResponse` | `401`, `403`, `404` |
-| POST | `/api/catalog/master-product-links/backfill` | Protegido | `ADMIN` | No | `BackfillMasterProductCatalogLinksResponse` | `401`, `403` |
-| GET | `/api/catalog/editorial/search` | Publico | Cadena `ACTIVE`; enlaces solo `ADMIN` | `q`, `type`, `franchiseId`, `seriesId`, `publisherId`, `language`, `country`, `publicationYear`, `resultType`, paginacion | `PageResponse<EditorialCatalogSearchItemResponse>` | `400`, `403` |
+| GET | `/api/catalog/publishers` | Publico | ACTIVE; ADMIN or EDITORIAL_ADMIN puede filtrar estado | `q`, `recordStatus`, `page`, `size`, `sort` | `PageResponse<PublisherResponse>` | `400`, `403` |
+| GET | `/api/catalog/publishers/{id}` | Publico/ADMIN or EDITORIAL_ADMIN | ACTIVE publico; cualquier no eliminado para ADMIN or EDITORIAL_ADMIN | No | `PublisherResponse` | `404` |
+| POST | `/api/catalog/publishers` | Protegido | `ADMIN or EDITORIAL_ADMIN` | `CreatePublisherRequest` | `PublisherResponse` | `400`, `401`, `403`, `409` |
+| PUT | `/api/catalog/publishers/{id}` | Protegido | `ADMIN or EDITORIAL_ADMIN` | `UpdatePublisherRequest` | `PublisherResponse` | `400`, `401`, `403`, `404`, `409` |
+| GET | `/api/catalog/franchises` | Publico | ACTIVE; ADMIN or EDITORIAL_ADMIN puede filtrar estado | `q`, `recordStatus`, `page`, `size`, `sort` | `PageResponse<CatalogFranchiseResponse>` | `400`, `403` |
+| GET | `/api/catalog/franchises/{id}` | Publico/ADMIN or EDITORIAL_ADMIN | ACTIVE publico; cualquier no eliminado para ADMIN or EDITORIAL_ADMIN | No | `CatalogFranchiseResponse` | `404` |
+| POST | `/api/catalog/franchises` | Protegido | `ADMIN or EDITORIAL_ADMIN` | `CreateCatalogFranchiseRequest` | `CatalogFranchiseResponse` | `400`, `401`, `403`, `409` |
+| PUT | `/api/catalog/franchises/{id}` | Protegido | `ADMIN or EDITORIAL_ADMIN` | `UpdateCatalogFranchiseRequest` | `CatalogFranchiseResponse` | `400`, `401`, `403`, `404`, `409` |
+| GET | `/api/catalog/series` | Publico | ACTIVE; ADMIN or EDITORIAL_ADMIN puede filtrar estado | `q`, `franchiseId`, `type`, `publicationStatus`, `publisherId`, `language`, `country`, `recordStatus`, paginacion | `PageResponse<CatalogSeriesResponse>` | `400`, `403` |
+| GET | `/api/catalog/series/{id}` | Publico/ADMIN or EDITORIAL_ADMIN | ACTIVE publico; cualquier no eliminado para ADMIN or EDITORIAL_ADMIN | No | `CatalogSeriesResponse` | `404` |
+| POST | `/api/catalog/series` | Protegido | `ADMIN or EDITORIAL_ADMIN` | `CreateCatalogSeriesRequest` | `CatalogSeriesResponse` | `400`, `401`, `403`, `404`, `409` |
+| PUT | `/api/catalog/series/{id}` | Protegido | `ADMIN or EDITORIAL_ADMIN` | `UpdateCatalogSeriesRequest` | `CatalogSeriesResponse` | `400`, `401`, `403`, `404`, `409` |
+| GET | `/api/catalog/series/{seriesId}/items` | Publico/ADMIN or EDITORIAL_ADMIN | ACTIVE publico; ADMIN or EDITORIAL_ADMIN puede filtrar estado | `q`, `publicationYear`, `language`, `country`, `recordStatus`, paginacion | `PageResponse<CatalogItemResponse>` | `400`, `403`, `404` |
+| GET | `/api/catalog/items/{id}` | Publico/ADMIN or EDITORIAL_ADMIN | ACTIVE con serie ACTIVE; cualquier no eliminado para ADMIN or EDITORIAL_ADMIN | No | `CatalogItemResponse` | `404` |
+| POST | `/api/catalog/series/{seriesId}/items` | Protegido | `ADMIN or EDITORIAL_ADMIN` | `CreateCatalogItemRequest` | `CatalogItemResponse` | `400`, `401`, `403`, `404`, `409` |
+| PUT | `/api/catalog/items/{id}` | Protegido | `ADMIN or EDITORIAL_ADMIN` | `UpdateCatalogItemRequest` | `CatalogItemResponse` | `400`, `401`, `403`, `404`, `409` |
+| GET | `/api/catalog/items/{itemId}/editions` | Publico/ADMIN or EDITORIAL_ADMIN | ACTIVE con item/serie ACTIVE; ADMIN or EDITORIAL_ADMIN puede filtrar estado | `publisherId`, `isbn`, `ean`, `format`, `language`, `country`, `publicationYear`, `recordStatus`, paginacion | `PageResponse<CatalogItemEditionResponse>` | `400`, `403`, `404` |
+| GET | `/api/catalog/editions/{id}` | Publico/ADMIN or EDITORIAL_ADMIN | Cadena ACTIVE publica; cualquier no eliminada para ADMIN or EDITORIAL_ADMIN | No | `CatalogItemEditionResponse` | `404` |
+| POST | `/api/catalog/items/{itemId}/editions` | Protegido | `ADMIN or EDITORIAL_ADMIN` | `CreateCatalogItemEditionRequest` | `CatalogItemEditionResponse` | `400`, `401`, `403`, `404`, `409` |
+| PUT | `/api/catalog/editions/{id}` | Protegido | `ADMIN or EDITORIAL_ADMIN` | `UpdateCatalogItemEditionRequest` | `CatalogItemEditionResponse` | `400`, `401`, `403`, `404`, `409` |
+| GET | `/api/catalog/master-product-links` | Protegido | `ADMIN or EDITORIAL_ADMIN` | Filtros de master product, item, edition, status/source y paginacion | `PageResponse<MasterProductCatalogLinkResponse>` | `400`, `401`, `403` |
+| GET | `/api/catalog/admin/data-quality/report` | Protegido | `ADMIN or EDITORIAL_ADMIN` | `scope`, `limit` (1..200) | `EditorialDataQualityReportResponse` | `400`, `401`, `403`; solo lectura, sin auto-fix ni merge |
+| GET | `/api/catalog/master-product-links/{id}` | Protegido | `ADMIN or EDITORIAL_ADMIN` | No | `MasterProductCatalogLinkResponse` | `401`, `403`, `404` |
+| POST | `/api/catalog/master-product-links` | Protegido | `ADMIN or EDITORIAL_ADMIN` | `CreateMasterProductCatalogLinkRequest` | `MasterProductCatalogLinkResponse` | `400`, `401`, `403`, `404`, `409` |
+| PUT | `/api/catalog/master-product-links/{id}` | Protegido | `ADMIN or EDITORIAL_ADMIN` | `UpdateMasterProductCatalogLinkRequest` | `MasterProductCatalogLinkResponse` | `400`, `401`, `403`, `404`, `409` |
+| PUT | `/api/catalog/master-product-links/{id}/verify` | Protegido | `ADMIN or EDITORIAL_ADMIN` | No | `MasterProductCatalogLinkResponse` | `401`, `403`, `404`, `409` |
+| PUT | `/api/catalog/master-product-links/{id}/reject` | Protegido | `ADMIN or EDITORIAL_ADMIN` | No | `MasterProductCatalogLinkResponse` | `401`, `403`, `404` |
+| POST | `/api/catalog/master-product-links/backfill` | Protegido | `ADMIN or EDITORIAL_ADMIN` | No | `BackfillMasterProductCatalogLinksResponse` | `401`, `403` |
+| GET | `/api/catalog/editorial/search` | Publico | Cadena `ACTIVE`; enlaces solo `ADMIN or EDITORIAL_ADMIN` | `q`, `type`, `franchiseId`, `seriesId`, `publisherId`, `language`, `country`, `publicationYear`, `resultType`, paginacion | `PageResponse<EditorialCatalogSearchItemResponse>` | `400`, `403` |
 | GET | `/api/catalog/editorial/series/{seriesId}/detail` | Publico | Cadena `ACTIVE` | No | `EditorialCatalogSeriesDetailResponse` | `404` |
 | GET | `/api/catalog/editorial/items/{itemId}/detail` | Publico | Cadena `ACTIVE` | No | `EditorialCatalogItemDetailResponse` | `404` |
 | GET | `/api/catalog/editorial/editions/{editionId}/detail` | Publico | Cadena `ACTIVE` | No | `EditorialCatalogEditionDetailResponse` | `404` |
-| GET | `/api/catalog/editorial/master-products/{masterProductId}/link` | Protegido | `ADMIN` | No | `EditorialLegacyBridgeResponse` | `401`, `403`, `404` |
-| GET | `/api/catalog/creators` | Publico/ADMIN | ACTIVE publico; ADMIN puede filtrar estado | `q`, `country`, `recordStatus`, paginacion | `PageResponse<CreatorResponse>` | `400`, `403` |
-| GET | `/api/catalog/creators/{id}` | Publico/ADMIN | ACTIVE publico; cualquier no eliminado para ADMIN | No | `CreatorResponse` | `404` |
-| POST | `/api/catalog/creators` | Protegido | `ADMIN` | `CreateCreatorRequest` | `CreatorResponse` | `400`, `401`, `403`, `409` |
-| PUT | `/api/catalog/creators/{id}` | Protegido | `ADMIN` | `UpdateCreatorRequest` | `CreatorResponse` | `400`, `401`, `403`, `404`, `409` |
-| DELETE | `/api/catalog/creators/{id}` | Protegido | `ADMIN` | No | Sin cuerpo | `401`, `403`, `404` |
-| GET | `/api/catalog/items/{itemId}/creators` | Publico/ADMIN | ACTIVE publico; ADMIN puede filtrar estado | `recordStatus` | Lista de `CatalogItemCreatorResponse` | `400`, `403`, `404` |
-| POST | `/api/catalog/items/{itemId}/creators` | Protegido | `ADMIN` | `CreateCatalogItemCreatorRequest` | `CatalogItemCreatorResponse` | `400`, `401`, `403`, `404`, `409` |
-| PUT | `/api/catalog/items/{itemId}/creators/{creditId}` | Protegido | `ADMIN` | `UpdateCatalogItemCreatorRequest` | `CatalogItemCreatorResponse` | `400`, `401`, `403`, `404`, `409` |
-| DELETE | `/api/catalog/items/{itemId}/creators/{creditId}` | Protegido | `ADMIN` | No | Sin cuerpo | `401`, `403`, `404` |
-| GET | `/api/catalog/items/{itemId}/relationships` | Publico/ADMIN | ACTIVE publico; ADMIN puede filtrar estado | `recordStatus` | Lista de `CatalogItemRelationshipResponse` | `400`, `403`, `404` |
-| POST | `/api/catalog/items/{itemId}/relationships` | Protegido | `ADMIN` | `CreateCatalogItemRelationshipRequest` | `CatalogItemRelationshipResponse` | `400`, `401`, `403`, `404`, `409` |
-| GET | `/api/catalog/items/{itemId}/relationships/{relationshipId}` | Publico/ADMIN | ACTIVE publico; ADMIN puede filtrar estado | `recordStatus` | `CatalogItemRelationshipResponse` | `400`, `403`, `404` |
-| PUT | `/api/catalog/items/{itemId}/relationships/{relationshipId}` | Protegido | `ADMIN` | `UpdateCatalogItemRelationshipRequest` | `CatalogItemRelationshipResponse` | `400`, `401`, `403`, `404`, `409` |
-| DELETE | `/api/catalog/items/{itemId}/relationships/{relationshipId}` | Protegido | `ADMIN` | No | Sin cuerpo | `401`, `403`, `404` |
+| GET | `/api/catalog/editorial/master-products/{masterProductId}/link` | Protegido | `ADMIN or EDITORIAL_ADMIN` | No | `EditorialLegacyBridgeResponse` | `401`, `403`, `404` |
+| GET | `/api/catalog/creators` | Publico/ADMIN or EDITORIAL_ADMIN | ACTIVE publico; ADMIN or EDITORIAL_ADMIN puede filtrar estado | `q`, `country`, `recordStatus`, paginacion | `PageResponse<CreatorResponse>` | `400`, `403` |
+| GET | `/api/catalog/creators/{id}` | Publico/ADMIN or EDITORIAL_ADMIN | ACTIVE publico; cualquier no eliminado para ADMIN or EDITORIAL_ADMIN | No | `CreatorResponse` | `404` |
+| POST | `/api/catalog/creators` | Protegido | `ADMIN or EDITORIAL_ADMIN` | `CreateCreatorRequest` | `CreatorResponse` | `400`, `401`, `403`, `409` |
+| PUT | `/api/catalog/creators/{id}` | Protegido | `ADMIN or EDITORIAL_ADMIN` | `UpdateCreatorRequest` | `CreatorResponse` | `400`, `401`, `403`, `404`, `409` |
+| DELETE | `/api/catalog/creators/{id}` | Protegido | `ADMIN or EDITORIAL_ADMIN` | No | Sin cuerpo | `401`, `403`, `404` |
+| GET | `/api/catalog/items/{itemId}/creators` | Publico/ADMIN or EDITORIAL_ADMIN | ACTIVE publico; ADMIN or EDITORIAL_ADMIN puede filtrar estado | `recordStatus` | Lista de `CatalogItemCreatorResponse` | `400`, `403`, `404` |
+| POST | `/api/catalog/items/{itemId}/creators` | Protegido | `ADMIN or EDITORIAL_ADMIN` | `CreateCatalogItemCreatorRequest` | `CatalogItemCreatorResponse` | `400`, `401`, `403`, `404`, `409` |
+| PUT | `/api/catalog/items/{itemId}/creators/{creditId}` | Protegido | `ADMIN or EDITORIAL_ADMIN` | `UpdateCatalogItemCreatorRequest` | `CatalogItemCreatorResponse` | `400`, `401`, `403`, `404`, `409` |
+| DELETE | `/api/catalog/items/{itemId}/creators/{creditId}` | Protegido | `ADMIN or EDITORIAL_ADMIN` | No | Sin cuerpo | `401`, `403`, `404` |
+| GET | `/api/catalog/items/{itemId}/relationships` | Publico/ADMIN or EDITORIAL_ADMIN | ACTIVE publico; ADMIN or EDITORIAL_ADMIN puede filtrar estado | `recordStatus` | Lista de `CatalogItemRelationshipResponse` | `400`, `403`, `404` |
+| POST | `/api/catalog/items/{itemId}/relationships` | Protegido | `ADMIN or EDITORIAL_ADMIN` | `CreateCatalogItemRelationshipRequest` | `CatalogItemRelationshipResponse` | `400`, `401`, `403`, `404`, `409` |
+| GET | `/api/catalog/items/{itemId}/relationships/{relationshipId}` | Publico/ADMIN or EDITORIAL_ADMIN | ACTIVE publico; ADMIN or EDITORIAL_ADMIN puede filtrar estado | `recordStatus` | `CatalogItemRelationshipResponse` | `400`, `403`, `404` |
+| PUT | `/api/catalog/items/{itemId}/relationships/{relationshipId}` | Protegido | `ADMIN or EDITORIAL_ADMIN` | `UpdateCatalogItemRelationshipRequest` | `CatalogItemRelationshipResponse` | `400`, `401`, `403`, `404`, `409` |
+| DELETE | `/api/catalog/items/{itemId}/relationships/{relationshipId}` | Protegido | `ADMIN or EDITORIAL_ADMIN` | No | Sin cuerpo | `401`, `403`, `404` |
 
 Enums iniciales:
 

@@ -30,7 +30,7 @@ public class CatalogItemCreatorService {
 
     @Transactional
     public CatalogItemCreatorResponse create(Long itemId, AuthenticatedUser user, CreateCatalogItemCreatorRequest request) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         CatalogItem item = findItem(itemId);
         Creator creator = creatorService.find(request.creatorId());
         ensureUnique(itemId, creator.getId(), request.creditRole(), null);
@@ -42,7 +42,7 @@ public class CatalogItemCreatorService {
     @Transactional
     public CatalogItemCreatorResponse update(Long itemId, Long creditId, AuthenticatedUser user,
                                              UpdateCatalogItemCreatorRequest request) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         findItem(itemId);
         CatalogItemCreator credit = findCredit(itemId, creditId);
         ensureUnique(itemId, credit.getCreator().getId(), request.creditRole(), creditId);
@@ -53,7 +53,7 @@ public class CatalogItemCreatorService {
 
     @Transactional
     public void delete(Long itemId, Long creditId, AuthenticatedUser user) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         findItem(itemId);
         findCredit(itemId, creditId).softDelete(user.id());
     }

@@ -87,7 +87,7 @@ public class CatalogSeriesController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @EditorialAdminRequired
     @Operation(summary = "Create a catalog series", description = "Requires ADMIN authority")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Catalog series created"),
@@ -105,7 +105,7 @@ public class CatalogSeriesController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @EditorialAdminRequired
     @Operation(summary = "Update a catalog series", description = "Requires ADMIN authority")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Catalog series updated"),

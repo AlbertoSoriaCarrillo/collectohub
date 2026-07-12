@@ -49,5 +49,11 @@ class EditorialDataQualityServiceTest {
         verify(creators).findDuplicateNameGroups(1);
         assertThatThrownBy(() -> service.report(admin, "unknown", 50)).isInstanceOf(InvalidEditorialCatalogRequestException.class);
     }
+    @Test void editorialAdminCanReadQualityReportAndUserIsRejected() {
+        assertThat(service.report(user("EDITORIAL_ADMIN"), "ALL", 50).totalChecks()).isEqualTo(13);
+        assertThatThrownBy(() -> service.report(user("USER"), "ALL", 50))
+                .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+    }
     private AuthenticatedUser user() { User user = User.register("admin@example.com", "hash", "Admin", new Role("ADMIN", "ADMIN")); ReflectionTestUtils.setField(user, "id", 1L); return AuthenticatedUser.from(user); }
+    private AuthenticatedUser user(String role) { User user = User.register(role.toLowerCase() + "@example.com", "hash", role, new Role(role, role)); ReflectionTestUtils.setField(user, "id", 1L); return AuthenticatedUser.from(user); }
 }

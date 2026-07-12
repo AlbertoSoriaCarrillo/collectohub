@@ -68,7 +68,7 @@ public class CatalogFranchiseController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @EditorialAdminRequired
     @Operation(summary = "Create a catalog franchise", description = "Requires ADMIN authority")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Franchise created"),
@@ -85,7 +85,7 @@ public class CatalogFranchiseController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @EditorialAdminRequired
     @Operation(summary = "Update a catalog franchise", description = "Requires ADMIN authority")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Franchise updated"),

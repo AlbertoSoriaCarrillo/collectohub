@@ -113,7 +113,7 @@ public class CatalogItemEditionService {
     @Transactional(readOnly = true)
     public CatalogItemEditionResponse get(Long id, AuthenticatedUser user) {
         CatalogItemEdition edition = findEdition(id);
-        if (!edition.isPubliclyVisible() && !EditorialCatalogSupport.isAdmin(user)) {
+        if (!edition.isPubliclyVisible() && !EditorialCatalogSupport.isEditorialAdmin(user)) {
             throw new CatalogItemEditionNotFoundException(id);
         }
         return CatalogItemEditionResponse.from(edition);
@@ -125,7 +125,7 @@ public class CatalogItemEditionService {
             AuthenticatedUser user,
             CreateCatalogItemEditionRequest request
     ) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         CatalogItem item = findItem(itemId);
         Publisher publisher = findPublisher(request.publisherId());
         String isbn = normalizeIdentifier(request.isbn());
@@ -158,7 +158,7 @@ public class CatalogItemEditionService {
             AuthenticatedUser user,
             UpdateCatalogItemEditionRequest request
     ) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         CatalogItemEdition edition = findEdition(id);
         CatalogItem item = findItem(request.catalogItemId());
         Publisher publisher = findPublisher(request.publisherId());
@@ -198,7 +198,7 @@ public class CatalogItemEditionService {
 
     private CatalogItem findItemForRead(Long id, AuthenticatedUser user) {
         CatalogItem item = findItem(id);
-        if (!item.isPubliclyVisible() && !EditorialCatalogSupport.isAdmin(user)) {
+        if (!item.isPubliclyVisible() && !EditorialCatalogSupport.isEditorialAdmin(user)) {
             throw new CatalogItemNotFoundException(id);
         }
         return item;

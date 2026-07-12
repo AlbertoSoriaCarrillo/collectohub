@@ -27,8 +27,9 @@ protegido para `ADMIN`, gestion de entidades editoriales, relaciones,
 reconciliacion legacy, datos demo por API y validacion local. EPIC 43A deja
 cerrado el diseno de separacion entre administracion global y operacion
 editorial mediante el futuro rol `EDITORIAL_ADMIN`, sin implementarlo todavia.
-MVP3 no queda cerrado como producto final; la siguiente tarea es EPIC 43B -
-Backend role EDITORIAL_ADMIN y autorizacion editorial centralizada.
+EPIC 43B implementa en backend `EDITORIAL_ADMIN` sin cambiar frontend ni
+asignarlo automaticamente. MVP3 no queda cerrado como producto final; la
+siguiente tarea es EPIC 43C - Guard y navegacion frontend para EDITORIAL_ADMIN.
 
 | Dominio | Estado actual |
 | --- | --- |

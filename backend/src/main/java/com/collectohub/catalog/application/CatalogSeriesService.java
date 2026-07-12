@@ -125,7 +125,7 @@ public class CatalogSeriesService {
     @Transactional(readOnly = true)
     public CatalogSeriesResponse get(Long id, AuthenticatedUser user) {
         CatalogSeries series = findSeries(id);
-        if (!series.isPubliclyVisible() && !EditorialCatalogSupport.isAdmin(user)) {
+        if (!series.isPubliclyVisible() && !EditorialCatalogSupport.isEditorialAdmin(user)) {
             throw new CatalogSeriesNotFoundException(id);
         }
         return CatalogSeriesResponse.from(series);
@@ -133,7 +133,7 @@ public class CatalogSeriesService {
 
     @Transactional
     public CatalogSeriesResponse create(AuthenticatedUser user, CreateCatalogSeriesRequest request) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         String title = EditorialCatalogSupport.normalizeRequired(request.title());
         CatalogFranchise franchise = findFranchise(request.franchiseId());
         Publisher publisher = findPublisher(request.primaryPublisherId());
@@ -160,7 +160,7 @@ public class CatalogSeriesService {
 
     @Transactional
     public CatalogSeriesResponse update(Long id, AuthenticatedUser user, UpdateCatalogSeriesRequest request) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         CatalogSeries series = findSeries(id);
         String title = EditorialCatalogSupport.normalizeRequired(request.title());
         CatalogFranchise franchise = findFranchise(request.franchiseId());

@@ -53,6 +53,15 @@ class CreatorControllerSecurityTest {
                 .contentType(MediaType.APPLICATION_JSON).content(creditJson())).andExpect(status().isCreated());
     }
 
+    @Test void editorialAdminCanCreateCreatorAndCredit() throws Exception {
+        when(creatorService.create(any(), any())).thenReturn(creator());
+        when(creditService.create(eq(20L), any(), any())).thenReturn(credit());
+        mockMvc.perform(post("/api/catalog/creators").header("Authorization", bearer("editorial-admin", "EDITORIAL_ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON).content(creatorJson())).andExpect(status().isCreated());
+        mockMvc.perform(post("/api/catalog/items/20/creators").header("Authorization", bearer("editorial-admin", "EDITORIAL_ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON).content(creditJson())).andExpect(status().isCreated());
+    }
+
     @Test void regularUserCannotCreateUpdateOrDelete() throws Exception {
         String token = bearer("user", "USER");
         mockMvc.perform(post("/api/catalog/creators").header("Authorization", token)

@@ -21,7 +21,7 @@ public class EditorialDataQualityService {
 
     @Transactional(readOnly = true)
     public EditorialDataQualityReportResponse report(AuthenticatedUser user, String scope, int limit) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         String normalized = scope == null || scope.isBlank() ? "ALL" : scope.trim().toUpperCase(Locale.ROOT);
         if (!Set.of("ALL", "CREATORS", "MASTER_LINKS", "PUBLISHERS", "FRANCHISES", "SERIES", "ITEMS", "EDITIONS").contains(normalized))
             throw new InvalidEditorialCatalogRequestException("Unsupported data-quality scope");

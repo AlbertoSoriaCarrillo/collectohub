@@ -214,7 +214,10 @@ class LiquibaseMigrationIntegrationTest {
         assertThat(tableNames()).containsAll(MVP_TABLES);
         assertThat(indexNames()).containsAll(REQUIRED_INDEXES);
         assertThat(constraintNames()).containsAll(REQUIRED_CONSTRAINTS);
-        assertThat(roleCodes()).containsExactlyInAnyOrder("ADMIN", "USER", "SHOP_OWNER", "CONTENT_CREATOR");
+        assertThat(roleCodes()).containsExactlyInAnyOrder(
+                "ADMIN", "USER", "SHOP_OWNER", "CONTENT_CREATOR", "EDITORIAL_ADMIN"
+        );
+        assertThat(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM user_roles", Integer.class)).isZero();
         assertThat(categoryCodes()).containsExactlyInAnyOrder(
                 "MANGA_COMIC",
                 "TRADING_CARD",

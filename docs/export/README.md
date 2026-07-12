@@ -6,8 +6,11 @@ DTOs, Angular routes, services and feature components as of 2026-07-07.
 EPIC 41B updates the documented snapshot to 2026-07-10 for MVP3 Admin
 Editorial routes and their existing backend operations. The database snapshot
 remains unchanged: no migration was created in MVP3 Admin Editorial.
-EPIC 42C adds the ADMIN-only data-quality report endpoint and route without
+EPIC 42C adds the editorial data-quality report endpoint and route without
 changing the database snapshot.
+EPIC 43B adds the additive `EDITORIAL_ADMIN` role seed and updates editorial
+endpoint permissions to `ADMIN | EDITORIAL_ADMIN`; it does not assign the role
+to users or add endpoints.
 
 ## Files
 

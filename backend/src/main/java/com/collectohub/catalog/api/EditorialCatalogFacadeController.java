@@ -90,7 +90,7 @@ public class EditorialCatalogFacadeController {
     }
 
     @GetMapping("/master-products/{masterProductId}/link")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @EditorialAdminRequired
     @Operation(summary = "Resolve the editorial link for a legacy master product", description = "Requires ADMIN")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Verified link, or latest proposal when unverified"),

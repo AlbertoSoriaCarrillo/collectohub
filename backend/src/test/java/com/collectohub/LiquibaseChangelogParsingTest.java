@@ -36,7 +36,8 @@ class LiquibaseChangelogParsingTest {
                         "008-add-editorial-references-to-collection-items",
                         "009-add-editorial-references-to-shop-products",
                         "010-create-catalog-creators",
-                        "011-create-catalog-item-relationships"
+                        "011-create-catalog-item-relationships",
+                        "012-add-editorial-admin-role"
                 );
     }
 

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/catalog/admin/data-quality")
-@PreAuthorize("hasAuthority('ADMIN')")
+@EditorialAdminRequired
 public class EditorialDataQualityController {
     private final EditorialDataQualityService service;
     public EditorialDataQualityController(EditorialDataQualityService service) { this.service = service; }

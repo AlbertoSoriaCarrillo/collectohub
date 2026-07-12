@@ -49,7 +49,7 @@ ADMIN. Auditoria: `docs/22_MVP3_ADMIN_UX_AUDIT.md`.
 | Datos demo | No se ejecuto contra backend ADMIN local. | Validacion parcial. | EPIC 41C. |
 | Docker | Daemon no disponible. | Sin smoke compose reciente. | Reintentar localmente. |
 | Datos reales | No hay carga productiva. | Catalogo de demostracion. | Calidad de datos posterior. |
-| Roles | Solo `ADMIN` editorial en codigo actual. | Exceso de privilegio para editores. | EPIC 43B/43C implementaran el diseno `EDITORIAL_ADMIN`. |
+| Roles | Backend acepta `ADMIN` y `EDITORIAL_ADMIN`; frontend aun solo ADMIN. | La UI no refleja aun el nuevo rol. | EPIC 43C implementara guard y navegacion. |
 | Calidad | EPIC 42A documenta calidad basica y warnings; faltan reglas backend fuertes, datos reales y E2E futuro. | Duplicados complejos posibles. | EPIC 42B. |
 
 EPIC 42B anade hardening selectivo para creators y confirma las protecciones ya
@@ -60,5 +60,6 @@ de calidad: siguen pendientes reglas complejas, datos reales y E2E futuro.
 
 EPIC 43A ha cerrado el diseno de roles editoriales separados de `ADMIN`; no
 inicia MVP4 ni modifica seguridad. Siguiente EPIC: **EPIC 43B - Backend role
-EDITORIAL_ADMIN y autorizacion editorial centralizada**, seguido de EPIC 43C
-para guard y navegacion editorial.
+EDITORIAL_ADMIN y autorizacion editorial centralizada** queda completada. La
+siguiente tarea es **EPIC 43C - Guard y navegacion frontend para
+EDITORIAL_ADMIN**.

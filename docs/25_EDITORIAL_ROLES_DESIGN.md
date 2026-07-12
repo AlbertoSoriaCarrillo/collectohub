@@ -122,7 +122,7 @@ editoriales futuras aceptaran ambos roles; los endpoints globales que requieren
 
 ## 9. Plan backend
 
-EPIC 43B debe empezar con una auditoria puntual de permisos y despues:
+EPIC 43B ha aplicado la auditoria puntual de permisos y:
 
 1. anadir una migracion Liquibase aditiva que inserte `EDITORIAL_ADMIN`, con
    rollback que elimine solo ese rol sin asignaciones activas;
@@ -178,6 +178,7 @@ No se eliminara ni degradara el rol `ADMIN`.
 ## 15. EPICs siguientes
 
 1. EPIC 43B - Backend role EDITORIAL_ADMIN y autorizacion editorial centralizada.
+   Completada el 2026-07-12: migracion 012, helper y autorizacion backend.
 2. EPIC 43C - Guard y navegacion editorial.
 3. EPIC futura separada - gestion visual global de roles, solo si es necesaria.
 

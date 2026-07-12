@@ -82,6 +82,18 @@ class MasterProductCatalogLinkControllerSecurityTest {
     }
 
     @Test
+    void editorialAdminCanListLinks() throws Exception {
+        when(linkService.search(
+                any(), isNull(), isNull(), isNull(), isNull(), isNull(),
+                eq(0), eq(20), eq("createdAt,desc")))
+                .thenReturn(new PageResponse<>(List.of(response("PROPOSED")), 0, 20, 1, 1, true, true));
+
+        mockMvc.perform(get("/api/catalog/master-product-links")
+                        .header("Authorization", "Bearer " + editorialAdminToken()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void anonymousAndUserCannotCreateLink() throws Exception {
         mockMvc.perform(post("/api/catalog/master-product-links")
                         .contentType(MediaType.APPLICATION_JSON).content(request()))
@@ -145,6 +157,12 @@ class MasterProductCatalogLinkControllerSecurityTest {
 
     private String userToken() {
         return jwtService.generateAccessToken(TestSecurityConfiguration.testUser("user@example.com", "USER"));
+    }
+
+    private String editorialAdminToken() {
+        return jwtService.generateAccessToken(TestSecurityConfiguration.testUser(
+                "editorial-admin@example.com", "EDITORIAL_ADMIN"
+        ));
     }
 
     @TestConfiguration

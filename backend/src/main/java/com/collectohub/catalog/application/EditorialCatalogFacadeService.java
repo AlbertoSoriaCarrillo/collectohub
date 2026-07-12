@@ -96,7 +96,7 @@ public class EditorialCatalogFacadeService {
         EditorialCatalogResultType parsedResultType = EditorialCatalogSupport.parseOptionalEnum(
                 resultType, EditorialCatalogResultType.class, "resultType");
         if (parsedResultType == EditorialCatalogResultType.MASTER_PRODUCT_LINK) {
-            EditorialCatalogSupport.ensureAdmin(user);
+            EditorialCatalogSupport.ensureEditorialAdmin(user);
         }
 
         PageRequest pageRequest = EditorialCatalogSupport.pageRequest(
@@ -168,7 +168,7 @@ public class EditorialCatalogFacadeService {
 
     @Transactional(readOnly = true)
     public EditorialLegacyBridgeResponse getLegacyLink(Long masterProductId, AuthenticatedUser user) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         MasterProductCatalogLink link = linkRepository
                 .findByMasterProduct_IdAndLinkStatusAndDeletedAtIsNull(
                         masterProductId, MasterProductCatalogLinkStatus.VERIFIED)

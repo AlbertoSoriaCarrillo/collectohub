@@ -76,8 +76,8 @@ EPIC 43A cierra el diseno de evolucion: `EDITORIAL_ADMIN` sera el rol
 operativo del catalogo editorial y `ADMIN` conservara acceso como superusuario.
 No se reutilizaran `CONTENT_CREATOR`, `SHOP_OWNER` ni `USER`; la separacion
 EDITORIAL_EDITOR/EDITORIAL_REVIEWER queda pospuesta. Esta decision aun no se ha
-implementado: la siguiente tarea es EPIC 43B, seguida de EPIC 43C para guard y
-navegacion editorial.
+implementado: EPIC 43B ya incorpora el rol y autorizacion backend. La siguiente
+tarea es EPIC 43C para guard y navegacion editorial.
 
 ## 6. Pantallas admin necesarias
 

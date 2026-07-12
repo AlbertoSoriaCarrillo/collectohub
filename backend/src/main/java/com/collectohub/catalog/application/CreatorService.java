@@ -37,13 +37,13 @@ public class CreatorService {
     @Transactional(readOnly = true)
     public CreatorResponse get(Long id, AuthenticatedUser user) {
         Creator creator = find(id);
-        if (!creator.isPubliclyVisible() && !EditorialCatalogSupport.isAdmin(user)) throw new CreatorNotFoundException(id);
+        if (!creator.isPubliclyVisible() && !EditorialCatalogSupport.isEditorialAdmin(user)) throw new CreatorNotFoundException(id);
         return CreatorResponse.from(creator);
     }
 
     @Transactional
     public CreatorResponse create(AuthenticatedUser user, CreateCreatorRequest request) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         Values values = values(request.name(), request.slug(), request.sortName(), request.biography(),
                 request.country(), request.birthYear(), request.deathYear(),
                 request.recordStatus() == null ? CatalogRecordStatus.DRAFT : request.recordStatus());
@@ -54,7 +54,7 @@ public class CreatorService {
 
     @Transactional
     public CreatorResponse update(Long id, AuthenticatedUser user, UpdateCreatorRequest request) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         Creator creator = find(id);
         Values values = values(request.name(), request.slug(), request.sortName(), request.biography(),
                 request.country(), request.birthYear(), request.deathYear(),
@@ -67,7 +67,7 @@ public class CreatorService {
 
     @Transactional
     public void delete(Long id, AuthenticatedUser user) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         find(id).softDelete(user.id());
     }
 

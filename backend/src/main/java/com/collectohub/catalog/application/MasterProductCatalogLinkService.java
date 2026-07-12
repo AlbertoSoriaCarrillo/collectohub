@@ -59,7 +59,7 @@ public class MasterProductCatalogLinkService {
             int size,
             String sort
     ) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         MasterProductCatalogLinkStatus parsedStatus = EditorialCatalogSupport.parseOptionalEnum(
                 status, MasterProductCatalogLinkStatus.class, "linkStatus");
         MasterProductCatalogLinkSource parsedSource = EditorialCatalogSupport.parseOptionalEnum(
@@ -96,7 +96,7 @@ public class MasterProductCatalogLinkService {
 
     @Transactional(readOnly = true)
     public MasterProductCatalogLinkResponse get(Long id, AuthenticatedUser user) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         return MasterProductCatalogLinkResponse.from(findLink(id));
     }
 
@@ -105,7 +105,7 @@ public class MasterProductCatalogLinkService {
             AuthenticatedUser user,
             CreateMasterProductCatalogLinkRequest request
     ) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         MasterProduct masterProduct = findMasterProduct(request.masterProductId());
         CatalogItem item = findItem(request.catalogItemId());
         CatalogItemEdition edition = findEdition(request.catalogItemEditionId());
@@ -125,7 +125,7 @@ public class MasterProductCatalogLinkService {
             AuthenticatedUser user,
             UpdateMasterProductCatalogLinkRequest request
     ) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         MasterProductCatalogLink link = findLink(id);
         CatalogItem item = findItem(request.catalogItemId());
         CatalogItemEdition edition = findEdition(request.catalogItemEditionId());
@@ -140,7 +140,7 @@ public class MasterProductCatalogLinkService {
 
     @Transactional
     public MasterProductCatalogLinkResponse verify(Long id, AuthenticatedUser user) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         MasterProductCatalogLink link = findLink(id);
         ensureVerifiedAvailable(link.getMasterProduct().getId(), id);
         link.changeStatus(MasterProductCatalogLinkStatus.VERIFIED, user.id());
@@ -149,7 +149,7 @@ public class MasterProductCatalogLinkService {
 
     @Transactional
     public MasterProductCatalogLinkResponse reject(Long id, AuthenticatedUser user) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         MasterProductCatalogLink link = findLink(id);
         link.changeStatus(MasterProductCatalogLinkStatus.REJECTED, user.id());
         return MasterProductCatalogLinkResponse.from(link);

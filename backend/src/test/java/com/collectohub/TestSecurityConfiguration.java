@@ -21,6 +21,9 @@ public class TestSecurityConfiguration {
     @Bean
     UserDetailsService testUserDetailsService() {
         return username -> {
+            if (username.startsWith("editorial-admin")) {
+                return AuthenticatedUser.from(testUser(username, "EDITORIAL_ADMIN"));
+            }
             if (username.startsWith("shop-owner")) {
                 return AuthenticatedUser.from(testUser(username, "USER", "SHOP_OWNER"));
             }

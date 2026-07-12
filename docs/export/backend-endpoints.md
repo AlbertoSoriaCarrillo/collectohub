@@ -58,60 +58,60 @@ for validation, 403 for insufficient authority, 404 for missing resources and
 
 Status: `MVP2_FOUNDATION`. All list operations return a stable `PageResponse`
 and expose only `ACTIVE`, non-deleted records by default. An authenticated
-`ADMIN` may filter by `recordStatus` and read non-public detail. Writes require
-`ADMIN`; `SHOP_OWNER` retains only its legacy `/api/master-products` permission.
+`ADMIN or EDITORIAL_ADMIN` may filter by `recordStatus` and read non-public detail. Writes require
+`ADMIN or EDITORIAL_ADMIN`; `SHOP_OWNER` retains only its legacy `/api/master-products` permission.
 
 | Method and path | Controller | Access/permission | Request or query | Response |
 | --- | --- | --- | --- | --- |
-| `GET /api/catalog/publishers` | `PublisherController` | Public ACTIVE; ADMIN status filter | `q`, `recordStatus`, `page`, `size`, `sort` | `PageResponse<PublisherResponse>` |
-| `GET /api/catalog/publishers/{id}` | `PublisherController` | Public ACTIVE or ADMIN | Path `id` | `PublisherResponse` |
-| `POST /api/catalog/publishers` | `PublisherController` | `ADMIN` | `CreatePublisherRequest` | `PublisherResponse` |
-| `PUT /api/catalog/publishers/{id}` | `PublisherController` | `ADMIN` | `UpdatePublisherRequest` | `PublisherResponse` |
-| `GET /api/catalog/franchises` | `CatalogFranchiseController` | Public ACTIVE; ADMIN status filter | `q`, `recordStatus`, `page`, `size`, `sort` | `PageResponse<CatalogFranchiseResponse>` |
-| `GET /api/catalog/franchises/{id}` | `CatalogFranchiseController` | Public ACTIVE or ADMIN | Path `id` | `CatalogFranchiseResponse` |
-| `POST /api/catalog/franchises` | `CatalogFranchiseController` | `ADMIN` | `CreateCatalogFranchiseRequest` | `CatalogFranchiseResponse` |
-| `PUT /api/catalog/franchises/{id}` | `CatalogFranchiseController` | `ADMIN` | `UpdateCatalogFranchiseRequest` | `CatalogFranchiseResponse` |
-| `GET /api/catalog/series` | `CatalogSeriesController` | Public ACTIVE; ADMIN status filter | `q`, `franchiseId`, `type`, `publicationStatus`, `publisherId`, `language`, `country`, `recordStatus`, pagination | `PageResponse<CatalogSeriesResponse>` |
-| `GET /api/catalog/series/{id}` | `CatalogSeriesController` | Public ACTIVE or ADMIN | Path `id` | `CatalogSeriesResponse` |
-| `POST /api/catalog/series` | `CatalogSeriesController` | `ADMIN` | `CreateCatalogSeriesRequest` | `CatalogSeriesResponse` |
-| `PUT /api/catalog/series/{id}` | `CatalogSeriesController` | `ADMIN` | `UpdateCatalogSeriesRequest` | `CatalogSeriesResponse` |
-| `GET /api/catalog/series/{seriesId}/items` | `CatalogItemController` | Public ACTIVE chain; ADMIN status filter | Item filters and pagination | `PageResponse<CatalogItemResponse>` |
-| `GET /api/catalog/items/{id}` | `CatalogItemController` | Public ACTIVE chain or ADMIN | Path `id` | `CatalogItemResponse` |
-| `POST /api/catalog/series/{seriesId}/items` | `CatalogItemController` | `ADMIN` | `CreateCatalogItemRequest` | `CatalogItemResponse` |
-| `PUT /api/catalog/items/{id}` | `CatalogItemController` | `ADMIN` | `UpdateCatalogItemRequest` | `CatalogItemResponse` |
-| `GET /api/catalog/items/{itemId}/editions` | `CatalogItemEditionController` | Public ACTIVE chain; ADMIN status filter | Edition filters and pagination | `PageResponse<CatalogItemEditionResponse>` |
-| `GET /api/catalog/editions/{id}` | `CatalogItemEditionController` | Public ACTIVE chain or ADMIN | Path `id` | `CatalogItemEditionResponse` |
-| `POST /api/catalog/items/{itemId}/editions` | `CatalogItemEditionController` | `ADMIN` | `CreateCatalogItemEditionRequest` | `CatalogItemEditionResponse` |
-| `PUT /api/catalog/editions/{id}` | `CatalogItemEditionController` | `ADMIN` | `UpdateCatalogItemEditionRequest` | `CatalogItemEditionResponse` |
-| `GET /api/catalog/master-product-links` | `MasterProductCatalogLinkController` | `ADMIN` | Bridge filters and pagination | `PageResponse<MasterProductCatalogLinkResponse>` |
-| `GET /api/catalog/master-product-links/{id}` | `MasterProductCatalogLinkController` | `ADMIN` | Path `id` | `MasterProductCatalogLinkResponse` |
-| `POST /api/catalog/master-product-links` | `MasterProductCatalogLinkController` | `ADMIN` | `CreateMasterProductCatalogLinkRequest` | `MasterProductCatalogLinkResponse` |
-| `PUT /api/catalog/master-product-links/{id}` | `MasterProductCatalogLinkController` | `ADMIN` | `UpdateMasterProductCatalogLinkRequest` | `MasterProductCatalogLinkResponse` |
-| `PUT /api/catalog/master-product-links/{id}/verify` | `MasterProductCatalogLinkController` | `ADMIN` | Path `id` | `MasterProductCatalogLinkResponse` |
-| `PUT /api/catalog/master-product-links/{id}/reject` | `MasterProductCatalogLinkController` | `ADMIN` | Path `id` | `MasterProductCatalogLinkResponse` |
-| `POST /api/catalog/master-product-links/backfill` | `MasterProductCatalogLinkController` | `ADMIN` | None | `BackfillMasterProductCatalogLinksResponse` |
-| `GET /api/catalog/editorial/search` | `EditorialCatalogFacadeController` | Public ACTIVE; link results require `ADMIN` | Editorial filters and pagination | `PageResponse<EditorialCatalogSearchItemResponse>` |
+| `GET /api/catalog/publishers` | `PublisherController` | Public ACTIVE; ADMIN or EDITORIAL_ADMIN status filter | `q`, `recordStatus`, `page`, `size`, `sort` | `PageResponse<PublisherResponse>` |
+| `GET /api/catalog/publishers/{id}` | `PublisherController` | Public ACTIVE or ADMIN or EDITORIAL_ADMIN | Path `id` | `PublisherResponse` |
+| `POST /api/catalog/publishers` | `PublisherController` | `ADMIN or EDITORIAL_ADMIN` | `CreatePublisherRequest` | `PublisherResponse` |
+| `PUT /api/catalog/publishers/{id}` | `PublisherController` | `ADMIN or EDITORIAL_ADMIN` | `UpdatePublisherRequest` | `PublisherResponse` |
+| `GET /api/catalog/franchises` | `CatalogFranchiseController` | Public ACTIVE; ADMIN or EDITORIAL_ADMIN status filter | `q`, `recordStatus`, `page`, `size`, `sort` | `PageResponse<CatalogFranchiseResponse>` |
+| `GET /api/catalog/franchises/{id}` | `CatalogFranchiseController` | Public ACTIVE or ADMIN or EDITORIAL_ADMIN | Path `id` | `CatalogFranchiseResponse` |
+| `POST /api/catalog/franchises` | `CatalogFranchiseController` | `ADMIN or EDITORIAL_ADMIN` | `CreateCatalogFranchiseRequest` | `CatalogFranchiseResponse` |
+| `PUT /api/catalog/franchises/{id}` | `CatalogFranchiseController` | `ADMIN or EDITORIAL_ADMIN` | `UpdateCatalogFranchiseRequest` | `CatalogFranchiseResponse` |
+| `GET /api/catalog/series` | `CatalogSeriesController` | Public ACTIVE; ADMIN or EDITORIAL_ADMIN status filter | `q`, `franchiseId`, `type`, `publicationStatus`, `publisherId`, `language`, `country`, `recordStatus`, pagination | `PageResponse<CatalogSeriesResponse>` |
+| `GET /api/catalog/series/{id}` | `CatalogSeriesController` | Public ACTIVE or ADMIN or EDITORIAL_ADMIN | Path `id` | `CatalogSeriesResponse` |
+| `POST /api/catalog/series` | `CatalogSeriesController` | `ADMIN or EDITORIAL_ADMIN` | `CreateCatalogSeriesRequest` | `CatalogSeriesResponse` |
+| `PUT /api/catalog/series/{id}` | `CatalogSeriesController` | `ADMIN or EDITORIAL_ADMIN` | `UpdateCatalogSeriesRequest` | `CatalogSeriesResponse` |
+| `GET /api/catalog/series/{seriesId}/items` | `CatalogItemController` | Public ACTIVE chain; ADMIN or EDITORIAL_ADMIN status filter | Item filters and pagination | `PageResponse<CatalogItemResponse>` |
+| `GET /api/catalog/items/{id}` | `CatalogItemController` | Public ACTIVE chain or ADMIN or EDITORIAL_ADMIN | Path `id` | `CatalogItemResponse` |
+| `POST /api/catalog/series/{seriesId}/items` | `CatalogItemController` | `ADMIN or EDITORIAL_ADMIN` | `CreateCatalogItemRequest` | `CatalogItemResponse` |
+| `PUT /api/catalog/items/{id}` | `CatalogItemController` | `ADMIN or EDITORIAL_ADMIN` | `UpdateCatalogItemRequest` | `CatalogItemResponse` |
+| `GET /api/catalog/items/{itemId}/editions` | `CatalogItemEditionController` | Public ACTIVE chain; ADMIN or EDITORIAL_ADMIN status filter | Edition filters and pagination | `PageResponse<CatalogItemEditionResponse>` |
+| `GET /api/catalog/editions/{id}` | `CatalogItemEditionController` | Public ACTIVE chain or ADMIN or EDITORIAL_ADMIN | Path `id` | `CatalogItemEditionResponse` |
+| `POST /api/catalog/items/{itemId}/editions` | `CatalogItemEditionController` | `ADMIN or EDITORIAL_ADMIN` | `CreateCatalogItemEditionRequest` | `CatalogItemEditionResponse` |
+| `PUT /api/catalog/editions/{id}` | `CatalogItemEditionController` | `ADMIN or EDITORIAL_ADMIN` | `UpdateCatalogItemEditionRequest` | `CatalogItemEditionResponse` |
+| `GET /api/catalog/master-product-links` | `MasterProductCatalogLinkController` | `ADMIN or EDITORIAL_ADMIN` | Bridge filters and pagination | `PageResponse<MasterProductCatalogLinkResponse>` |
+| `GET /api/catalog/master-product-links/{id}` | `MasterProductCatalogLinkController` | `ADMIN or EDITORIAL_ADMIN` | Path `id` | `MasterProductCatalogLinkResponse` |
+| `POST /api/catalog/master-product-links` | `MasterProductCatalogLinkController` | `ADMIN or EDITORIAL_ADMIN` | `CreateMasterProductCatalogLinkRequest` | `MasterProductCatalogLinkResponse` |
+| `PUT /api/catalog/master-product-links/{id}` | `MasterProductCatalogLinkController` | `ADMIN or EDITORIAL_ADMIN` | `UpdateMasterProductCatalogLinkRequest` | `MasterProductCatalogLinkResponse` |
+| `PUT /api/catalog/master-product-links/{id}/verify` | `MasterProductCatalogLinkController` | `ADMIN or EDITORIAL_ADMIN` | Path `id` | `MasterProductCatalogLinkResponse` |
+| `PUT /api/catalog/master-product-links/{id}/reject` | `MasterProductCatalogLinkController` | `ADMIN or EDITORIAL_ADMIN` | Path `id` | `MasterProductCatalogLinkResponse` |
+| `POST /api/catalog/master-product-links/backfill` | `MasterProductCatalogLinkController` | `ADMIN or EDITORIAL_ADMIN` | None | `BackfillMasterProductCatalogLinksResponse` |
+| `GET /api/catalog/editorial/search` | `EditorialCatalogFacadeController` | Public ACTIVE; link results require `ADMIN or EDITORIAL_ADMIN` | Editorial filters and pagination | `PageResponse<EditorialCatalogSearchItemResponse>` |
 | `GET /api/catalog/editorial/series/{seriesId}/detail` | `EditorialCatalogFacadeController` | Public ACTIVE chain | Path `seriesId` | `EditorialCatalogSeriesDetailResponse` |
 | `GET /api/catalog/editorial/items/{itemId}/detail` | `EditorialCatalogFacadeController` | Public ACTIVE chain | Path `itemId` | `EditorialCatalogItemDetailResponse` with editions, creators and relationships |
 | `GET /api/catalog/editorial/editions/{editionId}/detail` | `EditorialCatalogFacadeController` | Public ACTIVE chain | Path `editionId` | `EditorialCatalogEditionDetailResponse` |
-| `GET /api/catalog/editorial/master-products/{masterProductId}/link` | `EditorialCatalogFacadeController` | `ADMIN` | Path `masterProductId` | `EditorialLegacyBridgeResponse` |
-| `GET /api/catalog/creators` | `CreatorController` | Public ACTIVE; ADMIN status filter | Creator filters and pagination | `PageResponse<CreatorResponse>` |
-| `GET /api/catalog/creators/{id}` | `CreatorController` | Public ACTIVE or ADMIN | Path `id`; optional `recordStatus` | `CreatorResponse` |
-| `POST /api/catalog/creators` | `CreatorController` | `ADMIN` | `CreateCreatorRequest` | `CreatorResponse` |
-| `PUT /api/catalog/creators/{id}` | `CreatorController` | `ADMIN` | `UpdateCreatorRequest` | `CreatorResponse` |
-| `DELETE /api/catalog/creators/{id}` | `CreatorController` | `ADMIN` | Path `id` | No content |
-| `GET /api/catalog/items/{itemId}/creators` | `CatalogItemCreatorController` | Public ACTIVE; ADMIN status filter | Path `itemId`; optional `recordStatus` | `List<CatalogItemCreatorResponse>` |
-| `POST /api/catalog/items/{itemId}/creators` | `CatalogItemCreatorController` | `ADMIN` | `CreateCatalogItemCreatorRequest` | `CatalogItemCreatorResponse` |
-| `PUT /api/catalog/items/{itemId}/creators/{creditId}` | `CatalogItemCreatorController` | `ADMIN` | `UpdateCatalogItemCreatorRequest` | `CatalogItemCreatorResponse` |
-| `DELETE /api/catalog/items/{itemId}/creators/{creditId}` | `CatalogItemCreatorController` | `ADMIN` | Path `itemId`, `creditId` | No content |
-| `GET /api/catalog/items/{itemId}/relationships` | `CatalogItemRelationshipController` | Public ACTIVE; ADMIN status filter | Path `itemId`; optional `recordStatus` | `List<CatalogItemRelationshipResponse>` |
-| `POST /api/catalog/items/{itemId}/relationships` | `CatalogItemRelationshipController` | `ADMIN` | `CreateCatalogItemRelationshipRequest` | `CatalogItemRelationshipResponse` |
-| `GET /api/catalog/items/{itemId}/relationships/{relationshipId}` | `CatalogItemRelationshipController` | Public ACTIVE; ADMIN status filter | Path `itemId`, `relationshipId`; optional `recordStatus` | `CatalogItemRelationshipResponse` |
-| `PUT /api/catalog/items/{itemId}/relationships/{relationshipId}` | `CatalogItemRelationshipController` | `ADMIN` | `UpdateCatalogItemRelationshipRequest` | `CatalogItemRelationshipResponse` |
-| `DELETE /api/catalog/items/{itemId}/relationships/{relationshipId}` | `CatalogItemRelationshipController` | `ADMIN` | Path `itemId`, `relationshipId` | No content |
+| `GET /api/catalog/editorial/master-products/{masterProductId}/link` | `EditorialCatalogFacadeController` | `ADMIN or EDITORIAL_ADMIN` | Path `masterProductId` | `EditorialLegacyBridgeResponse` |
+| `GET /api/catalog/creators` | `CreatorController` | Public ACTIVE; ADMIN or EDITORIAL_ADMIN status filter | Creator filters and pagination | `PageResponse<CreatorResponse>` |
+| `GET /api/catalog/creators/{id}` | `CreatorController` | Public ACTIVE or ADMIN or EDITORIAL_ADMIN | Path `id`; optional `recordStatus` | `CreatorResponse` |
+| `POST /api/catalog/creators` | `CreatorController` | `ADMIN or EDITORIAL_ADMIN` | `CreateCreatorRequest` | `CreatorResponse` |
+| `PUT /api/catalog/creators/{id}` | `CreatorController` | `ADMIN or EDITORIAL_ADMIN` | `UpdateCreatorRequest` | `CreatorResponse` |
+| `DELETE /api/catalog/creators/{id}` | `CreatorController` | `ADMIN or EDITORIAL_ADMIN` | Path `id` | No content |
+| `GET /api/catalog/items/{itemId}/creators` | `CatalogItemCreatorController` | Public ACTIVE; ADMIN or EDITORIAL_ADMIN status filter | Path `itemId`; optional `recordStatus` | `List<CatalogItemCreatorResponse>` |
+| `POST /api/catalog/items/{itemId}/creators` | `CatalogItemCreatorController` | `ADMIN or EDITORIAL_ADMIN` | `CreateCatalogItemCreatorRequest` | `CatalogItemCreatorResponse` |
+| `PUT /api/catalog/items/{itemId}/creators/{creditId}` | `CatalogItemCreatorController` | `ADMIN or EDITORIAL_ADMIN` | `UpdateCatalogItemCreatorRequest` | `CatalogItemCreatorResponse` |
+| `DELETE /api/catalog/items/{itemId}/creators/{creditId}` | `CatalogItemCreatorController` | `ADMIN or EDITORIAL_ADMIN` | Path `itemId`, `creditId` | No content |
+| `GET /api/catalog/items/{itemId}/relationships` | `CatalogItemRelationshipController` | Public ACTIVE; ADMIN or EDITORIAL_ADMIN status filter | Path `itemId`; optional `recordStatus` | `List<CatalogItemRelationshipResponse>` |
+| `POST /api/catalog/items/{itemId}/relationships` | `CatalogItemRelationshipController` | `ADMIN or EDITORIAL_ADMIN` | `CreateCatalogItemRelationshipRequest` | `CatalogItemRelationshipResponse` |
+| `GET /api/catalog/items/{itemId}/relationships/{relationshipId}` | `CatalogItemRelationshipController` | Public ACTIVE; ADMIN or EDITORIAL_ADMIN status filter | Path `itemId`, `relationshipId`; optional `recordStatus` | `CatalogItemRelationshipResponse` |
+| `PUT /api/catalog/items/{itemId}/relationships/{relationshipId}` | `CatalogItemRelationshipController` | `ADMIN or EDITORIAL_ADMIN` | `UpdateCatalogItemRelationshipRequest` | `CatalogItemRelationshipResponse` |
+| `DELETE /api/catalog/items/{itemId}/relationships/{relationshipId}` | `CatalogItemRelationshipController` | `ADMIN or EDITORIAL_ADMIN` | Path `itemId`, `relationshipId` | No content |
 
 Writes may return 400 for validation/lifecycle rules, 401 without a token, 403
-without `ADMIN`, 404 for missing dependencies, and 409 for duplicate identity.
+without `ADMIN or EDITORIAL_ADMIN`, 404 for missing dependencies, and 409 for duplicate identity.
 Public creator and relationship reads expose only ACTIVE, non-deleted records
 with public item chains. The editorial item detail aggregates active editions,
 public creator credits and public relationships without adding separate

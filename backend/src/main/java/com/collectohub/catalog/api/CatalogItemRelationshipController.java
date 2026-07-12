@@ -25,7 +25,7 @@ public class CatalogItemRelationshipController {
         return service.listRelationships(itemId, user, recordStatus);
     }
 
-    @PostMapping @ResponseStatus(HttpStatus.CREATED) @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping @ResponseStatus(HttpStatus.CREATED) @EditorialAdminRequired
     public CatalogItemRelationshipResponse create(@PathVariable Long itemId,
             @AuthenticationPrincipal AuthenticatedUser user,
             @Valid @RequestBody CreateCatalogItemRelationshipRequest request) {
@@ -39,7 +39,7 @@ public class CatalogItemRelationshipController {
         return service.get(itemId, relationshipId, user, recordStatus);
     }
 
-    @PutMapping("/{relationshipId}") @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/{relationshipId}") @EditorialAdminRequired
     public CatalogItemRelationshipResponse update(@PathVariable Long itemId, @PathVariable Long relationshipId,
             @AuthenticationPrincipal AuthenticatedUser user,
             @Valid @RequestBody UpdateCatalogItemRelationshipRequest request) {
@@ -47,7 +47,7 @@ public class CatalogItemRelationshipController {
     }
 
     @DeleteMapping("/{relationshipId}") @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @EditorialAdminRequired
     public void delete(@PathVariable Long itemId, @PathVariable Long relationshipId,
             @AuthenticationPrincipal AuthenticatedUser user) {
         service.delete(itemId, relationshipId, user);

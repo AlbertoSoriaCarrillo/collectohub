@@ -523,6 +523,13 @@ El catalogo editorial usara inicialmente `EDITORIAL_ADMIN` como rol operativo.
 `EDITORIAL_EDITOR`/`EDITORIAL_REVIEWER` se pospone hasta que exista equipo
 editorial real y un flujo formal de aprobacion.
 
+## 2026-07-12 - Implementacion backend de EDITORIAL_ADMIN
+
+`EDITORIAL_ADMIN` se incorpora mediante una migracion aditiva sin asignaciones
+automaticas. La autorizacion editorial acepta `ADMIN` o `EDITORIAL_ADMIN` en
+una anotacion y helper centralizados; los permisos globales y legacy de tienda
+no cambian. La interfaz, guard y navegacion quedan para EPIC 43C.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

@@ -28,3 +28,5 @@ databaseChangeLog:
       file: db/changelog/changes/010-create-catalog-creators.sql
   - include:
       file: db/changelog/changes/011-create-catalog-item-relationships.sql
+  - include:
+      file: db/changelog/changes/012-add-editorial-admin-role.sql

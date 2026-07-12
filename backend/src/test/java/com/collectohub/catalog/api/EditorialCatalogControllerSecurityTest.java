@@ -127,6 +127,17 @@ class EditorialCatalogControllerSecurityTest {
     }
 
     @Test
+    void editorialAdminCreatesPublisher() throws Exception {
+        when(publisherService.create(any(), any())).thenReturn(publisherResponse());
+
+        mockMvc.perform(post("/api/catalog/publishers")
+                        .header("Authorization", "Bearer " + editorialAdminToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(publisherRequest()))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
     void regularUserCannotCreatePublisher() throws Exception {
         mockMvc.perform(post("/api/catalog/publishers")
                         .header("Authorization", "Bearer " + userToken())
@@ -332,6 +343,12 @@ class EditorialCatalogControllerSecurityTest {
 
     private String userToken() {
         return jwtService.generateAccessToken(TestSecurityConfiguration.testUser("alice@example.com", "USER"));
+    }
+
+    private String editorialAdminToken() {
+        return jwtService.generateAccessToken(TestSecurityConfiguration.testUser(
+                "editorial-admin@example.com", "EDITORIAL_ADMIN"
+        ));
     }
 
     private String shopOwnerToken() {

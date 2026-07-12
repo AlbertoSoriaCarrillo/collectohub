@@ -96,7 +96,7 @@ public class CatalogItemService {
     @Transactional(readOnly = true)
     public CatalogItemResponse get(Long id, AuthenticatedUser user) {
         CatalogItem item = findItem(id);
-        if (!item.isPubliclyVisible() && !EditorialCatalogSupport.isAdmin(user)) {
+        if (!item.isPubliclyVisible() && !EditorialCatalogSupport.isEditorialAdmin(user)) {
             throw new CatalogItemNotFoundException(id);
         }
         return CatalogItemResponse.from(item);
@@ -108,7 +108,7 @@ public class CatalogItemService {
             AuthenticatedUser user,
             CreateCatalogItemRequest request
     ) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         CatalogSeries series = findSeries(seriesId);
         String title = EditorialCatalogSupport.normalizeRequired(request.title());
         String sequenceLabel = EditorialCatalogSupport.normalizeNullable(request.sequenceLabel());
@@ -134,7 +134,7 @@ public class CatalogItemService {
 
     @Transactional
     public CatalogItemResponse update(Long id, AuthenticatedUser user, UpdateCatalogItemRequest request) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         CatalogItem item = findItem(id);
         CatalogSeries series = findSeries(request.seriesId());
         String title = EditorialCatalogSupport.normalizeRequired(request.title());
@@ -172,7 +172,7 @@ public class CatalogItemService {
 
     private CatalogSeries findSeriesForRead(Long id, AuthenticatedUser user) {
         CatalogSeries series = findSeries(id);
-        if (!series.isPubliclyVisible() && !EditorialCatalogSupport.isAdmin(user)) {
+        if (!series.isPubliclyVisible() && !EditorialCatalogSupport.isEditorialAdmin(user)) {
             throw new CatalogSeriesNotFoundException(id);
         }
         return series;

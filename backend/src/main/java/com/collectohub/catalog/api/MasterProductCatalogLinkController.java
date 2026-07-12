@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/catalog/master-product-links")
-@PreAuthorize("hasAuthority('ADMIN')")
+@EditorialAdminRequired
 @Tag(name = "Editorial catalog bridge", description = "ADMIN-only reconciliation of legacy and editorial catalog identities")
 public class MasterProductCatalogLinkController {
 

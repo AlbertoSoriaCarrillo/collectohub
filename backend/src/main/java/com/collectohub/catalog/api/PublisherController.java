@@ -68,7 +68,7 @@ public class PublisherController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @EditorialAdminRequired
     @Operation(summary = "Create an editorial publisher", description = "Requires ADMIN authority")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Publisher created"),
@@ -85,7 +85,7 @@ public class PublisherController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @EditorialAdminRequired
     @Operation(summary = "Update an editorial publisher", description = "Requires ADMIN authority")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Publisher updated"),

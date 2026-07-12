@@ -98,6 +98,25 @@ class EditorialCatalogItemControllerSecurityTest {
     }
 
     @Test
+    void editorialAdminListsDraftItemsAndCreatesItem() throws Exception {
+        when(itemService.search(
+                eq(30L), any(), isNull(), isNull(), isNull(), isNull(), eq("DRAFT"),
+                eq(0), eq(20), eq("sortOrder,asc")))
+                .thenReturn(page(itemResponse("DRAFT")));
+        when(itemService.create(eq(30L), any(), any())).thenReturn(itemResponse("ACTIVE"));
+
+        mockMvc.perform(get("/api/catalog/series/30/items")
+                        .header("Authorization", "Bearer " + editorialAdminToken())
+                        .param("recordStatus", "DRAFT"))
+                .andExpect(status().isOk());
+        mockMvc.perform(post("/api/catalog/series/30/items")
+                        .header("Authorization", "Bearer " + editorialAdminToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(itemRequest(1997, "1.000")))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
     void publicGetsActiveItem() throws Exception {
         when(itemService.get(40L, null)).thenReturn(itemResponse("ACTIVE"));
 
@@ -289,6 +308,12 @@ class EditorialCatalogItemControllerSecurityTest {
 
     private String userToken() {
         return jwtService.generateAccessToken(TestSecurityConfiguration.testUser("user@example.com", "USER"));
+    }
+
+    private String editorialAdminToken() {
+        return jwtService.generateAccessToken(TestSecurityConfiguration.testUser(
+                "editorial-admin@example.com", "EDITORIAL_ADMIN"
+        ));
     }
 
     private String itemRequest(int year, String sortOrder) {

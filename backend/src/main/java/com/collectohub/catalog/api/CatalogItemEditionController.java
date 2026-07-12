@@ -79,7 +79,7 @@ public class CatalogItemEditionController {
 
     @PostMapping("/items/{itemId}/editions")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @EditorialAdminRequired
     @Operation(summary = "Create a catalog item edition", description = "Requires ADMIN authority")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Catalog edition created"),
@@ -98,7 +98,7 @@ public class CatalogItemEditionController {
     }
 
     @PutMapping("/editions/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @EditorialAdminRequired
     @Operation(summary = "Update a catalog item edition", description = "Requires ADMIN authority")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Catalog edition updated"),

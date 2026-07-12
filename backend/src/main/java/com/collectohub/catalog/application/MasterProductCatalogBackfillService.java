@@ -42,7 +42,7 @@ public class MasterProductCatalogBackfillService {
 
     @Transactional
     public BackfillMasterProductCatalogLinksResponse run(AuthenticatedUser user) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         List<MasterProduct> products = masterProductRepository.findAllByDeletedAtIsNull();
         int proposed = 0;
         int skipped = 0;

@@ -40,12 +40,14 @@ class PublisherServiceTest {
 
     private PublisherService publisherService;
     private AuthenticatedUser admin;
+    private AuthenticatedUser editorialAdmin;
     private AuthenticatedUser regularUser;
 
     @BeforeEach
     void setUp() {
         publisherService = new PublisherService(publisherRepository, catalogSeriesRepository, editionRepository);
         admin = authenticatedUser(1L, "admin@example.com", "ADMIN");
+        editorialAdmin = authenticatedUser(3L, "editorial-admin@example.com", "EDITORIAL_ADMIN");
         regularUser = authenticatedUser(2L, "user@example.com", "USER");
     }
 
@@ -72,6 +74,20 @@ class PublisherServiceTest {
                 .thenReturn(Optional.of(publisher(10L, CatalogRecordStatus.DRAFT)));
 
         assertThat(publisherService.get(10L, admin).recordStatus()).isEqualTo("DRAFT");
+    }
+
+    @Test
+    void editorialAdminCanReadDraftAndCreatePublisher() {
+        when(publisherRepository.findByIdAndDeletedAtIsNull(10L))
+                .thenReturn(Optional.of(publisher(10L, CatalogRecordStatus.DRAFT)));
+        when(publisherRepository.save(any(Publisher.class)))
+                .thenAnswer(invocation -> withId(invocation.getArgument(0), 11L));
+
+        assertThat(publisherService.get(10L, editorialAdmin).recordStatus()).isEqualTo("DRAFT");
+        assertThat(publisherService.create(
+                editorialAdmin,
+                new CreatePublisherRequest("Editorial", "ES", CatalogRecordStatus.ACTIVE)
+        ).id()).isEqualTo(11L);
     }
 
     @Test

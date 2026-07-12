@@ -69,7 +69,7 @@ public class CatalogFranchiseService {
     @Transactional(readOnly = true)
     public CatalogFranchiseResponse get(Long id, AuthenticatedUser user) {
         CatalogFranchise franchise = findFranchise(id);
-        if (!franchise.isPubliclyVisible() && !EditorialCatalogSupport.isAdmin(user)) {
+        if (!franchise.isPubliclyVisible() && !EditorialCatalogSupport.isEditorialAdmin(user)) {
             throw new CatalogFranchiseNotFoundException(id);
         }
         return CatalogFranchiseResponse.from(franchise);
@@ -77,7 +77,7 @@ public class CatalogFranchiseService {
 
     @Transactional
     public CatalogFranchiseResponse create(AuthenticatedUser user, CreateCatalogFranchiseRequest request) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         String name = EditorialCatalogSupport.normalizeRequired(request.name());
         String slug = EditorialCatalogSupport.normalizeSlug(request.slug());
         ensureUnique(name, slug, null);
@@ -98,7 +98,7 @@ public class CatalogFranchiseService {
             AuthenticatedUser user,
             UpdateCatalogFranchiseRequest request
     ) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         CatalogFranchise franchise = findFranchise(id);
         String name = EditorialCatalogSupport.normalizeRequired(request.name());
         String slug = EditorialCatalogSupport.normalizeSlug(request.slug());

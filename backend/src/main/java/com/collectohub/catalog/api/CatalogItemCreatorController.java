@@ -19,17 +19,17 @@ public class CatalogItemCreatorController {
     @GetMapping public List<CatalogItemCreatorResponse> list(@PathVariable Long itemId) {
         return service.listPublic(itemId);
     }
-    @PostMapping @ResponseStatus(HttpStatus.CREATED) @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping @ResponseStatus(HttpStatus.CREATED) @EditorialAdminRequired
     public CatalogItemCreatorResponse create(@PathVariable Long itemId,
             @AuthenticationPrincipal AuthenticatedUser user,
             @Valid @RequestBody CreateCatalogItemCreatorRequest request) { return service.create(itemId, user, request); }
-    @PutMapping("/{creditId}") @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/{creditId}") @EditorialAdminRequired
     public CatalogItemCreatorResponse update(@PathVariable Long itemId, @PathVariable Long creditId,
             @AuthenticationPrincipal AuthenticatedUser user,
             @Valid @RequestBody UpdateCatalogItemCreatorRequest request) {
         return service.update(itemId, creditId, user, request);
     }
-    @DeleteMapping("/{creditId}") @ResponseStatus(HttpStatus.NO_CONTENT) @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("/{creditId}") @ResponseStatus(HttpStatus.NO_CONTENT) @EditorialAdminRequired
     public void delete(@PathVariable Long itemId, @PathVariable Long creditId,
             @AuthenticationPrincipal AuthenticatedUser user) { service.delete(itemId, creditId, user); }
 }

@@ -14,6 +14,22 @@
   ni MVP4. Siguiente tarea: EPIC 43B - Backend role EDITORIAL_ADMIN y
   autorizacion editorial centralizada.
 
+## 2026-07-12 - EPIC 43B - Backend role EDITORIAL_ADMIN y autorizacion editorial centralizada
+
+- Creada la migracion Liquibase 012, que inserta `EDITORIAL_ADMIN` sin asignar
+  usuarios y con rollback condicionado a no tener asignaciones.
+- Centralizada la autorizacion editorial en `EditorialCatalogSupport` y
+  `EditorialAdminRequired`; controladores, servicios y lectura DRAFT/ARCHIVED
+  aceptan `ADMIN` o `EDITORIAL_ADMIN`.
+- Anadidas pruebas de rol, controlador, servicio y changelog; JWT mantiene los
+  codigos de rol como authorities sin prefijo y no recibe claims nuevos.
+- Ejecutado `backend && .\\mvnw.cmd clean verify`: BUILD SUCCESS, 335 tests,
+  0 fallos, 0 errores y 0 omitidos; la prueba PostgreSQL/Testcontainers no se
+  omitio.
+- Sin frontend, guards, navegacion, asignacion automatica, endpoints nuevos,
+  E2E, Playwright ni MVP4. Siguiente tarea: EPIC 43C - Guard y navegacion
+  frontend para EDITORIAL_ADMIN.
+
 ## 2026-06-16
 
 Repositorio inicializado con documentación base.

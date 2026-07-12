@@ -62,7 +62,7 @@ public class PublisherService {
     @Transactional(readOnly = true)
     public PublisherResponse get(Long id, AuthenticatedUser user) {
         Publisher publisher = findPublisher(id);
-        if (!publisher.isPubliclyVisible() && !EditorialCatalogSupport.isAdmin(user)) {
+        if (!publisher.isPubliclyVisible() && !EditorialCatalogSupport.isEditorialAdmin(user)) {
             throw new PublisherNotFoundException(id);
         }
         return PublisherResponse.from(publisher);
@@ -70,7 +70,7 @@ public class PublisherService {
 
     @Transactional
     public PublisherResponse create(AuthenticatedUser user, CreatePublisherRequest request) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         String name = EditorialCatalogSupport.normalizeRequired(request.name());
         ensureNameAvailable(name, null);
 
@@ -85,7 +85,7 @@ public class PublisherService {
 
     @Transactional
     public PublisherResponse update(Long id, AuthenticatedUser user, UpdatePublisherRequest request) {
-        EditorialCatalogSupport.ensureAdmin(user);
+        EditorialCatalogSupport.ensureEditorialAdmin(user);
         Publisher publisher = findPublisher(id);
         String name = EditorialCatalogSupport.normalizeRequired(request.name());
         ensureNameAvailable(name, id);
