@@ -58,9 +58,8 @@ de calidad: siguen pendientes reglas complejas, datos reales y E2E futuro.
 
 ## Decision recomendada
 
-EPIC 43A ha cerrado el diseno de roles editoriales separados de `ADMIN`; no
-inicia MVP4 ni modifica seguridad. Siguiente EPIC: **EPIC 43B - Backend role
-EDITORIAL_ADMIN y autorizacion editorial centralizada**, y **EPIC 43C - Guard y
-navegacion frontend**, y **EPIC 43D - Provisionamiento controlado**, quedan
-completadas. La siguiente tarea es **EPIC 44A - Diseno y auditoria de MVP4
-Colecciones finales de usuario**.
+EPIC 43A cerro el diseno de roles editoriales separados de `ADMIN`; EPIC 43B,
+43C y 43D completaron autorizacion y provisionamiento controlado. EPIC 44A
+queda completada exclusivamente como diseno y auditoria de MVP4. La siguiente
+tarea es **EPIC 44B - Contrato backend de collection items y compatibilidad
+editorial**.

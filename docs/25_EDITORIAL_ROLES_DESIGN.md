@@ -183,7 +183,9 @@ No se eliminara ni degradara el rol `ADMIN`.
    `editorialAdminGuard`, 11 rutas y navegacion para ambos roles.
 3. EPIC 43D - Provisionamiento controlado. Completada el 2026-07-12 mediante
    scripts `psql` idempotentes; no existe autoasignacion ni interfaz publica.
-4. EPIC futura separada - gestion visual global de roles, solo si es necesaria.
+4. EPIC 44A - Diseno de MVP4 Colecciones finales. Completada como auditoria;
+   no modifica el modelo de roles ni implementa MVP4.
+5. EPIC futura separada - gestion visual global de roles, solo si es necesaria.
 
 MVP3 continua abierto. Esta decision no inicia MVP4 ni introduce funcionalidades
 sociales, marketplace, pagos o permisos colaborativos.

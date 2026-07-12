@@ -304,15 +304,13 @@ formatos Markdown, Mermaid y CSV descargables.
   su visualizacion en el detalle editorial.
 - MVP 2 queda recomendado como `MVP2_CLOSED_WITH_LIMITATIONS`; auditoria en
   `docs/20_MVP2_CLOSURE_REVIEW.md`.
-- El siguiente paso recomendado es EPIC 39: cierre formal MVP2 y preparacion de
-  MVP3 Admin Editorial y carga real de datos.
-- MVP3 queda planificado en `docs/21_MVP3_ADMIN_EDITORIAL_PLAN.md`; la primera
-  tanda administrativa EPIC 40A-40G queda implementada y validada
-  parcialmente.
-- El siguiente paso recomendado es EPIC 41A: auditoria UX/Admin editorial y
-  bugs de usabilidad, antes de ampliar el producto.
-- Social basico pasa a MVP 6; antes quedan MVP3 Admin Editorial, MVP4
-  colecciones finales y MVP5 tiendas profesionales/reservas.
+- MVP3 Admin Editorial ha avanzado hasta EPIC 43D, incluyendo autorizacion
+  editorial separada y provisionamiento operativo controlado.
+- EPIC 44A ha cerrado el diseno de MVP4 Colecciones finales de usuario; la
+  siguiente tarea es EPIC 44B - Contrato backend de collection items y
+  compatibilidad editorial.
+- Social basico pasa a MVP 6; MVP4 sigue solo disenado y MVP5 mantiene tiendas
+  profesionales/reservas como fase posterior.
 - Validar despues marketplace, pagos, producto comercial, movil y herramientas
   avanzadas para creadores en fases separadas.
 - Ejecutar E2E en CI con un job separado y estable.

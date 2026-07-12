@@ -93,6 +93,10 @@ implementar todavia el admin funcional. Plan de entrada:
 
 ## MVP 4 - Colecciones finales de usuario
 
+EPIC 44A completa el diseno y auditoria inicial. La primera entrega funcional
+planificada es EPIC 44B - Contrato backend de collection items y compatibilidad
+editorial.
+
 **Objetivo:** completar la experiencia coleccionista sobre el catalogo editorial
 como fuente principal.
 

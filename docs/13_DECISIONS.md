@@ -543,6 +543,14 @@ parametrizadas, transaccion e idempotencia. No hay autoasignacion, endpoint ni
 interfaz publica; un cambio de rol exige renovar la sesion. La gestion visual
 global sigue siendo una futura EPIC opcional.
 
+## 2026-07-12 - Identidad canonica futura de collection items
+
+Para nuevas altas catalogadas, `catalogItemId` sera la identidad principal y
+`catalogItemEditionId` sera opcional y pertenecera al item. `masterProductId`
+se conserva temporalmente para compatibilidad legacy. Los datos personales no
+se mueven al catalogo editorial; los items manuales requeriran una via marcada
+separada, sin permitir modificar el catalogo global.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

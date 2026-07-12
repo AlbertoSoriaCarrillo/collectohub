@@ -1,5 +1,17 @@
 # Registro de avance
 
+## 2026-07-12 - EPIC 44A - Diseno y auditoria de MVP4 Colecciones finales de usuario
+
+- Auditados backend, frontend, modelo de datos, referencias editoriales y
+  compatibilidad legacy de colecciones.
+- Decidida identidad canonica `catalogItemId`, edition opcional y
+  `masterProductId` mantenido temporalmente para legacy.
+- Disenados items manuales, OWNED/WANTED/MISSING, privacidad, migraciones
+  futuras, plan 44B-44H y criterios de cierre en `docs/26_MVP4_COLLECTIONS_DESIGN.md`.
+- Sin codigo funcional, migraciones, endpoints, rutas, E2E ni Playwright.
+  Siguiente tarea: EPIC 44B - Contrato backend de collection items y
+  compatibilidad editorial.
+
 ## 2026-07-12 - EPIC 43A - Diseno de roles editoriales separados de ADMIN
 
 - Realizado inventario de autorizaciones: 28 operaciones HTTP editoriales,

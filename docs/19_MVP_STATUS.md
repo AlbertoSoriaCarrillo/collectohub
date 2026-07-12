@@ -31,7 +31,7 @@ EPIC 43B y 43C implementan `EDITORIAL_ADMIN` en backend y su acceso editorial
 en frontend, sin asignarlo automaticamente ni ampliar administracion global.
 EPIC 43D deja un provisionamiento controlado sin interfaz publica ni
 autoasignacion. MVP3 no queda cerrado como producto final; la siguiente tarea
-es EPIC 44A - Diseno y auditoria de MVP4 Colecciones finales de usuario.
+es EPIC 44B - Contrato backend de collection items y compatibilidad editorial.
 
 | Dominio | Estado actual |
 | --- | --- |
