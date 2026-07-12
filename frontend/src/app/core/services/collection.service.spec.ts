@@ -89,6 +89,25 @@ describe('CollectionService', () => {
     request.flush(collection);
   });
 
+  it('updates a collection with the exact PUT URL and body', () => {
+    const payload = { name: 'Updated', description: '', visibility: 'PUBLIC' as const, categoryCode: '' };
+
+    service.updateCollection(3, payload).subscribe();
+
+    const request = httpTestingController.expectOne('http://localhost:8080/api/collections/3');
+    expect(request.request.method).toBe('PUT');
+    expect(request.request.body).toEqual(payload);
+    request.flush({ ...collection, ...payload });
+  });
+
+  it('deletes a collection with the exact DELETE URL', () => {
+    service.deleteCollection(3).subscribe();
+
+    const request = httpTestingController.expectOne('http://localhost:8080/api/collections/3');
+    expect(request.request.method).toBe('DELETE');
+    request.flush(null);
+  });
+
   it('adds a collection item', () => {
     const payload = {
       masterProductId: 5,

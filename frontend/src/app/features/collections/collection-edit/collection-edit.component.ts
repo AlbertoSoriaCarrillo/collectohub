@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { AuthService } from '../../../core/auth/auth.service';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import {
@@ -40,6 +41,7 @@ export class CollectionEditComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly catalogService = inject(CatalogService);
   private readonly collectionService = inject(CollectionService);
+  private readonly authService = inject(AuthService);
   private readonly errorMessageService = inject(ErrorMessageService);
   private readonly languageService = inject(LanguageService);
 
@@ -48,10 +50,14 @@ export class CollectionEditComponent implements OnInit {
   readonly collection = signal<CollectionResponse | null>(null);
   readonly collectionId = signal<number | null>(null);
   readonly loading = signal(false);
+  readonly categoriesLoading = signal(false);
+  readonly ownerLoading = signal(false);
+  readonly isOwner = signal(false);
+  readonly accessDenied = signal(false);
   readonly saving = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly form = this.fb.group({
-    name: ['', [Validators.required, Validators.maxLength(160)]],
+    name: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(160)]],
     description: ['', [Validators.maxLength(4000)]],
     visibility: ['PRIVATE', [Validators.required]],
     categoryCode: ['']
@@ -75,6 +81,13 @@ export class CollectionEditComponent implements OnInit {
       this.errorMessage.set(this.languageService.translate('collections.collectionNotFound'));
       return;
     }
+    if (!this.isOwner()) {
+      this.accessDenied.set(true);
+      return;
+    }
+    if (this.saving()) {
+      return;
+    }
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -93,9 +106,10 @@ export class CollectionEditComponent implements OnInit {
   }
 
   private loadCategories(): void {
-    this.catalogService.getCategories().subscribe({
+    this.categoriesLoading.set(true);
+    this.catalogService.getCategories().pipe(finalize(() => this.categoriesLoading.set(false))).subscribe({
       next: (categories) => this.categories.set(categories),
-      error: (error) => this.errorMessage.set(this.errorMessageService.toMessage(error))
+      error: () => this.errorMessage.set(this.languageService.translate('collections.categoriesLoadError'))
     });
   }
 
@@ -113,6 +127,7 @@ export class CollectionEditComponent implements OnInit {
             visibility: collection.visibility,
             categoryCode: collection.categoryCode ?? ''
           });
+          this.resolveOwnership(collection);
         },
         error: (error) => this.errorMessage.set(this.errorMessageService.toMessage(error))
       });
@@ -122,14 +137,37 @@ export class CollectionEditComponent implements OnInit {
     const value = this.form.getRawValue();
     return {
       name: value.name.trim(),
-      description: this.optionalText(value.description),
+      description: this.trimOrEmpty(value.description),
       visibility: value.visibility as UpdateCollectionRequest['visibility'],
-      categoryCode: this.optionalText(value.categoryCode)
+      categoryCode: this.trimOrEmpty(value.categoryCode)
     };
   }
 
-  private optionalText(value: string): string | null {
-    const normalized = value.trim();
-    return normalized ? normalized : null;
+  private trimOrEmpty(value: string): string {
+    return value.trim();
+  }
+
+  private resolveOwnership(collection: CollectionResponse): void {
+    const currentUser = this.authService.currentUser();
+    if (currentUser) {
+      this.setOwnership(currentUser.id, collection);
+      return;
+    }
+    if (!this.authService.hasToken()) {
+      this.accessDenied.set(true);
+      return;
+    }
+
+    this.ownerLoading.set(true);
+    this.authService.getMe().pipe(finalize(() => this.ownerLoading.set(false))).subscribe({
+      next: (user) => this.setOwnership(user.id, collection),
+      error: () => this.accessDenied.set(true)
+    });
+  }
+
+  private setOwnership(userId: number, collection: CollectionResponse): void {
+    const owner = userId === collection.userId;
+    this.isOwner.set(owner);
+    this.accessDenied.set(!owner);
   }
 }

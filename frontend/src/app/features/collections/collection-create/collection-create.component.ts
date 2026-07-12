@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { LanguageService } from '../../../core/i18n/language.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import {
   COLLECTION_VISIBILITIES,
@@ -38,36 +39,39 @@ export class CollectionCreateComponent implements OnInit {
   private readonly catalogService = inject(CatalogService);
   private readonly collectionService = inject(CollectionService);
   private readonly errorMessageService = inject(ErrorMessageService);
+  private readonly languageService = inject(LanguageService);
 
   readonly visibilities = COLLECTION_VISIBILITIES;
   readonly categories = signal<ProductCategoryResponse[]>([]);
-  readonly loading = signal(false);
+  readonly categoriesLoading = signal(false);
+  readonly saving = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly form = this.fb.group({
-    name: ['', [Validators.required, Validators.maxLength(160)]],
+    name: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(160)]],
     description: ['', [Validators.maxLength(4000)]],
     visibility: ['PRIVATE', [Validators.required]],
     categoryCode: ['']
   });
 
   ngOnInit(): void {
-    this.catalogService.getCategories().subscribe({
+    this.categoriesLoading.set(true);
+    this.catalogService.getCategories().pipe(finalize(() => this.categoriesLoading.set(false))).subscribe({
       next: (categories) => this.categories.set(categories),
-      error: (error) => this.errorMessage.set(this.errorMessageService.toMessage(error))
+      error: () => this.errorMessage.set(this.languageService.translate('collections.categoriesLoadError'))
     });
   }
 
   submit(): void {
-    if (this.form.invalid) {
+    if (this.saving() || this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    this.loading.set(true);
+    this.saving.set(true);
     this.errorMessage.set(null);
     this.collectionService
       .createCollection(this.toRequest())
-      .pipe(finalize(() => this.loading.set(false)))
+      .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
         next: (collection) => void this.router.navigate(['/collections', collection.id]),
         error: (error) => this.errorMessage.set(this.errorMessageService.toMessage(error))

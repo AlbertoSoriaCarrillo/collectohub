@@ -201,29 +201,25 @@ Resumen relevante:
 - EPIC 44A: diseño y auditoría de MVP4.
 - EPIC 44B: contrato backend de `collection_items` y compatibilidad editorial.
 - EPIC 44B-FIX: cierre de tests de privacidad, `referenceKind`, documentación y exports.
+- EPIC 44C: flujo frontend de creación y edición de colecciones.
 
 ## 9. Estado actual verificado
 
 Último commit verificado:
 
 ```text
-05d7cd3a8bf476977c68c0acf2a15d372f7a2734
-test: close collection item backend contract
+859d0a5
+docs: add AI project handoff
 ```
 
-Este commit cierra los huecos de EPIC 44B mediante:
-
-- tests de privacidad owner/public;
-- tests de `referenceKind`;
-- comprobación de serialización HTTP;
-- actualización de `docs/16_MVP_API_ENDPOINTS.md`;
-- actualización de exports backend;
-- actualización de backlog, estado y trazabilidad.
+EPIC 44C está completada localmente con validaciones frontend, control de
+propiedad, vaciado explícito de campos opcionales, i18n y pruebas. El commit de
+cierre debe verificarse en GitHub antes de darla por publicada.
 
 Siguiente tarea esperada:
 
 ```text
-EPIC 44C - Flujo frontend de creación y edición de colecciones
+EPIC 44D - Alta desde catálogo y selección de edición
 ```
 
 La IA debe volver a comprobar GitHub antes de asumir que este estado sigue vigente.
@@ -255,6 +251,8 @@ Decisiones cerradas:
 15. `MISSING` será un resultado calculado futuro, no equivalente a `WANTED`.
 16. El estado persistido legacy `MISSING` se mantiene hasta una transición explícita.
 17. Durante MVP4, las copias físicas se representan inicialmente como entradas separadas; `quantity` sigue abierto.
+18. La edición frontend compara siempre `collection.userId` con el usuario autenticado; los roles administrativos no sustituyen la propiedad.
+19. Crear usa `null` para opcionales vacíos; editar usa `""` para solicitar el vaciado de `description` o `categoryCode`.
 
 ## 11. Clasificación actual de referencias de collection items
 
@@ -281,7 +279,7 @@ Orden previsto:
 1. EPIC 44A - Diseño y auditoría. Completada.
 2. EPIC 44B - Contrato backend y compatibilidad editorial. Completada.
 3. EPIC 44B-FIX - Tests y documentación. Completada.
-4. EPIC 44C - Flujo frontend de creación y edición de colecciones.
+4. EPIC 44C - Flujo frontend de creación y edición de colecciones. Completada.
 5. EPIC 44D - Alta desde catálogo y selección de edición.
 6. EPIC 44E - Items manuales y enlace posterior al catálogo.
 7. EPIC 44F - OWNED, WANTED y faltantes calculados.
@@ -442,7 +440,8 @@ Estado esperado al crear este documento:
 - EPIC 44A completada;
 - EPIC 44B completada;
 - EPIC 44B-FIX completada;
-- siguiente tarea esperada: EPIC 44C.
+- EPIC 44C completada localmente; pendiente de verificar su commit publicado;
+- siguiente tarea esperada: EPIC 44D.
 
 Empieza revisando GitHub.
 ```

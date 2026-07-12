@@ -18,14 +18,20 @@
         <mat-form-field appearance="outline">
           <mat-label>{{ 'common.name' | translate }}</mat-label>
           <input matInput formControlName="name" data-testid="create-collection-name" />
-          @if (form.controls.name.hasError('required') && form.controls.name.touched) {
+          @if ((form.controls.name.hasError('required') || form.controls.name.hasError('pattern')) && form.controls.name.touched) {
             <mat-error>{{ 'validation.requiredName' | translate }}</mat-error>
+          }
+          @if (form.controls.name.hasError('maxlength') && form.controls.name.touched) {
+            <mat-error>{{ 'validation.nameTooLong' | translate }}</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>{{ 'common.description' | translate }}</mat-label>
           <textarea matInput rows="4" formControlName="description"></textarea>
+          @if (form.controls.description.hasError('maxlength') && form.controls.description.touched) {
+            <mat-error>{{ 'validation.descriptionTooLong' | translate }}</mat-error>
+          }
         </mat-form-field>
 
         <div class="form-grid">
@@ -49,6 +55,15 @@
           </mat-form-field>
         </div>
 
+        <div class="privacy-help">
+          <p><strong>{{ 'enums.collectionVisibility.PRIVATE' | translate }}:</strong> {{ 'collections.privacyPrivate' | translate }}</p>
+          <p><strong>{{ 'enums.collectionVisibility.PUBLIC' | translate }}:</strong> {{ 'collections.privacyPublic' | translate }}</p>
+        </div>
+
+        @if (categoriesLoading()) {
+          <p class="status-text">{{ 'collections.loadingForm' | translate }}</p>
+        }
+
         @if (errorMessage()) {
           <p class="form-error" role="alert">{{ errorMessage() }}</p>
         }
@@ -58,10 +73,10 @@
             mat-flat-button
             color="primary"
             type="submit"
-            [disabled]="loading()"
+            [disabled]="saving()"
             data-testid="create-collection-submit"
           >
-            {{ loading() ? ('actions.creating' | translate) : ('collections.createSubmit' | translate) }}
+            {{ saving() ? ('actions.creating' | translate) : ('collections.createSubmit' | translate) }}
           </button>
           <a mat-button routerLink="/collections">{{ 'actions.cancel' | translate }}</a>
         </div>

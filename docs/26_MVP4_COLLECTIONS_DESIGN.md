@@ -181,7 +181,7 @@ serie ordenada. E2E/Playwright siguen pospuestos hasta un recorrido maduro.
 
 1. EPIC 44B y 44B-FIX - Contrato backend, pruebas y documentacion de
    collection items. Completadas.
-2. EPIC 44C - Flujo frontend de creacion y edicion de colecciones.
+2. EPIC 44C - Flujo frontend de creacion y edicion de colecciones. Completada.
 3. EPIC 44D - Alta desde catalogo y seleccion de edition.
 4. EPIC 44E - Items manuales y enlace posterior al catalogo.
 5. EPIC 44F - OWNED, WANTED y faltantes calculados.
@@ -205,11 +205,13 @@ serie ordenada. E2E/Playwright siguen pospuestos hasta un recorrido maduro.
 - Exclusiones manuales de missing y comportamiento de items archivados.
 - Momento de retirar el estado MISSING persistido.
 
-## Estado posterior a EPIC 44B y 44B-FIX
+## Estado posterior a EPIC 44C
 
 EPIC 44B implementa la identidad editorial directa, la compatibilidad legacy,
 `referenceKind` calculado y la sanitizacion de campos personales en backend.
 EPIC 44B-FIX anade pruebas de propiedad, roles no propietarios y serializacion
-HTTP, y cierra el contrato documental. No implementa items manuales,
-transiciones de estado, missing calculado ni frontend. La siguiente tarea es
-EPIC 44C.
+HTTP, y cierra el contrato documental. EPIC 44C cierra el flujo frontend del
+contenedor coleccion con validaciones, propiedad, vaciado explicito de campos
+opcionales y listado sin contador no fiable. No implementa items manuales,
+transiciones de estado, missing calculado ni alta editorial. La siguiente tarea
+es EPIC 44D.

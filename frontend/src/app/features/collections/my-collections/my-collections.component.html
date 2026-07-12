@@ -72,7 +72,6 @@
             <p>{{ collection.description || ('common.noDescription' | translate) }}</p>
             <mat-chip-set [attr.aria-label]="'collections.dataAria' | translate">
               <mat-chip>{{ 'enums.collectionVisibility.' + collection.visibility | translate }}</mat-chip>
-              <mat-chip>{{ 'collections.noItems' | translate: { count: collection.items.length } }}</mat-chip>
             </mat-chip-set>
           </mat-card-content>
           <mat-card-actions>

@@ -30,16 +30,16 @@ editorial mediante el futuro rol `EDITORIAL_ADMIN`, sin implementarlo todavia.
 EPIC 43B y 43C implementan `EDITORIAL_ADMIN` en backend y su acceso editorial
 en frontend, sin asignarlo automaticamente ni ampliar administracion global.
 EPIC 43D deja un provisionamiento controlado sin interfaz publica ni
-autoasignacion. EPIC 44A, 44B y 44B-FIX dejan cerrados el diseno, contrato
-backend, privacidad y documentacion de collection items; MVP3 no queda cerrado
-como producto final. La siguiente tarea es EPIC 44C - Flujo frontend de
-creacion y edicion de colecciones.
+autoasignacion. EPIC 44A, 44B, 44B-FIX y 44C dejan cerrados el diseno, contrato
+backend, privacidad y flujo frontend del contenedor coleccion; MVP3 no queda
+cerrado como producto final. La siguiente tarea es EPIC 44D - Alta desde
+catalogo y seleccion de edicion.
 
 | Dominio | Estado actual |
 | --- | --- |
 | Identity & Access | Implementado para MVP |
 | Catalog Knowledge Base | Parcial; fundamentos MVP 2, fachada de lectura, frontend editorial publico, creators y relaciones de items implementados |
-| User Collections | Contrato editorial/legacy y privacidad por propietario cerrados; flujo frontend MVP4 pendiente |
+| User Collections | Flujo de crear/editar colecciones, contrato editorial/legacy y privacidad por propietario cerrados; alta catalogada pendiente |
 | Social | Futuro |
 | Shops & Inventory | Inventario legacy/editorial implementado; fuera del recorrido principal |
 | Matching | Recomendaciones por edicion, item y fallback legacy |
@@ -343,11 +343,11 @@ de aplicacion, 81 endpoints, 32 rutas Angular y 61 relaciones pantalla-backend.
 Los estados distinguen recorrido MVP 1, base legacy/futura, infraestructura,
 MVP 2 visible/foundation y redirecciones sin alterar codigo funcional.
 
-MVP 2 queda cerrado con limitaciones y MVP3 Admin Editorial cuenta ya con un
-primer bloque parcial validado: EPIC 40A-40G. La siguiente tarea recomendada es
-**EPIC 41B - Cierre documental/exportable MVP3 parcial**. EPIC 41A ya aplico
-una auditoria UX inicial a las pantallas admin y corrigio confirmaciones sin
-i18n. Social, tiendas, marketplace, pagos y movil continúan en fases
+MVP 2 queda cerrado con limitaciones. MVP3 Admin Editorial ha completado el
+bloque 40A-40G, cierres 41B y calidad 42C, y permanece abierto para mejoras
+posteriores. La prioridad activa es MVP4: EPIC 44C cierra crear y editar
+colecciones; la siguiente tarea es EPIC 44D - Alta desde catalogo y seleccion
+de edicion. Social, tiendas, marketplace, pagos y movil continúan en fases
 posteriores.
 
 EPIC 41B queda completada: el cierre parcial esta en

@@ -76,5 +76,21 @@ describe('MyCollectionsComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Manga pendientes');
     expect(compiled.textContent).toContain('Manga / Comic');
+    expect(compiled.querySelectorAll('mat-chip')).toHaveLength(1);
+    expect(compiled.querySelector('a[href="/collections/3"]')).toBeTruthy();
+    expect(compiled.querySelector('a[href="/collections/3/edit"]')).toBeTruthy();
+  });
+
+  it('keeps visibility and category filters working', async () => {
+    await configure([collection]);
+    const fixture = TestBed.createComponent(MyCollectionsComponent);
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+    component.filters.setValue({ visibility: 'PRIVATE', categoryCode: 'MANGA_COMIC' });
+    component.loadCollections();
+
+    expect(TestBed.inject(CollectionService).getMyCollections).toHaveBeenLastCalledWith({
+      visibility: 'PRIVATE', categoryCode: 'MANGA_COMIC'
+    });
   });
 });

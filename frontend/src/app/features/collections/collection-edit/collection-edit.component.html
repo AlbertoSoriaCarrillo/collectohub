@@ -10,28 +10,48 @@
   </header>
 
   @if (loading()) {
-    <p class="status-text">{{ 'collections.loadingOne' | translate }}</p>
+    <p class="status-text">{{ 'collections.loadingForm' | translate }}</p>
   }
 
   @if (errorMessage()) {
     <p class="form-error" role="alert">{{ errorMessage() }}</p>
   }
 
-  @if (collection()) {
+  @if (accessDenied()) {
+    <mat-card class="form-card">
+      <mat-card-content>
+        <p class="form-error" role="alert">{{ 'collections.editNotAllowed' | translate }}</p>
+        <div class="form-actions">
+          @if (collectionId(); as id) {
+            <a mat-button [routerLink]="['/collections', id]">{{ 'actions.backToDetail' | translate }}</a>
+          }
+          <a mat-button routerLink="/collections">{{ 'actions.backToCollections' | translate }}</a>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (collection() && !loading() && !categoriesLoading() && !ownerLoading() && isOwner()) {
     <mat-card class="form-card">
       <mat-card-content>
         <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
           <mat-form-field appearance="outline">
             <mat-label>{{ 'common.name' | translate }}</mat-label>
             <input matInput formControlName="name" />
-            @if (form.controls.name.hasError('required') && form.controls.name.touched) {
+            @if ((form.controls.name.hasError('required') || form.controls.name.hasError('pattern')) && form.controls.name.touched) {
               <mat-error>{{ 'validation.requiredName' | translate }}</mat-error>
+            }
+            @if (form.controls.name.hasError('maxlength') && form.controls.name.touched) {
+              <mat-error>{{ 'validation.nameTooLong' | translate }}</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>{{ 'common.description' | translate }}</mat-label>
             <textarea matInput rows="4" formControlName="description"></textarea>
+            @if (form.controls.description.hasError('maxlength') && form.controls.description.touched) {
+              <mat-error>{{ 'validation.descriptionTooLong' | translate }}</mat-error>
+            }
           </mat-form-field>
 
           <div class="form-grid">
@@ -55,8 +75,13 @@
             </mat-form-field>
           </div>
 
+          <div class="privacy-help">
+            <p><strong>{{ 'enums.collectionVisibility.PRIVATE' | translate }}:</strong> {{ 'collections.privacyPrivate' | translate }}</p>
+            <p><strong>{{ 'enums.collectionVisibility.PUBLIC' | translate }}:</strong> {{ 'collections.privacyPublic' | translate }}</p>
+          </div>
+
           <div class="form-actions">
-            <button mat-flat-button color="primary" type="submit" [disabled]="saving()">
+            <button mat-flat-button color="primary" type="submit" [disabled]="saving()" data-testid="edit-collection-submit">
               {{ saving() ? ('actions.saving' | translate) : ('actions.saveChanges' | translate) }}
             </button>
             @if (collectionId(); as id) {

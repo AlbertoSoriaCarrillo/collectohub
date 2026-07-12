@@ -1,5 +1,25 @@
 # Registro de avance
 
+## 2026-07-13 - EPIC 44C - Flujo frontend de creacion y edicion de colecciones
+
+- Endurecidas las validaciones de nombre, descripcion y visibilidad en crear y
+  editar; los nombres se recortan y se rechazan valores compuestos por espacios.
+- Anadido control frontend de propiedad para edicion: `ADMIN` y
+  `EDITORIAL_ADMIN` ajenos no ven ni pueden enviar el formulario.
+- Corregida la semantica de actualizacion: editar envia `""` para borrar
+  description o categoryCode, mientras crear conserva `null` para opcionales
+  vacios.
+- Anadidos estados de carga, guardado, error y categorias, textos ES/EN y
+  explicaciones de privacidad. El listado deja de mostrar un contador de items
+  no fiable.
+- Anadidos tests de create/edit, listado y servicio. Ejecutados `npm.cmd ci`
+  (474 paquetes), `npm.cmd test -- --watch=false` (58 archivos y 201 tests
+  correctos) y `npm.cmd run build` correcto. Permanece el warning conocido del
+  bundle inicial: 620.58 kB frente al budget de 500 kB.
+- Sin backend, migraciones, rutas o endpoints nuevos, items manuales, cambios
+  OWNED/WANTED/MISSING, E2E ni Playwright. Siguiente tarea: EPIC 44D - Alta
+  desde catalogo y seleccion de edicion.
+
 ## 2026-07-12 - EPIC 44B-FIX - Cierre de pruebas y documentacion del contrato de collection items
 
 - Anadidos tests de privacidad: el propietario recibe `notes` y `acquiredAt`;
