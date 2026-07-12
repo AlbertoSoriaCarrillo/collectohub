@@ -630,6 +630,7 @@ export const es: TranslationDictionary = {
     editorialCatalogMode: 'Catalogo editorial',
     legacyCompatibility: 'Compatibilidad legacy',
     editorialSearchHint: 'Busca una obra, ISBN, EAN o edicion para empezar.',
+    editorialNoResults: 'No se encontraron items para esta busqueda.',
     selectCatalogItem: 'Seleccionar obra/item',
     selectedCatalogItem: 'Item seleccionado',
     loadingEditions: 'Cargando ediciones...',

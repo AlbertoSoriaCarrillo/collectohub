@@ -33,13 +33,14 @@
         </mat-form-field>
 
         @if (form.controls.referenceMode.value === 'EDITORIAL') {
-          <form class="search-form" [formGroup]="editorialSearch" (ngSubmit)="searchEditorial()" novalidate>
+          <div class="search-form" [formGroup]="editorialSearch">
             <mat-form-field appearance="outline"><mat-label>{{ 'collections.searchEditorialCatalog' | translate }}</mat-label>
               <input matInput type="search" formControlName="q" data-testid="collection-item-search-editorial" />
             </mat-form-field>
-            <button mat-stroked-button type="submit" [disabled]="searching()">{{ searching() ? ('actions.searching' | translate) : ('actions.search' | translate) }}</button>
-          </form>
-          @if (!searching() && editorialResults().length === 0) { <p class="status-text">{{ 'collections.editorialSearchHint' | translate }}</p> }
+            <button mat-stroked-button type="button" (click)="searchEditorial()" [disabled]="searching()" data-testid="collection-item-editorial-search-submit">{{ searching() ? ('actions.searching' | translate) : ('actions.search' | translate) }}</button>
+          </div>
+          @if (!searching() && !editorialSearchPerformed()) { <p class="status-text">{{ 'collections.editorialSearchHint' | translate }}</p> }
+          @if (!searching() && editorialSearchPerformed() && editorialResults().length === 0) { <p class="status-text">{{ 'collections.editorialNoResults' | translate }}</p> }
           @if (editorialResults().length > 0) {
             <mat-form-field class="wide" appearance="outline"><mat-label>{{ 'collections.selectCatalogItem' | translate }}</mat-label>
               <mat-select [value]="selectedCatalogItem()" (selectionChange)="selectCatalogItem($event.value)" data-testid="collection-item-editorial-result">
@@ -68,12 +69,12 @@
             </section>
           }
         } @else {
-          <form class="search-form" [formGroup]="productSearch" (ngSubmit)="searchProducts()" novalidate>
+          <div class="search-form" [formGroup]="productSearch">
             <mat-form-field appearance="outline"><mat-label>{{ 'inventory.masterProductSearch' | translate }}</mat-label>
               <input matInput type="search" formControlName="name" />
             </mat-form-field>
-            <button mat-stroked-button type="submit" [disabled]="searching()">{{ searching() ? ('actions.searching' | translate) : ('actions.search' | translate) }}</button>
-          </form>
+            <button mat-stroked-button type="button" (click)="searchProducts()" [disabled]="searching()" data-testid="collection-item-legacy-search-submit">{{ searching() ? ('actions.searching' | translate) : ('actions.search' | translate) }}</button>
+          </div>
           <mat-form-field class="wide" appearance="outline"><mat-label>{{ 'collections.selectLegacyProduct' | translate }}</mat-label>
             <mat-select formControlName="masterProductId">@for (product of products(); track product.id) { <mat-option [value]="product.id">{{ product.name }}</mat-option> }</mat-select>
           </mat-form-field>

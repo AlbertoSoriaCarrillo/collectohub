@@ -108,9 +108,11 @@ describe('CollectionService', () => {
     request.flush(null);
   });
 
-  it('adds a collection item', () => {
+  it('adds a legacy collection item without editorial residual fields', () => {
     const payload = {
       masterProductId: 5,
+      catalogItemId: null,
+      catalogItemEditionId: null,
       collectionStatus: 'MISSING' as const,
       physicalCondition: 'NEW' as const
     };
@@ -125,6 +127,22 @@ describe('CollectionService', () => {
     expect(request.request.method).toBe('POST');
     expect(request.request.body).toEqual(payload);
     request.flush(item);
+  });
+
+  it('adds an editorial collection item without an edition', () => {
+    const payload = {
+      masterProductId: null,
+      catalogItemId: 11,
+      catalogItemEditionId: null,
+      collectionStatus: 'OWNED' as const
+    };
+
+    service.addCollectionItem(3, payload).subscribe();
+
+    const request = httpTestingController.expectOne('http://localhost:8080/api/collections/3/items');
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual(payload);
+    request.flush({ ...item, masterProductId: null, catalogItemId: 11 });
   });
 
   it('adds a collection item with an editorial item and edition', () => {

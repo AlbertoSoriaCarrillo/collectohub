@@ -1,5 +1,17 @@
 # Registro de avance
 
+## 2026-07-13 - EPIC 44D-FIX - Endurecimiento del selector de item y edicion
+
+- Eliminados formularios anidados; las busquedas usan botones `type="button"`
+  y no pueden disparar el POST.
+- Anadida invalidacion por identificador de peticion para que respuestas o
+  errores obsoletos no modifiquen detalle, edition, `detailLoading` ni error.
+- Diferenciados estado inicial de busqueda y sin resultados; anadidas pruebas
+  DOM, de propiedad, concurrencia determinista y payloads exactos.
+- Ejecutado `npm.cmd test -- --watch=false`: 58 archivos y 210 tests correctos.
+- Sin backend, migraciones, rutas/endpoints o exports nuevos, items manuales,
+  cambios OWNED/WANTED/MISSING, E2E ni Playwright. Siguiente tarea: EPIC 44E.
+
 ## 2026-07-13 - EPIC 44D - Alta desde catalogo y seleccion de edicion
 
 - Implementado flujo catalogo editorial como via principal: busqueda

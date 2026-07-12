@@ -49,6 +49,17 @@ describe('CollectionItemCreateComponent', () => {
     expect(collectionService.getCollection).toHaveBeenCalledWith(3);
   });
 
+  it('renders valid form structure and search buttons do not submit the item', async () => {
+    await configure(); const fixture = TestBed.createComponent(CollectionItemCreateComponent); fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.querySelector('form form')).toBeNull();
+    expect(element.querySelectorAll('form')).toHaveLength(1);
+    (element.querySelector('[data-testid="collection-item-editorial-search-submit"]') as HTMLButtonElement).click();
+    expect(editorialService.search).toHaveBeenCalledTimes(1);
+    expect(collectionService.addCollectionItem).not.toHaveBeenCalled();
+  });
+
   it('rejects invalid collection ids and non-owners without searching or posting', async () => {
     await configure('bad'); let fixture = TestBed.createComponent(CollectionItemCreateComponent); fixture.detectChanges();
     expect(fixture.componentInstance.errorMessage()).toBeTruthy();
@@ -68,6 +79,55 @@ describe('CollectionItemCreateComponent', () => {
     expect(component.selectedCatalogItemDetail()).toBe(detail);
     component.selectEdition(20); expect(component.selectedEditionId()).toBe(20);
     component.selectCatalogItem(itemCandidate); expect(component.selectedEditionId()).toBeNull();
+  });
+
+  it('keeps only the newest item detail when A resolves after B', async () => {
+    await configure();
+    const detailA = new Subject<EditorialCatalogItemDetail>();
+    const detailB = new Subject<EditorialCatalogItemDetail>();
+    editorialService.getItemDetail.mockImplementation(((id: number) => id === 10 ? detailA : detailB) as never);
+    const fixture = TestBed.createComponent(CollectionItemCreateComponent); fixture.detectChanges();
+    const component = fixture.componentInstance;
+    const candidateB = { ...itemCandidate, itemId: 11, itemTitle: 'Item B' };
+    const detailForB = { ...detail, item: { ...detail.item, id: 11, title: 'Item B' } } as EditorialCatalogItemDetail;
+
+    component.selectCatalogItem(itemCandidate);
+    component.selectCatalogItem(candidateB);
+    detailB.next(detailForB); detailB.complete();
+    detailA.next(detail); detailA.complete();
+
+    expect(component.selectedCatalogItemDetail()?.item.id).toBe(11);
+    expect(component.detailLoading()).toBe(false);
+  });
+
+  it('ignores an old detail error after the newer item succeeds', async () => {
+    await configure();
+    const detailA = new Subject<EditorialCatalogItemDetail>();
+    const detailB = new Subject<EditorialCatalogItemDetail>();
+    editorialService.getItemDetail.mockImplementation(((id: number) => id === 10 ? detailA : detailB) as never);
+    const fixture = TestBed.createComponent(CollectionItemCreateComponent); fixture.detectChanges();
+    const component = fixture.componentInstance;
+    const candidateB = { ...itemCandidate, itemId: 11, itemTitle: 'Item B' };
+    const detailForB = { ...detail, item: { ...detail.item, id: 11, title: 'Item B' } } as EditorialCatalogItemDetail;
+
+    component.selectCatalogItem(itemCandidate); component.selectCatalogItem(candidateB);
+    detailB.next(detailForB); detailB.complete(); detailA.error(new Error('old error'));
+
+    expect(component.selectedCatalogItemDetail()?.item.id).toBe(11);
+    expect(component.errorMessage()).toBeNull();
+  });
+
+  it('invalidates a pending detail when switching to legacy mode', async () => {
+    await configure(); const pending = new Subject<EditorialCatalogItemDetail>();
+    editorialService.getItemDetail.mockReturnValueOnce(pending);
+    const fixture = TestBed.createComponent(CollectionItemCreateComponent); fixture.detectChanges();
+    const component = fixture.componentInstance;
+    component.selectCatalogItem(itemCandidate); component.changeReferenceMode('LEGACY');
+    pending.next(detail); pending.complete();
+
+    expect(component.selectedCatalogItem()).toBeNull();
+    expect(component.selectedCatalogItemDetail()).toBeNull();
+    expect(component.detailLoading()).toBe(false);
   });
 
   it('sends canonical editorial payloads without a silent legacy bridge and navigates on success', async () => {

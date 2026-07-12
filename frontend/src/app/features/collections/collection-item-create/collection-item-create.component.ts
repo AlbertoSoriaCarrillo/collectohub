@@ -1,7 +1,8 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -40,6 +41,8 @@ export class CollectionItemCreateComponent implements OnInit {
   private readonly editorialCatalogService = inject(EditorialCatalogService);
   private readonly errorMessageService = inject(ErrorMessageService);
   private readonly languageService = inject(LanguageService);
+  private readonly destroyRef = inject(DestroyRef);
+  private detailRequestId = 0;
 
   readonly statuses = COLLECTION_ITEM_STATUSES;
   readonly conditions = PHYSICAL_CONDITIONS;
@@ -55,6 +58,7 @@ export class CollectionItemCreateComponent implements OnInit {
   readonly errorMessage = signal<string | null>(null);
   readonly products = signal<MasterProductResponse[]>([]);
   readonly editorialResults = signal<EditorialCatalogSearchItem[]>([]);
+  readonly editorialSearchPerformed = signal(false);
   readonly selectedCatalogItem = signal<EditorialCatalogSearchItem | null>(null);
   readonly selectedCatalogItemDetail = signal<EditorialCatalogItemDetail | null>(null);
   readonly selectedEditionId = signal<number | null>(null);
@@ -86,8 +90,7 @@ export class CollectionItemCreateComponent implements OnInit {
       this.form.controls.masterProductId.setValue(null);
       this.products.set([]);
     } else {
-      this.clearEditorialSelection();
-      this.editorialResults.set([]);
+      this.clearEditorialState();
     }
     this.errorMessage.set(null);
   }
@@ -102,12 +105,13 @@ export class CollectionItemCreateComponent implements OnInit {
 
   searchEditorial(): void {
     if (!this.isOwner() || this.searching()) return;
-    this.clearEditorialSelection();
+    this.clearEditorialState();
+    this.editorialSearchPerformed.set(true);
     this.editorialResults.set([]);
     this.errorMessage.set(null);
     this.searching.set(true);
     this.editorialCatalogService.search({ q: this.editorialSearch.controls.q.value, size: 30 })
-      .pipe(finalize(() => this.searching.set(false)))
+      .pipe(finalize(() => this.searching.set(false)), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (page) => this.editorialResults.set(this.toItemCandidates(page.content)),
         error: (error) => this.errorMessage.set(this.errorMessageService.toMessage(error))
@@ -116,16 +120,24 @@ export class CollectionItemCreateComponent implements OnInit {
 
   selectCatalogItem(candidate: EditorialCatalogSearchItem): void {
     if (!this.isOwner() || candidate.itemId == null) return;
+    const requestId = ++this.detailRequestId;
     this.selectedCatalogItem.set(candidate);
     this.selectedCatalogItemDetail.set(null);
     this.selectedEditionId.set(null);
     this.errorMessage.set(null);
     this.detailLoading.set(true);
     this.editorialCatalogService.getItemDetail(candidate.itemId)
-      .pipe(finalize(() => this.detailLoading.set(false)))
+      .pipe(
+        finalize(() => { if (requestId === this.detailRequestId) this.detailLoading.set(false); }),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe({
-        next: (detail) => this.selectedCatalogItemDetail.set(detail),
+        next: (detail) => {
+          if (requestId !== this.detailRequestId || this.selectedCatalogItem()?.itemId !== detail.item.id) return;
+          this.selectedCatalogItemDetail.set(detail);
+        },
         error: (error) => {
+          if (requestId !== this.detailRequestId) return;
           this.selectedCatalogItem.set(null);
           this.selectedEditionId.set(null);
           this.errorMessage.set(this.errorMessageService.toMessage(error));
@@ -196,14 +208,24 @@ export class CollectionItemCreateComponent implements OnInit {
   }
 
   private clearEditorialSelection(): void {
+    this.detailRequestId++;
+    this.detailLoading.set(false);
     this.selectedCatalogItem.set(null);
     this.selectedCatalogItemDetail.set(null);
     this.selectedEditionId.set(null);
   }
 
+  private clearEditorialState(): void {
+    this.clearEditorialSelection();
+    this.editorialResults.set([]);
+    this.editorialSearchPerformed.set(false);
+  }
+
   private toRequest(): CreateCollectionItemRequest {
     const value = this.form.getRawValue();
-    const editorial = value.referenceMode === 'EDITORIAL' ? this.selectedCatalogItemDetail() : null;
+    const selected = this.selectedCatalogItem();
+    const detail = this.selectedCatalogItemDetail();
+    const editorial = value.referenceMode === 'EDITORIAL' && selected?.itemId === detail?.item.id ? detail : null;
     return {
       masterProductId: value.referenceMode === 'LEGACY' ? Number(value.masterProductId) : null,
       catalogItemId: editorial?.item.id ?? null,

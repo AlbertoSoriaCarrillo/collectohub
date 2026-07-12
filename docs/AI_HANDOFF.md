@@ -208,13 +208,12 @@ Resumen relevante:
 Último commit verificado:
 
 ```text
-09f37ad3db0afd878e7e13232f1aa0877ed04895
-feat: complete collection create and edit flow
+157cf24119027d1c1aa2baea181eb2d75c424230
+feat: add catalog item and edition selection
 ```
 
-EPIC 44C está publicada. EPIC 44D está implementada en el cambio actual con
-selección editorial item -> edición, pendiente de verificar su commit en
-GitHub.
+EPIC 44D está publicada. EPIC 44D-FIX está implementada en el cambio actual y
+pendiente de verificar su commit en GitHub.
 
 Siguiente tarea esperada:
 
