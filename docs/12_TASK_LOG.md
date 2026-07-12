@@ -44,6 +44,21 @@
   Playwright ni MVP4. Siguiente tarea: EPIC 43D - Provisionamiento controlado
   de EDITORIAL_ADMIN y validacion integral.
 
+## 2026-07-12 - EPIC 43D - Provisionamiento controlado de EDITORIAL_ADMIN y validacion integral
+
+- Creados scripts operativos para Status, Grant y Revoke, idempotentes,
+  transaccionales y sin credenciales hardcodeadas; rechazan usuarios inactivos
+  o eliminados y no alteran otros roles.
+- Creado smoke de API que renueva sesion, comprueba `/api/users/me`, HTTP 200
+  editorial y HTTP 403 opcional de usuario regular; `-Cleanup` solo revoca una
+  concesion creada por la misma ejecucion.
+- Validada sintaxis PowerShell. No se pudo ejecutar PostgreSQL/API real porque
+  `psql` no esta disponible en el entorno; quedan comandos operativos en
+  `scripts/admin/README.md`.
+- Sin migraciones, endpoints, pantalla de roles, autoasignacion, JWT, E2E,
+  Playwright ni MVP4. Siguiente tarea: EPIC 44A - Diseno y auditoria de MVP4
+  Colecciones finales de usuario.
+
 ## 2026-06-16
 
 Repositorio inicializado con documentación base.

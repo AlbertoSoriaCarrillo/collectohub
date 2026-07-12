@@ -77,8 +77,8 @@ operativo del catalogo editorial y `ADMIN` conservara acceso como superusuario.
 No se reutilizaran `CONTENT_CREATOR`, `SHOP_OWNER` ni `USER`; la separacion
 EDITORIAL_EDITOR/EDITORIAL_REVIEWER queda pospuesta. Esta decision aun no se ha
 implementado: EPIC 43B incorpora el rol y autorizacion backend, y EPIC 43C el
-guard y navegacion editorial. La siguiente tarea es EPIC 43D para
-provisionamiento controlado y validacion integral.
+guard y navegacion editorial. EPIC 43D completa el provisionamiento controlado
+por script; la siguiente tarea es EPIC 44A de auditoria y diseno de MVP4.
 
 ## 6. Pantallas admin necesarias
 

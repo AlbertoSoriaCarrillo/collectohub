@@ -97,8 +97,10 @@ Calidad editorial avanzada y reporte de duplicados.
 EPIC 42C, 42C-FIX y 42C-FIX2 completadas el 2026-07-12. EPIC 43A - Diseno de
 roles editoriales separados de ADMIN queda completada el 2026-07-12. El diseno
 recomienda `EDITORIAL_ADMIN` sin implementarlo todavia. Siguiente tarea:
-EPIC 43B y EPIC 43C quedan completadas el 2026-07-12. Siguiente tarea:
-EPIC 43D - Provisionamiento controlado de EDITORIAL_ADMIN y validacion integral.
+EPIC 43B, 43C y 43D quedan completadas el 2026-07-12. `EDITORIAL_ADMIN` se
+provisiona solo mediante operacion controlada, sin autoasignacion ni interfaz
+publica. Siguiente tarea: EPIC 44A - Diseno y auditoria de MVP4 Colecciones
+finales de usuario.
 
 ## MVP 4 - Colecciones finales de usuario
 

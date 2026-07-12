@@ -536,6 +536,13 @@ Las rutas y navegacion del admin editorial usan `editorialAdminGuard` y la
 capacidad `ADMIN` o `EDITORIAL_ADMIN`. `adminGuard` sigue comprobando solo
 `ADMIN` para no ampliar la administracion global.
 
+## 2026-07-12 - Provisionamiento operativo de EDITORIAL_ADMIN
+
+La asignacion inicial usa scripts PowerShell controlados con `psql`, variables
+parametrizadas, transaccion e idempotencia. No hay autoasignacion, endpoint ni
+interfaz publica; un cambio de rol exige renovar la sesion. La gestion visual
+global sigue siendo una futura EPIC opcional.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

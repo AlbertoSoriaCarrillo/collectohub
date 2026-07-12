@@ -29,8 +29,9 @@ cerrado el diseno de separacion entre administracion global y operacion
 editorial mediante el futuro rol `EDITORIAL_ADMIN`, sin implementarlo todavia.
 EPIC 43B y 43C implementan `EDITORIAL_ADMIN` en backend y su acceso editorial
 en frontend, sin asignarlo automaticamente ni ampliar administracion global.
-MVP3 no queda cerrado como producto final; la siguiente tarea es EPIC 43D -
-Provisionamiento controlado de EDITORIAL_ADMIN y validacion integral.
+EPIC 43D deja un provisionamiento controlado sin interfaz publica ni
+autoasignacion. MVP3 no queda cerrado como producto final; la siguiente tarea
+es EPIC 44A - Diseno y auditoria de MVP4 Colecciones finales de usuario.
 
 | Dominio | Estado actual |
 | --- | --- |

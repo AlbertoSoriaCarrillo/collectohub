@@ -213,6 +213,14 @@ El enlace con un producto maestro legacy es opcional: proporciona un
 `-MasterProductId` positivo cuando exista. Para comprobar el script sin hacer
 llamadas a la API usa `-WhatIf`.
 
+## Provisionamiento Editorial
+
+`EDITORIAL_ADMIN` se concede solo mediante un script operativo controlado; no
+existe autoasignacion, endpoint ni pantalla publica de roles. La guia y los
+comandos de estado, concesion, revocacion y validacion estan en
+`scripts/admin/README.md`. Tras cambiar el rol, el usuario debe cerrar sesion y
+volver a iniciar sesion para renovar los roles visibles en JWT y frontend.
+
 ## Demo / Screenshots
 
 No hay capturas reales versionadas todavia. Las futuras imagenes de portfolio se
