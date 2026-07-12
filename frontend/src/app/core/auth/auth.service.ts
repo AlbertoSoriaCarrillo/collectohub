@@ -58,4 +58,8 @@ export class AuthService {
   hasAnyRole(roles: string[]): boolean {
     return roles.some((role) => this.hasRole(role));
   }
+
+  hasEditorialAdminAccess(): boolean {
+    return this.hasAnyRole(['ADMIN', 'EDITORIAL_ADMIN']);
+  }
 }

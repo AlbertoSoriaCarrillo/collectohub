@@ -122,7 +122,8 @@ All rows in this section are `LEGACY_FUTURE`.
 
 ## MVP3 Admin Editorial
 
-`EditorialAdminService` powers all ADMIN-only routes. Publishers, franchises,
+`EditorialAdminService` powers all editorial routes for `ADMIN` or
+`EDITORIAL_ADMIN`. Publishers, franchises,
 series, items and editions use their existing search/get/create/update API
 operations; creators and credits also use DELETE; relationships use
 GET/POST/PUT/DELETE by source item; master-product-links use search/get/create/
@@ -131,7 +132,7 @@ or backend contract was created for these screens.
 
 `/admin/editorial/data-quality` - `AdminDataQualityComponent` uses
 `EditorialAdminService.getEditorialDataQualityReport()` and
-`GET /api/catalog/admin/data-quality/report` as an ADMIN-only read-only report.
+`GET /api/catalog/admin/data-quality/report` as a read-only editorial report.
 
 | Route | Component | Backend relationship | Status |
 | --- | --- | --- | --- |

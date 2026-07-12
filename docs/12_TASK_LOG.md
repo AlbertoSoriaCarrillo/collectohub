@@ -30,6 +30,20 @@
   E2E, Playwright ni MVP4. Siguiente tarea: EPIC 43C - Guard y navegacion
   frontend para EDITORIAL_ADMIN.
 
+## 2026-07-12 - EPIC 43C - Guard y navegacion frontend para EDITORIAL_ADMIN
+
+- Creado `editorialAdminGuard`: permite `ADMIN` y `EDITORIAL_ADMIN`, redirige
+  anonimos a login con `returnUrl` y usuarios sin permiso a home.
+- Conservado `adminGuard` para ADMIN global; las 11 rutas editoriales y el
+  enlace principal ahora usan la capacidad editorial centralizada.
+- Anadidos tests de guard, rutas, layout y sesion/roles.
+- Ejecutados `npm.cmd ci`, `npm.cmd test -- --watch=false` (57 archivos y 190
+  tests correctos) y `npm.cmd run build` correcto. Persiste el warning conocido
+  del budget inicial: 619.73 kB frente a 500 kB.
+- Sin backend, migraciones, JWT, asignacion automatica, rutas nuevas, E2E,
+  Playwright ni MVP4. Siguiente tarea: EPIC 43D - Provisionamiento controlado
+  de EDITORIAL_ADMIN y validacion integral.
+
 ## 2026-06-16
 
 Repositorio inicializado con documentación base.

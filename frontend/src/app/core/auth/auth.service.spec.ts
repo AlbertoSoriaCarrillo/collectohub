@@ -53,4 +53,18 @@ describe('AuthService', () => {
     expect(tokenStorage.getRefreshToken()).toBe('refresh-token');
     expect(tokenStorage.getRoles()).toEqual(['USER']);
   });
+
+  it('recognizes EDITORIAL_ADMIN as editorial access without changing stored roles', () => {
+    tokenStorage.saveUser({
+      id: 8,
+      email: 'editor@example.com',
+      displayName: 'Editorial Admin',
+      preferredInterfaceLanguage: 'es',
+      roles: ['EDITORIAL_ADMIN']
+    });
+
+    expect(service.hasRole('EDITORIAL_ADMIN')).toBe(true);
+    expect(service.hasAnyRole(['ADMIN', 'EDITORIAL_ADMIN'])).toBe(true);
+    expect(service.hasEditorialAdminAccess()).toBe(true);
+  });
 });

@@ -56,6 +56,17 @@ describe('adminGuard', () => {
 
     expect(router.serializeUrl(result as ReturnType<Router['createUrlTree']>)).toBe('/home');
   });
+
+  it('rejects users with only EDITORIAL_ADMIN role', () => {
+    authService.hasToken.mockReturnValue(true);
+    authService.hasRole.mockImplementation((role: string) => role === 'EDITORIAL_ADMIN');
+
+    const result = runGuard('/admin/global');
+    const router = TestBed.inject(Router);
+
+    expect(router.serializeUrl(result as ReturnType<Router['createUrlTree']>)).toBe('/home');
+    expect(authService.hasRole).toHaveBeenCalledWith('ADMIN');
+  });
 });
 
 function runGuard(url: string) {

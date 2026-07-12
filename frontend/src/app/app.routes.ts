@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
-import { adminGuard } from './core/guards/admin.guard';
+import { editorialAdminGuard } from './core/guards/editorial-admin.guard';
 import { MainLayoutComponent } from './layout/main-layout.component';
 
 export const routes: Routes = [
@@ -161,7 +161,7 @@ export const routes: Routes = [
       },
       {
         path: 'admin/editorial',
-        canActivate: [authGuard, adminGuard],
+        canActivate: [authGuard, editorialAdminGuard],
         loadComponent: () =>
           import(
             './features/admin/editorial/admin-editorial-shell/admin-editorial-shell.component'
@@ -169,7 +169,7 @@ export const routes: Routes = [
       },
       {
         path: 'admin/editorial/publishers',
-        canActivate: [authGuard, adminGuard],
+        canActivate: [authGuard, editorialAdminGuard],
         loadComponent: () =>
           import('./features/admin/editorial/admin-publishers/admin-publishers.component').then(
             (m) => m.AdminPublishersComponent
@@ -177,7 +177,7 @@ export const routes: Routes = [
       },
       {
         path: 'admin/editorial/franchises',
-        canActivate: [authGuard, adminGuard],
+        canActivate: [authGuard, editorialAdminGuard],
         loadComponent: () =>
           import('./features/admin/editorial/admin-franchises/admin-franchises.component').then(
             (m) => m.AdminFranchisesComponent
@@ -185,7 +185,7 @@ export const routes: Routes = [
       },
       {
         path: 'admin/editorial/series',
-        canActivate: [authGuard, adminGuard],
+        canActivate: [authGuard, editorialAdminGuard],
         loadComponent: () =>
           import('./features/admin/editorial/admin-series/admin-series.component').then(
             (m) => m.AdminSeriesComponent
@@ -193,7 +193,7 @@ export const routes: Routes = [
       },
       {
         path: 'admin/editorial/items',
-        canActivate: [authGuard, adminGuard],
+        canActivate: [authGuard, editorialAdminGuard],
         loadComponent: () =>
           import('./features/admin/editorial/admin-items/admin-items.component').then(
             (m) => m.AdminItemsComponent
@@ -201,7 +201,7 @@ export const routes: Routes = [
       },
       {
         path: 'admin/editorial/editions',
-        canActivate: [authGuard, adminGuard],
+        canActivate: [authGuard, editorialAdminGuard],
         loadComponent: () =>
           import('./features/admin/editorial/admin-editions/admin-editions.component').then(
             (m) => m.AdminEditionsComponent
@@ -209,7 +209,7 @@ export const routes: Routes = [
       },
       {
         path: 'admin/editorial/creators',
-        canActivate: [authGuard, adminGuard],
+        canActivate: [authGuard, editorialAdminGuard],
         loadComponent: () =>
           import('./features/admin/editorial/admin-creators/admin-creators.component').then(
             (m) => m.AdminCreatorsComponent
@@ -217,7 +217,7 @@ export const routes: Routes = [
       },
       {
         path: 'admin/editorial/credits',
-        canActivate: [authGuard, adminGuard],
+        canActivate: [authGuard, editorialAdminGuard],
         loadComponent: () =>
           import('./features/admin/editorial/admin-credits/admin-credits.component').then(
             (m) => m.AdminCreditsComponent
@@ -225,7 +225,7 @@ export const routes: Routes = [
       },
       {
         path: 'admin/editorial/relationships',
-        canActivate: [authGuard, adminGuard],
+        canActivate: [authGuard, editorialAdminGuard],
         loadComponent: () =>
           import(
             './features/admin/editorial/admin-relationships/admin-relationships.component'
@@ -233,7 +233,7 @@ export const routes: Routes = [
       },
       {
         path: 'admin/editorial/master-product-links',
-        canActivate: [authGuard, adminGuard],
+        canActivate: [authGuard, editorialAdminGuard],
         loadComponent: () =>
           import(
             './features/admin/editorial/admin-master-product-links/admin-master-product-links.component'
@@ -241,7 +241,7 @@ export const routes: Routes = [
       },
       {
         path: 'admin/editorial/data-quality',
-        canActivate: [authGuard, adminGuard],
+        canActivate: [authGuard, editorialAdminGuard],
         loadComponent: () => import('./features/admin/editorial/admin-data-quality/admin-data-quality.component').then((m) => m.AdminDataQualityComponent)
       },
       {

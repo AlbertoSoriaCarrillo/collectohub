@@ -12,12 +12,18 @@ describe('MainLayoutComponent', () => {
     currentUser: computed(() => currentUser()),
     isAuthenticated: computed(() => Boolean(currentUser())),
     hasRole: vi.fn((role: string) => currentUser()?.roles.includes(role) ?? false),
+    hasEditorialAdminAccess: vi.fn(() =>
+      currentUser()?.roles.some((role) => role === 'ADMIN' || role === 'EDITORIAL_ADMIN') ?? false
+    ),
     logout: vi.fn()
   };
 
   beforeEach(async () => {
     currentUser.set(null);
     authService.hasRole.mockImplementation((role: string) => currentUser()?.roles.includes(role) ?? false);
+    authService.hasEditorialAdminAccess.mockImplementation(() =>
+      currentUser()?.roles.some((role) => role === 'ADMIN' || role === 'EDITORIAL_ADMIN') ?? false
+    );
     authService.logout.mockClear();
 
     await TestBed.configureTestingModule({
@@ -73,13 +79,17 @@ describe('MainLayoutComponent', () => {
     expect(visibleRoutes(compiled)).not.toContain('/reservations');
   });
 
-  it('shows the editorial admin link only for ADMIN users', () => {
+  it.each([
+    ['ADMIN', ['USER', 'ADMIN']],
+    ['EDITORIAL_ADMIN', ['USER', 'EDITORIAL_ADMIN']],
+    ['both editorial roles', ['ADMIN', 'EDITORIAL_ADMIN']]
+  ])('shows one editorial admin link for %s users', (_role, roles) => {
     currentUser.set({
       id: 2,
       email: 'admin@example.com',
       displayName: 'Admin Example',
       preferredInterfaceLanguage: 'es',
-      roles: ['USER', 'ADMIN']
+      roles
     });
 
     const fixture = TestBed.createComponent(MainLayoutComponent);
@@ -89,7 +99,24 @@ describe('MainLayoutComponent', () => {
 
     expect(compiled.querySelector('[data-testid="admin-editorial-nav-link"]')).toBeTruthy();
     expect(compiled.querySelector('[data-testid="admin-editorial-sidebar-link"]')).toBeTruthy();
+    expect(compiled.querySelectorAll('[data-testid="admin-editorial-nav-link"]')).toHaveLength(1);
     expect(visibleRoutes(compiled)).toContain('/admin/editorial');
+  });
+
+  it.each(['SHOP_OWNER', 'CONTENT_CREATOR'])('hides editorial admin navigation from %s users', (role) => {
+    currentUser.set({
+      id: 3,
+      email: 'user@example.com',
+      displayName: 'User Example',
+      preferredInterfaceLanguage: 'es',
+      roles: ['USER', role]
+    });
+
+    const fixture = TestBed.createComponent(MainLayoutComponent);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('[data-testid="admin-editorial-nav-link"]')).toBeFalsy();
+    expect(fixture.nativeElement.querySelector('[data-testid="admin-editorial-sidebar-link"]')).toBeFalsy();
   });
 });
 

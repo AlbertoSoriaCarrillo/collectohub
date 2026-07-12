@@ -67,8 +67,8 @@ export class MainLayoutComponent {
       .join('');
   }
 
-  isAdmin(): boolean {
-    return this.authService.isAuthenticated() && this.authService.hasRole('ADMIN');
+  hasEditorialAdminAccess(): boolean {
+    return this.authService.isAuthenticated() && this.authService.hasEditorialAdminAccess();
   }
 
   logout(): void {

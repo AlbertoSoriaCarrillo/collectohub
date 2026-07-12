@@ -11,6 +11,8 @@ changing the database snapshot.
 EPIC 43B adds the additive `EDITORIAL_ADMIN` role seed and updates editorial
 endpoint permissions to `ADMIN | EDITORIAL_ADMIN`; it does not assign the role
 to users or add endpoints.
+EPIC 43C adds the frontend `editorialAdminGuard` and updates all 11 editorial
+routes and their navigation visibility for the same two roles.
 
 ## Files
 

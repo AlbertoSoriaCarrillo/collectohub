@@ -179,7 +179,8 @@ No se eliminara ni degradara el rol `ADMIN`.
 
 1. EPIC 43B - Backend role EDITORIAL_ADMIN y autorizacion editorial centralizada.
    Completada el 2026-07-12: migracion 012, helper y autorizacion backend.
-2. EPIC 43C - Guard y navegacion editorial.
+2. EPIC 43C - Guard y navegacion editorial. Completada el 2026-07-12:
+   `editorialAdminGuard`, 11 rutas y navegacion para ambos roles.
 3. EPIC futura separada - gestion visual global de roles, solo si es necesaria.
 
 MVP3 continua abierto. Esta decision no inicia MVP4 ni introduce funcionalidades

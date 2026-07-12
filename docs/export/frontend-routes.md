@@ -41,8 +41,9 @@ notably private collection reads.
 
 ## MVP3 Admin Editorial
 
-All routes below require `authGuard` and `adminGuard` and are exposed from the
-ADMIN-only editorial shell.
+All routes below require `authGuard` and `editorialAdminGuard`. They are exposed
+to `ADMIN` or `EDITORIAL_ADMIN`; `adminGuard` remains reserved for future global
+administration.
 
 | Path | Component | Navigation | Status | Description |
 | --- | --- | --- | --- | --- |

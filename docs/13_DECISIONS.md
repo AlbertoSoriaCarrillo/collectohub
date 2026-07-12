@@ -530,6 +530,12 @@ automaticas. La autorizacion editorial acepta `ADMIN` o `EDITORIAL_ADMIN` en
 una anotacion y helper centralizados; los permisos globales y legacy de tienda
 no cambian. La interfaz, guard y navegacion quedan para EPIC 43C.
 
+## 2026-07-12 - Acceso frontend editorial separado
+
+Las rutas y navegacion del admin editorial usan `editorialAdminGuard` y la
+capacidad `ADMIN` o `EDITORIAL_ADMIN`. `adminGuard` sigue comprobando solo
+`ADMIN` para no ampliar la administracion global.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

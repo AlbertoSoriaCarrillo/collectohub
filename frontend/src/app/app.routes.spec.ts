@@ -1,6 +1,7 @@
 import { routes } from './app.routes';
 import { adminGuard } from './core/guards/admin.guard';
 import { authGuard } from './core/guards/auth.guard';
+import { editorialAdminGuard } from './core/guards/editorial-admin.guard';
 
 describe('app routes', () => {
   it('redirects legacy entry points to the collection-focused MVP shell', () => {
@@ -98,16 +99,17 @@ describe('app routes', () => {
     expect(reservations?.canActivate).toContain(authGuard);
     expect(reservationDetail?.canActivate).toContain(authGuard);
     expect(shopReservations?.canActivate).toContain(authGuard);
-    expect(adminEditorial?.canActivate).toEqual([authGuard, adminGuard]);
-    expect(adminPublishers?.canActivate).toEqual([authGuard, adminGuard]);
-    expect(adminFranchises?.canActivate).toEqual([authGuard, adminGuard]);
-    expect(adminSeries?.canActivate).toEqual([authGuard, adminGuard]);
-    expect(adminItems?.canActivate).toEqual([authGuard, adminGuard]);
-    expect(adminEditions?.canActivate).toEqual([authGuard, adminGuard]);
-    expect(adminCreators?.canActivate).toEqual([authGuard, adminGuard]);
-    expect(adminCredits?.canActivate).toEqual([authGuard, adminGuard]);
-    expect(adminRelationships?.canActivate).toEqual([authGuard, adminGuard]);
-    expect(adminMasterProductLinks?.canActivate).toEqual([authGuard, adminGuard]);
-    expect(adminDataQuality?.canActivate).toEqual([authGuard, adminGuard]);
+    expect(adminEditorial?.canActivate).toEqual([authGuard, editorialAdminGuard]);
+    expect(adminPublishers?.canActivate).toEqual([authGuard, editorialAdminGuard]);
+    expect(adminFranchises?.canActivate).toEqual([authGuard, editorialAdminGuard]);
+    expect(adminSeries?.canActivate).toEqual([authGuard, editorialAdminGuard]);
+    expect(adminItems?.canActivate).toEqual([authGuard, editorialAdminGuard]);
+    expect(adminEditions?.canActivate).toEqual([authGuard, editorialAdminGuard]);
+    expect(adminCreators?.canActivate).toEqual([authGuard, editorialAdminGuard]);
+    expect(adminCredits?.canActivate).toEqual([authGuard, editorialAdminGuard]);
+    expect(adminRelationships?.canActivate).toEqual([authGuard, editorialAdminGuard]);
+    expect(adminMasterProductLinks?.canActivate).toEqual([authGuard, editorialAdminGuard]);
+    expect(adminDataQuality?.canActivate).toEqual([authGuard, editorialAdminGuard]);
+    expect(adminEditorial?.canActivate).not.toContain(adminGuard);
   });
 });
