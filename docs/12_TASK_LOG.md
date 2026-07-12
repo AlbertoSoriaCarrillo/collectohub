@@ -1,5 +1,25 @@
 # Registro de avance
 
+## 2026-07-12 - EPIC 44B-FIX - Cierre de pruebas y documentacion del contrato de collection items
+
+- Anadidos tests de privacidad: el propietario recibe `notes` y `acquiredAt`;
+  lectores anonimos, usuarios ajenos, `ADMIN` y `EDITORIAL_ADMIN` reciben la
+  respuesta publica sanitizada, sin privilegio por rol.
+- Anadidos tests de `referenceKind` para `DIRECT_CATALOG`, `VERIFIED_BRIDGE` y
+  `LEGACY_UNRESOLVED`, sin mutacion ni escritura durante lecturas.
+  `INVALID_REFERENCE` queda documentado para datos historicos inconsistentes:
+  no se crea fixture persistible porque produccion exige una identidad valida.
+- Comprobada la serializacion MVC real de respuesta publica sanitizada y de la
+  respuesta completa del propietario, incluidas las referencias editoriales.
+- Actualizados contrato API, exportaciones backend, backlog, estado y diseno
+  MVP4 para reflejar `catalogItemId` canonico, edition opcional, compatibilidad
+  `masterProductId` y privacidad por propiedad.
+- Ejecutado `backend && .\\mvnw.cmd clean verify`: BUILD SUCCESS, 340 tests,
+  0 fallos, 0 errores y 0 omitidos.
+- Sin frontend, migraciones, endpoints nuevos, items manuales, cambios de
+  OWNED/WANTED/MISSING, E2E ni Playwright. Siguiente tarea: EPIC 44C - Flujo
+  frontend de creacion y edicion de colecciones.
+
 ## 2026-07-12 - EPIC 44B - Contrato backend de collection items y compatibilidad editorial
 
 - Consolidado `catalogItemId` como identidad editorial directa con edition

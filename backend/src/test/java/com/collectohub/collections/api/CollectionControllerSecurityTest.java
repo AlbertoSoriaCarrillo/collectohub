@@ -30,6 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -323,6 +324,31 @@ class CollectionControllerSecurityTest {
                 .andExpect(status().isNoContent());
     }
 
+    @Test
+    void publicCollectionResponseSerializesSanitizedItemFieldsAndEditorialReferences() throws Exception {
+        when(collectionService.getCollection(eq(null), eq(100L))).thenReturn(collectionResponse(publicItemResponse()));
+
+        mockMvc.perform(get("/api/collections/100"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items[0].notes").value(nullValue()))
+                .andExpect(jsonPath("$.items[0].acquiredAt").value(nullValue()))
+                .andExpect(jsonPath("$.items[0].referenceKind").value("DIRECT_CATALOG"))
+                .andExpect(jsonPath("$.items[0].catalogItemId").value(500))
+                .andExpect(jsonPath("$.items[0].catalogItemEditionId").value(600))
+                .andExpect(jsonPath("$.items[0].editorialReferenceSource").value("MANUAL_EDITORIAL"));
+    }
+
+    @Test
+    void ownerCollectionResponseSerializesPrivateItemFields() throws Exception {
+        when(collectionService.getCollection(any(), eq(100L))).thenReturn(collectionResponse(itemResponse()));
+
+        mockMvc.perform(get("/api/collections/100")
+                        .header("Authorization", "Bearer " + userToken()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items[0].notes").value("First print"))
+                .andExpect(jsonPath("$.items[0].acquiredAt").value("2023-06-01"));
+    }
+
     private String userToken() {
         return jwtService.generateAccessToken(TestSecurityConfiguration.testUser("alice@example.com"));
     }
@@ -346,6 +372,14 @@ class CollectionControllerSecurityTest {
     }
 
     private CollectionResponse collectionResponse(String name) {
+        return collectionResponse(name, itemResponse());
+    }
+
+    private CollectionResponse collectionResponse(CollectionItemResponse item) {
+        return collectionResponse("Manga", item);
+    }
+
+    private CollectionResponse collectionResponse(String name, CollectionItemResponse item) {
         return new CollectionResponse(
                 100L,
                 42L,
@@ -354,7 +388,7 @@ class CollectionControllerSecurityTest {
                 "PUBLIC",
                 "MANGA_COMIC",
                 "Manga and comic",
-                List.of(itemResponse())
+                List.of(item)
         );
     }
 
@@ -393,6 +427,15 @@ class CollectionControllerSecurityTest {
                 50,
                 "First print",
                 LocalDate.of(2023, 6, 1)
+        );
+    }
+
+    private CollectionItemResponse publicItemResponse() {
+        return new CollectionItemResponse(
+                300L, 100L, 200L, "Dragon Ball 1", "MANGA_COMIC", "Dragon Ball", "Tankobon", "1",
+                500L, "Dragon Ball 1", "1", 400L, "Dragon Ball", 600L, "Edition", "PAPERBACK",
+                null, null, null, null, null, "MANUAL_EDITORIAL", "DIRECT_CATALOG", "OWNED", "LIKE_NEW",
+                "1", 50, null, null
         );
     }
 

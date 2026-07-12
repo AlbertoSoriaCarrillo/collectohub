@@ -207,16 +207,23 @@ Enums:
 
 ## Colecciones
 
+Los endpoints actuales de collection items usan `catalogItemId` como referencia
+editorial canonica; `catalogItemEditionId` es opcional y debe pertenecer al
+item. `masterProductId` se mantiene para compatibilidad legacy. La respuesta
+calcula `referenceKind` sin persistirlo. En lecturas PUBLIC, `notes` y
+`acquiredAt` solo se devuelven al propietario; las referencias editoriales y el
+estado permanecen visibles. Todavia no existe soporte para items manuales.
+
 | Metodo | Path | Acceso | Permiso | Body/Filtros | Respuesta | Errores |
 | --- | --- | --- | --- | --- | --- | --- |
 | POST | `/api/collections` | Protegido | Usuario autenticado | `name`, `description`, `visibility`, `categoryCode` | `CollectionResponse` | `400`, `401`, `404` |
 | GET | `/api/collections/my` | Protegido | Propietario autenticado | Filtros `visibility`, `categoryCode` | Lista de colecciones propias | `400`, `401`, `404` |
-| GET | `/api/collections/{collectionId}` | Publico/protegido | Publica o propietario | No | `CollectionResponse` con items | `404` |
+| GET | `/api/collections/{collectionId}` | Publico/protegido | Publica o propietario | No | `CollectionResponse` con items; campos personales solo owner | `404` |
 | PUT | `/api/collections/{collectionId}` | Protegido | Propietario | Campos de `UpdateCollectionRequest` | `CollectionResponse` | `400`, `401`, `403`, `404` |
 | DELETE | `/api/collections/{collectionId}` | Protegido | Propietario | No | Sin cuerpo | `401`, `403`, `404` |
-| POST | `/api/collections/{collectionId}/items` | Protegido | Propietario | `masterProductId`, `collectionStatus`, `physicalCondition`, `unitNumber`, `totalLimitedUnits`, `notes`, `acquiredAt` | `CollectionItemResponse` | `400`, `401`, `403`, `404` |
-| GET | `/api/collections/{collectionId}/items` | Publico/protegido | Coleccion publica o propietario | No | Lista de items | `404` |
-| PUT | `/api/collections/{collectionId}/items/{itemId}` | Protegido | Propietario | Campos de `UpdateCollectionItemRequest` | `CollectionItemResponse` | `400`, `401`, `403`, `404` |
+| POST | `/api/collections/{collectionId}/items` | Protegido | Propietario | `catalogItemId`, edition opcional, `masterProductId` legacy y campos personales | `CollectionItemResponse` con `referenceKind` | `400`, `401`, `403`, `404` |
+| GET | `/api/collections/{collectionId}/items` | Publico/protegido | Coleccion publica o propietario | No | Lista de items; campos personales solo owner | `404` |
+| PUT | `/api/collections/{collectionId}/items/{itemId}` | Protegido | Propietario | Referencia editorial canonica o legacy compatible y campos actualizables | `CollectionItemResponse` con `referenceKind` | `400`, `401`, `403`, `404` |
 | DELETE | `/api/collections/{collectionId}/items/{itemId}` | Protegido | Propietario | No | Sin cuerpo | `401`, `403`, `404` |
 
 Enums:

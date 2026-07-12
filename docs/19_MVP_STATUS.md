@@ -30,14 +30,16 @@ editorial mediante el futuro rol `EDITORIAL_ADMIN`, sin implementarlo todavia.
 EPIC 43B y 43C implementan `EDITORIAL_ADMIN` en backend y su acceso editorial
 en frontend, sin asignarlo automaticamente ni ampliar administracion global.
 EPIC 43D deja un provisionamiento controlado sin interfaz publica ni
-autoasignacion. MVP3 no queda cerrado como producto final; la siguiente tarea
-es EPIC 44C - Flujo frontend de creacion y edicion de colecciones.
+autoasignacion. EPIC 44A, 44B y 44B-FIX dejan cerrados el diseno, contrato
+backend, privacidad y documentacion de collection items; MVP3 no queda cerrado
+como producto final. La siguiente tarea es EPIC 44C - Flujo frontend de
+creacion y edicion de colecciones.
 
 | Dominio | Estado actual |
 | --- | --- |
 | Identity & Access | Implementado para MVP |
 | Catalog Knowledge Base | Parcial; fundamentos MVP 2, fachada de lectura, frontend editorial publico, creators y relaciones de items implementados |
-| User Collections | Implementado con referencias legacy/editoriales duales desde EPIC 36 |
+| User Collections | Contrato editorial/legacy y privacidad por propietario cerrados; flujo frontend MVP4 pendiente |
 | Social | Futuro |
 | Shops & Inventory | Inventario legacy/editorial implementado; fuera del recorrido principal |
 | Matching | Recomendaciones por edicion, item y fallback legacy |

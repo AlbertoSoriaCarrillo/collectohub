@@ -65,7 +65,8 @@ con bridge verificado. No permite una entrada sin identidad catalogada.
 
 ## 6. Problemas y deuda tecnica
 
-- La respuesta publica expone `notes` y `acquiredAt`; MVP4 debe separarlos.
+- EPIC 44B ya sanitiza `notes` y `acquiredAt` para lectores no propietarios;
+  quedan pendientes flujos frontend que comuniquen esa privacidad.
 - Una alta editorial puede incluir master product compatible, pero la UI actual
   limpia esa relacion al cambiar a editorial y no expresa el bridge con claridad.
 - No hay item manual, cantidad, copias, alias local ni enlace posterior.
@@ -178,7 +179,8 @@ serie ordenada. E2E/Playwright siguen pospuestos hasta un recorrido maduro.
 
 ## 18. Plan de EPICs
 
-1. EPIC 44B - Contrato backend de collection items y compatibilidad editorial.
+1. EPIC 44B y 44B-FIX - Contrato backend, pruebas y documentacion de
+   collection items. Completadas.
 2. EPIC 44C - Flujo frontend de creacion y edicion de colecciones.
 3. EPIC 44D - Alta desde catalogo y seleccion de edition.
 4. EPIC 44E - Items manuales y enlace posterior al catalogo.
@@ -203,9 +205,11 @@ serie ordenada. E2E/Playwright siguen pospuestos hasta un recorrido maduro.
 - Exclusiones manuales de missing y comportamiento de items archivados.
 - Momento de retirar el estado MISSING persistido.
 
-## Estado posterior a EPIC 44B
+## Estado posterior a EPIC 44B y 44B-FIX
 
 EPIC 44B implementa la identidad editorial directa, la compatibilidad legacy,
 `referenceKind` calculado y la sanitizacion de campos personales en backend.
-No implementa items manuales, transiciones de estado, missing calculado ni
-frontend. La siguiente tarea es EPIC 44C.
+EPIC 44B-FIX anade pruebas de propiedad, roles no propietarios y serializacion
+HTTP, y cierra el contrato documental. No implementa items manuales,
+transiciones de estado, missing calculado ni frontend. La siguiente tarea es
+EPIC 44C.

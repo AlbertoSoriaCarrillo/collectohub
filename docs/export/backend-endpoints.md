@@ -121,16 +121,24 @@ frontend-facing facade endpoints.
 
 Controller: `CollectionController`.
 
+`catalogItemId` is the canonical editorial reference and
+`catalogItemEditionId` is optional. `masterProductId` remains supported for
+legacy compatibility. `CollectionItemResponse.referenceKind` is calculated as
+`DIRECT_CATALOG`, `VERIFIED_BRIDGE` or `LEGACY_UNRESOLVED`; it is not stored.
+Public readers receive editorial references and status, but `notes` and
+`acquiredAt` are included only for the collection owner. Manual items are not
+supported yet.
+
 | Method and path | Access/permission | Request | Response | Status |
 | --- | --- | --- | --- | --- |
 | `POST /api/collections` | Authenticated user | `CreateCollectionRequest` | `CollectionResponse` | `MVP1_VISIBLE` |
 | `GET /api/collections/my` | Owner; query `visibility`, `categoryCode` | None | `List<CollectionResponse>` | `MVP1_VISIBLE` |
-| `GET /api/collections/{collectionId}` | Public collection or owner | None | `CollectionResponse` | `MVP1_VISIBLE` |
+| `GET /api/collections/{collectionId}` | Public collection or owner | None | `CollectionResponse`; item personal fields owner-only | `MVP1_VISIBLE` |
 | `PUT /api/collections/{collectionId}` | Owner | `UpdateCollectionRequest` | `CollectionResponse` | `MVP1_VISIBLE` |
 | `DELETE /api/collections/{collectionId}` | Owner | None | No content | `MVP1_VISIBLE` |
-| `POST /api/collections/{collectionId}/items` | Owner | `CreateCollectionItemRequest` | `CollectionItemResponse` | `MVP1_VISIBLE` |
-| `GET /api/collections/{collectionId}/items` | Public collection or owner | None | `List<CollectionItemResponse>` | `MVP1_VISIBLE` |
-| `PUT /api/collections/{collectionId}/items/{itemId}` | Owner | `UpdateCollectionItemRequest` | `CollectionItemResponse` | `MVP1_VISIBLE` |
+| `POST /api/collections/{collectionId}/items` | Owner | Canonical `catalogItemId`, optional edition; legacy `masterProductId` | `CollectionItemResponse` | `MVP1_VISIBLE` |
+| `GET /api/collections/{collectionId}/items` | Public collection or owner | None | `List<CollectionItemResponse>`; personal fields owner-only | `MVP1_VISIBLE` |
+| `PUT /api/collections/{collectionId}/items/{itemId}` | Owner | Canonical editorial or compatible legacy reference | `CollectionItemResponse` | `MVP1_VISIBLE` |
 | `DELETE /api/collections/{collectionId}/items/{itemId}` | Owner | None | No content | `MVP1_VISIBLE` |
 
 Delete operations are logical deletes. Private resources are not exposed to

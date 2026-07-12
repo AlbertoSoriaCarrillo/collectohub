@@ -51,6 +51,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
 class CollectionServiceTest {
@@ -149,6 +150,58 @@ class CollectionServiceTest {
 
         assertThat(response.id()).isEqualTo(101L);
         assertThat(response.visibility()).isEqualTo("PUBLIC");
+    }
+
+    @Test
+    void ownerReceivesPrivateCollectionItemFields() {
+        CollectionItem item = collectionItem(300L, publicCollection);
+        when(collectionRepository.findByIdAndDeletedAtIsNull(101L)).thenReturn(Optional.of(publicCollection));
+        when(collectionItemRepository.findByCollection_IdAndDeletedAtIsNullOrderByIdAsc(101L)).thenReturn(List.of(item));
+
+        var response = collectionService.getCollection(AuthenticatedUser.from(owner), 101L).items().getFirst();
+
+        assertThat(response.notes()).isEqualTo("First print");
+        assertThat(response.acquiredAt()).isEqualTo(LocalDate.of(2023, 6, 1));
+    }
+
+    @Test
+    void publicCollectionSanitizesPrivateFieldsForAnonymousAndNonOwnersRegardlessOfRole() {
+        CollectionItem item = editorialCollectionItem(300L, publicCollection,
+                com.collectohub.collections.domain.CollectionEditorialReferenceSource.VERIFIED_BRIDGE);
+        User admin = user(44L, "admin@example.com");
+        admin.addRole(new Role("ADMIN", "Administrator"));
+        User editorialAdmin = user(45L, "editorial@example.com");
+        editorialAdmin.addRole(new Role("EDITORIAL_ADMIN", "Editorial administrator"));
+        when(collectionRepository.findByIdAndDeletedAtIsNull(101L)).thenReturn(Optional.of(publicCollection));
+        when(collectionItemRepository.findByCollection_IdAndDeletedAtIsNullOrderByIdAsc(101L)).thenReturn(List.of(item));
+
+        var anonymous = collectionService.getCollection(null, 101L).items().getFirst();
+        var otherUserResponse = collectionService.getCollection(AuthenticatedUser.from(otherUser), 101L).items().getFirst();
+        var adminResponse = collectionService.getCollection(AuthenticatedUser.from(admin), 101L).items().getFirst();
+        var editorialAdminResponse = collectionService.getCollection(AuthenticatedUser.from(editorialAdmin), 101L).items().getFirst();
+
+        assertSanitizedPublicItem(anonymous);
+        assertSanitizedPublicItem(otherUserResponse);
+        assertSanitizedPublicItem(adminResponse);
+        assertSanitizedPublicItem(editorialAdminResponse);
+    }
+
+    @Test
+    void collectionItemReferenceKindsAreCalculatedWithoutPersistingReadSideChanges() {
+        CollectionItem directCatalog = editorialCollectionItem(300L, publicCollection,
+                com.collectohub.collections.domain.CollectionEditorialReferenceSource.MANUAL_EDITORIAL);
+        CollectionItem verifiedBridge = editorialCollectionItem(301L, publicCollection,
+                com.collectohub.collections.domain.CollectionEditorialReferenceSource.VERIFIED_BRIDGE);
+        CollectionItem legacy = collectionItem(302L, publicCollection);
+        when(collectionRepository.findByIdAndDeletedAtIsNull(101L)).thenReturn(Optional.of(publicCollection));
+        when(collectionItemRepository.findByCollection_IdAndDeletedAtIsNullOrderByIdAsc(101L))
+                .thenReturn(List.of(directCatalog, verifiedBridge, legacy));
+
+        var response = collectionService.getCollection(AuthenticatedUser.from(owner), 101L);
+
+        assertThat(response.items()).extracting(item -> item.referenceKind())
+                .containsExactly("DIRECT_CATALOG", "VERIFIED_BRIDGE", "LEGACY_UNRESOLVED");
+        verify(collectionItemRepository, never()).save(any(CollectionItem.class));
     }
 
     @Test
@@ -376,17 +429,21 @@ class CollectionServiceTest {
 
         assertThat(response).hasSize(1);
         assertThat(response.getFirst().id()).isEqualTo(300L);
+        assertThat(response.getFirst().notes()).isEqualTo("First print");
+        assertThat(response.getFirst().acquiredAt()).isEqualTo(LocalDate.of(2023, 6, 1));
     }
 
     @Test
     void publicCollectionItemsCanBeListedWithoutToken() {
-        CollectionItem item = collectionItem(300L, publicCollection);
+        CollectionItem item = editorialCollectionItem(300L, publicCollection,
+                com.collectohub.collections.domain.CollectionEditorialReferenceSource.VERIFIED_BRIDGE);
         when(collectionRepository.findByIdAndDeletedAtIsNull(101L)).thenReturn(Optional.of(publicCollection));
         when(collectionItemRepository.findByCollection_IdAndDeletedAtIsNullOrderByIdAsc(101L)).thenReturn(List.of(item));
 
         var response = collectionService.listItems(null, 101L);
 
         assertThat(response).hasSize(1);
+        assertSanitizedPublicItem(response.getFirst());
     }
 
     @Test
@@ -548,6 +605,40 @@ class CollectionServiceTest {
                 LocalDate.of(2023, 6, 1),
                 collection.getUser().getId()
         ), id);
+    }
+
+    private CollectionItem editorialCollectionItem(
+            Long id,
+            Collection collection,
+            com.collectohub.collections.domain.CollectionEditorialReferenceSource source
+    ) {
+        CatalogItem catalogItem = editorialItem(500L);
+        CatalogItemEdition edition = editorialEdition(600L, catalogItem);
+        return withId(CollectionItem.create(
+                collection,
+                masterProduct,
+                catalogItem,
+                edition,
+                source,
+                CollectionItemStatus.OWNED,
+                PhysicalCondition.LIKE_NEW,
+                "1",
+                50,
+                "First print",
+                LocalDate.of(2023, 6, 1),
+                collection.getUser().getId()
+        ), id);
+    }
+
+    private void assertSanitizedPublicItem(com.collectohub.collections.dto.CollectionItemResponse response) {
+        assertThat(response.notes()).isNull();
+        assertThat(response.acquiredAt()).isNull();
+        assertThat(response.masterProductId()).isEqualTo(200L);
+        assertThat(response.catalogItemId()).isEqualTo(500L);
+        assertThat(response.catalogItemEditionId()).isEqualTo(600L);
+        assertThat(response.editorialReferenceSource()).isEqualTo("VERIFIED_BRIDGE");
+        assertThat(response.referenceKind()).isEqualTo("VERIFIED_BRIDGE");
+        assertThat(response.collectionStatus()).isEqualTo("OWNED");
     }
 
     private MasterProduct masterProduct(Long id) {

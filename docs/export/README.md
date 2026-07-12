@@ -13,6 +13,10 @@ endpoint permissions to `ADMIN | EDITORIAL_ADMIN`; it does not assign the role
 to users or add endpoints.
 EPIC 43C adds the frontend `editorialAdminGuard` and updates all 11 editorial
 routes and their navigation visibility for the same two roles.
+EPIC 44B and 44B-FIX update only the contract of existing collection item
+operations: canonical editorial references, legacy compatibility, calculated
+`referenceKind` and owner-only personal fields. No endpoints, routes or
+database schema were added.
 
 ## Files
 

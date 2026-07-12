@@ -557,6 +557,14 @@ La privacidad se resuelve en backend por propiedad de la coleccion, no por rol
 editorial: notas y fecha de adquisicion se sanitizan para lectores publicos y
 se mantienen para el propietario. `referenceKind` es calculado y no persiste.
 
+## 2026-07-12 - Clasificacion calculada de collection item
+
+Las filas validas se clasifican en respuesta como `DIRECT_CATALOG`,
+`VERIFIED_BRIDGE` o `LEGACY_UNRESOLVED`; la lectura no persiste la clasificacion
+ni ejecuta backfill. `INVALID_REFERENCE` queda reservado para datos historicos
+inconsistentes y no tiene fixture de produccion porque las reglas actuales
+exigen una referencia editorial o legacy valida.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.
