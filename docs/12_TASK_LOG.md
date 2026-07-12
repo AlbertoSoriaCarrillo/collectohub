@@ -1,5 +1,15 @@
 # Registro de avance
 
+## 2026-07-13 - EPIC 44D-FIX2 - Validacion final e invalidacion de busquedas obsoletas
+
+- Protegidas busquedas editorial y legacy con identificadores vigentes; cambios
+  de modo invalidan respuestas, errores y loading obsoletos.
+- Ejecutado `npm.cmd ci`: 474 paquetes correctos. Ejecutado
+  `npm.cmd test -- --watch=false`: 58 archivos y 212 tests correctos.
+- Ejecutado `npm.cmd run build`: correcto; warning conocido de bundle inicial
+  622.72 kB frente a budget 500 kB. Sin backend, migraciones, rutas,
+  endpoints, exports, E2E ni Playwright. Siguiente tarea: EPIC 44E.
+
 ## 2026-07-13 - EPIC 44D-FIX - Endurecimiento del selector de item y edicion
 
 - Eliminados formularios anidados; las busquedas usan botones `type="button"`

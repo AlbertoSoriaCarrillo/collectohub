@@ -130,6 +130,22 @@ describe('CollectionItemCreateComponent', () => {
     expect(component.detailLoading()).toBe(false);
   });
 
+  it('ignores an editorial search resolved after switching to legacy', async () => {
+    await configure(); const pending = new Subject<{ content: EditorialCatalogSearchItem[]; page: number; size: number; totalElements: number; totalPages: number; first: boolean; last: boolean }>();
+    editorialService.search.mockReturnValueOnce(pending);
+    const fixture = TestBed.createComponent(CollectionItemCreateComponent); fixture.detectChanges(); const component = fixture.componentInstance;
+    component.searchEditorial(); component.changeReferenceMode('LEGACY'); pending.next({ content: [itemCandidate], page: 0, size: 30, totalElements: 1, totalPages: 1, first: true, last: true }); pending.complete();
+    expect(component.editorialResults()).toEqual([]); expect(component.editorialSearchPerformed()).toBe(false); expect(component.errorMessage()).toBeNull();
+  });
+
+  it('ignores a legacy search resolved after switching to editorial', async () => {
+    await configure(); const pending = new Subject<[]>();
+    catalogService.searchMasterProducts.mockReturnValueOnce(pending);
+    const fixture = TestBed.createComponent(CollectionItemCreateComponent); fixture.detectChanges(); const component = fixture.componentInstance;
+    component.changeReferenceMode('LEGACY'); component.searchProducts(); component.changeReferenceMode('EDITORIAL'); pending.next([]); pending.complete();
+    expect(component.products()).toEqual([]); expect(component.form.controls.masterProductId.value).toBeNull();
+  });
+
   it('sends canonical editorial payloads without a silent legacy bridge and navigates on success', async () => {
     await configure(); const fixture = TestBed.createComponent(CollectionItemCreateComponent); const router = TestBed.inject(Router); const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true); fixture.detectChanges(); const component = fixture.componentInstance;
     component.selectCatalogItem(itemCandidate);

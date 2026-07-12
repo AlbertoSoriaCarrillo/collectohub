@@ -43,6 +43,8 @@ export class CollectionItemCreateComponent implements OnInit {
   private readonly languageService = inject(LanguageService);
   private readonly destroyRef = inject(DestroyRef);
   private detailRequestId = 0;
+  private editorialSearchRequestId = 0;
+  private legacySearchRequestId = 0;
 
   readonly statuses = COLLECTION_ITEM_STATUSES;
   readonly conditions = PHYSICAL_CONDITIONS;
@@ -86,10 +88,13 @@ export class CollectionItemCreateComponent implements OnInit {
   }
 
   changeReferenceMode(mode: ReferenceMode): void {
+    this.searching.set(false);
     if (mode === 'EDITORIAL') {
+      this.legacySearchRequestId++;
       this.form.controls.masterProductId.setValue(null);
       this.products.set([]);
     } else {
+      this.editorialSearchRequestId++;
       this.clearEditorialState();
     }
     this.errorMessage.set(null);
@@ -97,24 +102,26 @@ export class CollectionItemCreateComponent implements OnInit {
 
   searchProducts(): void {
     if (!this.isOwner() || this.searching()) return;
+    const requestId = ++this.legacySearchRequestId;
     this.searching.set(true);
     this.catalogService.searchMasterProducts({ name: this.productSearch.controls.name.value, status: 'ACTIVE' })
-      .pipe(finalize(() => this.searching.set(false)))
-      .subscribe({ next: (products) => this.products.set(products), error: (error) => this.errorMessage.set(this.errorMessageService.toMessage(error)) });
+      .pipe(finalize(() => { if (requestId === this.legacySearchRequestId) this.searching.set(false); }), takeUntilDestroyed(this.destroyRef))
+      .subscribe({ next: (products) => { if (requestId === this.legacySearchRequestId) this.products.set(products); }, error: (error) => { if (requestId === this.legacySearchRequestId) this.errorMessage.set(this.errorMessageService.toMessage(error)); } });
   }
 
   searchEditorial(): void {
     if (!this.isOwner() || this.searching()) return;
     this.clearEditorialState();
+    const requestId = ++this.editorialSearchRequestId;
     this.editorialSearchPerformed.set(true);
     this.editorialResults.set([]);
     this.errorMessage.set(null);
     this.searching.set(true);
     this.editorialCatalogService.search({ q: this.editorialSearch.controls.q.value, size: 30 })
-      .pipe(finalize(() => this.searching.set(false)), takeUntilDestroyed(this.destroyRef))
+      .pipe(finalize(() => { if (requestId === this.editorialSearchRequestId) this.searching.set(false); }), takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (page) => this.editorialResults.set(this.toItemCandidates(page.content)),
-        error: (error) => this.errorMessage.set(this.errorMessageService.toMessage(error))
+        next: (page) => { if (requestId === this.editorialSearchRequestId) this.editorialResults.set(this.toItemCandidates(page.content)); },
+        error: (error) => { if (requestId === this.editorialSearchRequestId) this.errorMessage.set(this.errorMessageService.toMessage(error)); }
       });
   }
 
@@ -216,6 +223,8 @@ export class CollectionItemCreateComponent implements OnInit {
   }
 
   private clearEditorialState(): void {
+    this.editorialSearchRequestId++;
+    this.searching.set(false);
     this.clearEditorialSelection();
     this.editorialResults.set([]);
     this.editorialSearchPerformed.set(false);
