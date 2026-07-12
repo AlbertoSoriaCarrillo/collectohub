@@ -12,6 +12,12 @@ ownership or membership.
 
 ## Health
 
+## Editorial data quality
+
+| Method and path | Access | Request | Response | Status | Purpose |
+| --- | --- | --- | --- | --- | --- |
+| `GET /api/catalog/admin/data-quality/report` | `ADMIN` | Optional `scope`; `limit` 1..200 | `EditorialDataQualityReportResponse` | `MVP3_ADMIN_PARTIAL` | Read-only exact duplicate report; no fix, merge or deletion. |
+
 | Method and path | Access | Request | Response | Status | Purpose |
 | --- | --- | --- | --- | --- | --- |
 | `GET /api/health` | Public | None | `HealthResponse` | `TECHNICAL` | Backend liveness and service identity. |

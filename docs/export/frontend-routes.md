@@ -56,6 +56,7 @@ ADMIN-only editorial shell.
 | `/admin/editorial/credits` | `AdminCreditsComponent` | Shell | `MVP3_ADMIN_PARTIAL` | Item credits. |
 | `/admin/editorial/relationships` | `AdminRelationshipsComponent` | Shell | `MVP3_ADMIN_PARTIAL` | Item relationships. |
 | `/admin/editorial/master-product-links` | `AdminMasterProductLinksComponent` | Shell | `MVP3_ADMIN_PARTIAL` | Legacy reconciliation. |
+| `/admin/editorial/data-quality` | `AdminDataQualityComponent` | Shell | `MVP3_ADMIN_PARTIAL` | Read-only duplicate quality report. |
 
 | Path | Destination | Reason |
 | --- | --- | --- |

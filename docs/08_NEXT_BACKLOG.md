@@ -94,6 +94,9 @@ validaciones backend selectivas.
 EPIC 42B completada el 2026-07-10. Siguiente tarea recomendada: EPIC 42C -
 Calidad editorial avanzada y reporte de duplicados.
 
+EPIC 42C, 42C-FIX y 42C-FIX2 completadas el 2026-07-12. Siguiente tarea
+recomendada: EPIC 43A - Diseno de roles editoriales separados de ADMIN.
+
 ## MVP 4 - Colecciones finales de usuario
 
 - adopcion principal del catalogo editorial en colecciones;

@@ -1718,3 +1718,16 @@ Siguiente paso: crear el backend en la carpeta backend.
   dedicadas para no cargar tablas completas de forma fragil.
 - Ejecutado `npm.cmd test -- --watch=false`: 55 archivos y 175 tests correctos.
 - Sin migraciones, escritura, auto-fix, merge, borrado, E2E, Playwright ni MVP4.
+
+## 2026-07-12 - EPIC 42C-FIX2 - Cierre tecnico del reporte de calidad editorial
+
+- Sustituidos escaneos globales por queries agregadas con `GROUP BY`, `HAVING`,
+  exclusion de borrados y limite por check.
+- Implementados 13 checks: publisher; franchise name/slug; series; item
+  title/sequence; edition ISBN/EAN/name; creator name/slug; master link
+  VERIFIED/exacto.
+- Anadidos tests backend de scopes, limite, informe vacio e invalido, y tests
+  frontend de pantalla, ruta, servicio, shell e i18n.
+- Actualizados API docs y exports de endpoint, ruta y mapa frontend-backend.
+- Backend `clean verify` y frontend tests correctos; sin migraciones,
+  escritura, auto-fix, merge, borrado, E2E, Playwright ni MVP4.

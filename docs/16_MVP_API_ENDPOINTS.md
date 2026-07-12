@@ -148,6 +148,7 @@ registros `ACTIVE` no eliminados. `recordStatus` es un filtro exclusivo de
 | POST | `/api/catalog/items/{itemId}/editions` | Protegido | `ADMIN` | `CreateCatalogItemEditionRequest` | `CatalogItemEditionResponse` | `400`, `401`, `403`, `404`, `409` |
 | PUT | `/api/catalog/editions/{id}` | Protegido | `ADMIN` | `UpdateCatalogItemEditionRequest` | `CatalogItemEditionResponse` | `400`, `401`, `403`, `404`, `409` |
 | GET | `/api/catalog/master-product-links` | Protegido | `ADMIN` | Filtros de master product, item, edition, status/source y paginacion | `PageResponse<MasterProductCatalogLinkResponse>` | `400`, `401`, `403` |
+| GET | `/api/catalog/admin/data-quality/report` | Protegido | `ADMIN` | `scope`, `limit` (1..200) | `EditorialDataQualityReportResponse` | `400`, `401`, `403`; solo lectura, sin auto-fix ni merge |
 | GET | `/api/catalog/master-product-links/{id}` | Protegido | `ADMIN` | No | `MasterProductCatalogLinkResponse` | `401`, `403`, `404` |
 | POST | `/api/catalog/master-product-links` | Protegido | `ADMIN` | `CreateMasterProductCatalogLinkRequest` | `MasterProductCatalogLinkResponse` | `400`, `401`, `403`, `404`, `409` |
 | PUT | `/api/catalog/master-product-links/{id}` | Protegido | `ADMIN` | `UpdateMasterProductCatalogLinkRequest` | `MasterProductCatalogLinkResponse` | `400`, `401`, `403`, `404`, `409` |

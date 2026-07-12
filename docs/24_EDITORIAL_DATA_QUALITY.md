@@ -49,3 +49,11 @@ EPIC 42B - Hardening admin editorial y validaciones backend selectivas.
 Publishers, franchises, series, items y editions requieren decisiones con datos
 reales, normalizacion y posiblemente constraints/migraciones. Siguen pendientes
 fuzzy matching, aliases, metricas y reportes de duplicados.
+
+## Reporte de lectura
+
+`GET /api/catalog/admin/data-quality/report` es ADMIN-only y no modifica datos.
+Acepta `scope` y `limit` (1..200, 50 por defecto). Usa agrupaciones exactas de
+registros no eliminados para publishers, franchises, series con franchise,
+items, editions, creators y master links. No realiza fuzzy matching, auto-fix,
+merge ni borrado.

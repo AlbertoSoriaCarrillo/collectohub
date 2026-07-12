@@ -129,6 +129,10 @@ GET/POST/PUT/DELETE by source item; master-product-links use search/get/create/
 update, verify, reject, backfill and editorial legacy bridge lookup. No endpoint
 or backend contract was created for these screens.
 
+`/admin/editorial/data-quality` - `AdminDataQualityComponent` uses
+`EditorialAdminService.getEditorialDataQualityReport()` and
+`GET /api/catalog/admin/data-quality/report` as an ADMIN-only read-only report.
+
 | Route | Component | Backend relationship | Status |
 | --- | --- | --- | --- |
 | `/` | Redirect | No direct API call | `REDIRECT` |

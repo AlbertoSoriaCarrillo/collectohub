@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.Optional;
 import java.util.List;
+import org.springframework.data.jpa.repository.Query;
 
 public interface CatalogItemRepository extends
         JpaRepository<CatalogItem, Long>,
@@ -46,4 +47,8 @@ public interface CatalogItemRepository extends
             String title,
             Long excludedId
     );
+    @Query(value = "select concat(series_id, ':', lower(trim(title))) as groupKey, min(title) as displayValue, string_agg(id::text, ',' order by id) as recordIds, string_agg(title, ' | ' order by id) as recordLabels from catalog_items where deleted_at is null group by series_id, lower(trim(title)) having count(*) > 1 order by groupKey limit :limit", nativeQuery = true)
+    List<EditorialDataQualityGroup> findDuplicateTitleInSeriesGroups(int limit);
+    @Query(value = "select concat(series_id, ':', lower(trim(sequence_label))) as groupKey, min(sequence_label) as displayValue, string_agg(id::text, ',' order by id) as recordIds, string_agg(title, ' | ' order by id) as recordLabels from catalog_items where deleted_at is null and nullif(trim(sequence_label), '') is not null group by series_id, lower(trim(sequence_label)) having count(*) > 1 order by groupKey limit :limit", nativeQuery = true)
+    List<EditorialDataQualityGroup> findDuplicateSequenceInSeriesGroups(int limit);
 }
