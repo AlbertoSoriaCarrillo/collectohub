@@ -1,13 +1,15 @@
 # MVP3 partial closure - Admin Editorial
 
-Fecha: 2026-07-10. Este cierre cubre EPIC 40A-40G y EPIC 41A; MVP3 no queda
-cerrado como producto final.
+Fecha: 2026-07-12. Este cierre cubre EPIC 40A-40G, EPIC 41A y las decisiones
+posteriores de calidad/autorizacion; MVP3 no queda cerrado como producto final.
 
 ## Resumen ejecutivo
 
 El primer bloque de administracion editorial esta implementado, auditado y
 validado localmente. Permite a `ADMIN` mantener datos editoriales y reconciliar
 el catalogo legacy, usando endpoints ya existentes sin migraciones nuevas.
+EPIC 43A ha documentado, sin cambios funcionales, la evolucion hacia
+`EDITORIAL_ADMIN` para aplicar minimo privilegio.
 
 ## Pantallas disponibles
 
@@ -47,7 +49,7 @@ ADMIN. Auditoria: `docs/22_MVP3_ADMIN_UX_AUDIT.md`.
 | Datos demo | No se ejecuto contra backend ADMIN local. | Validacion parcial. | EPIC 41C. |
 | Docker | Daemon no disponible. | Sin smoke compose reciente. | Reintentar localmente. |
 | Datos reales | No hay carga productiva. | Catalogo de demostracion. | Calidad de datos posterior. |
-| Roles | Solo `ADMIN` editorial. | Sin flujos especializados. | Decidir hardening. |
+| Roles | Solo `ADMIN` editorial en codigo actual. | Exceso de privilegio para editores. | EPIC 43B/43C implementaran el diseno `EDITORIAL_ADMIN`. |
 | Calidad | EPIC 42A documenta calidad basica y warnings; faltan reglas backend fuertes, datos reales y E2E futuro. | Duplicados complejos posibles. | EPIC 42B. |
 
 EPIC 42B anade hardening selectivo para creators y confirma las protecciones ya
@@ -56,6 +58,7 @@ de calidad: siguen pendientes reglas complejas, datos reales y E2E futuro.
 
 ## Decision recomendada
 
-Siguiente EPIC: **EPIC 41C - E2E basico Admin Editorial y validacion con datos
-demo**. Antes de ampliar MVP3 o iniciar MVP4 conviene probar el recorrido real
-con navegador, API y datos demo.
+EPIC 43A ha cerrado el diseno de roles editoriales separados de `ADMIN`; no
+inicia MVP4 ni modifica seguridad. Siguiente EPIC: **EPIC 43B - Backend role
+EDITORIAL_ADMIN y autorizacion editorial centralizada**, seguido de EPIC 43C
+para guard y navegacion editorial.

@@ -515,6 +515,14 @@ de anadir pantallas de mantenimiento editorial.
 El orden recomendado es: shell admin, entidades base, items/ediciones, creators,
 relaciones, reconciliacion y datos demo.
 
+## 2026-07-12 - Roles editoriales separados de ADMIN
+
+El catalogo editorial usara inicialmente `EDITORIAL_ADMIN` como rol operativo.
+`ADMIN` conservara acceso como superusuario. No se reutilizaran
+`CONTENT_CREATOR`, `SHOP_OWNER` ni `USER`. La division
+`EDITORIAL_EDITOR`/`EDITORIAL_REVIEWER` se pospone hasta que exista equipo
+editorial real y un flujo formal de aprobacion.
+
 ## 2026-06-16 - Edad recomendada
 
 - Decisión: plataforma recomendada para mayores de 18 años.

@@ -1,6 +1,6 @@
 # CollectoHub MVP 3 admin editorial plan
 
-Fecha de revision: 2026-07-10.
+Fecha de revision: 2026-07-12.
 
 ## 1. Objetivo de MVP3
 
@@ -72,7 +72,12 @@ moderacion social/comunitaria.
 - `DRAFT` y `ARCHIVED` solo deben mostrarse en pantallas admin.
 - El enlace de navegacion admin debe ocultarse si el usuario no tiene `ADMIN`.
 
-No se implementan cambios de permisos en esta fase documental.
+EPIC 43A cierra el diseno de evolucion: `EDITORIAL_ADMIN` sera el rol
+operativo del catalogo editorial y `ADMIN` conservara acceso como superusuario.
+No se reutilizaran `CONTENT_CREATOR`, `SHOP_OWNER` ni `USER`; la separacion
+EDITORIAL_EDITOR/EDITORIAL_REVIEWER queda pospuesta. Esta decision aun no se ha
+implementado: la siguiente tarea es EPIC 43B, seguida de EPIC 43C para guard y
+navegacion editorial.
 
 ## 6. Pantallas admin necesarias
 

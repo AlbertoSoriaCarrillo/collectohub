@@ -1,5 +1,19 @@
 # Registro de avance
 
+## 2026-07-12 - EPIC 43A - Diseno de roles editoriales separados de ADMIN
+
+- Realizado inventario de autorizaciones: 28 operaciones HTTP editoriales,
+  defensas de servicio equivalentes, guard compartido de 11 rutas y navegacion.
+- Creada matriz de capacidades y evaluadas las alternativas de rol unico,
+  editor/reviewer y permisos granulares.
+- Decision adoptada: `EDITORIAL_ADMIN` como rol operativo editorial; `ADMIN`
+  conserva acceso como superusuario.
+- Estudiada la compatibilidad JWT/sesion y definidos los planes de backend,
+  frontend y asignacion controlada exclusivamente por ADMIN.
+- Sin codigo funcional, migraciones, endpoints, guards nuevos, E2E, Playwright
+  ni MVP4. Siguiente tarea: EPIC 43B - Backend role EDITORIAL_ADMIN y
+  autorizacion editorial centralizada.
+
 ## 2026-06-16
 
 Repositorio inicializado con documentación base.

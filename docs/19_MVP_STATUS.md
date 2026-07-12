@@ -1,6 +1,6 @@
 # CollectoHub MVP status
 
-Fecha de revision: 2026-07-10.
+Fecha de revision: 2026-07-12.
 
 ## Estado general
 
@@ -24,10 +24,11 @@ tiendas, marketplace, pagos y movil quedan en fases posteriores.
 
 MVP 3 tiene validado un primer bloque parcial: EPIC 40A-40G entrega shell
 protegido para `ADMIN`, gestion de entidades editoriales, relaciones,
-reconciliacion legacy, datos demo por API y validacion local. No queda cerrado
-como producto final: siguen pendientes una auditoria UX/admin, calidad de datos
-y decisiones de siguiente bloque. La siguiente tarea recomendada es EPIC 41A -
-Auditoria UX/Admin editorial y bugs de usabilidad.
+reconciliacion legacy, datos demo por API y validacion local. EPIC 43A deja
+cerrado el diseno de separacion entre administracion global y operacion
+editorial mediante el futuro rol `EDITORIAL_ADMIN`, sin implementarlo todavia.
+MVP3 no queda cerrado como producto final; la siguiente tarea es EPIC 43B -
+Backend role EDITORIAL_ADMIN y autorizacion editorial centralizada.
 
 | Dominio | Estado actual |
 | --- | --- |
