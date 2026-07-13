@@ -29,6 +29,9 @@ public record CollectionItemResponse(
         String catalogFranchiseName,
         String editorialReferenceSource,
         String referenceKind,
+        String manualTitle,
+        String manualDescription,
+        String manualType,
         String collectionStatus,
         String physicalCondition,
         String unitNumber,
@@ -73,6 +76,9 @@ public record CollectionItemResponse(
                 series == null || series.getFranchise() == null ? null : series.getFranchise().getName(),
                 item.getEditorialReferenceSource().name(),
                 referenceKind(item).name(),
+                item.getManualTitle(),
+                item.getManualDescription(),
+                item.getManualType(),
                 item.getCollectionStatus().name(),
                 item.getPhysicalCondition() == null ? null : item.getPhysicalCondition().name(),
                 item.getUnitNumber(),
@@ -88,8 +94,11 @@ public record CollectionItemResponse(
                     ? CollectionItemReferenceKind.VERIFIED_BRIDGE
                     : CollectionItemReferenceKind.DIRECT_CATALOG;
         }
-        return item.getMasterProduct() != null
-                ? CollectionItemReferenceKind.LEGACY_UNRESOLVED
+        if (item.getMasterProduct() != null) {
+            return CollectionItemReferenceKind.LEGACY_UNRESOLVED;
+        }
+        return item.isManual()
+                ? CollectionItemReferenceKind.MANUAL
                 : CollectionItemReferenceKind.INVALID_REFERENCE;
     }
 }

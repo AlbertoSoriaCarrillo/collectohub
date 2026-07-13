@@ -37,7 +37,8 @@ class LiquibaseChangelogParsingTest {
                         "009-add-editorial-references-to-shop-products",
                         "010-create-catalog-creators",
                         "011-create-catalog-item-relationships",
-                        "012-add-editorial-admin-role"
+                        "012-add-editorial-admin-role",
+                        "013-add-manual-collection-items"
                 );
     }
 
@@ -73,5 +74,27 @@ class LiquibaseChangelogParsingTest {
                 .contains("shop_product.catalog_item_id IS NULL")
                 .doesNotContain("link_status = 'PROPOSED'")
                 .doesNotContain("link_status = 'REJECTED'");
+    }
+
+    @Test
+    void manualCollectionItemMigrationDefinesAReversibleIdentityContract() throws Exception {
+        String migration;
+        try (var input = getClass().getClassLoader().getResourceAsStream(
+                "db/changelog/changes/013-add-manual-collection-items.sql")) {
+            assertThat(input).isNotNull();
+            migration = new String(input.readAllBytes(), StandardCharsets.UTF_8);
+        }
+
+        assertThat(migration)
+                .contains("ADD COLUMN manual_title VARCHAR(160)")
+                .contains("ADD COLUMN manual_description VARCHAR(4000)")
+                .contains("ADD COLUMN manual_type VARCHAR(80)")
+                .contains("DROP CONSTRAINT chk_collection_items_reference")
+                .contains("ADD CONSTRAINT chk_collection_items_reference")
+                .contains("'MANUAL'")
+                .contains("btrim(manual_title) <> ''")
+                .contains("Cannot rollback manual collection item migration while manual data exists")
+                .doesNotContain("UPDATE collection_items")
+                .doesNotContain("CREATE INDEX");
     }
 }

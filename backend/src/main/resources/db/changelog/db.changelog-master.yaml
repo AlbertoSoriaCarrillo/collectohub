@@ -30,3 +30,5 @@ databaseChangeLog:
       file: db/changelog/changes/011-create-catalog-item-relationships.sql
   - include:
       file: db/changelog/changes/012-add-editorial-admin-role.sql
+  - include:
+      file: db/changelog/changes/013-add-manual-collection-items.sql

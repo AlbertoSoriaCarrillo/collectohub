@@ -15,6 +15,7 @@ import org.testcontainers.utility.DockerImageName;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Testcontainers(disabledWithoutDocker = true)
 @SpringBootTest
@@ -168,6 +169,7 @@ class LiquibaseMigrationIntegrationTest {
             "fk_collection_items_catalog_item",
             "fk_collection_items_catalog_item_edition",
             "chk_collection_items_reference",
+            "chk_collection_items_manual_title_not_blank",
             "chk_collection_items_edition_requires_item",
             "chk_collection_items_editorial_reference_source",
             "fk_shop_products_catalog_item",
@@ -226,6 +228,129 @@ class LiquibaseMigrationIntegrationTest {
                 "MERCHANDISING",
                 "MOVIE_SERIES"
         );
+    }
+
+    @Test
+    void manualCollectionItemMigrationEnforcesItsPostgresqlContract() {
+        assertThat(collectionItemManualColumns()).containsExactlyInAnyOrder(
+                "manual_title", "manual_description", "manual_type"
+        );
+
+        CollectionItemFixture fixture = createCollectionItemFixture();
+        insertCollectionItem(fixture, fixture.masterProductId(), null, null, "LEGACY", null, null, null);
+        insertCollectionItem(fixture, null, fixture.catalogItemId(), null, "MANUAL_EDITORIAL", null, null, null);
+        insertCollectionItem(fixture, fixture.masterProductId(), fixture.catalogItemId(), fixture.catalogItemEditionId(),
+                "VERIFIED_BRIDGE", null, null, null);
+        insertCollectionItem(fixture, null, null, null, "MANUAL", "My manual item", "Description", "CUSTOM");
+
+        assertThatThrownBy(() -> insertCollectionItem(
+                fixture, null, null, null, "MANUAL", "", null, null
+        )).isInstanceOf(Exception.class);
+        assertThatThrownBy(() -> insertCollectionItem(
+                fixture, null, null, null, "MANUAL", "   ", null, null
+        )).isInstanceOf(Exception.class);
+        assertThatThrownBy(() -> insertCollectionItem(
+                fixture, fixture.masterProductId(), null, null, "MANUAL", "Mixed", null, null
+        )).isInstanceOf(Exception.class);
+        assertThatThrownBy(() -> insertCollectionItem(
+                fixture, null, fixture.catalogItemId(), null, "MANUAL", "Mixed", null, null
+        )).isInstanceOf(Exception.class);
+        assertThatThrownBy(() -> insertCollectionItem(
+                fixture, null, null, fixture.catalogItemEditionId(), "MANUAL", "Mixed", null, null
+        )).isInstanceOf(Exception.class);
+        assertThatThrownBy(() -> insertCollectionItem(
+                fixture, null, null, null, "MANUAL", null, "Description", null
+        )).isInstanceOf(Exception.class);
+        assertThatThrownBy(() -> insertCollectionItem(
+                fixture, null, null, null, "MANUAL", null, null, "CUSTOM"
+        )).isInstanceOf(Exception.class);
+        assertThatThrownBy(() -> insertCollectionItem(
+                fixture, null, null, null, "MANUAL", null, null, null
+        )).isInstanceOf(Exception.class);
+        assertThatThrownBy(() -> insertCollectionItem(
+                fixture, fixture.masterProductId(), null, null, "LEGACY", "Manual metadata", null, null
+        )).isInstanceOf(Exception.class);
+        assertThatThrownBy(() -> insertCollectionItem(
+                fixture, null, null, fixture.catalogItemEditionId(), "MANUAL_EDITORIAL", null, null, null
+        )).isInstanceOf(Exception.class);
+
+        assertThat(jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM collection_items WHERE collection_id = ?", Integer.class, fixture.collectionId()
+        )).isEqualTo(4);
+    }
+
+    private List<String> collectionItemManualColumns() {
+        return jdbcTemplate.queryForList("""
+                SELECT column_name
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                  AND table_name = 'collection_items'
+                  AND column_name IN ('manual_title', 'manual_description', 'manual_type')
+                """, String.class);
+    }
+
+    private CollectionItemFixture createCollectionItemFixture() {
+        Long userId = jdbcTemplate.queryForObject("""
+                INSERT INTO users (email, password_hash, display_name)
+                VALUES ('migration-manual@example.com', 'hash', 'Migration user')
+                RETURNING id
+                """, Long.class);
+        Long categoryId = jdbcTemplate.queryForObject(
+                "SELECT id FROM product_categories WHERE code = 'MANGA_COMIC'", Long.class);
+        Long collectionId = jdbcTemplate.queryForObject("""
+                INSERT INTO collections (user_id, name, visibility)
+                VALUES (?, 'Migration contract collection', 'PRIVATE')
+                RETURNING id
+                """, Long.class, userId);
+        Long masterProductId = jdbcTemplate.queryForObject("""
+                INSERT INTO master_products (name, category_id, created_by)
+                VALUES ('Migration contract master product', ?, ?)
+                RETURNING id
+                """, Long.class, categoryId, userId);
+        Long seriesId = jdbcTemplate.queryForObject("""
+                INSERT INTO catalog_series (title, type, publication_status, created_by)
+                VALUES ('Migration contract series', 'MANGA', 'ONGOING', ?)
+                RETURNING id
+                """, Long.class, userId);
+        Long catalogItemId = jdbcTemplate.queryForObject("""
+                INSERT INTO catalog_items (series_id, title, created_by)
+                VALUES (?, 'Migration contract item', ?)
+                RETURNING id
+                """, Long.class, seriesId, userId);
+        Long catalogItemEditionId = jdbcTemplate.queryForObject("""
+                INSERT INTO catalog_item_editions (catalog_item_id, format, created_by)
+                VALUES (?, 'PAPERBACK', ?)
+                RETURNING id
+                """, Long.class, catalogItemId, userId);
+        return new CollectionItemFixture(collectionId, masterProductId, catalogItemId, catalogItemEditionId);
+    }
+
+    private void insertCollectionItem(
+            CollectionItemFixture fixture,
+            Long masterProductId,
+            Long catalogItemId,
+            Long catalogItemEditionId,
+            String source,
+            String manualTitle,
+            String manualDescription,
+            String manualType
+    ) {
+        jdbcTemplate.update("""
+                INSERT INTO collection_items (
+                    collection_id, master_product_id, catalog_item_id, catalog_item_edition_id,
+                    editorial_reference_source, manual_title, manual_description, manual_type, collection_status
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'OWNED')
+                """,
+                fixture.collectionId(), masterProductId, catalogItemId, catalogItemEditionId,
+                source, manualTitle, manualDescription, manualType);
+    }
+
+    private record CollectionItemFixture(
+            Long collectionId,
+            Long masterProductId,
+            Long catalogItemId,
+            Long catalogItemEditionId
+    ) {
     }
 
     private List<String> tableNames() {

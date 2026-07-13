@@ -28,6 +28,9 @@ public record CreateCollectionItemRequest(
         @Size(max = 4000)
         String notes,
 
-        LocalDate acquiredAt
+        LocalDate acquiredAt,
+        @Size(max = 160) String manualTitle,
+        @Size(max = 4000) String manualDescription,
+        @Size(max = 80) String manualType
 ) {
 }

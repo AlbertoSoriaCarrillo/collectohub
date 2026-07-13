@@ -421,6 +421,9 @@ class CollectionControllerSecurityTest {
                 null,
                 "LEGACY",
                 "LEGACY_UNRESOLVED",
+                null,
+                null,
+                null,
                 status,
                 "LIKE_NEW",
                 "1",
@@ -434,7 +437,7 @@ class CollectionControllerSecurityTest {
         return new CollectionItemResponse(
                 300L, 100L, 200L, "Dragon Ball 1", "MANGA_COMIC", "Dragon Ball", "Tankobon", "1",
                 500L, "Dragon Ball 1", "1", 400L, "Dragon Ball", 600L, "Edition", "PAPERBACK",
-                null, null, null, null, null, "MANUAL_EDITORIAL", "DIRECT_CATALOG", "OWNED", "LIKE_NEW",
+                null, null, null, null, null, "MANUAL_EDITORIAL", "DIRECT_CATALOG", null, null, null, "OWNED", "LIKE_NEW",
                 "1", 50, null, null
         );
     }

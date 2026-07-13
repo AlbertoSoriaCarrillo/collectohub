@@ -279,7 +279,7 @@ class CollectionServiceTest {
                 AuthenticatedUser.from(owner),
                 100L,
                 new CreateCollectionItemRequest(null, 500L, null, CollectionItemStatus.OWNED,
-                        null, null, null, null, null)
+                        null, null, null, null, null, null, null, null)
         );
 
         assertThat(response.masterProductId()).isNull();
@@ -301,7 +301,7 @@ class CollectionServiceTest {
                 AuthenticatedUser.from(owner),
                 100L,
                 new CreateCollectionItemRequest(null, 500L, 600L, CollectionItemStatus.OWNED,
-                        null, null, null, null, null)
+                        null, null, null, null, null, null, null, null)
         );
 
         assertThat(response.catalogItemEditionId()).isEqualTo(600L);
@@ -338,7 +338,7 @@ class CollectionServiceTest {
                 AuthenticatedUser.from(owner),
                 100L,
                 new CreateCollectionItemRequest(null, null, null, CollectionItemStatus.OWNED,
-                        null, null, null, null, null)
+                        null, null, null, null, null, null, null, null)
         )).isInstanceOf(InvalidCollectionItemReferenceException.class);
     }
 
@@ -353,7 +353,7 @@ class CollectionServiceTest {
                 AuthenticatedUser.from(owner),
                 100L,
                 new CreateCollectionItemRequest(null, 500L, null, CollectionItemStatus.OWNED,
-                        null, null, null, null, null)
+                        null, null, null, null, null, null, null, null)
         )).isInstanceOf(com.collectohub.catalog.application.CatalogItemNotFoundException.class);
     }
 
@@ -375,7 +375,7 @@ class CollectionServiceTest {
                 AuthenticatedUser.from(owner),
                 100L,
                 new CreateCollectionItemRequest(200L, 501L, null, CollectionItemStatus.OWNED,
-                        null, null, null, null, null)
+                        null, null, null, null, null, null, null, null)
         )).isInstanceOf(ConflictingCollectionItemReferenceException.class);
     }
 
@@ -392,7 +392,7 @@ class CollectionServiceTest {
                 AuthenticatedUser.from(owner),
                 100L,
                 new CreateCollectionItemRequest(null, 500L, 600L, CollectionItemStatus.OWNED,
-                        null, null, null, null, null)
+                        null, null, null, null, null, null, null, null)
         )).isInstanceOf(InvalidCollectionItemReferenceException.class);
     }
 
@@ -473,7 +473,7 @@ class CollectionServiceTest {
                         "2",
                         100,
                         "Updated",
-                        LocalDate.of(2024, 1, 1)
+                        LocalDate.of(2024, 1, 1), null, null, null
                 )
         );
 
@@ -503,7 +503,7 @@ class CollectionServiceTest {
                 AuthenticatedUser.from(owner),
                 100L,
                 300L,
-                new UpdateCollectionItemRequest(201L, null, null, null, null, null, null, null, null)
+                new UpdateCollectionItemRequest(201L, null, null, null, null, null, null, null, null, null, null, null)
         );
 
         assertThat(response.masterProductId()).isEqualTo(201L);
@@ -535,7 +535,7 @@ class CollectionServiceTest {
                 AuthenticatedUser.from(owner),
                 100L,
                 300L,
-                new UpdateCollectionItemRequest(null, 500L, null, null, null, null, null, null, null)
+                new UpdateCollectionItemRequest(null, 500L, null, null, null, null, null, null, null, null, null, null)
         );
 
         assertThat(response.catalogItemId()).isEqualTo(500L);
@@ -551,7 +551,7 @@ class CollectionServiceTest {
                 AuthenticatedUser.from(otherUser),
                 100L,
                 300L,
-                new UpdateCollectionItemRequest(null, null, null, CollectionItemStatus.WANTED, null, null, null, null, null)
+                new UpdateCollectionItemRequest(null, null, null, CollectionItemStatus.WANTED, null, null, null, null, null, null, null, null)
         )).isInstanceOf(AccessDeniedException.class);
     }
 
@@ -576,7 +576,7 @@ class CollectionServiceTest {
                 "1",
                 50,
                 "First print",
-                LocalDate.of(2023, 6, 1)
+                LocalDate.of(2023, 6, 1), null, null, null
         );
     }
 

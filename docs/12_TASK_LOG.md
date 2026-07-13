@@ -1899,3 +1899,31 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Actualizados API docs y exports de endpoint, ruta y mapa frontend-backend.
 - Backend `clean verify` y frontend tests correctos; sin migraciones,
   escritura, auto-fix, merge, borrado, E2E, Playwright ni MVP4.
+
+## 2026-07-13 - EPIC 44E-A1 - Esquema y contrato base de items manuales
+
+- Anadida la migracion Liquibase 013 con `manual_title`,
+  `manual_description` y `manual_type` en `collection_items`, sin backfill ni
+  indices manuales.
+- El constraint `chk_collection_items_reference` conserva la identidad
+  referenciada legacy/editorial y anade la identidad manual exclusiva; se
+  prohíben referencias mezcladas, title vacio o solo espacios, metadata manual
+  sin title y source `MANUAL` sin title. Se mantiene
+  `chk_collection_items_edition_requires_item`.
+- El rollback falla explicitamente si existe source `MANUAL` o cualquiera de
+  los campos manuales. Sin datos manuales, restaura los constraints previos y
+  elimina las columnas nuevas.
+- Anadido `MANUAL` a `CollectionEditorialReferenceSource` y a
+  `CollectionItemReferenceKind`; `referenceKind` sigue calculado y no se
+  persiste. Anadidos `CollectionItem.createManual` e `isManual`.
+- Ampliados los DTOs de create/update y la respuesta publica con los campos
+  manuales. `manualTitle`, `manualDescription` y `manualType` se muestran en
+  lecturas publicas; `notes` y `acquiredAt` siguen siendo privados.
+- Anadidas pruebas de entidad, respuesta y migracion real con
+  PostgreSQL/Testcontainers, incluyendo los constraints validos e invalidos.
+- Ejecutados tests dirigidos: 61 tests, 0 fallos, 0 errores y 0 omitidos.
+  Ejecutado `cd backend && .\mvnw.cmd test`: `BUILD SUCCESS`, 346 tests,
+  0 fallos, 0 errores y 0 omitidos. PostgreSQL/Testcontainers se ejecuto.
+- La API todavia no permite altas manuales: queda pendiente EPIC 44E-A2 para
+  creacion/edicion backend y EPIC 44E-A3 para enlace posterior al catalogo.
+  Sin frontend, endpoints, exports, E2E ni Playwright.

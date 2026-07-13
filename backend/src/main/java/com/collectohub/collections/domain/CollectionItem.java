@@ -47,6 +47,13 @@ public class CollectionItem {
     @Column(name = "editorial_reference_source", nullable = false, length = 40)
     private CollectionEditorialReferenceSource editorialReferenceSource;
 
+    @Column(name = "manual_title", length = 160)
+    private String manualTitle;
+    @Column(name = "manual_description", length = 4000)
+    private String manualDescription;
+    @Column(name = "manual_type", length = 80)
+    private String manualType;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "collection_status", nullable = false, length = 30)
     private CollectionItemStatus collectionStatus;
@@ -119,6 +126,14 @@ public class CollectionItem {
         return item;
     }
 
+    public static CollectionItem createManual(Collection collection, String manualTitle, String manualDescription, String manualType, CollectionItemStatus collectionStatus, PhysicalCondition physicalCondition, String unitNumber, Integer totalLimitedUnits, String notes, LocalDate acquiredAt, Long createdBy) {
+        CollectionItem item = create(collection, null, null, null, CollectionEditorialReferenceSource.MANUAL, collectionStatus, physicalCondition, unitNumber, totalLimitedUnits, notes, acquiredAt, createdBy);
+        item.manualTitle = manualTitle;
+        item.manualDescription = manualDescription;
+        item.manualType = manualType;
+        return item;
+    }
+
     public void updateReference(
             MasterProduct masterProduct,
             CatalogItem catalogItem,
@@ -177,6 +192,17 @@ public class CollectionItem {
     public CatalogItemEdition getCatalogItemEdition() { return catalogItemEdition; }
 
     public CollectionEditorialReferenceSource getEditorialReferenceSource() { return editorialReferenceSource; }
+    public String getManualTitle() { return manualTitle; }
+    public String getManualDescription() { return manualDescription; }
+    public String getManualType() { return manualType; }
+    public boolean isManual() {
+        return editorialReferenceSource == CollectionEditorialReferenceSource.MANUAL
+                && manualTitle != null
+                && !manualTitle.isBlank()
+                && masterProduct == null
+                && catalogItem == null
+                && catalogItemEdition == null;
+    }
 
     public CollectionItemStatus getCollectionStatus() {
         return collectionStatus;

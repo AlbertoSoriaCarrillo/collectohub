@@ -205,20 +205,20 @@ Resumen relevante:
 
 ## 9. Estado actual verificado
 
-Último commit verificado:
+Último commit verificado previo a EPIC 44E-A1:
 
 ```text
-157cf24119027d1c1aa2baea181eb2d75c424230
-feat: add catalog item and edition selection
+ae4cefce1fa179fe05e51b2e43d536226082f8f9
+fix: close catalog selection validation
 ```
 
-EPIC 44D está publicada. EPIC 44D-FIX está implementada en el cambio actual y
-pendiente de verificar su commit en GitHub.
+EPIC 44E-A1 está implementada en el cambio actual y pendiente de verificar su
+commit en GitHub.
 
 Siguiente tarea esperada:
 
 ```text
-EPIC 44E - Items manuales y enlace posterior al catálogo
+EPIC 44E-A2 - Creación y edición backend de items manuales
 ```
 
 La IA debe volver a comprobar GitHub antes de asumir que este estado sigue vigente.
@@ -253,6 +253,10 @@ Decisiones cerradas:
 18. La edición frontend compara siempre `collection.userId` con el usuario autenticado; los roles administrativos no sustituyen la propiedad.
 19. Crear usa `null` para opcionales vacíos; editar usa `""` para solicitar el vaciado de `description` o `categoryCode`.
 20. La alta catalogada usa `catalogItemId` y una edición opcional obtenida solo del detalle del item; no envía enlaces legacy implícitos.
+21. EPIC 44E-A1 añade el contrato de item manual en esquema, entidad y DTOs;
+    la API seguirá rechazando altas manuales hasta EPIC 44E-A2.
+22. El enlace posterior de un item manual al catálogo queda reservado para
+    EPIC 44E-A3; no hay backfill ni transición automática.
 
 ## 11. Clasificación actual de referencias de collection items
 
@@ -261,6 +265,7 @@ Valores actuales de `referenceKind`:
 - `DIRECT_CATALOG`;
 - `VERIFIED_BRIDGE`;
 - `LEGACY_UNRESOLVED`;
+- `MANUAL`;
 - `INVALID_REFERENCE`.
 
 Reglas principales:
@@ -268,6 +273,7 @@ Reglas principales:
 - referencia editorial directa: `catalogItemId` presente;
 - edición opcional y perteneciente al item;
 - referencia legacy: `masterProductId` sin catálogo directo;
+- referencia manual: source `MANUAL`, title no vacío y sin referencias;
 - referencia dual solo cuando no contradice un bridge `VERIFIED`;
 - datos privados sanitizados en lecturas públicas;
 - propietario recibe respuesta completa.
@@ -280,11 +286,13 @@ Orden previsto:
 2. EPIC 44B - Contrato backend y compatibilidad editorial. Completada.
 3. EPIC 44B-FIX - Tests y documentación. Completada.
 4. EPIC 44C - Flujo frontend de creación y edición de colecciones. Completada.
-5. EPIC 44D - Alta desde catálogo y selección de edición. Implementada localmente; pendiente de verificar su commit publicado.
-6. EPIC 44E - Items manuales y enlace posterior al catálogo.
-7. EPIC 44F - OWNED, WANTED y faltantes calculados.
-8. EPIC 44G - Detalle final, filtros, ordenación y progreso.
-9. EPIC 44H - Datos demo, validación integral y cierre parcial de MVP4.
+5. EPIC 44D - Alta desde catálogo y selección de edición. Completada.
+6. EPIC 44E-A1 - Esquema y contrato base de items manuales. Implementada en el cambio actual; pendiente de verificar su commit publicado.
+7. EPIC 44E-A2 - Creación y edición backend de items manuales.
+8. EPIC 44E-A3 - Enlace posterior de item manual al catálogo.
+9. EPIC 44F - OWNED, WANTED y faltantes calculados.
+10. EPIC 44G - Detalle final, filtros, ordenación y progreso.
+11. EPIC 44H - Datos demo, validación integral y cierre parcial de MVP4.
 
 El orden puede adaptarse si GitHub o la implementación real muestran dependencias distintas.
 
