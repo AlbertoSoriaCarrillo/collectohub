@@ -200,27 +200,34 @@ describe('CollectionService', () => {
   it('links a manual collection item to a catalog item without an edition', () => {
     const payload = { catalogItemId: 11, catalogItemEditionId: null };
 
-    service.linkManualCollectionItemToCatalog(3, 7, payload).subscribe();
+    const linked = { ...item, masterProductId: null, catalogItemId: 11, catalogItemEditionId: null,
+      editorialReferenceSource: 'MANUAL_EDITORIAL' as const, referenceKind: 'DIRECT_CATALOG' as const,
+      manualTitle: null, manualDescription: null, manualType: null, unitNumber: '1', notes: 'Personal' };
+    service.linkManualCollectionItemToCatalog(3, 7, payload).subscribe((response) => expect(response).toEqual(linked));
 
     const request = httpTestingController.expectOne(
       'http://localhost:8080/api/collections/3/items/7/catalog-reference'
     );
     expect(request.request.method).toBe('PUT');
     expect(request.request.body).toEqual(payload);
-    request.flush({ ...item, catalogItemId: 11 });
+    request.flush(linked);
   });
 
   it('links a manual collection item to a catalog item and edition', () => {
     const payload = { catalogItemId: 11, catalogItemEditionId: 12 };
 
-    service.linkManualCollectionItemToCatalog(3, 7, payload).subscribe();
+    const linked = { ...item, masterProductId: null, catalogItemId: 11, catalogItemEditionId: 12,
+      editorialReferenceSource: 'MANUAL_EDITORIAL' as const, referenceKind: 'DIRECT_CATALOG' as const,
+      manualTitle: null, manualDescription: null, manualType: null, physicalCondition: 'GOOD' as const,
+      acquiredAt: '2026-07-13' };
+    service.linkManualCollectionItemToCatalog(3, 7, payload).subscribe((response) => expect(response).toEqual(linked));
 
     const request = httpTestingController.expectOne(
       'http://localhost:8080/api/collections/3/items/7/catalog-reference'
     );
     expect(request.request.method).toBe('PUT');
     expect(request.request.body).toEqual(payload);
-    request.flush({ ...item, catalogItemId: 11, catalogItemEditionId: 12 });
+    request.flush(linked);
   });
 
   it('deletes a collection item', () => {

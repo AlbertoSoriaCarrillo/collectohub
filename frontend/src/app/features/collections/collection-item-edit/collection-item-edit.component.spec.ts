@@ -2,9 +2,9 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { CollectionItemResponse } from '../../../core/models/collection.model';
-import { EditorialCatalogSearchItem } from '../../../core/models/editorial-catalog.model';
+import { EditorialCatalogItemDetail, EditorialCatalogSearchItem } from '../../../core/models/editorial-catalog.model';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { CollectionService } from '../../../core/services/collection.service';
 import { EditorialCatalogService } from '../../../core/services/editorial-catalog.service';
@@ -70,7 +70,7 @@ describe('CollectionItemEditComponent', () => {
     hasToken: ReturnType<typeof vi.fn>;
     getMe: ReturnType<typeof vi.fn>;
   };
-  let editorialCatalogService: { search: ReturnType<typeof vi.fn> };
+  let editorialCatalogService: { search: ReturnType<typeof vi.fn>; getItemDetail: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
     catalogService = {
@@ -101,7 +101,8 @@ describe('CollectionItemEditComponent', () => {
         totalPages: 1,
         first: true,
         last: true
-      }))
+      })),
+      getItemDetail: vi.fn()
     };
 
     await TestBed.configureTestingModule({
@@ -281,6 +282,50 @@ describe('CollectionItemEditComponent', () => {
 
     expect(component.selectedEditorial()).toBeNull();
     expect(component.errorMessage()).toBeTruthy();
+  });
+
+  it('opens the manual link panel, searches deduplicated items and clears it on close', async () => {
+    const manualItem = { ...legacyItem, masterProductId: null, masterProductName: null, referenceKind: 'MANUAL' as const, manualTitle: 'Manual' };
+    collectionService.getCollectionItems.mockReturnValue(of([manualItem]));
+    const component = await createComponent();
+    component.openManualCatalogLink();
+    component.manualLinkSearch.controls.q.setValue('  One Piece  ');
+    component.searchCatalogForManualLink();
+    expect(editorialCatalogService.search).toHaveBeenCalledWith({ q: 'One Piece', size: 30 });
+    expect(component.manualLinkResults()).toEqual([editorialResult]);
+    expect(component.form.dirty).toBe(false);
+    component.closeManualCatalogLink();
+    expect(component.manualLinkPanelOpen()).toBe(false);
+    expect(component.manualLinkResults()).toEqual([]);
+  });
+
+  it('ignores an obsolete manual-link search response after closing the panel', async () => {
+    const pending = new Subject<any>();
+    editorialCatalogService.search.mockReturnValue(pending);
+    collectionService.getCollectionItems.mockReturnValue(of([{ ...legacyItem, masterProductId: null, referenceKind: 'MANUAL' as const, manualTitle: 'Manual' }]));
+    const component = await createComponent();
+    component.openManualCatalogLink();
+    component.searchCatalogForManualLink();
+    component.closeManualCatalogLink();
+    pending.next({ content: [editorialResult] });
+    expect(component.manualLinkResults()).toEqual([]);
+  });
+
+  it('links a selected manual item with the exact contract and no generic update', async () => {
+    const detail = { item: { id: 20, title: 'One Piece 1' }, editions: [] } as unknown as EditorialCatalogItemDetail;
+    const manualItem = { ...legacyItem, masterProductId: null, referenceKind: 'MANUAL' as const, manualTitle: 'Manual' };
+    const linked = { ...manualItem, catalogItemId: 20, manualTitle: null, referenceKind: 'DIRECT_CATALOG' as const, editorialReferenceSource: 'MANUAL_EDITORIAL' as const };
+    collectionService.getCollectionItems.mockReturnValue(of([manualItem]));
+    editorialCatalogService.getItemDetail.mockReturnValue(of(detail));
+    collectionService.linkManualCollectionItemToCatalog.mockReturnValue(of(linked));
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const component = await createComponent();
+    component.openManualCatalogLink();
+    component.selectManualLinkCatalogItem(editorialResult);
+    component.linkManualItemToCatalog();
+    expect(collectionService.linkManualCollectionItemToCatalog).toHaveBeenCalledWith(3, 7, { catalogItemId: 20, catalogItemEditionId: null });
+    expect(collectionService.updateCollectionItem).not.toHaveBeenCalled();
+    expect(component.isManualItem(component.item()!)).toBe(false);
   });
 
   async function createComponent(): Promise<CollectionItemEditComponent> {

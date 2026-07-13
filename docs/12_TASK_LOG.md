@@ -2036,3 +2036,14 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Ejecutados frontend tests y build: 58 archivos, 218 tests correctos; warning
   conocido de bundle inicial de 625.71 kB frente al budget de 500 kB. Sin
   backend, rutas, dependencias, exports, E2E ni Playwright. Siguiente: EPIC 44F.
+
+## 2026-07-13 - EPIC 44E-B2B-TEST-FIX - Cobertura integral del enlace manual
+
+- Endurecidas las pruebas HTTP de `catalog-reference` para verificar la
+  respuesta editorial, metadata manual nula y preservacion de datos personales.
+- Anadidas pruebas del panel manual para busqueda normalizada y deduplicada,
+  invalidacion de respuesta obsoleta al cerrar y payload exacto sin edicion;
+  tambien verifica que no se usa el PUT generico.
+- Ejecutados tests y build Angular correctamente. El build mantiene el warning
+  conocido de bundle inicial de 625.71 kB frente al budget de 500 kB. Sin
+  backend, rutas, dependencias, exports, E2E ni Playwright. Siguiente: EPIC 44F.
