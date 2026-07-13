@@ -10,11 +10,12 @@ export type CollectionItemStatus =
   | 'SELLABLE'
   | 'TRADABLE';
 
-export type CollectionEditorialReferenceSource = 'LEGACY' | 'VERIFIED_BRIDGE' | 'MANUAL_EDITORIAL';
+export type CollectionEditorialReferenceSource = 'LEGACY' | 'VERIFIED_BRIDGE' | 'MANUAL_EDITORIAL' | 'MANUAL';
 export type CollectionItemReferenceKind =
   | 'DIRECT_CATALOG'
   | 'VERIFIED_BRIDGE'
   | 'LEGACY_UNRESOLVED'
+  | 'MANUAL'
   | 'INVALID_REFERENCE';
 
 export interface CollectionItemResponse {
@@ -41,6 +42,9 @@ export interface CollectionItemResponse {
   catalogFranchiseName?: string | null;
   editorialReferenceSource?: CollectionEditorialReferenceSource;
   referenceKind?: CollectionItemReferenceKind;
+  manualTitle: string | null;
+  manualDescription: string | null;
+  manualType: string | null;
   collectionStatus: CollectionItemStatus;
   physicalCondition: PhysicalCondition | null;
   unitNumber: string | null;
@@ -78,6 +82,9 @@ export interface CreateCollectionItemRequest {
   masterProductId?: number | null;
   catalogItemId?: number | null;
   catalogItemEditionId?: number | null;
+  manualTitle?: string | null;
+  manualDescription?: string | null;
+  manualType?: string | null;
   collectionStatus: CollectionItemStatus;
   physicalCondition?: PhysicalCondition | null;
   unitNumber?: string | null;
@@ -90,6 +97,9 @@ export interface UpdateCollectionItemRequest {
   masterProductId?: number | null;
   catalogItemId?: number | null;
   catalogItemEditionId?: number | null;
+  manualTitle?: string | null;
+  manualDescription?: string | null;
+  manualType?: string | null;
   collectionStatus?: CollectionItemStatus | null;
   physicalCondition?: PhysicalCondition | null;
   unitNumber?: string | null;

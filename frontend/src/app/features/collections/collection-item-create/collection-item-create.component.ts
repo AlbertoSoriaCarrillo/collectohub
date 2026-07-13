@@ -23,7 +23,7 @@ import { CatalogService } from '../../../core/services/catalog.service';
 import { CollectionService } from '../../../core/services/collection.service';
 import { EditorialCatalogService } from '../../../core/services/editorial-catalog.service';
 
-type ReferenceMode = 'EDITORIAL' | 'LEGACY';
+type ReferenceMode = 'EDITORIAL' | 'MANUAL' | 'LEGACY';
 
 @Component({
   selector: 'app-collection-item-create',
@@ -69,6 +69,9 @@ export class CollectionItemCreateComponent implements OnInit {
   readonly form = this.fb.group({
     referenceMode: ['EDITORIAL' as ReferenceMode, [Validators.required]],
     masterProductId: [null as number | null],
+    manualTitle: ['', [Validators.maxLength(160)]],
+    manualDescription: ['', [Validators.maxLength(4000)]],
+    manualType: ['', [Validators.maxLength(80)]],
     collectionStatus: ['', [Validators.required]],
     physicalCondition: [''],
     unitNumber: ['', [Validators.maxLength(50)]],
@@ -93,10 +96,17 @@ export class CollectionItemCreateComponent implements OnInit {
       this.legacySearchRequestId++;
       this.form.controls.masterProductId.setValue(null);
       this.products.set([]);
-    } else {
+    } else if (mode === 'LEGACY') {
       this.editorialSearchRequestId++;
       this.clearEditorialState();
+    } else {
+      this.editorialSearchRequestId++;
+      this.legacySearchRequestId++;
+      this.clearEditorialState();
+      this.form.controls.masterProductId.setValue(null);
+      this.products.set([]);
     }
+    if (mode !== 'MANUAL') this.form.patchValue({ manualTitle: '', manualDescription: '', manualType: '' });
     this.errorMessage.set(null);
   }
 
@@ -167,7 +177,7 @@ export class CollectionItemCreateComponent implements OnInit {
     const value = this.form.getRawValue();
     const missingReference = value.referenceMode === 'EDITORIAL'
       ? !this.selectedCatalogItemDetail()
-      : !value.masterProductId;
+      : value.referenceMode === 'LEGACY' ? !value.masterProductId : !this.optionalText(value.manualTitle);
     if (this.form.invalid || missingReference) {
       this.form.markAllAsTouched();
       if (missingReference) this.errorMessage.set(this.languageService.translate('collections.referenceRequired'));
@@ -239,6 +249,9 @@ export class CollectionItemCreateComponent implements OnInit {
       masterProductId: value.referenceMode === 'LEGACY' ? Number(value.masterProductId) : null,
       catalogItemId: editorial?.item.id ?? null,
       catalogItemEditionId: editorial ? this.selectedEditionId() : null,
+      manualTitle: value.referenceMode === 'MANUAL' ? this.optionalText(value.manualTitle) : null,
+      manualDescription: value.referenceMode === 'MANUAL' ? this.optionalText(value.manualDescription) : null,
+      manualType: value.referenceMode === 'MANUAL' ? this.optionalText(value.manualType) : null,
       collectionStatus: value.collectionStatus as CreateCollectionItemRequest['collectionStatus'],
       physicalCondition: (this.optionalText(value.physicalCondition) as CreateCollectionItemRequest['physicalCondition']) ?? null,
       unitNumber: this.optionalText(value.unitNumber),

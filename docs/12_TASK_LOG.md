@@ -1966,3 +1966,12 @@ Siguiente paso: crear el backend en la carpeta backend.
   formato de error existente.
 - Tests dirigidos: `BUILD SUCCESS`, 67 tests, 0 fallos, 0 errores y 0 omitidos.
 - Sin migraciones, frontend, E2E ni Playwright. Siguiente tarea: EPIC 44E-B.
+
+## 2026-07-13 - EPIC 44E-B1 - Frontend de alta y visualización de items manuales
+
+- Actualizados los modelos TypeScript, el alta manual con payload aislado y la
+  visualización pública de identidad manual en detalle de colección.
+- Añadidos modo MANUAL, normalización, i18n ES/EN y fixtures compatibles.
+- Ejecutados tests Angular y build correctamente; se mantiene el warning de
+  bundle inicial de 623.35 kB frente al budget de 500 kB. Sin backend, rutas,
+  dependencias, E2E ni Playwright. Siguiente tarea: EPIC 44E-B2.

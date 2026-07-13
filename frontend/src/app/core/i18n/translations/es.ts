@@ -717,6 +717,13 @@ export const es: TranslationDictionary = {
     selectLegacyProduct: 'Seleccionar producto legacy',
     legacyReferenceRequired: 'Debes seleccionar un producto legacy.',
     editorialReferenceRequired: 'Debes seleccionar una referencia editorial.'
+    ,manualMode: 'Entrada manual'
+    ,manualReference: 'Manual'
+    ,manualTitle: 'Titulo manual'
+    ,manualDescription: 'Descripcion manual'
+    ,manualType: 'Tipo manual'
+    ,manualTitleRequired: 'El titulo manual es obligatorio.'
+    ,manualCatalogExplanation: 'Esta entrada no modifica el catalogo global. Podras enlazarla posteriormente a un item del catalogo.'
   },
   recommendations: {
     eyebrow: 'Buscados',

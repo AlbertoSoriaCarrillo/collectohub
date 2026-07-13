@@ -716,6 +716,13 @@ export const en: TranslationDictionary = {
     selectLegacyProduct: 'Select legacy product',
     legacyReferenceRequired: 'Select a legacy product.',
     editorialReferenceRequired: 'Select an editorial reference.'
+    ,manualMode: 'Manual entry'
+    ,manualReference: 'Manual'
+    ,manualTitle: 'Manual title'
+    ,manualDescription: 'Manual description'
+    ,manualType: 'Manual type'
+    ,manualTitleRequired: 'Manual title is required.'
+    ,manualCatalogExplanation: 'This entry does not modify the global catalog. You can link it to a catalog item later.'
   },
   recommendations: {
     eyebrow: 'Wanted',

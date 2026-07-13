@@ -61,7 +61,7 @@ export class CollectionDetailComponent implements OnInit {
   }
 
   itemTitle(item: CollectionItemResponse): string {
-    return item.catalogItemTitle || item.masterProductName || this.languageService.translate('common.notReported');
+    return item.catalogItemTitle || item.manualTitle || item.masterProductName || this.languageService.translate('common.notReported');
   }
 
   referenceLabel(item: CollectionItemResponse): string {
@@ -70,11 +70,14 @@ export class CollectionDetailComponent implements OnInit {
         DIRECT_CATALOG: 'collections.directCatalogReference',
         VERIFIED_BRIDGE: 'collections.verifiedBridge',
         LEGACY_UNRESOLVED: 'collections.legacyUnresolvedReference',
+        MANUAL: 'collections.manualReference',
         INVALID_REFERENCE: 'collections.invalidReference'
       }[item.referenceKind];
       return this.languageService.translate(key);
     }
-    const key = item.editorialReferenceSource === 'VERIFIED_BRIDGE'
+    const key = item.editorialReferenceSource === 'MANUAL'
+      ? 'collections.manualReference'
+      : item.editorialReferenceSource === 'VERIFIED_BRIDGE'
       ? 'collections.verifiedBridge'
       : item.editorialReferenceSource === 'MANUAL_EDITORIAL'
         ? 'collections.editorialItem'

@@ -28,6 +28,7 @@
           <mat-label>{{ 'collections.reference' | translate }}</mat-label>
           <mat-select [formControl]="form.controls.referenceMode" (selectionChange)="changeReferenceMode($event.value)" data-testid="collection-reference-mode">
             <mat-option value="EDITORIAL">{{ 'collections.editorialCatalogMode' | translate }}</mat-option>
+            <mat-option value="MANUAL" data-testid="collection-reference-mode-manual">{{ 'collections.manualMode' | translate }}</mat-option>
             <mat-option value="LEGACY">{{ 'collections.legacyCompatibility' | translate }}</mat-option>
           </mat-select>
         </mat-form-field>
@@ -68,6 +69,15 @@
               }
             </section>
           }
+        } @else if (form.controls.referenceMode.value === 'MANUAL') {
+          <section class="selected-reference" data-testid="collection-item-manual-fields">
+            <p class="privacy-help">{{ 'collections.manualCatalogExplanation' | translate }}</p>
+            <mat-form-field class="wide" appearance="outline"><mat-label>{{ 'collections.manualTitle' | translate }}</mat-label><input matInput formControlName="manualTitle" data-testid="collection-item-manual-title" />
+              @if (form.controls.manualTitle.touched && !(form.controls.manualTitle.value || '').trim()) { <mat-error>{{ 'collections.manualTitleRequired' | translate }}</mat-error> }
+            </mat-form-field>
+            <mat-form-field class="wide" appearance="outline"><mat-label>{{ 'collections.manualDescription' | translate }}</mat-label><textarea matInput rows="3" formControlName="manualDescription" data-testid="collection-item-manual-description"></textarea></mat-form-field>
+            <mat-form-field class="wide" appearance="outline"><mat-label>{{ 'collections.manualType' | translate }}</mat-label><input matInput formControlName="manualType" data-testid="collection-item-manual-type" /></mat-form-field>
+          </section>
         } @else {
           <div class="search-form" [formGroup]="productSearch">
             <mat-form-field appearance="outline"><mat-label>{{ 'inventory.masterProductSearch' | translate }}</mat-label>

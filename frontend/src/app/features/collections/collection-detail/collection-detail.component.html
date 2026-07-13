@@ -72,9 +72,7 @@
             <mat-card-header>
               <span class="visual-token" aria-hidden="true">{{ itemTitle(item).slice(0, 1).toUpperCase() }}</span>
               <mat-card-title>{{ itemTitle(item) }}</mat-card-title>
-              <mat-card-subtitle>
-                {{ item.catalogFranchiseName || item.masterProductFranchise || item.masterProductCategoryCode }}
-              </mat-card-subtitle>
+              <mat-card-subtitle>{{ item.referenceKind === 'MANUAL' ? item.manualType : (item.catalogFranchiseName || item.masterProductFranchise || item.masterProductCategoryCode) }}</mat-card-subtitle>
             </mat-card-header>
             <mat-card-content>
               <mat-chip-set [attr.aria-label]="'collections.itemDataAria' | translate">
@@ -85,7 +83,9 @@
                 }
               </mat-chip-set>
 
-              <dl>
+              @if (item.referenceKind === 'MANUAL') {
+                @if (item.manualDescription) { <p>{{ item.manualDescription }}</p> }
+              } @else { <dl>
                 <div>
                   <dt>{{ 'common.collection' | translate }}</dt>
                   <dd>{{ item.catalogSeriesTitle || item.masterProductCollectionName || ('common.notReported' | translate) }}</dd>
@@ -112,7 +112,7 @@
                   <dt>{{ 'collections.acquiredAt' | translate }}</dt>
                   <dd>{{ item.acquiredAt || ('common.notReported' | translate) }}</dd>
                 </div>
-              </dl>
+              </dl> }
 
               @if (item.notes) {
                 <p class="notes">{{ item.notes }}</p>
