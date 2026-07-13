@@ -197,6 +197,32 @@ describe('CollectionService', () => {
     request.flush({ ...item, collectionStatus: 'OWNED' });
   });
 
+  it('links a manual collection item to a catalog item without an edition', () => {
+    const payload = { catalogItemId: 11 };
+
+    service.linkManualCollectionItemToCatalog(3, 7, payload).subscribe();
+
+    const request = httpTestingController.expectOne(
+      'http://localhost:8080/api/collections/3/items/7/catalog-reference'
+    );
+    expect(request.request.method).toBe('PUT');
+    expect(request.request.body).toEqual(payload);
+    request.flush({ ...item, catalogItemId: 11 });
+  });
+
+  it('links a manual collection item to a catalog item and edition', () => {
+    const payload = { catalogItemId: 11, catalogItemEditionId: 12 };
+
+    service.linkManualCollectionItemToCatalog(3, 7, payload).subscribe();
+
+    const request = httpTestingController.expectOne(
+      'http://localhost:8080/api/collections/3/items/7/catalog-reference'
+    );
+    expect(request.request.method).toBe('PUT');
+    expect(request.request.body).toEqual(payload);
+    request.flush({ ...item, catalogItemId: 11, catalogItemEditionId: 12 });
+  });
+
   it('deletes a collection item', () => {
     service.deleteCollectionItem(3, 7).subscribe((response) => {
       expect(response).toBeNull();

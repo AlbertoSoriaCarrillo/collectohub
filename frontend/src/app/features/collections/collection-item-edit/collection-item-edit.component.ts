@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
+import { AuthService } from '../../../core/auth/auth.service';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { MasterProductResponse } from '../../../core/models/catalog.model';
@@ -41,6 +42,7 @@ export class CollectionItemEditComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
   private readonly catalogService = inject(CatalogService);
   private readonly collectionService = inject(CollectionService);
   private readonly editorialCatalogService = inject(EditorialCatalogService);
@@ -53,6 +55,9 @@ export class CollectionItemEditComponent implements OnInit {
   readonly itemId = signal<number | null>(null);
   readonly item = signal<CollectionItemResponse | null>(null);
   readonly loading = signal(false);
+  readonly ownerLoading = signal(false);
+  readonly isOwner = signal(false);
+  readonly accessDenied = signal(false);
   readonly saving = signal(false);
   readonly searching = signal(false);
   readonly errorMessage = signal<string | null>(null);
@@ -124,7 +129,7 @@ export class CollectionItemEditComponent implements OnInit {
 
     this.collectionId.set(collectionId);
     this.itemId.set(itemId);
-    this.loadItem(collectionId, itemId);
+    this.loadCollectionAndOwnership(collectionId, itemId);
   }
 
   submit(): void {
@@ -134,6 +139,8 @@ export class CollectionItemEditComponent implements OnInit {
       this.errorMessage.set(this.languageService.translate('collections.itemNotFound'));
       return;
     }
+
+    if (!this.isOwner() || this.saving()) return;
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -170,6 +177,32 @@ export class CollectionItemEditComponent implements OnInit {
       });
   }
 
+  private loadCollectionAndOwnership(collectionId: number, itemId: number): void {
+    this.loading.set(true);
+    this.collectionService.getCollection(collectionId).pipe(finalize(() => this.loading.set(false))).subscribe({
+      next: (collection) => this.resolveOwnership(collection.userId, itemId),
+      error: (error) => this.errorMessage.set(this.errorMessageService.toMessage(error))
+    });
+  }
+
+  private resolveOwnership(ownerId: number, itemId: number): void {
+    const currentUser = this.authService.currentUser();
+    if (currentUser) { this.setOwnership(currentUser.id, ownerId, itemId); return; }
+    if (!this.authService.hasToken()) { this.accessDenied.set(true); return; }
+    this.ownerLoading.set(true);
+    this.authService.getMe().pipe(finalize(() => this.ownerLoading.set(false))).subscribe({
+      next: (user) => this.setOwnership(user.id, ownerId, itemId),
+      error: () => this.accessDenied.set(true)
+    });
+  }
+
+  private setOwnership(userId: number, ownerId: number, itemId: number): void {
+    const owner = userId === ownerId;
+    this.isOwner.set(owner);
+    this.accessDenied.set(!owner);
+    if (owner) this.loadItem(this.collectionId()!, itemId);
+  }
+
   private loadItem(collectionId: number, itemId: number): void {
     this.loading.set(true);
     this.collectionService
@@ -185,7 +218,7 @@ export class CollectionItemEditComponent implements OnInit {
 
           this.item.set(item);
           this.form.patchValue({
-            referenceMode: item.referenceKind === 'MANUAL' ? 'MANUAL' : item.catalogItemId ? 'EDITORIAL' : 'LEGACY',
+            referenceMode: this.isManualItem(item) ? 'MANUAL' : item.catalogItemId ? 'EDITORIAL' : 'LEGACY',
             masterProductId: item.masterProductId,
             manualTitle: item.manualTitle ?? '',
             manualDescription: item.manualDescription ?? '',
@@ -206,21 +239,24 @@ export class CollectionItemEditComponent implements OnInit {
     const value = this.form.getRawValue();
     const editorial = value.referenceMode === 'EDITORIAL' ? this.selectedEditorial() : null;
     const reference = value.referenceMode === 'MANUAL'
-      ? { masterProductId: null, catalogItemId: null, catalogItemEditionId: null,
-          manualTitle: this.optionalText(value.manualTitle), manualDescription: this.optionalText(value.manualDescription), manualType: this.optionalText(value.manualType) }
+      ? {
+          manualTitle: this.normalizedEditableText(value.manualTitle),
+          manualDescription: this.normalizedEditableText(value.manualDescription),
+          manualType: this.normalizedEditableText(value.manualType)
+        }
       : value.referenceMode === 'LEGACY'
       ? {
           masterProductId: Number(value.masterProductId),
           catalogItemId: null,
-          catalogItemEditionId: null, manualTitle: null, manualDescription: null, manualType: null
+          catalogItemEditionId: null
         }
       : editorial
         ? {
             masterProductId: null,
             catalogItemId: editorial.itemId,
-            catalogItemEditionId: editorial.editionId, manualTitle: null, manualDescription: null, manualType: null
+            catalogItemEditionId: editorial.editionId
           }
-        : { manualTitle: null, manualDescription: null, manualType: null };
+        : {};
     return {
       ...reference,
       collectionStatus: value.collectionStatus as UpdateCollectionItemRequest['collectionStatus'],
@@ -237,5 +273,13 @@ export class CollectionItemEditComponent implements OnInit {
   private optionalText(value: string | null | undefined): string | null {
     const normalized = (value ?? '').trim();
     return normalized ? normalized : null;
+  }
+
+  private normalizedEditableText(value: string | null | undefined): string {
+    return (value ?? '').trim();
+  }
+
+  isManualItem(item: CollectionItemResponse): boolean {
+    return item.referenceKind === 'MANUAL' || item.editorialReferenceSource === 'MANUAL';
   }
 }

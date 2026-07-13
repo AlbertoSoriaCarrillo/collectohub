@@ -9,7 +9,7 @@
     }
   </header>
 
-  @if (loading()) {
+  @if (loading() || ownerLoading()) {
     <p class="status-text">{{ 'collections.loadingItems' | translate }}</p>
   }
 
@@ -17,17 +17,22 @@
     <p class="form-error" role="alert">{{ errorMessage() }}</p>
   }
 
-  @if (item(); as currentItem) {
+  @if (accessDenied()) { <p class="form-error" role="alert">{{ 'collections.editNotAllowed' | translate }}</p> }
+
+  @if (item() && isOwner()) {
+    @let currentItem = item()!;
     <mat-card class="form-card">
         <mat-card-header>
           <mat-card-title>{{ currentItem.catalogItemTitle || currentItem.manualTitle || currentItem.masterProductName }}</mat-card-title>
-        <mat-card-subtitle>
-          {{ currentItem.referenceKind === 'MANUAL' ? currentItem.manualType : (currentItem.catalogFranchiseName || currentItem.masterProductFranchise || currentItem.masterProductCategoryCode) }}
-        </mat-card-subtitle>
+        @if (!isManualItem(currentItem) || currentItem.manualType) {
+          <mat-card-subtitle>
+            {{ isManualItem(currentItem) ? currentItem.manualType : (currentItem.catalogFranchiseName || currentItem.masterProductFranchise || currentItem.masterProductCategoryCode) }}
+          </mat-card-subtitle>
+        }
       </mat-card-header>
 
       <mat-card-content>
-        @if (currentItem.referenceKind !== 'MANUAL') { <mat-form-field appearance="outline">
+        @if (!isManualItem(currentItem)) { <mat-form-field appearance="outline">
           <mat-label>{{ 'collections.reference' | translate }}</mat-label>
           <mat-select [formControl]="form.controls.referenceMode" data-testid="collection-edit-reference-mode">
             <mat-option value="LEGACY">{{ 'collections.legacyReference' | translate }}</mat-option>
@@ -36,9 +41,10 @@
         </mat-form-field> }
         @if (form.controls.referenceMode.value === 'MANUAL') {
           <section [formGroup]="form" data-testid="collection-edit-manual-fields">
-            <mat-form-field class="wide" appearance="outline"><mat-label>{{ 'collections.manualTitle' | translate }}</mat-label><input matInput formControlName="manualTitle" data-testid="collection-edit-manual-title" /></mat-form-field>
-            <mat-form-field class="wide" appearance="outline"><mat-label>{{ 'collections.manualDescription' | translate }}</mat-label><textarea matInput formControlName="manualDescription"></textarea></mat-form-field>
-            <mat-form-field class="wide" appearance="outline"><mat-label>{{ 'collections.manualType' | translate }}</mat-label><input matInput formControlName="manualType" /></mat-form-field>
+            <p class="privacy-help">{{ 'collections.manualEditExplanation' | translate }}</p>
+            <mat-form-field class="wide" appearance="outline"><mat-label>{{ 'collections.manualTitle' | translate }}</mat-label><input matInput formControlName="manualTitle" data-testid="collection-edit-manual-title" />@if (form.controls.manualTitle.touched && !(form.controls.manualTitle.value || '').trim()) { <mat-error>{{ 'collections.manualTitleRequired' | translate }}</mat-error> } @if (form.controls.manualTitle.hasError('maxlength')) { <mat-error>{{ 'collections.manualTitleTooLong' | translate }}</mat-error> }</mat-form-field>
+            <mat-form-field class="wide" appearance="outline"><mat-label>{{ 'collections.manualDescription' | translate }}</mat-label><textarea matInput formControlName="manualDescription" data-testid="collection-edit-manual-description"></textarea>@if (form.controls.manualDescription.hasError('maxlength')) { <mat-error>{{ 'collections.manualDescriptionTooLong' | translate }}</mat-error> }</mat-form-field>
+            <mat-form-field class="wide" appearance="outline"><mat-label>{{ 'collections.manualType' | translate }}</mat-label><input matInput formControlName="manualType" data-testid="collection-edit-manual-type" />@if (form.controls.manualType.hasError('maxlength')) { <mat-error>{{ 'collections.manualTypeTooLong' | translate }}</mat-error> }</mat-form-field>
           </section>
         } @else if (form.controls.referenceMode.value === 'LEGACY') {
           <form class="search-form" [formGroup]="productSearch" (ngSubmit)="searchProducts()" novalidate>

@@ -205,20 +205,21 @@ Resumen relevante:
 
 ## 9. Estado actual verificado
 
-Último commit verificado previo a EPIC 44E-B2A:
+Fecha: 2026-07-13
+
+Último commit previo a publicar EPIC 44E-B2A-FIX:
 
 ```text
-e89eafdab02cac9166b7feee28e85feeaf886040
-fix: close manual collection item creation flow
+5ba0e382af745c7711b4e149d291f1d16868f404
+feat: edit manual collection items
 ```
 
-EPIC 44E-B2A está implementada en el cambio actual y pendiente de verificar su
-commit en GitHub.
+EPIC completada en el árbol actual: `44E-B2A-FIX - Cierre de edición frontend de items manuales`.
 
 Siguiente tarea esperada:
 
 ```text
-EPIC 44E-B2B - Selector y llamada de enlace manual al catálogo
+EPIC 44E-B2B - Selector y llamada visual de enlace manual al catálogo
 ```
 
 La IA debe volver a comprobar GitHub antes de asumir que este estado sigue vigente.
@@ -257,6 +258,14 @@ Decisiones cerradas:
     la API seguirá rechazando altas manuales hasta EPIC 44E-A2.
 22. El enlace posterior de un item manual al catálogo queda reservado para
     EPIC 44E-A3; no hay backfill ni transición automática.
+23. El PUT de un item manual envía solo metadata manual y datos personales;
+    `""` solicita vaciar description o type, mientras que no enviar un campo
+    conserva su valor.
+24. La ruta frontend de edición exige que `collection.userId` coincida con el
+    usuario autenticado antes de cargar o enviar items; los roles no conceden
+    esta propiedad.
+25. EPIC 44E-B2B debe limitarse al selector y la llamada visual de enlace; no
+    debe cambiar el contrato ya validado ni iniciar E2E o Playwright.
 
 ## 11. Clasificación actual de referencias de collection items
 

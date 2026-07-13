@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
@@ -7,6 +8,7 @@ import { EditorialCatalogSearchItem } from '../../../core/models/editorial-catal
 import { CatalogService } from '../../../core/services/catalog.service';
 import { CollectionService } from '../../../core/services/collection.service';
 import { EditorialCatalogService } from '../../../core/services/editorial-catalog.service';
+import { AuthService } from '../../../core/auth/auth.service';
 import { CollectionItemEditComponent } from './collection-item-edit.component';
 
 describe('CollectionItemEditComponent', () => {
@@ -58,8 +60,14 @@ describe('CollectionItemEditComponent', () => {
 
   let catalogService: { searchMasterProducts: ReturnType<typeof vi.fn> };
   let collectionService: {
+    getCollection: ReturnType<typeof vi.fn>;
     getCollectionItems: ReturnType<typeof vi.fn>;
     updateCollectionItem: ReturnType<typeof vi.fn>;
+  };
+  let authService: {
+    currentUser: ReturnType<typeof signal>;
+    hasToken: ReturnType<typeof vi.fn>;
+    getMe: ReturnType<typeof vi.fn>;
   };
   let editorialCatalogService: { search: ReturnType<typeof vi.fn> };
 
@@ -73,8 +81,14 @@ describe('CollectionItemEditComponent', () => {
       }]))
     };
     collectionService = {
+      getCollection: vi.fn(() => of({ userId: 1 })),
       getCollectionItems: vi.fn(() => of([legacyItem])),
       updateCollectionItem: vi.fn(() => of(legacyItem))
+    };
+    authService = {
+      currentUser: signal({ id: 1 }),
+      hasToken: vi.fn(() => true),
+      getMe: vi.fn()
     };
     editorialCatalogService = {
       search: vi.fn(() => of({
@@ -103,6 +117,7 @@ describe('CollectionItemEditComponent', () => {
         },
         { provide: CatalogService, useValue: catalogService },
         { provide: CollectionService, useValue: collectionService },
+        { provide: AuthService, useValue: authService },
         { provide: EditorialCatalogService, useValue: editorialCatalogService }
       ]
     }).compileComponents();
@@ -117,7 +132,7 @@ describe('CollectionItemEditComponent', () => {
     expect(component.form.controls.collectionStatus.value).toBe('MISSING');
   });
 
-  it('loads and updates a manual item without references', async () => {
+  it('loads and updates a manual item without references and clears blank manual fields', async () => {
     const manualItem = { ...legacyItem, masterProductId: null, masterProductName: null,
       editorialReferenceSource: 'MANUAL' as const, referenceKind: 'MANUAL' as const,
       manualTitle: 'Promotional edition', manualDescription: 'Event item', manualType: 'Book' };
@@ -126,10 +141,11 @@ describe('CollectionItemEditComponent', () => {
     expect(component.form.controls.referenceMode.value).toBe('MANUAL');
     component.form.patchValue({ manualTitle: ' Updated ', manualDescription: ' ', manualType: ' Guide ' });
     component.submit();
-    expect(collectionService.updateCollectionItem).toHaveBeenCalledWith(3, 7, expect.objectContaining({
-      masterProductId: null, catalogItemId: null, catalogItemEditionId: null,
-      manualTitle: 'Updated', manualDescription: null, manualType: 'Guide'
-    }));
+    const request = collectionService.updateCollectionItem.mock.calls[0][2];
+    expect(request).toMatchObject({ manualTitle: 'Updated', manualDescription: '', manualType: 'Guide' });
+    expect(request).not.toHaveProperty('masterProductId');
+    expect(request).not.toHaveProperty('catalogItemId');
+    expect(request).not.toHaveProperty('catalogItemEditionId');
   });
 
   it('searches and selects a legacy master product', async () => {
@@ -162,6 +178,10 @@ describe('CollectionItemEditComponent', () => {
         catalogItemEditionId: null
       })
     );
+    const request = collectionService.updateCollectionItem.mock.calls[0][2];
+    expect(request).not.toHaveProperty('manualTitle');
+    expect(request).not.toHaveProperty('manualDescription');
+    expect(request).not.toHaveProperty('manualType');
   });
 
   it('shows and preserves an existing editorial reference', async () => {
@@ -183,6 +203,29 @@ describe('CollectionItemEditComponent', () => {
     const request = collectionService.updateCollectionItem.mock.calls[0][2];
     expect(request).not.toHaveProperty('catalogItemId');
     expect(request).not.toHaveProperty('catalogItemEditionId');
+  });
+
+  it('detects manual items when only editorialReferenceSource is MANUAL', async () => {
+    collectionService.getCollectionItems.mockReturnValue(of([{
+      ...legacyItem,
+      masterProductId: null,
+      editorialReferenceSource: 'MANUAL' as const,
+      manualTitle: 'Source-only manual'
+    }]));
+
+    const component = await createComponent();
+
+    expect(component.form.controls.referenceMode.value).toBe('MANUAL');
+  });
+
+  it('does not load collection items for a user who does not own the collection', async () => {
+    collectionService.getCollection.mockReturnValue(of({ userId: 2 }));
+
+    const component = await createComponent();
+
+    expect(component.accessDenied()).toBe(true);
+    expect(component.item()).toBeNull();
+    expect(collectionService.getCollectionItems).not.toHaveBeenCalled();
   });
 
   it('searches editorial references and excludes complete series', async () => {

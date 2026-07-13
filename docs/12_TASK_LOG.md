@@ -1991,3 +1991,23 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Añadido el contrato y servicio TypeScript de `catalog-reference`, sin selector
   ni llamada visual todavía. Tests y build Angular correctos; permanece el
   warning de bundle de 623.78 kB. Siguiente tarea: EPIC 44E-B2B.
+
+## 2026-07-13 - EPIC 44E-B2A-FIX - Cierre de edición frontend de items manuales
+
+- El PUT manual conserva la semántica backend: description y type vacíos se
+  envían como `""` para solicitar su borrado. El payload manual no incluye
+  `masterProductId`, `catalogItemId` ni `catalogItemEditionId`; los flujos
+  legacy/editorial tampoco envían metadata manual residual.
+- La ruta de edición resuelve la propiedad mediante `collection.userId` y el
+  usuario autenticado antes de cargar items, renderizar el formulario o enviar
+  cambios. Los roles administrativos no sustituyen la propiedad.
+- La detección manual acepta tanto `referenceKind: MANUAL` como
+  `editorialReferenceSource: MANUAL`; se añadieron mensajes DOM, validaciones y
+  cobertura de payload, acceso directo y referencia manual fuente-única.
+- Añadidas pruebas HTTP de `catalog-reference` con y sin edición, sin selector
+  visual ni llamada desde la pantalla.
+- Ejecutado `cd frontend && npm.cmd test -- --watch=false`: 58 archivos y 218
+  tests correctos. Ejecutado `npm.cmd run build`: correcto, con el warning
+  conocido del bundle inicial de 624.34 kB frente al budget de 500 kB. Sin
+  backend, rutas nuevas, dependencias, exports, E2E ni Playwright. Siguiente
+  tarea: EPIC 44E-B2B.

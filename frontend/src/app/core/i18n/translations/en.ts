@@ -725,7 +725,8 @@ export const en: TranslationDictionary = {
     manualTitleTooLong: 'Manual title cannot exceed 160 characters.',
     manualDescriptionTooLong: 'Manual description cannot exceed 4000 characters.',
     manualTypeTooLong: 'Manual type cannot exceed 80 characters.',
-    manualCatalogExplanation: 'This entry does not modify the global catalog. You can link it to a catalog item later.'
+    manualCatalogExplanation: 'This entry does not modify the global catalog. You can link it to a catalog item later.',
+    manualEditExplanation: 'You can edit the manual identity and personal data. Catalog linking is performed through a separate action.'
   },
   recommendations: {
     eyebrow: 'Wanted',
