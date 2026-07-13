@@ -205,14 +205,14 @@ Resumen relevante:
 
 ## 9. Estado actual verificado
 
-Último commit verificado previo a EPIC 44E-B1:
+Último commit verificado previo a EPIC 44E-B1-FIX:
 
 ```text
- c480866484b3ed813d1625acd819850a4f2d7be3
-fix: close manual catalog link contract
+f69d95c36cb8011160b35421b970f79e2384c78e
+feat: add manual collection item creation
 ```
 
-EPIC 44E-B1 está implementada en el cambio actual y pendiente de verificar su
+EPIC 44E-B1-FIX está implementada en el cambio actual y pendiente de verificar su
 commit en GitHub.
 
 Siguiente tarea esperada:

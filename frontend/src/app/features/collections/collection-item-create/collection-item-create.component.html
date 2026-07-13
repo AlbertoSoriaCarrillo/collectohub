@@ -74,9 +74,10 @@
             <p class="privacy-help">{{ 'collections.manualCatalogExplanation' | translate }}</p>
             <mat-form-field class="wide" appearance="outline"><mat-label>{{ 'collections.manualTitle' | translate }}</mat-label><input matInput formControlName="manualTitle" data-testid="collection-item-manual-title" />
               @if (form.controls.manualTitle.touched && !(form.controls.manualTitle.value || '').trim()) { <mat-error>{{ 'collections.manualTitleRequired' | translate }}</mat-error> }
+              @if (form.controls.manualTitle.hasError('maxlength') && form.controls.manualTitle.touched) { <mat-error>{{ 'collections.manualTitleTooLong' | translate }}</mat-error> }
             </mat-form-field>
-            <mat-form-field class="wide" appearance="outline"><mat-label>{{ 'collections.manualDescription' | translate }}</mat-label><textarea matInput rows="3" formControlName="manualDescription" data-testid="collection-item-manual-description"></textarea></mat-form-field>
-            <mat-form-field class="wide" appearance="outline"><mat-label>{{ 'collections.manualType' | translate }}</mat-label><input matInput formControlName="manualType" data-testid="collection-item-manual-type" /></mat-form-field>
+            <mat-form-field class="wide" appearance="outline"><mat-label>{{ 'collections.manualDescription' | translate }}</mat-label><textarea matInput rows="3" formControlName="manualDescription" data-testid="collection-item-manual-description"></textarea>@if (form.controls.manualDescription.hasError('maxlength') && form.controls.manualDescription.touched) { <mat-error>{{ 'collections.manualDescriptionTooLong' | translate }}</mat-error> }</mat-form-field>
+            <mat-form-field class="wide" appearance="outline"><mat-label>{{ 'collections.manualType' | translate }}</mat-label><input matInput formControlName="manualType" data-testid="collection-item-manual-type" />@if (form.controls.manualType.hasError('maxlength') && form.controls.manualType.touched) { <mat-error>{{ 'collections.manualTypeTooLong' | translate }}</mat-error> }</mat-form-field>
           </section>
         } @else {
           <div class="search-form" [formGroup]="productSearch">

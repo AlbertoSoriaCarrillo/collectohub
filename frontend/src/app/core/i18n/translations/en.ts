@@ -715,14 +715,17 @@ export const en: TranslationDictionary = {
     searchLegacyProduct: 'Search legacy product',
     selectLegacyProduct: 'Select legacy product',
     legacyReferenceRequired: 'Select a legacy product.',
-    editorialReferenceRequired: 'Select an editorial reference.'
-    ,manualMode: 'Manual entry'
-    ,manualReference: 'Manual'
-    ,manualTitle: 'Manual title'
-    ,manualDescription: 'Manual description'
-    ,manualType: 'Manual type'
-    ,manualTitleRequired: 'Manual title is required.'
-    ,manualCatalogExplanation: 'This entry does not modify the global catalog. You can link it to a catalog item later.'
+    editorialReferenceRequired: 'Select an editorial reference.',
+    manualMode: 'Manual entry',
+    manualReference: 'Manual',
+    manualTitle: 'Manual title',
+    manualDescription: 'Manual description',
+    manualType: 'Manual type',
+    manualTitleRequired: 'Manual title is required.',
+    manualTitleTooLong: 'Manual title cannot exceed 160 characters.',
+    manualDescriptionTooLong: 'Manual description cannot exceed 4000 characters.',
+    manualTypeTooLong: 'Manual type cannot exceed 80 characters.',
+    manualCatalogExplanation: 'This entry does not modify the global catalog. You can link it to a catalog item later.'
   },
   recommendations: {
     eyebrow: 'Wanted',

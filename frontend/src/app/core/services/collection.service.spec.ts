@@ -132,6 +132,23 @@ describe('CollectionService', () => {
     request.flush(item);
   });
 
+  it('adds a manual collection item with the exact POST body', () => {
+    const payload = {
+      masterProductId: null, catalogItemId: null, catalogItemEditionId: null,
+      manualTitle: 'Edición promocional', manualDescription: 'Entregada durante un evento', manualType: 'Libro',
+      collectionStatus: 'OWNED' as const, physicalCondition: 'GOOD' as const,
+      unitNumber: '1', totalLimitedUnits: 100, notes: 'Mi ejemplar', acquiredAt: '2026-07-13'
+    };
+    const manualItem = { ...item, ...payload, masterProductName: null, manualTitle: payload.manualTitle,
+      manualDescription: payload.manualDescription, manualType: payload.manualType, referenceKind: 'MANUAL' as const,
+      editorialReferenceSource: 'MANUAL' as const };
+    service.addCollectionItem(3, payload).subscribe((response) => expect(response).toEqual(manualItem));
+    const request = httpTestingController.expectOne('http://localhost:8080/api/collections/3/items');
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual(payload);
+    request.flush(manualItem);
+  });
+
   it('adds an editorial collection item without an edition', () => {
     const payload = {
       masterProductId: null,

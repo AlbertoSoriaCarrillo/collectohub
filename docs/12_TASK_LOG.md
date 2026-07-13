@@ -1975,3 +1975,11 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Ejecutados tests Angular y build correctamente; se mantiene el warning de
   bundle inicial de 623.35 kB frente al budget de 500 kB. Sin backend, rutas,
   dependencias, E2E ni Playwright. Siguiente tarea: EPIC 44E-B2.
+
+## 2026-07-13 - EPIC 44E-B1-FIX - Cierre del alta y visualización manual
+
+- Añadidos mensajes de validación de longitud, prueba HTTP del payload manual
+  y visualización de unitNumber/acquiredAt compartida por tarjetas manuales.
+- Tests y build Angular correctos; persiste el warning de bundle inicial de
+  623.78 kB frente al budget de 500 kB. Sin backend, rutas, dependencias, E2E
+  ni Playwright. Siguiente tarea: EPIC 44E-B2.

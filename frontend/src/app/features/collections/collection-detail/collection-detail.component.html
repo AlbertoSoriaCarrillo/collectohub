@@ -104,14 +104,10 @@
                     <dd>{{ item.catalogPublisherName || ('common.notReported' | translate) }}</dd>
                   </div>
                 }
-                <div>
-                  <dt>{{ 'common.unit' | translate }}</dt>
-                  <dd>{{ item.unitNumber || ('common.notReported' | translate) }}</dd>
-                </div>
-                <div>
-                  <dt>{{ 'collections.acquiredAt' | translate }}</dt>
-                  <dd>{{ item.acquiredAt || ('common.notReported' | translate) }}</dd>
-                </div>
+              </dl> }
+              @if (item.unitNumber || item.acquiredAt) { <dl>
+                @if (item.unitNumber) { <div data-testid="collection-item-unit"><dt>{{ 'common.unit' | translate }}</dt><dd>{{ item.unitNumber }}</dd></div> }
+                @if (item.acquiredAt) { <div data-testid="collection-item-acquired-at"><dt>{{ 'collections.acquiredAt' | translate }}</dt><dd>{{ item.acquiredAt }}</dd></div> }
               </dl> }
 
               @if (item.notes) {
