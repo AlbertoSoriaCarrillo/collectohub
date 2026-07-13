@@ -214,12 +214,13 @@ Fecha: 2026-07-13
 feat: edit manual collection items
 ```
 
-EPIC completada en el árbol actual: `44E-B2A-FIX - Cierre de edición frontend de items manuales`.
+EPIC 44E-B2B está implementada en el cambio actual y pendiente de verificar su
+commit en GitHub.
 
 Siguiente tarea esperada:
 
 ```text
-EPIC 44E-B2B - Selector y llamada visual de enlace manual al catálogo
+EPIC 44F - OWNED, WANTED y faltantes calculados
 ```
 
 La IA debe volver a comprobar GitHub antes de asumir que este estado sigue vigente.

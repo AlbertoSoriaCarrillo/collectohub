@@ -198,7 +198,7 @@ describe('CollectionService', () => {
   });
 
   it('links a manual collection item to a catalog item without an edition', () => {
-    const payload = { catalogItemId: 11 };
+    const payload = { catalogItemId: 11, catalogItemEditionId: null };
 
     service.linkManualCollectionItemToCatalog(3, 7, payload).subscribe();
 

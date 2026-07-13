@@ -142,7 +142,7 @@ visibles al usuario normal; DRAFT/ARCHIVED y borrados no se exponen.
 | Mover WANTED/OWNED | PUT generico | transicion explicita o PUT semantico | Mantener PUT |
 | Buscar para alta | Dos servicios frontend | selector item -> editions | Reutilizar facade publica |
 | Missing | No existe | consulta calculada por serie/coleccion | Endpoint nuevo futuro |
-| Enlazar manual | No existe | accion controlada de resolucion | Nuevo futuro |
+| Enlazar manual | Implementado | accion controlada de resolucion, edicion opcional y datos personales preservados | Sin backfill |
 
 ## 14. Compatibilidad legacy
 
@@ -183,7 +183,7 @@ serie ordenada. E2E/Playwright siguen pospuestos hasta un recorrido maduro.
    collection items. Completadas.
 2. EPIC 44C - Flujo frontend de creacion y edicion de colecciones. Completada.
 3. EPIC 44D - Alta desde catalogo y seleccion de edition. Completada.
-4. EPIC 44E - Items manuales y enlace posterior al catalogo.
+4. EPIC 44E - Items manuales y enlace posterior al catalogo. Completada.
 5. EPIC 44F - OWNED, WANTED y faltantes calculados.
 6. EPIC 44G - Detalle final, filtros, ordenacion y progreso.
 7. EPIC 44H - Datos demo, validacion integral y cierre parcial MVP4.
@@ -215,4 +215,4 @@ contenedor coleccion con validaciones, propiedad, vaciado explicito de campos
 opcionales y listado sin contador no fiable. No implementa items manuales,
 transiciones de estado ni missing calculado. EPIC 44D usa el catalogo editorial
 como via principal, selecciona edition opcional desde el detalle del item y
-mantiene legacy como compatibilidad explicita. La siguiente tarea es EPIC 44E.
+mantiene legacy como compatibilidad explicita. La siguiente tarea es EPIC 44F.

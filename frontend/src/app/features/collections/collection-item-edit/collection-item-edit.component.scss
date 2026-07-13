@@ -77,6 +77,22 @@ form {
   gap: 12px;
 }
 
+.manual-link-panel,
+.manual-link-results {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.manual-link-panel {
+  border-top: 1px solid rgba(159, 176, 193, 0.25);
+  padding-top: 20px;
+}
+
+.manual-link-warning {
+  color: #ffb4ab;
+}
+
 @media (max-width: 640px) {
   .page-header,
   .form-actions,

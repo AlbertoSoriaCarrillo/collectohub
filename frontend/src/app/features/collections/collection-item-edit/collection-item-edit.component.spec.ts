@@ -63,6 +63,7 @@ describe('CollectionItemEditComponent', () => {
     getCollection: ReturnType<typeof vi.fn>;
     getCollectionItems: ReturnType<typeof vi.fn>;
     updateCollectionItem: ReturnType<typeof vi.fn>;
+    linkManualCollectionItemToCatalog: ReturnType<typeof vi.fn>;
   };
   let authService: {
     currentUser: ReturnType<typeof signal>;
@@ -83,7 +84,8 @@ describe('CollectionItemEditComponent', () => {
     collectionService = {
       getCollection: vi.fn(() => of({ userId: 1 })),
       getCollectionItems: vi.fn(() => of([legacyItem])),
-      updateCollectionItem: vi.fn(() => of(legacyItem))
+      updateCollectionItem: vi.fn(() => of(legacyItem)),
+      linkManualCollectionItemToCatalog: vi.fn(() => of(legacyItem))
     };
     authService = {
       currentUser: signal({ id: 1 }),

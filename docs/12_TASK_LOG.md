@@ -2011,3 +2011,16 @@ Siguiente paso: crear el backend en la carpeta backend.
   conocido del bundle inicial de 624.34 kB frente al budget de 500 kB. Sin
   backend, rutas nuevas, dependencias, exports, E2E ni Playwright. Siguiente
   tarea: EPIC 44E-B2B.
+
+## 2026-07-13 - EPIC 44E-B2B - Selector y enlace frontend de item manual al catalogo
+
+- Anadida una accion separada para enlazar solo items manuales del propietario.
+  El panel usa busqueda editorial publica, deduplicacion por item, carga de
+  detalle con edicion opcional y confirmacion explicita antes del PUT existente.
+- El enlace no usa el PUT generico, bloquea cambios sin guardar, conserva datos
+  personales y limpia la identidad manual tras una respuesta correcta.
+- Los estados y request IDs del panel son independientes del formulario de
+  edicion, con cancelacion mediante `takeUntilDestroyed`.
+- Ejecutado `npm.cmd test -- --watch=false`: 58 archivos y 218 tests correctos.
+  Ejecutado `npm.cmd run build`: correcto, con warning conocido de bundle
+  inicial de 625.71 kB frente al budget de 500 kB. Siguiente tarea: EPIC 44F.

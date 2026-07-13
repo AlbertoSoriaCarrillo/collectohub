@@ -726,7 +726,19 @@ export const en: TranslationDictionary = {
     manualDescriptionTooLong: 'Manual description cannot exceed 4000 characters.',
     manualTypeTooLong: 'Manual type cannot exceed 80 characters.',
     manualCatalogExplanation: 'This entry does not modify the global catalog. You can link it to a catalog item later.',
-    manualEditExplanation: 'You can edit the manual identity and personal data. Catalog linking is performed through a separate action.'
+    manualEditExplanation: 'You can edit the manual identity and personal data. Catalog linking is performed through a separate action.',
+    linkManualToCatalog: 'Link to catalog',
+    linkManualExplanation: 'Find the canonical catalog item for this manual entry.',
+    linkManualIdentityWarning: 'The manual identity will be replaced by the catalog reference.',
+    linkManualPersonalDataPreserved: 'Your personal data will be preserved.',
+    manualLinkSearch: 'Search catalog',
+    manualLinkSearchResults: 'Catalog results',
+    manualLinkSelectedItem: 'Selected item',
+    manualLinkEdition: 'Optional edition',
+    noSpecificEdition: 'No specific edition',
+    confirmManualCatalogLink: 'Confirm catalog link',
+    linkingToCatalog: 'Linking to catalog...',
+    saveBeforeCatalogLink: 'Save or discard pending changes before linking this item to the catalog.'
   },
   recommendations: {
     eyebrow: 'Wanted',

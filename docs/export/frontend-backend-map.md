@@ -62,8 +62,11 @@ future use, but no public route or component invokes or exposes it.
 | `/collections/:collectionId/items/new` - `CollectionItemCreateComponent` | `EditorialCatalogService` | `GET /api/catalog/editorial/items/{itemId}/detail` | Load selected item and its optional editions. |
 | `/collections/:collectionId/items/new` - `CollectionItemCreateComponent` | `CollectionService` | `POST /api/collections/{collectionId}/items` | Add item. |
 | `/collections/:collectionId/items/:itemId/edit` - `CollectionItemEditComponent` | `CollectionService` | `GET /api/collections/{collectionId}/items` | Select item. |
+| `/collections/:collectionId/items/:itemId/edit` - `CollectionItemEditComponent` | `CollectionService` | `GET /api/collections/{collectionId}` | Strict owner check before loading or linking. |
 | `/collections/:collectionId/items/:itemId/edit` - `CollectionItemEditComponent` | `EditorialCatalogService` | `GET /api/catalog/editorial/search` | Optional editorial reference replacement. |
+| `/collections/:collectionId/items/:itemId/edit` - `CollectionItemEditComponent` | `EditorialCatalogService` | `GET /api/catalog/editorial/items/{itemId}/detail` | Manual-link item detail and optional edition. |
 | `/collections/:collectionId/items/:itemId/edit` - `CollectionItemEditComponent` | `CollectionService` | `PUT /api/collections/{collectionId}/items/{itemId}` | Update item. |
+| `/collections/:collectionId/items/:itemId/edit` - `CollectionItemEditComponent` | `CollectionService` | `PUT /api/collections/{collectionId}/items/{itemId}/catalog-reference` | Owner-only manual link; replaces manual identity and preserves personal data. |
 | `/collections/:collectionId` - `CollectionDetailComponent` | `CollectionService` | `GET /api/collections/{collectionId}` | Load readable collection. |
 | `/collections/:collectionId` - `CollectionDetailComponent` | `CollectionService` | `GET /api/collections/{collectionId}/items` | Load items. |
 | `/collections/:collectionId` - `CollectionDetailComponent` | `AuthService` | `GET /api/users/me` | Conditional owner resolution. |

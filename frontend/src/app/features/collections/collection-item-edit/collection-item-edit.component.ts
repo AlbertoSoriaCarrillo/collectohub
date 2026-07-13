@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -12,7 +13,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { MasterProductResponse } from '../../../core/models/catalog.model';
-import { EditorialCatalogSearchItem } from '../../../core/models/editorial-catalog.model';
+import { EditorialCatalogItemDetail, EditorialCatalogSearchItem } from '../../../core/models/editorial-catalog.model';
 import {
   COLLECTION_ITEM_STATUSES,
   CollectionItemResponse,
@@ -48,6 +49,9 @@ export class CollectionItemEditComponent implements OnInit {
   private readonly editorialCatalogService = inject(EditorialCatalogService);
   private readonly errorMessageService = inject(ErrorMessageService);
   private readonly languageService = inject(LanguageService);
+  private readonly destroyRef = inject(DestroyRef);
+  private manualLinkSearchRequestId = 0;
+  private manualLinkDetailRequestId = 0;
 
   readonly statuses = COLLECTION_ITEM_STATUSES;
   readonly conditions = PHYSICAL_CONDITIONS;
@@ -64,8 +68,19 @@ export class CollectionItemEditComponent implements OnInit {
   readonly products = signal<MasterProductResponse[]>([]);
   readonly editorialResults = signal<EditorialCatalogSearchItem[]>([]);
   readonly selectedEditorial = signal<EditorialCatalogSearchItem | null>(null);
+  readonly manualLinkPanelOpen = signal(false);
+  readonly manualLinkSearching = signal(false);
+  readonly manualLinkSearchPerformed = signal(false);
+  readonly manualLinkDetailLoading = signal(false);
+  readonly manualLinkSubmitting = signal(false);
+  readonly manualLinkResults = signal<EditorialCatalogSearchItem[]>([]);
+  readonly selectedManualLinkItem = signal<EditorialCatalogSearchItem | null>(null);
+  readonly selectedManualLinkDetail = signal<EditorialCatalogItemDetail | null>(null);
+  readonly selectedManualLinkEditionId = signal<number | null>(null);
+  readonly manualLinkErrorMessage = signal<string | null>(null);
   readonly productSearch = this.fb.nonNullable.group({ name: [''] });
   readonly editorialSearch = this.fb.nonNullable.group({ q: [''] });
+  readonly manualLinkSearch = this.fb.nonNullable.group({ q: [''] });
   readonly form = this.fb.group({
     referenceMode: ['LEGACY' as 'LEGACY' | 'EDITORIAL' | 'MANUAL'],
     masterProductId: [null as number | null],
@@ -177,6 +192,85 @@ export class CollectionItemEditComponent implements OnInit {
       });
   }
 
+  openManualCatalogLink(): void {
+    if (!this.isOwner() || !this.item() || !this.isManualItem(this.item()!)) return;
+    if (this.form.dirty) { this.manualLinkErrorMessage.set(this.languageService.translate('collections.saveBeforeCatalogLink')); return; }
+    this.manualLinkPanelOpen.set(true);
+    this.manualLinkErrorMessage.set(null);
+  }
+
+  closeManualCatalogLink(): void {
+    this.manualLinkSearchRequestId++;
+    this.manualLinkDetailRequestId++;
+    this.manualLinkPanelOpen.set(false);
+    this.manualLinkSearching.set(false);
+    this.manualLinkDetailLoading.set(false);
+    this.manualLinkSubmitting.set(false);
+    this.manualLinkSearchPerformed.set(false);
+    this.manualLinkSearch.reset({ q: '' });
+    this.manualLinkResults.set([]);
+    this.selectedManualLinkItem.set(null);
+    this.selectedManualLinkDetail.set(null);
+    this.selectedManualLinkEditionId.set(null);
+    this.manualLinkErrorMessage.set(null);
+  }
+
+  searchCatalogForManualLink(): void {
+    if (!this.isOwner() || !this.manualLinkPanelOpen() || !this.item() || !this.isManualItem(this.item()!) || this.manualLinkSearching() || this.manualLinkSubmitting()) return;
+    const requestId = ++this.manualLinkSearchRequestId;
+    this.manualLinkSearchPerformed.set(true);
+    this.manualLinkResults.set([]);
+    this.manualLinkErrorMessage.set(null);
+    this.manualLinkSearching.set(true);
+    this.editorialCatalogService.search({ q: this.manualLinkSearch.controls.q.value.trim(), size: 30 })
+      .pipe(finalize(() => { if (requestId === this.manualLinkSearchRequestId) this.manualLinkSearching.set(false); }), takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (page) => { if (requestId === this.manualLinkSearchRequestId && this.manualLinkPanelOpen()) this.manualLinkResults.set(this.toManualLinkCandidates(page.content)); },
+        error: (error) => { if (requestId === this.manualLinkSearchRequestId && this.manualLinkPanelOpen()) this.manualLinkErrorMessage.set(this.errorMessageService.toMessage(error)); }
+      });
+  }
+
+  selectManualLinkCatalogItem(candidate: EditorialCatalogSearchItem): void {
+    if (!this.isOwner() || !this.manualLinkPanelOpen() || candidate.itemId == null) return;
+    const requestId = ++this.manualLinkDetailRequestId;
+    this.selectedManualLinkItem.set(candidate);
+    this.selectedManualLinkDetail.set(null);
+    this.selectedManualLinkEditionId.set(null);
+    this.manualLinkErrorMessage.set(null);
+    this.manualLinkDetailLoading.set(true);
+    this.editorialCatalogService.getItemDetail(candidate.itemId)
+      .pipe(finalize(() => { if (requestId === this.manualLinkDetailRequestId) this.manualLinkDetailLoading.set(false); }), takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (detail) => { if (requestId === this.manualLinkDetailRequestId && this.selectedManualLinkItem()?.itemId === detail.item.id) this.selectedManualLinkDetail.set(detail); },
+        error: (error) => { if (requestId === this.manualLinkDetailRequestId) { this.selectedManualLinkItem.set(null); this.manualLinkErrorMessage.set(this.errorMessageService.toMessage(error)); } }
+      });
+  }
+
+  selectManualLinkEdition(editionId: number | null): void {
+    const editions = this.selectedManualLinkDetail()?.editions ?? [];
+    this.selectedManualLinkEditionId.set(editionId !== null && editions.some((edition) => edition.id === editionId) ? editionId : null);
+  }
+
+  linkManualItemToCatalog(): void {
+    const collectionId = this.collectionId();
+    const item = this.item();
+    const detail = this.selectedManualLinkDetail();
+    if (!collectionId || !item || !detail || !this.isOwner() || !this.isManualItem(item) || this.form.dirty || this.manualLinkDetailLoading() || this.saving() || this.manualLinkSubmitting()) {
+      if (this.form.dirty) this.manualLinkErrorMessage.set(this.languageService.translate('collections.saveBeforeCatalogLink'));
+      return;
+    }
+    const editionId = this.selectedManualLinkEditionId();
+    const edition = editionId === null ? null : detail.editions.find((candidate) => candidate.id === editionId);
+    if (editionId !== null && !edition) { this.selectedManualLinkEditionId.set(null); return; }
+    const message = this.languageService.translate('collections.confirmManualCatalogLink') + '\n' + detail.item.title + (edition ? ` - ${edition.editionName ?? edition.format}` : '');
+    if (!window.confirm(message)) return;
+    this.manualLinkSubmitting.set(true);
+    this.manualLinkErrorMessage.set(null);
+    this.collectionService.linkManualCollectionItemToCatalog(collectionId, item.id, { catalogItemId: detail.item.id, catalogItemEditionId: editionId })
+      .pipe(finalize(() => this.manualLinkSubmitting.set(false)), takeUntilDestroyed(this.destroyRef))
+      .subscribe({ next: (response) => { this.item.set(response); this.closeManualCatalogLink(); void this.router.navigate(['/collections', collectionId]); }, error: (error) => this.manualLinkErrorMessage.set(this.errorMessageService.toMessage(error)) });
+  }
+
   private loadCollectionAndOwnership(collectionId: number, itemId: number): void {
     this.loading.set(true);
     this.collectionService.getCollection(collectionId).pipe(finalize(() => this.loading.set(false))).subscribe({
@@ -281,5 +375,14 @@ export class CollectionItemEditComponent implements OnInit {
 
   isManualItem(item: CollectionItemResponse): boolean {
     return item.referenceKind === 'MANUAL' || item.editorialReferenceSource === 'MANUAL';
+  }
+
+  private toManualLinkCandidates(results: EditorialCatalogSearchItem[]): EditorialCatalogSearchItem[] {
+    const candidates = new Map<number, EditorialCatalogSearchItem>();
+    results.filter((result) => result.resultType !== 'SERIES' && result.itemId !== null).forEach((result) => {
+      const existing = candidates.get(result.itemId!);
+      if (!existing || result.resultType === 'ITEM') candidates.set(result.itemId!, result);
+    });
+    return [...candidates.values()];
   }
 }
