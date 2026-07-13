@@ -27,6 +27,7 @@ import com.collectohub.collections.dto.CreateCollectionItemRequest;
 import com.collectohub.collections.dto.CreateCollectionRequest;
 import com.collectohub.collections.dto.UpdateCollectionItemRequest;
 import com.collectohub.collections.dto.UpdateCollectionRequest;
+import com.collectohub.collections.dto.LinkManualCollectionItemRequest;
 import com.collectohub.collections.infrastructure.CollectionItemRepository;
 import com.collectohub.collections.infrastructure.CollectionRepository;
 import com.collectohub.inventory.domain.PhysicalCondition;
@@ -234,6 +235,49 @@ public class CollectionService {
                 authenticatedUser.id()
         );
         return CollectionItemResponse.from(item);
+    }
+
+    @Transactional
+    public CollectionItemResponse linkManualItemToCatalog(
+            AuthenticatedUser authenticatedUser,
+            Long collectionId,
+            Long itemId,
+            LinkManualCollectionItemRequest request
+    ) {
+        Collection collection = findActiveCollection(collectionId);
+        ensureOwner(authenticatedUser, collection);
+        CollectionItem item = collectionItemRepository.findByIdAndCollection_IdAndDeletedAtIsNull(itemId, collectionId)
+                .orElseThrow(() -> new CollectionItemNotFoundException(itemId));
+        if (isExactCatalogLinkRepeat(item, request)) {
+            return CollectionItemResponse.from(item);
+        }
+        if (!item.isManual()) {
+            throw new ConflictingCollectionItemReferenceException(
+                    "Only a manual collection item can be linked to the catalog"
+            );
+        }
+        CatalogItem catalogItem = findActiveCatalogItem(request.catalogItemId());
+        CatalogItemEdition edition = request.catalogItemEditionId() == null
+                ? null
+                : findActiveCatalogItemEdition(request.catalogItemEditionId());
+        validateEditionBelongsToItem(edition, catalogItem);
+        item.linkToCatalog(catalogItem, edition, authenticatedUser.id());
+        return CollectionItemResponse.from(item);
+    }
+
+    private boolean isExactCatalogLinkRepeat(CollectionItem item, LinkManualCollectionItemRequest request) {
+        return item.getMasterProduct() == null
+                && item.getCatalogItem() != null
+                && item.getCatalogItem().getId().equals(request.catalogItemId())
+                && sameId(item.getCatalogItemEdition(), request.catalogItemEditionId())
+                && item.getEditorialReferenceSource() == CollectionEditorialReferenceSource.MANUAL_EDITORIAL
+                && item.getManualTitle() == null
+                && item.getManualDescription() == null
+                && item.getManualType() == null;
+    }
+
+    private boolean sameId(CatalogItemEdition edition, Long id) {
+        return edition == null ? id == null : edition.getId().equals(id);
     }
 
     private void updateManualItem(CollectionItem item, UpdateCollectionItemRequest request, Long updatedBy) {

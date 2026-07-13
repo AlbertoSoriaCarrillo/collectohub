@@ -205,20 +205,20 @@ Resumen relevante:
 
 ## 9. Estado actual verificado
 
-Último commit verificado previo a EPIC 44E-A2:
+Último commit verificado previo a EPIC 44E-A3:
 
 ```text
-00e87ff613954f3995f797815d6c89489b133b75
-feat: add manual collection item contract
+feb50a4fba7d368a8c5c9a4614a026d05483a790
+feat: enable manual collection item management
 ```
 
-EPIC 44E-A2 está implementada en el cambio actual y pendiente de verificar su
+EPIC 44E-A3 está implementada en el cambio actual y pendiente de verificar su
 commit en GitHub.
 
 Siguiente tarea esperada:
 
 ```text
-EPIC 44E-A3 - Enlace posterior de item manual al catálogo
+EPIC 44E-B - Frontend de alta, edición y enlace de items manuales
 ```
 
 La IA debe volver a comprobar GitHub antes de asumir que este estado sigue vigente.

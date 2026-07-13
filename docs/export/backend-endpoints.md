@@ -2,7 +2,7 @@
 
 Source of truth reviewed: Spring MVC controllers, `SecurityConfig`, request and
 response DTOs, and application-service authorization. This inventory contains
-81 application endpoints. Framework-generated Swagger/OpenAPI paths are public
+82 application endpoints. Framework-generated Swagger/OpenAPI paths are public
 but are not counted as application endpoints.
 
 Authentication is stateless JWT. `PROTECTED` requires a valid Bearer token;
@@ -136,9 +136,10 @@ supported yet.
 | `GET /api/collections/{collectionId}` | Public collection or owner | None | `CollectionResponse`; item personal fields owner-only | `MVP1_VISIBLE` |
 | `PUT /api/collections/{collectionId}` | Owner | `UpdateCollectionRequest` | `CollectionResponse` | `MVP1_VISIBLE` |
 | `DELETE /api/collections/{collectionId}` | Owner | None | No content | `MVP1_VISIBLE` |
-| `POST /api/collections/{collectionId}/items` | Owner | Canonical `catalogItemId`, optional edition; legacy `masterProductId` | `CollectionItemResponse` | `MVP1_VISIBLE` |
+| `POST /api/collections/{collectionId}/items` | Owner | Manual metadata, canonical `catalogItemId`, optional edition, or legacy `masterProductId` | `CollectionItemResponse` | `MVP1_VISIBLE` |
 | `GET /api/collections/{collectionId}/items` | Public collection or owner | None | `List<CollectionItemResponse>`; personal fields owner-only | `MVP1_VISIBLE` |
-| `PUT /api/collections/{collectionId}/items/{itemId}` | Owner | Canonical editorial or compatible legacy reference | `CollectionItemResponse` | `MVP1_VISIBLE` |
+| `PUT /api/collections/{collectionId}/items/{itemId}` | Owner | Manual metadata or canonical editorial/legacy reference | `CollectionItemResponse` | `MVP1_VISIBLE` |
+| `PUT /api/collections/{collectionId}/items/{itemId}/catalog-reference` | Owner | `LinkManualCollectionItemRequest` | `CollectionItemResponse` | `MVP1_VISIBLE` |
 | `DELETE /api/collections/{collectionId}/items/{itemId}` | Owner | None | No content | `MVP1_VISIBLE` |
 
 Delete operations are logical deletes. Private resources are not exposed to

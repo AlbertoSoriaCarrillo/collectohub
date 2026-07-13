@@ -1947,3 +1947,14 @@ Siguiente paso: crear el backend en la carpeta backend.
   `mvnw.cmd clean verify`: `BUILD SUCCESS`, 354 tests, 0 fallos, 0 errores y
   0 omitidos. Sin migraciones, frontend, exports, E2E ni Playwright. Siguiente
   tarea: EPIC 44E-A3.
+
+## 2026-07-13 - EPIC 44E-A3 - Enlace posterior de item manual al catálogo
+
+- Añadido el PUT propietario `catalog-reference` para transformar una identidad
+  manual en una referencia editorial pública, con edición opcional.
+- El enlace limpia la metadata manual, conserva los datos personales y usa
+  `MANUAL_EDITORIAL` con `DIRECT_CATALOG`; no consulta legacy ni bridges.
+- Reintentos exactos son idempotentes y no actualizan auditoría. Referencias
+  incompatibles se traducen al conflicto existente.
+- Añadidas pruebas de dominio, servicio y MVC. Sin migraciones, frontend, E2E
+  ni Playwright. Siguiente tarea: EPIC 44E-B.

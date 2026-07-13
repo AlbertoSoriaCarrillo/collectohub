@@ -22,6 +22,7 @@ import com.collectohub.collections.dto.CreateCollectionItemRequest;
 import com.collectohub.collections.dto.CreateCollectionRequest;
 import com.collectohub.collections.dto.UpdateCollectionItemRequest;
 import com.collectohub.collections.dto.UpdateCollectionRequest;
+import com.collectohub.collections.dto.LinkManualCollectionItemRequest;
 import com.collectohub.collections.infrastructure.CollectionItemRepository;
 import com.collectohub.collections.infrastructure.CollectionRepository;
 import com.collectohub.inventory.domain.PhysicalCondition;
@@ -563,6 +564,53 @@ class CollectionServiceTest {
         assertThat(response.referenceKind()).isEqualTo("MANUAL");
         assertThat(response.collectionStatus()).isEqualTo("WANTED");
         assertThat(response.notes()).isEqualTo("Updated");
+    }
+
+    @Test
+    void ownerLinksManualItemToPublicCatalogWithoutLegacyLookups() {
+        CollectionItem item = manualCollectionItem(305L, privateCollection);
+        CatalogItem catalogItem = editorialItem(500L);
+        CatalogItemEdition edition = editorialEdition(600L, catalogItem);
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+        when(collectionItemRepository.findByIdAndCollection_IdAndDeletedAtIsNull(305L, 100L)).thenReturn(Optional.of(item));
+        when(catalogItemRepository.findByIdAndDeletedAtIsNull(500L)).thenReturn(Optional.of(catalogItem));
+        when(catalogItemEditionRepository.findByIdAndDeletedAtIsNull(600L)).thenReturn(Optional.of(edition));
+
+        var response = collectionService.linkManualItemToCatalog(
+                AuthenticatedUser.from(owner), 100L, 305L, new LinkManualCollectionItemRequest(500L, 600L)
+        );
+
+        assertThat(response.catalogItemId()).isEqualTo(500L);
+        assertThat(response.catalogItemEditionId()).isEqualTo(600L);
+        assertThat(response.masterProductId()).isNull();
+        assertThat(response.manualTitle()).isNull();
+        assertThat(response.editorialReferenceSource()).isEqualTo("MANUAL_EDITORIAL");
+        assertThat(response.referenceKind()).isEqualTo("DIRECT_CATALOG");
+        assertThat(response.notes()).isEqualTo("First print");
+        verify(masterProductRepository, never()).findByIdAndDeletedAtIsNull(any());
+        verify(masterProductCatalogLinkRepository, never())
+                .findByMasterProduct_IdAndLinkStatusAndDeletedAtIsNull(any(), any());
+    }
+
+    @Test
+    void exactManualCatalogLinkRetryDoesNotChangeTheItem() {
+        CatalogItem catalogItem = editorialItem(500L);
+        CollectionItem item = manualCollectionItem(305L, privateCollection);
+        ReflectionTestUtils.setField(item, "catalogItem", catalogItem);
+        ReflectionTestUtils.setField(item, "manualTitle", null);
+        ReflectionTestUtils.setField(item, "manualDescription", null);
+        ReflectionTestUtils.setField(item, "manualType", null);
+        ReflectionTestUtils.setField(item, "editorialReferenceSource",
+                com.collectohub.collections.domain.CollectionEditorialReferenceSource.MANUAL_EDITORIAL);
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+        when(collectionItemRepository.findByIdAndCollection_IdAndDeletedAtIsNull(305L, 100L)).thenReturn(Optional.of(item));
+
+        var response = collectionService.linkManualItemToCatalog(
+                AuthenticatedUser.from(owner), 100L, 305L, new LinkManualCollectionItemRequest(500L, null)
+        );
+
+        assertThat(response.catalogItemId()).isEqualTo(500L);
+        verify(catalogItemRepository, never()).findByIdAndDeletedAtIsNull(any());
     }
 
     @Test

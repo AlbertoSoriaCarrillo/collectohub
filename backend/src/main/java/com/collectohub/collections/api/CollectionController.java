@@ -9,6 +9,7 @@ import com.collectohub.collections.dto.CreateCollectionItemRequest;
 import com.collectohub.collections.dto.CreateCollectionRequest;
 import com.collectohub.collections.dto.UpdateCollectionItemRequest;
 import com.collectohub.collections.dto.UpdateCollectionRequest;
+import com.collectohub.collections.dto.LinkManualCollectionItemRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -89,7 +90,7 @@ public class CollectionController {
 
     @PostMapping("/{collectionId}/items")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Add a canonical catalog item, optional edition, or legacy master product to a collection")
+    @Operation(summary = "Add a manual item, canonical catalog item with optional edition, or legacy master product to a collection")
     public CollectionItemResponse addItem(
             @AuthenticationPrincipal AuthenticatedUser user,
             @PathVariable Long collectionId,
@@ -116,6 +117,17 @@ public class CollectionController {
             @Valid @RequestBody UpdateCollectionItemRequest request
     ) {
         return collectionService.updateItem(user, collectionId, itemId, request);
+    }
+
+    @PutMapping("/{collectionId}/items/{itemId}/catalog-reference")
+    @Operation(summary = "Link a manual collection item to a public catalog item and optional edition")
+    public CollectionItemResponse linkManualItemToCatalog(
+            @AuthenticationPrincipal AuthenticatedUser user,
+            @PathVariable Long collectionId,
+            @PathVariable Long itemId,
+            @Valid @RequestBody LinkManualCollectionItemRequest request
+    ) {
+        return collectionService.linkManualItemToCatalog(user, collectionId, itemId, request);
     }
 
     @DeleteMapping("/{collectionId}/items/{itemId}")

@@ -168,6 +168,24 @@ public class CollectionItem {
         this.updatedBy = updatedBy;
     }
 
+    public void linkToCatalog(CatalogItem catalogItem, CatalogItemEdition catalogItemEdition, Long updatedBy) {
+        if (!isManual()) {
+            throw new IllegalStateException("Only manual collection items can link to the catalog");
+        }
+        if (catalogItem == null) {
+            throw new IllegalArgumentException("Catalog item is required");
+        }
+        this.masterProduct = null;
+        this.catalogItem = catalogItem;
+        this.catalogItemEdition = catalogItemEdition;
+        this.editorialReferenceSource = CollectionEditorialReferenceSource.MANUAL_EDITORIAL;
+        this.manualTitle = null;
+        this.manualDescription = null;
+        this.manualType = null;
+        this.updatedAt = Instant.now();
+        this.updatedBy = updatedBy;
+    }
+
     public void update(
             CollectionItemStatus collectionStatus,
             PhysicalCondition physicalCondition,

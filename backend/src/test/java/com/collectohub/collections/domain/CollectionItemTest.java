@@ -1,6 +1,8 @@
 package com.collectohub.collections.domain;
 
 import com.collectohub.catalog.domain.ProductCategory;
+import com.collectohub.catalog.domain.CatalogItem;
+import com.collectohub.catalog.domain.CatalogItemEdition;
 import com.collectohub.inventory.domain.PhysicalCondition;
 import com.collectohub.users.domain.Role;
 import com.collectohub.users.domain.User;
@@ -11,6 +13,8 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class CollectionItemTest {
 
@@ -103,6 +107,31 @@ class CollectionItemTest {
                 .isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> legacy.updateManualMetadata("Title", null, null, 42L))
                 .isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    void linkToCatalogReplacesOnlyManualIdentity() {
+        CollectionItem item = CollectionItem.createManual(
+                collection(), "Manual", "Description", "TYPE", CollectionItemStatus.OWNED,
+                PhysicalCondition.GOOD, "7", 25, "Private", LocalDate.of(2026, 1, 1), 42L
+        );
+        CatalogItem catalogItem = mock(CatalogItem.class);
+        CatalogItemEdition edition = mock(CatalogItemEdition.class);
+
+        item.linkToCatalog(catalogItem, edition, 43L);
+
+        assertThat(item.getMasterProduct()).isNull();
+        assertThat(item.getCatalogItem()).isSameAs(catalogItem);
+        assertThat(item.getCatalogItemEdition()).isSameAs(edition);
+        assertThat(item.getEditorialReferenceSource()).isEqualTo(CollectionEditorialReferenceSource.MANUAL_EDITORIAL);
+        assertThat(item.getManualTitle()).isNull();
+        assertThat(item.getManualDescription()).isNull();
+        assertThat(item.getManualType()).isNull();
+        assertThat(item.isManual()).isFalse();
+        assertThat(item.getCollectionStatus()).isEqualTo(CollectionItemStatus.OWNED);
+        assertThat(item.getNotes()).isEqualTo("Private");
+        assertThat(ReflectionTestUtils.getField(item, "updatedBy")).isEqualTo(43L);
+        assertThatThrownBy(() -> item.linkToCatalog(catalogItem, null, 43L)).isInstanceOf(IllegalStateException.class);
     }
 
     private Collection collection() {

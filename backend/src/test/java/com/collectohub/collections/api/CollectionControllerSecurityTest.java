@@ -8,6 +8,7 @@ import com.collectohub.collections.application.CollectionNotFoundException;
 import com.collectohub.collections.application.CollectionService;
 import com.collectohub.collections.dto.CollectionItemResponse;
 import com.collectohub.collections.dto.CollectionResponse;
+import com.collectohub.collections.dto.LinkManualCollectionItemRequest;
 import com.collectohub.config.SecurityConfig;
 import com.collectohub.shared.api.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +31,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.mockito.ArgumentCaptor;
 import static org.mockito.Mockito.when;
 import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -361,6 +364,27 @@ class CollectionControllerSecurityTest {
                 .andExpect(jsonPath("$.manualType").value("Libro"));
 
         verify(collectionService).updateItem(any(), eq(100L), eq(300L), any());
+    }
+
+    @Test
+    void ownerLinksManualItemToCatalogThroughDedicatedEndpoint() throws Exception {
+        when(collectionService.linkManualItemToCatalog(any(), eq(100L), eq(300L), any()))
+                .thenReturn(publicItemResponse());
+
+        mockMvc.perform(put("/api/collections/100/items/300/catalog-reference")
+                        .header("Authorization", "Bearer " + userToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"catalogItemId\":500,\"catalogItemEditionId\":600}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.catalogItemId").value(500))
+                .andExpect(jsonPath("$.catalogItemEditionId").value(600))
+                .andExpect(jsonPath("$.manualTitle").value(nullValue()))
+                .andExpect(jsonPath("$.editorialReferenceSource").value("MANUAL_EDITORIAL"));
+
+        ArgumentCaptor<LinkManualCollectionItemRequest> captor = ArgumentCaptor.forClass(LinkManualCollectionItemRequest.class);
+        verify(collectionService).linkManualItemToCatalog(any(), eq(100L), eq(300L), captor.capture());
+        assertThat(captor.getValue().catalogItemId()).isEqualTo(500L);
+        assertThat(captor.getValue().catalogItemEditionId()).isEqualTo(600L);
     }
 
     @Test
