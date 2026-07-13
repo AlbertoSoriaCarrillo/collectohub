@@ -214,7 +214,14 @@ Fecha: 2026-07-13
 feat: edit manual collection items
 ```
 
-EPIC 44E-B2B está implementada en el cambio actual y pendiente de verificar su
+Ultimo commit verificado:
+
+```text
+a6a05ef2b769a599e9eb14ea8459123b4d6a72d2
+feat: link manual collection items from frontend
+```
+
+EPIC 44E-B2B-FIX está implementada en el cambio actual y pendiente de verificar su
 commit en GitHub.
 
 Siguiente tarea esperada:

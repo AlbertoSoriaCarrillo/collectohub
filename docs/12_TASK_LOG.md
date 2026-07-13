@@ -2024,3 +2024,15 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Ejecutado `npm.cmd test -- --watch=false`: 58 archivos y 218 tests correctos.
   Ejecutado `npm.cmd run build`: correcto, con warning conocido de bundle
   inicial de 625.71 kB frente al budget de 500 kB. Siguiente tarea: EPIC 44F.
+
+## 2026-07-13 - EPIC 44E-B2B-FIX - Cierre del enlace frontend manual
+
+- Las busquedas nuevas invalidan la seleccion, detalle y edicion anteriores;
+  tambien invalidan cualquier detalle pendiente. El panel no se puede cerrar ni
+  reabrir durante el PUT de enlace.
+- La confirmacion incluye la advertencia de sustitucion de identidad y la
+  conservacion de datos personales. El selector de edicion muestra publisher,
+  ISBN/EAN y ano solo cuando existen.
+- Ejecutados frontend tests y build: 58 archivos, 218 tests correctos; warning
+  conocido de bundle inicial de 625.71 kB frente al budget de 500 kB. Sin
+  backend, rutas, dependencias, exports, E2E ni Playwright. Siguiente: EPIC 44F.

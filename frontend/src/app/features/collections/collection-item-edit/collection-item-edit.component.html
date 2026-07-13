@@ -69,10 +69,10 @@
               }
               @if (selectedManualLinkItem(); as selected) { <p data-testid="manual-catalog-link-selected-item">{{ 'collections.manualLinkSelectedItem' | translate }}: {{ selected.itemTitle }}</p> }
               @if (selectedManualLinkDetail(); as detail) {
-                <mat-form-field class="wide" appearance="outline"><mat-label>{{ 'collections.manualLinkEdition' | translate }}</mat-label><mat-select [value]="selectedManualLinkEditionId()" (selectionChange)="selectManualLinkEdition($event.value)" data-testid="manual-catalog-link-edition"><mat-option [value]="null">{{ 'collections.noSpecificEdition' | translate }}</mat-option>@for (edition of detail.editions; track edition.id) { <mat-option [value]="edition.id">{{ edition.editionName || edition.format }} @if (edition.isbn || edition.ean) { - {{ edition.isbn || edition.ean }} } @if (edition.publicationYear) { ({{ edition.publicationYear }}) }</mat-option>}</mat-select></mat-form-field>
+                <mat-form-field class="wide" appearance="outline"><mat-label>{{ 'collections.manualLinkEdition' | translate }}</mat-label><mat-select [value]="selectedManualLinkEditionId()" (selectionChange)="selectManualLinkEdition($event.value)" data-testid="manual-catalog-link-edition"><mat-option [value]="null">{{ 'collections.noSpecificEdition' | translate }}</mat-option>@for (edition of detail.editions; track edition.id) { <mat-option [value]="edition.id">{{ edition.editionName || edition.format }} @if (edition.publisherName) { - {{ edition.publisherName }} } @if (edition.isbn || edition.ean) { - {{ edition.isbn || edition.ean }} } @if (edition.publicationYear) { ({{ edition.publicationYear }}) }</mat-option>}</mat-select></mat-form-field>
                 <button mat-flat-button color="primary" type="button" (click)="linkManualItemToCatalog()" [disabled]="manualLinkSubmitting() || manualLinkDetailLoading()" data-testid="manual-catalog-link-confirm">{{ manualLinkSubmitting() ? ('collections.linkingToCatalog' | translate) : ('collections.confirmManualCatalogLink' | translate) }}</button>
               }
-              <button mat-button type="button" (click)="closeManualCatalogLink()" data-testid="manual-catalog-link-cancel">{{ 'actions.cancel' | translate }}</button>
+              <button mat-button type="button" (click)="closeManualCatalogLink()" [disabled]="manualLinkSubmitting()" data-testid="manual-catalog-link-cancel">{{ 'actions.cancel' | translate }}</button>
             </section>
           }
         } @else if (form.controls.referenceMode.value === 'LEGACY') {
