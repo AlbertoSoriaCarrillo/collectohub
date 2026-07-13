@@ -205,14 +205,14 @@ Resumen relevante:
 
 ## 9. Estado actual verificado
 
-Último commit verificado previo a EPIC 44E-A3:
+Último commit verificado previo a EPIC 44E-A3-FIX:
 
 ```text
-feb50a4fba7d368a8c5c9a4614a026d05483a790
-feat: enable manual collection item management
+291daf3b31cbb2c07f5e63930ecffca79e29ceed
+feat: link manual collection items to catalog
 ```
 
-EPIC 44E-A3 está implementada en el cambio actual y pendiente de verificar su
+EPIC 44E-A3-FIX está implementada en el cambio actual y pendiente de verificar su
 commit en GitHub.
 
 Siguiente tarea esperada:

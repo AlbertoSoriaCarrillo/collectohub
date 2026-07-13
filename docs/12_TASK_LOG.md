@@ -1958,3 +1958,11 @@ Siguiente paso: crear el backend en la carpeta backend.
   incompatibles se traducen al conflicto existente.
 - Añadidas pruebas de dominio, servicio y MVC. Sin migraciones, frontend, E2E
   ni Playwright. Siguiente tarea: EPIC 44E-B.
+
+## 2026-07-13 - EPIC 44E-A3-FIX - Cierre de pruebas, documentación y exports
+
+- Ampliada la cobertura MVC del enlace con 401 sin token, 400 sin catálogo,
+  409 por identidad incompatible y 404 por item inexistente, preservando el
+  formato de error existente.
+- Tests dirigidos: `BUILD SUCCESS`, 67 tests, 0 fallos, 0 errores y 0 omitidos.
+- Sin migraciones, frontend, E2E ni Playwright. Siguiente tarea: EPIC 44E-B.

@@ -522,6 +522,35 @@ class CollectionControllerSecurityTest {
         );
     }
 
+    @Test
+    void catalogReferenceRequiresAuthenticationAndCatalogItemId() throws Exception {
+        mockMvc.perform(put("/api/collections/100/items/300/catalog-reference")
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"catalogItemId\":500}"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.status").value(401));
+        mockMvc.perform(put("/api/collections/100/items/300/catalog-reference")
+                        .header("Authorization", "Bearer " + userToken())
+                        .contentType(MediaType.APPLICATION_JSON).content("{}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400));
+    }
+
+    @Test
+    void catalogReferenceMapsConflictAndNotFoundErrors() throws Exception {
+        when(collectionService.linkManualItemToCatalog(any(), eq(100L), eq(300L), any()))
+                .thenThrow(new com.collectohub.collections.application.ConflictingCollectionItemReferenceException("incompatible"));
+        mockMvc.perform(put("/api/collections/100/items/300/catalog-reference")
+                        .header("Authorization", "Bearer " + userToken())
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"catalogItemId\":500}"))
+                .andExpect(status().isConflict()).andExpect(jsonPath("$.status").value(409));
+        when(collectionService.linkManualItemToCatalog(any(), eq(100L), eq(300L), any()))
+                .thenThrow(new com.collectohub.collections.application.CollectionItemNotFoundException(300L));
+        mockMvc.perform(put("/api/collections/100/items/300/catalog-reference")
+                        .header("Authorization", "Bearer " + userToken())
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"catalogItemId\":500}"))
+                .andExpect(status().isNotFound()).andExpect(jsonPath("$.status").value(404));
+    }
+
     @TestConfiguration
     static class CollectionServiceTestConfiguration {
 
