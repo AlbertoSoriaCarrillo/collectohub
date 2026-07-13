@@ -1983,3 +1983,11 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Tests y build Angular correctos; persiste el warning de bundle inicial de
   623.78 kB frente al budget de 500 kB. Sin backend, rutas, dependencias, E2E
   ni Playwright. Siguiente tarea: EPIC 44E-B2.
+
+## 2026-07-13 - EPIC 44E-B2A - Edición de items manuales y contrato de enlace
+
+- La edición reconoce items manuales, permite actualizar su metadata y conserva
+  datos personales sin enviar referencias legacy/editoriales.
+- Añadido el contrato y servicio TypeScript de `catalog-reference`, sin selector
+  ni llamada visual todavía. Tests y build Angular correctos; permanece el
+  warning de bundle de 623.78 kB. Siguiente tarea: EPIC 44E-B2B.

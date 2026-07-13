@@ -117,6 +117,21 @@ describe('CollectionItemEditComponent', () => {
     expect(component.form.controls.collectionStatus.value).toBe('MISSING');
   });
 
+  it('loads and updates a manual item without references', async () => {
+    const manualItem = { ...legacyItem, masterProductId: null, masterProductName: null,
+      editorialReferenceSource: 'MANUAL' as const, referenceKind: 'MANUAL' as const,
+      manualTitle: 'Promotional edition', manualDescription: 'Event item', manualType: 'Book' };
+    collectionService.getCollectionItems.mockReturnValue(of([manualItem]));
+    const component = await createComponent();
+    expect(component.form.controls.referenceMode.value).toBe('MANUAL');
+    component.form.patchValue({ manualTitle: ' Updated ', manualDescription: ' ', manualType: ' Guide ' });
+    component.submit();
+    expect(collectionService.updateCollectionItem).toHaveBeenCalledWith(3, 7, expect.objectContaining({
+      masterProductId: null, catalogItemId: null, catalogItemEditionId: null,
+      manualTitle: 'Updated', manualDescription: null, manualType: 'Guide'
+    }));
+  });
+
   it('searches and selects a legacy master product', async () => {
     const component = await createComponent();
     component.productSearch.controls.name.setValue('One Piece 2');

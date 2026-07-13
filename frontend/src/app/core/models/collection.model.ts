@@ -108,6 +108,11 @@ export interface UpdateCollectionItemRequest {
   acquiredAt?: string | null;
 }
 
+export interface LinkManualCollectionItemRequest {
+  catalogItemId: number;
+  catalogItemEditionId?: number | null;
+}
+
 export interface CollectionSearchFilters {
   visibility?: CollectionVisibility | null;
   categoryCode?: string | null;

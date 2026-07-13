@@ -62,8 +62,11 @@ export class CollectionItemEditComponent implements OnInit {
   readonly productSearch = this.fb.nonNullable.group({ name: [''] });
   readonly editorialSearch = this.fb.nonNullable.group({ q: [''] });
   readonly form = this.fb.group({
-    referenceMode: ['LEGACY' as 'LEGACY' | 'EDITORIAL'],
+    referenceMode: ['LEGACY' as 'LEGACY' | 'EDITORIAL' | 'MANUAL'],
     masterProductId: [null as number | null],
+    manualTitle: ['', [Validators.maxLength(160)]],
+    manualDescription: ['', [Validators.maxLength(4000)]],
+    manualType: ['', [Validators.maxLength(80)]],
     collectionStatus: ['', [Validators.required]],
     physicalCondition: [''],
     unitNumber: ['', [Validators.maxLength(50)]],
@@ -138,6 +141,11 @@ export class CollectionItemEditComponent implements OnInit {
     }
 
     const value = this.form.getRawValue();
+    if (value.referenceMode === 'MANUAL' && !this.optionalText(value.manualTitle)) {
+      this.form.controls.manualTitle.markAsTouched();
+      this.errorMessage.set(this.languageService.translate('collections.manualTitleRequired'));
+      return;
+    }
     if (value.referenceMode === 'LEGACY' && !value.masterProductId) {
       this.errorMessage.set(this.languageService.translate('collections.legacyReferenceRequired'));
       return;
@@ -177,8 +185,11 @@ export class CollectionItemEditComponent implements OnInit {
 
           this.item.set(item);
           this.form.patchValue({
-            referenceMode: item.catalogItemId ? 'EDITORIAL' : 'LEGACY',
+            referenceMode: item.referenceKind === 'MANUAL' ? 'MANUAL' : item.catalogItemId ? 'EDITORIAL' : 'LEGACY',
             masterProductId: item.masterProductId,
+            manualTitle: item.manualTitle ?? '',
+            manualDescription: item.manualDescription ?? '',
+            manualType: item.manualType ?? '',
             collectionStatus: item.collectionStatus,
             physicalCondition: item.physicalCondition ?? '',
             unitNumber: item.unitNumber ?? '',
@@ -194,19 +205,22 @@ export class CollectionItemEditComponent implements OnInit {
   private toRequest(): UpdateCollectionItemRequest {
     const value = this.form.getRawValue();
     const editorial = value.referenceMode === 'EDITORIAL' ? this.selectedEditorial() : null;
-    const reference = value.referenceMode === 'LEGACY'
+    const reference = value.referenceMode === 'MANUAL'
+      ? { masterProductId: null, catalogItemId: null, catalogItemEditionId: null,
+          manualTitle: this.optionalText(value.manualTitle), manualDescription: this.optionalText(value.manualDescription), manualType: this.optionalText(value.manualType) }
+      : value.referenceMode === 'LEGACY'
       ? {
           masterProductId: Number(value.masterProductId),
           catalogItemId: null,
-          catalogItemEditionId: null
+          catalogItemEditionId: null, manualTitle: null, manualDescription: null, manualType: null
         }
       : editorial
         ? {
             masterProductId: null,
             catalogItemId: editorial.itemId,
-            catalogItemEditionId: editorial.editionId
+            catalogItemEditionId: editorial.editionId, manualTitle: null, manualDescription: null, manualType: null
           }
-        : {};
+        : { manualTitle: null, manualDescription: null, manualType: null };
     return {
       ...reference,
       collectionStatus: value.collectionStatus as UpdateCollectionItemRequest['collectionStatus'],

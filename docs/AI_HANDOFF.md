@@ -205,20 +205,20 @@ Resumen relevante:
 
 ## 9. Estado actual verificado
 
-Último commit verificado previo a EPIC 44E-B1-FIX:
+Último commit verificado previo a EPIC 44E-B2A:
 
 ```text
-f69d95c36cb8011160b35421b970f79e2384c78e
-feat: add manual collection item creation
+e89eafdab02cac9166b7feee28e85feeaf886040
+fix: close manual collection item creation flow
 ```
 
-EPIC 44E-B1-FIX está implementada en el cambio actual y pendiente de verificar su
+EPIC 44E-B2A está implementada en el cambio actual y pendiente de verificar su
 commit en GitHub.
 
 Siguiente tarea esperada:
 
 ```text
-EPIC 44E-B2 - Frontend de edición y enlace de items manuales
+EPIC 44E-B2B - Selector y llamada de enlace manual al catálogo
 ```
 
 La IA debe volver a comprobar GitHub antes de asumir que este estado sigue vigente.

@@ -9,7 +9,8 @@ import {
   CreateCollectionItemRequest,
   CreateCollectionRequest,
   UpdateCollectionItemRequest,
-  UpdateCollectionRequest
+  UpdateCollectionRequest,
+  LinkManualCollectionItemRequest
 } from '../models/collection.model';
 
 @Injectable({
@@ -71,6 +72,16 @@ export class CollectionService {
     return this.http.put<CollectionItemResponse>(
       `${this.apiBaseUrl}/api/collections/${collectionId}/items/${itemId}`,
       request
+    );
+  }
+
+  linkManualCollectionItemToCatalog(
+    collectionId: number,
+    itemId: number,
+    request: LinkManualCollectionItemRequest
+  ): Observable<CollectionItemResponse> {
+    return this.http.put<CollectionItemResponse>(
+      `${this.apiBaseUrl}/api/collections/${collectionId}/items/${itemId}/catalog-reference`, request
     );
   }
 
