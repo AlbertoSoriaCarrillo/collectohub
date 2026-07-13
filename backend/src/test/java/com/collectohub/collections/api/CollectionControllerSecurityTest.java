@@ -29,6 +29,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -256,6 +257,29 @@ class CollectionControllerSecurityTest {
     }
 
     @Test
+    void ownerAddsManualItemThroughExistingEndpoint() throws Exception {
+        when(collectionService.addItem(any(), eq(100L), any())).thenReturn(manualItemResponse());
+
+        mockMvc.perform(post("/api/collections/100/items")
+                        .header("Authorization", "Bearer " + userToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "manualTitle": "Edición promocional",
+                                  "collectionStatus": "OWNED"
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.manualTitle").value("Edición promocional"))
+                .andExpect(jsonPath("$.editorialReferenceSource").value("MANUAL"))
+                .andExpect(jsonPath("$.referenceKind").value("MANUAL"))
+                .andExpect(jsonPath("$.masterProductId").value(nullValue()))
+                .andExpect(jsonPath("$.catalogItemId").value(nullValue()));
+
+        verify(collectionService).addItem(any(), eq(100L), any());
+    }
+
+    @Test
     void ownerListsCollectionItems() throws Exception {
         when(collectionService.listItems(any(), eq(100L))).thenReturn(List.of(itemResponse()));
 
@@ -315,6 +339,28 @@ class CollectionControllerSecurityTest {
                                 """))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.status").value(403));
+    }
+
+    @Test
+    void ownerUpdatesManualItemThroughExistingEndpoint() throws Exception {
+        when(collectionService.updateItem(any(), eq(100L), eq(300L), any())).thenReturn(manualItemResponse());
+
+        mockMvc.perform(put("/api/collections/100/items/300")
+                        .header("Authorization", "Bearer " + userToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "manualTitle": "Nuevo título",
+                                  "manualDescription": "",
+                                  "manualType": "Libro"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.manualTitle").value("Edición promocional"))
+                .andExpect(jsonPath("$.manualDescription").value("Descripción"))
+                .andExpect(jsonPath("$.manualType").value("Libro"));
+
+        verify(collectionService).updateItem(any(), eq(100L), eq(300L), any());
     }
 
     @Test
@@ -439,6 +485,16 @@ class CollectionControllerSecurityTest {
                 500L, "Dragon Ball 1", "1", 400L, "Dragon Ball", 600L, "Edition", "PAPERBACK",
                 null, null, null, null, null, "MANUAL_EDITORIAL", "DIRECT_CATALOG", null, null, null, "OWNED", "LIKE_NEW",
                 "1", 50, null, null
+        );
+    }
+
+    private CollectionItemResponse manualItemResponse() {
+        return new CollectionItemResponse(
+                300L, 100L, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null,
+                null, null, null, null, null, "MANUAL", "MANUAL",
+                "Edición promocional", "Descripción", "Libro", "OWNED", "LIKE_NEW",
+                "1", 50, "First print", LocalDate.of(2023, 6, 1)
         );
     }
 

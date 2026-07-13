@@ -1927,3 +1927,23 @@ Siguiente paso: crear el backend en la carpeta backend.
 - La API todavia no permite altas manuales: queda pendiente EPIC 44E-A2 para
   creacion/edicion backend y EPIC 44E-A3 para enlace posterior al catalogo.
   Sin frontend, endpoints, exports, E2E ni Playwright.
+
+## 2026-07-13 - EPIC 44E-A2 - Creacion y edicion backend de items manuales
+
+- Activada la alta manual mediante el POST existente de collection items y la
+  edicion mediante el PUT existente, sin rutas ni endpoints nuevos.
+- La creacion normaliza title, description y type; title es obligatorio y los
+  valores opcionales vacios se guardan como `null`. La ruta manual no consulta
+  master products, catalog items, editions ni bridges.
+- Se rechazan mezclas entre metadata manual y referencias legacy/editoriales.
+  Los items manuales no pueden enlazarse por el PUT generico; ese enlace queda
+  reservado para EPIC 44E-A3.
+- Anadido `updateManualMetadata` en dominio. Conserva referencias y datos
+  personales; el PUT puede modificar estos ultimos sin perder identidad manual.
+- Mantenidas propiedad estricta y compatibilidad legacy, editorial y VERIFIED
+  BRIDGE. Las entradas referenciadas rechazan metadata manual.
+- Anadidas pruebas de dominio, servicio y MVC. Tests dirigidos: 61 correctos,
+  sin fallos, errores u omitidos. Ejecutados `mvnw.cmd test` y
+  `mvnw.cmd clean verify`: `BUILD SUCCESS`, 354 tests, 0 fallos, 0 errores y
+  0 omitidos. Sin migraciones, frontend, exports, E2E ni Playwright. Siguiente
+  tarea: EPIC 44E-A3.

@@ -205,20 +205,20 @@ Resumen relevante:
 
 ## 9. Estado actual verificado
 
-Último commit verificado previo a EPIC 44E-A1:
+Último commit verificado previo a EPIC 44E-A2:
 
 ```text
-ae4cefce1fa179fe05e51b2e43d536226082f8f9
-fix: close catalog selection validation
+00e87ff613954f3995f797815d6c89489b133b75
+feat: add manual collection item contract
 ```
 
-EPIC 44E-A1 está implementada en el cambio actual y pendiente de verificar su
+EPIC 44E-A2 está implementada en el cambio actual y pendiente de verificar su
 commit en GitHub.
 
 Siguiente tarea esperada:
 
 ```text
-EPIC 44E-A2 - Creación y edición backend de items manuales
+EPIC 44E-A3 - Enlace posterior de item manual al catálogo
 ```
 
 La IA debe volver a comprobar GitHub antes de asumir que este estado sigue vigente.
@@ -287,8 +287,8 @@ Orden previsto:
 3. EPIC 44B-FIX - Tests y documentación. Completada.
 4. EPIC 44C - Flujo frontend de creación y edición de colecciones. Completada.
 5. EPIC 44D - Alta desde catálogo y selección de edición. Completada.
-6. EPIC 44E-A1 - Esquema y contrato base de items manuales. Implementada en el cambio actual; pendiente de verificar su commit publicado.
-7. EPIC 44E-A2 - Creación y edición backend de items manuales.
+6. EPIC 44E-A1 - Esquema y contrato base de items manuales. Completada.
+7. EPIC 44E-A2 - Creación y edición backend de items manuales. Implementada en el cambio actual; pendiente de verificar su commit publicado.
 8. EPIC 44E-A3 - Enlace posterior de item manual al catálogo.
 9. EPIC 44F - OWNED, WANTED y faltantes calculados.
 10. EPIC 44G - Detalle final, filtros, ordenación y progreso.

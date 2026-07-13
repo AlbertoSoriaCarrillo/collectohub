@@ -149,6 +149,25 @@ public class CollectionItem {
         this.updatedBy = updatedBy;
     }
 
+    public void updateManualMetadata(
+            String manualTitle,
+            String manualDescription,
+            String manualType,
+            Long updatedBy
+    ) {
+        if (!isManual()) {
+            throw new IllegalStateException("Only manual collection items can update manual metadata");
+        }
+        if (manualTitle == null || manualTitle.isBlank()) {
+            throw new IllegalArgumentException("Manual title is required");
+        }
+        this.manualTitle = manualTitle;
+        this.manualDescription = manualDescription;
+        this.manualType = manualType;
+        this.updatedAt = Instant.now();
+        this.updatedBy = updatedBy;
+    }
+
     public void update(
             CollectionItemStatus collectionStatus,
             PhysicalCondition physicalCondition,

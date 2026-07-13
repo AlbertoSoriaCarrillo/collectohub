@@ -343,6 +343,68 @@ class CollectionServiceTest {
     }
 
     @Test
+    void ownerAddsCompleteManualItemWithoutCatalogLookups() {
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+        when(collectionItemRepository.save(any(CollectionItem.class)))
+                .thenAnswer(invocation -> withId(invocation.getArgument(0), 304L));
+
+        var response = collectionService.addItem(
+                AuthenticatedUser.from(owner),
+                100L,
+                new CreateCollectionItemRequest(null, null, null, CollectionItemStatus.OWNED,
+                        PhysicalCondition.GOOD, " 7 ", 30, " Private ", LocalDate.of(2026, 7, 1),
+                        " Manual title ", " Description ", " TYPE ")
+        );
+
+        assertThat(response.editorialReferenceSource()).isEqualTo("MANUAL");
+        assertThat(response.referenceKind()).isEqualTo("MANUAL");
+        assertThat(response.manualTitle()).isEqualTo("Manual title");
+        assertThat(response.manualDescription()).isEqualTo("Description");
+        assertThat(response.manualType()).isEqualTo("TYPE");
+        assertThat(response.masterProductId()).isNull();
+        assertThat(response.catalogItemId()).isNull();
+        assertThat(response.catalogItemEditionId()).isNull();
+        assertThat(response.unitNumber()).isEqualTo("7");
+        assertThat(response.notes()).isEqualTo("Private");
+        verify(masterProductRepository, never()).findByIdAndDeletedAtIsNull(any());
+        verify(catalogItemRepository, never()).findByIdAndDeletedAtIsNull(any());
+        verify(catalogItemEditionRepository, never()).findByIdAndDeletedAtIsNull(any());
+        verify(masterProductCatalogLinkRepository, never())
+                .findByMasterProduct_IdAndLinkStatusAndDeletedAtIsNull(any(), any());
+    }
+
+    @Test
+    void manualCreationNormalizesOptionalMetadataAndRejectsMixedReferences() {
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+        when(collectionItemRepository.save(any(CollectionItem.class)))
+                .thenAnswer(invocation -> withId(invocation.getArgument(0), 304L));
+
+        var response = collectionService.addItem(
+                AuthenticatedUser.from(owner), 100L,
+                new CreateCollectionItemRequest(null, null, null, CollectionItemStatus.OWNED,
+                        null, null, null, null, null, "Manual", "   ", " ")
+        );
+        assertThat(response.manualDescription()).isNull();
+        assertThat(response.manualType()).isNull();
+
+        assertThatThrownBy(() -> collectionService.addItem(
+                AuthenticatedUser.from(owner), 100L,
+                new CreateCollectionItemRequest(200L, null, null, CollectionItemStatus.OWNED,
+                        null, null, null, null, null, "Manual", null, null)
+        )).isInstanceOf(InvalidCollectionItemReferenceException.class);
+        assertThatThrownBy(() -> collectionService.addItem(
+                AuthenticatedUser.from(owner), 100L,
+                new CreateCollectionItemRequest(null, null, null, CollectionItemStatus.OWNED,
+                        null, null, null, null, null, null, "Description", null)
+        )).isInstanceOf(InvalidCollectionItemReferenceException.class);
+        assertThatThrownBy(() -> collectionService.addItem(
+                AuthenticatedUser.from(owner), 100L,
+                new CreateCollectionItemRequest(null, null, null, CollectionItemStatus.OWNED,
+                        null, null, null, null, null, "   ", null, null)
+        )).isInstanceOf(InvalidCollectionItemReferenceException.class);
+    }
+
+    @Test
     void archivedEditorialItemIsRejected() {
         CatalogItem catalogItem = editorialItem(500L);
         when(catalogItem.isPubliclyVisible()).thenReturn(false);
@@ -483,6 +545,46 @@ class CollectionServiceTest {
     }
 
     @Test
+    void ownerUpdatesManualMetadataAndPersonalDataWithoutChangingIdentity() {
+        CollectionItem item = manualCollectionItem(305L, privateCollection);
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+        when(collectionItemRepository.findByIdAndCollection_IdAndDeletedAtIsNull(305L, 100L)).thenReturn(Optional.of(item));
+
+        var response = collectionService.updateItem(
+                AuthenticatedUser.from(owner), 100L, 305L,
+                new UpdateCollectionItemRequest(null, null, null, CollectionItemStatus.WANTED,
+                        PhysicalCondition.GOOD, "2", 20, "Updated", LocalDate.of(2026, 7, 2),
+                        " Updated title ", "", " New type ")
+        );
+
+        assertThat(response.manualTitle()).isEqualTo("Updated title");
+        assertThat(response.manualDescription()).isNull();
+        assertThat(response.manualType()).isEqualTo("New type");
+        assertThat(response.referenceKind()).isEqualTo("MANUAL");
+        assertThat(response.collectionStatus()).isEqualTo("WANTED");
+        assertThat(response.notes()).isEqualTo("Updated");
+    }
+
+    @Test
+    void manualUpdateRejectsReferencesAndReferencedItemRejectsManualMetadata() {
+        CollectionItem manual = manualCollectionItem(305L, privateCollection);
+        CollectionItem legacy = collectionItem(300L, privateCollection);
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+        when(collectionItemRepository.findByIdAndCollection_IdAndDeletedAtIsNull(305L, 100L)).thenReturn(Optional.of(manual));
+        when(collectionItemRepository.findByIdAndCollection_IdAndDeletedAtIsNull(300L, 100L)).thenReturn(Optional.of(legacy));
+
+        assertThatThrownBy(() -> collectionService.updateItem(
+                AuthenticatedUser.from(owner), 100L, 305L,
+                new UpdateCollectionItemRequest(200L, null, null, null, null, null, null, null, null, null, null, null)
+        )).isInstanceOf(InvalidCollectionItemReferenceException.class);
+        assertThatThrownBy(() -> collectionService.updateItem(
+                AuthenticatedUser.from(owner), 100L, 300L,
+                new UpdateCollectionItemRequest(null, null, null, null, null, null, null, null, null, "Manual", null, null)
+        )).isInstanceOf(InvalidCollectionItemReferenceException.class);
+        assertThat(manual.getManualTitle()).isEqualTo("Manual title");
+    }
+
+    @Test
     void ownerChangesEditorialItemToLegacyReference() {
         CollectionItem item = collectionItem(300L, privateCollection);
         ReflectionTestUtils.setField(item, "catalogItem", editorialItem(500L));
@@ -604,6 +706,14 @@ class CollectionServiceTest {
                 "First print",
                 LocalDate.of(2023, 6, 1),
                 collection.getUser().getId()
+        ), id);
+    }
+
+    private CollectionItem manualCollectionItem(Long id, Collection collection) {
+        return withId(CollectionItem.createManual(
+                collection, "Manual title", "Manual description", "CUSTOM",
+                CollectionItemStatus.OWNED, PhysicalCondition.LIKE_NEW, "1", 50,
+                "First print", LocalDate.of(2023, 6, 1), collection.getUser().getId()
         ), id);
     }
 

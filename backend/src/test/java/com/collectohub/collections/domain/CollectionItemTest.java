@@ -10,6 +10,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CollectionItemTest {
 
@@ -59,6 +60,49 @@ class CollectionItemTest {
         assertThat(legacy.isManual()).isFalse();
         assertThat(editorial.isManual()).isFalse();
         assertThat(incoherent.isManual()).isFalse();
+    }
+
+    @Test
+    void updateManualMetadataChangesOnlyManualMetadataAndAuditFields() {
+        CollectionItem item = CollectionItem.createManual(
+                collection(), "Original", "Description", "TYPE", CollectionItemStatus.OWNED,
+                PhysicalCondition.GOOD, "1", 10, "Private", LocalDate.of(2026, 1, 1), 42L
+        );
+
+        item.updateManualMetadata("Updated", null, null, 43L);
+
+        assertThat(item.getManualTitle()).isEqualTo("Updated");
+        assertThat(item.getManualDescription()).isNull();
+        assertThat(item.getManualType()).isNull();
+        assertThat(item.getMasterProduct()).isNull();
+        assertThat(item.getCatalogItem()).isNull();
+        assertThat(item.getCatalogItemEdition()).isNull();
+        assertThat(item.getCollectionStatus()).isEqualTo(CollectionItemStatus.OWNED);
+        assertThat(item.getNotes()).isEqualTo("Private");
+        assertThat(ReflectionTestUtils.getField(item, "updatedAt")).isNotNull();
+        assertThat(ReflectionTestUtils.getField(item, "updatedBy")).isEqualTo(43L);
+        assertThat(ReflectionTestUtils.getField(item, "createdBy")).isEqualTo(42L);
+    }
+
+    @Test
+    void updateManualMetadataRejectsInvalidTitleAndNonManualItems() {
+        CollectionItem manual = CollectionItem.createManual(
+                collection(), "Manual", null, null, CollectionItemStatus.OWNED,
+                null, null, null, null, null, 42L
+        );
+        CollectionItem legacy = CollectionItem.create(
+                collection(), null, null, null, CollectionEditorialReferenceSource.LEGACY,
+                CollectionItemStatus.OWNED, null, null, null, null, null, 42L
+        );
+
+        assertThatThrownBy(() -> manual.updateManualMetadata(null, null, null, 42L))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> manual.updateManualMetadata("", null, null, 42L))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> manual.updateManualMetadata("   ", null, null, 42L))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> legacy.updateManualMetadata("Title", null, null, 42L))
+                .isInstanceOf(IllegalStateException.class);
     }
 
     private Collection collection() {

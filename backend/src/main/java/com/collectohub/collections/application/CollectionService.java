@@ -157,6 +157,25 @@ public class CollectionService {
     ) {
         Collection collection = findActiveCollection(collectionId);
         ensureOwner(authenticatedUser, collection);
+        if (hasManualInput(request)) {
+            validateNoMixedManualReference(
+                    request.masterProductId(), request.catalogItemId(), request.catalogItemEditionId()
+            );
+            CollectionItem item = CollectionItem.createManual(
+                    collection,
+                    normalizeRequiredManualTitle(request.manualTitle()),
+                    normalizeNullable(request.manualDescription()),
+                    normalizeNullable(request.manualType()),
+                    request.collectionStatus(),
+                    request.physicalCondition(),
+                    normalizeNullable(request.unitNumber()),
+                    request.totalLimitedUnits(),
+                    normalizeNullable(request.notes()),
+                    request.acquiredAt(),
+                    authenticatedUser.id()
+            );
+            return CollectionItemResponse.from(collectionItemRepository.save(item));
+        }
         ResolvedReference reference = resolveReference(
                 request.masterProductId(),
                 request.catalogItemId(),
@@ -190,15 +209,20 @@ public class CollectionService {
         ensureOwner(authenticatedUser, collection);
         CollectionItem item = collectionItemRepository.findByIdAndCollection_IdAndDeletedAtIsNull(itemId, collectionId)
                 .orElseThrow(() -> new CollectionItemNotFoundException(itemId));
-        if (hasExplicitReference(request)) {
-            ResolvedReference reference = resolveUpdatedReference(item, request);
-            item.updateReference(
-                    reference.masterProduct(),
-                    reference.catalogItem(),
-                    reference.catalogItemEdition(),
-                    reference.source(),
-                    authenticatedUser.id()
-            );
+        if (item.isManual()) {
+            updateManualItem(item, request, authenticatedUser.id());
+        } else {
+            rejectManualInputForReferencedItem(request);
+            if (hasExplicitReference(request)) {
+                ResolvedReference reference = resolveUpdatedReference(item, request);
+                item.updateReference(
+                        reference.masterProduct(),
+                        reference.catalogItem(),
+                        reference.catalogItemEdition(),
+                        reference.source(),
+                        authenticatedUser.id()
+                );
+            }
         }
         item.update(
                 Objects.requireNonNullElse(request.collectionStatus(), item.getCollectionStatus()),
@@ -210,6 +234,63 @@ public class CollectionService {
                 authenticatedUser.id()
         );
         return CollectionItemResponse.from(item);
+    }
+
+    private void updateManualItem(CollectionItem item, UpdateCollectionItemRequest request, Long updatedBy) {
+        if (hasExplicitReference(request)) {
+            throw new InvalidCollectionItemReferenceException(
+                    "Linking a manual collection item to the catalog requires the dedicated operation"
+            );
+        }
+        if (!hasManualInput(request)) {
+            return;
+        }
+        String title = request.manualTitle() == null
+                ? item.getManualTitle()
+                : normalizeRequiredManualTitle(request.manualTitle());
+        String description = request.manualDescription() == null
+                ? item.getManualDescription()
+                : normalizeNullable(request.manualDescription());
+        String type = request.manualType() == null
+                ? item.getManualType()
+                : normalizeNullable(request.manualType());
+        item.updateManualMetadata(title, description, type, updatedBy);
+    }
+
+    private void rejectManualInputForReferencedItem(UpdateCollectionItemRequest request) {
+        if (hasManualInput(request)) {
+            throw new InvalidCollectionItemReferenceException(
+                    "Manual metadata is only valid for manual collection items"
+            );
+        }
+    }
+
+    private boolean hasManualInput(CreateCollectionItemRequest request) {
+        return request.manualTitle() != null
+                || request.manualDescription() != null
+                || request.manualType() != null;
+    }
+
+    private boolean hasManualInput(UpdateCollectionItemRequest request) {
+        return request.manualTitle() != null
+                || request.manualDescription() != null
+                || request.manualType() != null;
+    }
+
+    private void validateNoMixedManualReference(Long masterProductId, Long catalogItemId, Long catalogItemEditionId) {
+        if (masterProductId != null || catalogItemId != null || catalogItemEditionId != null) {
+            throw new InvalidCollectionItemReferenceException(
+                    "Manual collection items cannot include catalog or legacy references"
+            );
+        }
+    }
+
+    private String normalizeRequiredManualTitle(String value) {
+        String normalized = normalizeNullable(value);
+        if (normalized == null) {
+            throw new InvalidCollectionItemReferenceException("Manual title is required");
+        }
+        return normalized;
     }
 
     @Transactional
