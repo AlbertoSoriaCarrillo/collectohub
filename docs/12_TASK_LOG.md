@@ -2058,3 +2058,11 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Tests y build Angular correctos, con el warning conocido de 625.71 kB frente
   al budget de 500 kB. Sin backend, rutas, dependencias, exports, E2E ni
   Playwright. Siguiente tarea: EPIC 44F.
+
+## 2026-07-15 - EPIC 44F-A - Diseño de OWNED, WANTED y faltantes calculados
+
+- Cerrado el contrato de progreso owner-only por coleccion y serie, estados de
+  posesion, precedencia, legacy MISSING y transicion WANTED a OWNED mediante
+  el PUT existente sobre la misma entrada.
+- Sin backend, frontend, migraciones, endpoints, rutas, dependencias, exports,
+  E2E ni Playwright. Siguiente tarea: EPIC 44F-B.

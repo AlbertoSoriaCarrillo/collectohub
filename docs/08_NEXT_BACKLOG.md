@@ -100,7 +100,7 @@ recomienda `EDITORIAL_ADMIN` sin implementarlo todavia. Siguiente tarea:
 EPIC 43B, 43C y 43D quedan completadas el 2026-07-12. `EDITORIAL_ADMIN` se
 provisiona solo mediante operacion controlada, sin autoasignacion ni interfaz
 publica. EPIC 44A, EPIC 44B, EPIC 44B-FIX, EPIC 44C y EPIC 44D quedan completadas.
-EPIC 44E queda completada. Siguiente tarea: EPIC 44F - OWNED, WANTED y faltantes calculados.
+EPIC 44E y EPIC 44F-A quedan completadas. Siguiente tarea: EPIC 44F-B - Backend de OWNED, WANTED y faltantes calculados.
 
 ## MVP 4 - Colecciones finales de usuario
 
@@ -154,6 +154,9 @@ EPIC 44E queda completada. Siguiente tarea: EPIC 44F - OWNED, WANTED y faltantes
 - herramientas avanzadas para creadores y comunidades.
 
 ## Reglas de backlog
+
+EPIC 44E y EPIC 44F-A estan completadas. Siguiente EPIC: 44F-B - Backend de
+OWNED, WANTED y faltantes calculados.
 
 - No adelantar una fase porque exista una tabla, rol o pantalla legacy.
 - Cada EPIC debe declarar que objetivo de producto valida.

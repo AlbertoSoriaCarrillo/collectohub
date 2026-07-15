@@ -210,8 +210,8 @@ Fecha: 2026-07-13
 Último commit previo a publicar EPIC 44E-B2A-FIX:
 
 ```text
-5ba0e382af745c7711b4e149d291f1d16868f404
-feat: edit manual collection items
+f5e870cad152ab7589d3245f8f19f44098e85043
+test: complete manual collection item frontend coverage
 ```
 
 Ultimo commit verificado:
@@ -221,13 +221,13 @@ Ultimo commit verificado:
 test: close manual catalog link frontend coverage
 ```
 
-EPIC 44E-B2B-TEST-FIX2 está implementada en el cambio actual y pendiente de verificar su
+EPIC 44F-A está implementada en el cambio actual y pendiente de verificar su
 commit en GitHub.
 
 Siguiente tarea esperada:
 
 ```text
-EPIC 44F - OWNED, WANTED y faltantes calculados
+EPIC 44F-B - Backend de OWNED, WANTED y faltantes calculados
 ```
 
 La IA debe volver a comprobar GitHub antes de asumir que este estado sigue vigente.

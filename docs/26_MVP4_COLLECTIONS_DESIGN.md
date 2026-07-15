@@ -188,6 +188,10 @@ serie ordenada. E2E/Playwright siguen pospuestos hasta un recorrido maduro.
 6. EPIC 44G - Detalle final, filtros, ordenacion y progreso.
 7. EPIC 44H - Datos demo, validacion integral y cierre parcial MVP4.
 
+Las decisiones ejecutables de 44F-A estan en
+`docs/27_MVP4_OWNED_WANTED_MISSING_DESIGN.md`; la siguiente implementacion es
+44F-B.
+
 ## 19. Criterios de cierre MVP4
 
 - Crear y mantener una coleccion real con privacidad correcta.

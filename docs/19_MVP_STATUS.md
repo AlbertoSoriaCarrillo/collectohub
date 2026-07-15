@@ -36,6 +36,8 @@ el alta editorial item -> edicion como via principal. EPIC 44E completa alta,
 edicion y enlace posterior de items manuales al catalogo, con edicion opcional,
 propiedad estricta y preservacion de datos personales. MVP3 no queda cerrado
 como producto final. La siguiente tarea es EPIC 44F.
+EPIC 44F-A ha cerrado el diseno; los faltantes calculados aun no estan
+implementados. Siguiente: EPIC 44F-B.
 
 | Dominio | Estado actual |
 | --- | --- |
