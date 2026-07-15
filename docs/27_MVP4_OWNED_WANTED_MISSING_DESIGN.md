@@ -125,5 +125,5 @@ social, filtros/orden final y E2E.
 
 ## Estado de implementacion
 
-EPIC 44F-B cierra el backend de este contrato. EPIC 44F-C implementa el frontend
-en el cambio actual; EPIC 44F-D queda pendiente.
+44F-A diseno cerrado; 44F-B backend cerrado; 44F-C frontend cerrado; 44F-D
+regresion, demo y documentacion cerradas. EPIC 44F completada.

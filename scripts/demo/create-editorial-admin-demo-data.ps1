@@ -122,7 +122,7 @@ function Get-OrCreateItem {
 
 if ($WhatIfPreference) {
     Write-Host "WhatIf: no API calls will be made."
-    Write-Host "Would authenticate ADMIN and create or reuse publisher, franchise, series, two items, edition, creator, credit, relationship and optional master-product link."
+    Write-Host "Would authenticate ADMIN and create or reuse publisher, franchise, series, three items, edition, creator, credit, relationship and optional master-product link."
     return
 }
 
@@ -132,6 +132,7 @@ $franchiseName = "Demo Saga CollectoHub $DemoSuffix"
 $seriesTitle = "Demo Manga Series $DemoSuffix"
 $item1Title = "Demo Volume 1 $DemoSuffix"
 $item2Title = "Demo Volume 2 $DemoSuffix"
+$item3Title = "Demo Volume 3 $DemoSuffix"
 $creatorName = "Demo Author CollectoHub $DemoSuffix"
 $slug = ("demo-saga-collectohub-$DemoSuffix" -replace "[^a-zA-Z0-9-]", "-").ToLowerInvariant()
 
@@ -153,6 +154,7 @@ $series = Get-OrCreateEntity -SearchPath "/api/catalog/series" -CreatePath "/api
 }
 $item1 = Get-OrCreateItem -SeriesId $series.id -Title $item1Title -Order 1 -Token $token
 $item2 = Get-OrCreateItem -SeriesId $series.id -Title $item2Title -Order 2 -Token $token
+$item3 = Get-OrCreateItem -SeriesId $series.id -Title $item3Title -Order 3 -Token $token
 
 $editionSearch = Invoke-EditorialApi -Method "GET" -Path "/api/catalog/items/$($item1.id)/editions?recordStatus=ACTIVE&size=50" -Token $token
 $edition = @($editionSearch.content | Where-Object { $_.editionName -eq "Demo Volume 1 Paperback 2026 $DemoSuffix" }) | Select-Object -First 1
@@ -214,7 +216,7 @@ if ($MasterProductId -gt 0) {
 $summary = [ordered]@{
     generatedAt = (Get-Date).ToString("o"); apiBaseUrl = $ApiBaseUrl; demoSuffix = $DemoSuffix
     publisherId = $publisher.id; franchiseId = $franchise.id; seriesId = $series.id
-    item1Id = $item1.id; item2Id = $item2.id; editionId = $edition.id; creatorId = $creator.id
+    item1Id = $item1.id; item2Id = $item2.id; item3Id = $item3.id; editionId = $edition.id; creatorId = $creator.id
     creditId = if ($credit) { $credit.id } else { $null }; relationshipId = if ($relationship) { $relationship.id } else { $null }
     masterProductLinkId = if ($masterProductLink) { $masterProductLink.id } else { $null }
 }

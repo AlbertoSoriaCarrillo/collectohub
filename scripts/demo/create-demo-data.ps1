@@ -433,9 +433,9 @@ $collectionId = $collection.id
 $collectionItemDefinitions = @(
     @{
         key = "dragonQuest"
-        collectionStatus = "MISSING"
+        collectionStatus = "WANTED"
         physicalCondition = "NEW"
-        notes = "Faltante principal para activar recomendaciones."
+        notes = "Item buscado principal para activar recomendaciones."
     },
     @{
         key = "galaxyDragon"
@@ -463,7 +463,15 @@ foreach ($item in $collectionItemDefinitions) {
     }
 
     $collectionItem = Invoke-CollectoHubApi -Method "POST" -Path "/api/collections/$collectionId/items" -Body $itemBody -Token $collectorToken
+    if ($collectionItem.collectionStatus -ne $item.collectionStatus) {
+        throw "Collection item '$($item.key)' returned unexpected status '$($collectionItem.collectionStatus)'."
+    }
     $collectionItemIds[$item.key] = $collectionItem.id
+}
+
+$createdStatuses = $collectionItemDefinitions | ForEach-Object { $_.collectionStatus }
+if ($createdStatuses -contains "MISSING" -or -not ($createdStatuses -contains "WANTED") -or -not ($createdStatuses -contains "OWNED")) {
+    throw "The legacy demo must create WANTED and OWNED collection items and must not persist MISSING."
 }
 
 Write-Host "Checking collector recommendations ..."
@@ -547,6 +555,7 @@ Write-Host "  Shop ID:        $shopId"
 Write-Host "  Collection ID:  $collectionId"
 Write-Host "  Reservation ID: $reservationId"
 Write-Host "  Recommendations: $($recommendations.totalRecommendations)"
+Write-Host "  Collection statuses: Dragon Quest WANTED, Galaxy Dragon WANTED, Retro Quest OWNED"
 Write-Host ""
 Write-Host "MVP 1 URLs:"
 foreach ($key in @("home", "login", "catalog", "collections", "collectionDetail", "wanted", "profile")) {

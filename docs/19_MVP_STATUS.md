@@ -36,8 +36,9 @@ el alta editorial item -> edicion como via principal. EPIC 44E completa alta,
 edicion y enlace posterior de items manuales al catalogo, con edicion opcional,
 propiedad estricta y preservacion de datos personales. MVP3 no queda cerrado
 como producto final. La siguiente tarea es EPIC 44F.
-EPIC 44F-A ha cerrado el diseno; los faltantes calculados aun no estan
-implementados. Siguiente: EPIC 44F-B.
+MVP4 sigue abierto: EPIC 44E y 44F estan completadas. El progreso owner-only por
+serie calcula MISSING, permite la transicion WANTED a OWNED y la siguiente tarea
+es EPIC 44G-A.
 
 | Dominio | Estado actual |
 | --- | --- |
@@ -348,8 +349,8 @@ Los estados distinguen recorrido MVP 1, base legacy/futura, infraestructura,
 MVP 2 visible/foundation y redirecciones sin alterar codigo funcional.
 
 MVP 2 queda cerrado con limitaciones. El backend y frontend de progreso y
-faltantes calculados estan implementados; el cierre y regresion quedan pendientes
-en 44F-D. MVP4 continua abierto. MVP3 Admin Editorial ha completado el
+faltantes calculados estan implementados y EPIC 44F esta cerrada. MVP4 continua
+abierto. MVP3 Admin Editorial ha completado el
 bloque 40A-40G, cierres 41B y calidad 42C, y permanece abierto para mejoras
 posteriores. La prioridad activa es MVP4: EPIC 44C cierra crear y editar
 colecciones; la siguiente tarea es EPIC 44D - Alta desde catalogo y seleccion

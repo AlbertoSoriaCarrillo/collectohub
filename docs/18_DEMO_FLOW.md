@@ -112,13 +112,20 @@ Resultado esperado:
 1. Ir a `Colecciones`.
 2. Crear una coleccion privada de categoria `MANGA_COMIC`.
 3. Abrir la coleccion.
-4. Si hay productos maestros de demo, anadir un item y marcarlo como `OWNED`,
-   `WANTED`, `MISSING` o `DUPLICATED`.
+4. Anadir un item y marcarlo como `OWNED`, `WANTED` o `DUPLICATED`. Una alta
+   nueva no puede persistir `MISSING`.
 
 Resultado esperado:
 
 - La coleccion aparece solo para el propietario si es privada.
-- Los estados se entienden como `Lo tengo`, `Lo quiero`, `Me falta`.
+- `MISSING` se calcula en el progreso por serie, no como una nueva fila.
+
+## 6.1 Progreso por serie
+
+Con los datos de `docs/25_DEMO_DATA.md`, abre la URL de progreso de la serie.
+Muestra grupos OWNED, WANTED y MISSING, porcentaje y la transicion de una misma
+entrada WANTED a OWNED. No ejecutes esa transicion antes de capturar el escenario
+1/1/1. `/wanted` sigue siendo el flujo comercial existente.
 
 ## 7. Revisar buscados
 

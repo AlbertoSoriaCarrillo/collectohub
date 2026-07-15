@@ -2147,3 +2147,22 @@ Siguiente paso: crear el backend en la carpeta backend.
   de 629.27 kB frente al budget de 500 kB.
 - Sin backend, recomendaciones, migraciones, dependencias, exports, cambios en
   `/wanted`, E2E ni Playwright. Siguiente tarea: EPIC 44F-D.
+
+## 2026-07-15 - EPIC 44F-D - Cierre de OWNED, WANTED y faltantes calculados
+
+- Corregido el demo legacy: Dragon Quest y Galaxy Dragon son WANTED; Retro Quest
+  es OWNED y el script valida que no cree MISSING persistido.
+- El demo editorial crea tres items y el nuevo script MVP4 prepara y valida el
+  escenario 1 OWNED, 1 WANTED, 1 MISSING calculado y 33%, sin guardar secretos.
+- Parser de los tres scripts correcto. `-WhatIf` correcto y sin llamadas HTTP ni
+  ficheros locales; la ejecucion real no se realizo porque no habia backend/API,
+  PostgreSQL y cuenta ADMIN local disponibles para este cierre.
+- Exports auditados: endpoint, ruta y mapa de progreso/transicion ya correctos.
+  Creada la revision formal `docs/28_MVP4_44F_CLOSURE_REVIEW.md`.
+- Ejecutado `mvnw.cmd clean verify`: BUILD SUCCESS, 411 tests, 0 fallos, 0
+  errores y 4 omitidos por integraciones condicionadas a Docker/Testcontainers.
+  Ejecutado `npm.cmd ci`: 474 paquetes instalados y 475 auditados; permanecen 7
+  vulnerabilidades conocidas (3 bajas y 4 altas). Tests frontend: 59 archivos y
+  239 tests correctos; build correcto con warning de bundle inicial de 629.27 kB
+  frente al budget de 500 kB. Sin cambios funcionales de backend/frontend,
+  migraciones, dependencias, E2E ni Playwright. Siguiente tarea: EPIC 44G-A.

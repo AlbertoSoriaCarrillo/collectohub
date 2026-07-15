@@ -217,17 +217,17 @@ test: complete manual collection item frontend coverage
 Ultimo commit verificado:
 
 ```text
-f8fa00d9d322ec8bce6aad410353e2b651f67238
-feat: add collection series progress frontend
+933a2590d7862440b849aa36443ec80f8a3bcd48
+fix: close collection series progress frontend
 ```
 
-EPIC 44F-C-FIX está implementada en el cambio actual y pendiente de verificar
-su commit en GitHub.
+EPIC 44F-D esta implementada en el cambio actual y pendiente de verificar su
+commit en GitHub.
 
 Siguiente tarea esperada:
 
 ```text
-EPIC 44F-D - Cierre de OWNED, WANTED y faltantes calculados
+EPIC 44G-A - Auditoria y diseno del detalle final, filtros y ordenacion
 ```
 
 La IA debe volver a comprobar GitHub antes de asumir que este estado sigue vigente.

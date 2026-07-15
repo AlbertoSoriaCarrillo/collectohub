@@ -93,9 +93,8 @@ de tienda, inventario y reserva para validar el backend:
   - display name: `Demo Collector <suffix>`
 - Coleccion publica:
   - `Mi coleccion manga y retro <suffix>`.
-- Items de coleccion:
-  - `MISSING` para Dragon Quest.
-  - `WANTED` para Galaxy Dragon.
+- Items de coleccion legacy:
+  - `WANTED` para Dragon Quest y Galaxy Dragon.
   - `OWNED` para Retro Quest.
 - Reserva del coleccionista sobre el producto de tienda Dragon Quest.
 
@@ -148,20 +147,29 @@ Ejemplo:
 .\scripts\demo\create-demo-data.ps1 -Suffix "screenshots-002"
 ```
 
+## Demo de progreso MVP4
+
+`create-mvp4-progress-demo-data.ps1` requiere backend, PostgreSQL y una cuenta
+ADMIN valida. Crea una serie editorial de tres items, un coleccionista y una
+coleccion publica con 1 OWNED, 1 WANTED y el tercer item sin fila, por lo que el
+progreso calculado es 1/1/1 y 33%.
+
+```powershell
+.\scripts\demo\create-mvp4-progress-demo-data.ps1 -DemoSuffix "progress-001"
+.\scripts\demo\create-mvp4-progress-demo-data.ps1 -WhatIf
+```
+
+Acepta `ApiBaseUrl`, `FrontendBaseUrl`, `AdminEmail`, `AdminPassword`,
+`DemoSuffix` y `CollectorPassword`. Guarda solo IDs, resumen y URLs en
+`scripts/demo/.last-mvp4-progress-demo-data.json`; nunca guarda contrasenas ni
+tokens. `MISSING` nuevo no se persiste.
+
 ## Limpiar base local
 
 El script no borra datos ni ejecuta limpieza automatica.
 
-Si usas Docker Compose y quieres empezar desde una base vacia:
-
-```powershell
-cd infra
-docker compose down -v
-docker compose up --build
-```
-
-`down -v` elimina el volumen de PostgreSQL local. Usalo solo si no necesitas
-conservar los datos existentes.
+La limpieza de volumenes queda fuera de los scripts y requiere una decision
+manual explicita; no es un paso normal de esta guia.
 
 ## Limitaciones
 

@@ -209,6 +209,11 @@ Para cargar datos de prueba del bloque Admin Editorial con una cuenta `ADMIN`:
   -DemoSuffix "local"
 ```
 
+Para el escenario MVP4 de progreso por serie (1 OWNED, 1 WANTED y 1 MISSING
+calculado), consulta `docs/25_DEMO_DATA.md` y usa
+`scripts/demo/create-mvp4-progress-demo-data.ps1`. El modo `-WhatIf` no llama a
+la API ni guarda datos locales.
+
 El enlace con un producto maestro legacy es opcional: proporciona un
 `-MasterProductId` positivo cuando exista. Para comprobar el script sin hacer
 llamadas a la API usa `-WhatIf`.
