@@ -84,6 +84,6 @@ This snapshot is maintained manually. When the implementation changes:
 - Recommendations have no table: the backend matches collection and inventory
   references by edition, item or legacy master product.
 - EPIC 38 raises the inventory to 11 Liquibase migrations, 22 application
-  tables, 81 endpoints and 32 routes. The frontend-backend map remains at 61
+  tables, 82 endpoints and 32 routes. The frontend-backend map remains at 61
   relationships because creators and relationships are consumed through the
   existing editorial item-detail endpoint.

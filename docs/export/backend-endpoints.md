@@ -140,6 +140,7 @@ supported yet.
 | `GET /api/collections/{collectionId}/items` | Public collection or owner | None | `List<CollectionItemResponse>`; personal fields owner-only | `MVP1_VISIBLE` |
 | `PUT /api/collections/{collectionId}/items/{itemId}` | Owner | Manual metadata or canonical editorial/legacy reference | `CollectionItemResponse` | `MVP1_VISIBLE` |
 | `PUT /api/collections/{collectionId}/items/{itemId}/catalog-reference` | Owner | `LinkManualCollectionItemRequest` | `CollectionItemResponse` | `MVP1_VISIBLE` |
+| `GET /api/collections/{collectionId}/series/{seriesId}/progress` | Authenticated collection owner | None | Calculated `CollectionSeriesProgressResponse`, without private item data | `MVP1_VISIBLE` |
 | `DELETE /api/collections/{collectionId}/items/{itemId}` | Owner | None | No content | `MVP1_VISIBLE` |
 
 Delete operations are logical deletes. Private resources are not exposed to

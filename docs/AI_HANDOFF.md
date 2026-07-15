@@ -205,7 +205,7 @@ Resumen relevante:
 
 ## 9. Estado actual verificado
 
-Fecha: 2026-07-13
+Fecha: 2026-07-15
 
 Último commit previo a publicar EPIC 44E-B2A-FIX:
 
@@ -217,11 +217,11 @@ test: complete manual collection item frontend coverage
 Ultimo commit verificado:
 
 ```text
-23cdbc70ab45b161176a7fd999d4ad63a5651ad6
-test: close manual catalog link frontend coverage
+841c3b19b947850f3e6d42936e51ee7084fa83e0
+feat: add collection series progress backend
 ```
 
-EPIC 44F-B está implementada en el cambio actual y pendiente de verificar su
+EPIC 44F-B-FIX está implementada en el cambio actual y pendiente de verificar su
 commit en GitHub.
 
 Siguiente tarea esperada:

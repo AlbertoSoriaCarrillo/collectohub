@@ -155,8 +155,9 @@ EPIC 44E y EPIC 44F-A quedan completadas. Siguiente tarea: EPIC 44F-B - Backend 
 
 ## Reglas de backlog
 
-EPIC 44E y EPIC 44F-A estan completadas. Siguiente EPIC: 44F-B - Backend de
-OWNED, WANTED y faltantes calculados.
+EPIC 44E y EPIC 44F-A estan completadas. EPIC 44F-B funcional esta publicada y
+44F-B-FIX queda implementada en el cambio actual. Siguiente EPIC: 44F-C -
+Frontend de OWNED, WANTED y faltantes calculados.
 
 - No adelantar una fase porque exista una tabla, rol o pantalla legacy.
 - Cada EPIC debe declarar que objetivo de producto valida.

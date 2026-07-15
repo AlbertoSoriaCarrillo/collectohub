@@ -343,11 +343,13 @@ La revision de este archivo no encontro necesidad de cambios en esta fase.
 ## Siguientes pasos recomendados
 
 La referencia tecnica descargable queda versionada en `docs/export/`: 22 tablas
-de aplicacion, 81 endpoints, 32 rutas Angular y 61 relaciones pantalla-backend.
+de aplicacion, 82 endpoints, 32 rutas Angular y 61 relaciones pantalla-backend.
 Los estados distinguen recorrido MVP 1, base legacy/futura, infraestructura,
 MVP 2 visible/foundation y redirecciones sin alterar codigo funcional.
 
-MVP 2 queda cerrado con limitaciones. MVP3 Admin Editorial ha completado el
+MVP 2 queda cerrado con limitaciones. El backend de progreso y faltantes
+calculados esta implementado; el cierre de pruebas de 44F-B queda pendiente del
+commit actual y el frontend se aplaza a 44F-C. MVP4 continua abierto. MVP3 Admin Editorial ha completado el
 bloque 40A-40G, cierres 41B y calidad 42C, y permanece abierto para mejoras
 posteriores. La prioridad activa es MVP4: EPIC 44C cierra crear y editar
 colecciones; la siguiente tarea es EPIC 44D - Alta desde catalogo y seleccion

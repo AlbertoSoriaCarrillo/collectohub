@@ -2077,3 +2077,16 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Ejecutado `mvnw.cmd test`: BUILD SUCCESS, 360 tests, 0 fallos, 0 errores y 3
   omitidos. Sin frontend, recomendaciones, migraciones, dependencias, E2E ni
   Playwright. Siguiente tarea: EPIC 44F-C.
+
+## 2026-07-15 - EPIC 44F-B-FIX - Cierre de backend de progreso
+
+- Auditada la seguridad owner-only, precedencia OWNED/WANTED/MISSING y el
+  bloqueo de nuevas escrituras `MISSING`; reformateado el servicio sin cambiar
+  su contrato.
+- Anadida cobertura unitaria del progreso calculado, incluida la precedencia,
+  warning de `MISSING` legacy, listas de IDs y ausencia de persistencia.
+- Actualizados los exports de endpoints con el recurso de progreso calculado.
+- Ejecutado `mvnw.cmd test`: BUILD SUCCESS, 363 tests, 0 fallos, 0 errores y 3
+  omitidos por las integraciones condicionadas a Docker/Testcontainers.
+- Sin frontend, recomendaciones, migraciones, dependencias, E2E ni Playwright.
+  Siguiente tarea: EPIC 44F-C.
