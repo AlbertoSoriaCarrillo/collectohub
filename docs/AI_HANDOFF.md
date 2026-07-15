@@ -217,11 +217,11 @@ feat: edit manual collection items
 Ultimo commit verificado:
 
 ```text
-a6a05ef2b769a599e9eb14ea8459123b4d6a72d2
-feat: link manual collection items from frontend
+23cdbc70ab45b161176a7fd999d4ad63a5651ad6
+test: close manual catalog link frontend coverage
 ```
 
-EPIC 44E-B2B-TEST-FIX está implementada en el cambio actual y pendiente de verificar su
+EPIC 44E-B2B-TEST-FIX2 está implementada en el cambio actual y pendiente de verificar su
 commit en GitHub.
 
 Siguiente tarea esperada:

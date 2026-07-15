@@ -164,6 +164,27 @@ describe('CollectionItemCreateComponent', () => {
     expect(collectionService.addCollectionItem).toHaveBeenCalledWith(3, expect.objectContaining({ masterProductId: 5, catalogItemId: null, catalogItemEditionId: null }));
   });
 
+  it('creates a trimmed manual item without legacy or editorial references', async () => {
+    await configure(); const fixture = TestBed.createComponent(CollectionItemCreateComponent); fixture.detectChanges(); const component = fixture.componentInstance;
+    vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    component.selectCatalogItem(itemCandidate); component.selectEdition(20); component.changeReferenceMode('MANUAL');
+    component.form.patchValue({ referenceMode: 'MANUAL', manualTitle: '  Convention item  ', manualDescription: '', manualType: '', collectionStatus: 'OWNED' });
+    component.submit();
+    expect(collectionService.addCollectionItem).toHaveBeenCalledWith(3, expect.objectContaining({
+      masterProductId: null, catalogItemId: null, catalogItemEditionId: null,
+      manualTitle: 'Convention item', manualDescription: null, manualType: null
+    }));
+  });
+
+  it('rejects a manual title made only of spaces', async () => {
+    await configure(); const fixture = TestBed.createComponent(CollectionItemCreateComponent); fixture.detectChanges(); const component = fixture.componentInstance;
+    component.changeReferenceMode('MANUAL');
+    component.form.patchValue({ referenceMode: 'MANUAL', manualTitle: '   ', collectionStatus: 'OWNED' });
+    component.submit();
+    expect(collectionService.addCollectionItem).not.toHaveBeenCalled();
+    expect(component.errorMessage()).toBeTruthy();
+  });
+
   it('prevents duplicate submits and surfaces detail/search errors', async () => {
     await configure(); editorialService.getItemDetail.mockReturnValueOnce(throwError(() => new Error('detail'))); const fixture = TestBed.createComponent(CollectionItemCreateComponent); fixture.detectChanges(); const component = fixture.componentInstance;
     component.searchEditorial(); component.selectCatalogItem(itemCandidate); expect(component.errorMessage()).toBeTruthy();

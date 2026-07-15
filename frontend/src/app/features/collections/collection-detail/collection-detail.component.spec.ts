@@ -99,6 +99,8 @@ describe('CollectionDetailComponent', () => {
     expect(component.referenceLabel({ ...item, referenceKind: 'DIRECT_CATALOG' })).toMatch(/directa|direct/i);
     expect(component.referenceLabel({ ...item, referenceKind: 'VERIFIED_BRIDGE' })).toMatch(/verificado|verified/i);
     expect(component.referenceLabel({ ...item, referenceKind: 'LEGACY_UNRESOLVED' })).toMatch(/legacy/i);
+    expect(component.referenceLabel({ ...item, referenceKind: 'MANUAL' })).toMatch(/manual/i);
+    expect(component.referenceLabel({ ...item, editorialReferenceSource: 'MANUAL' })).toMatch(/manual/i);
   });
 
   it('keeps selected edition metadata optional in the rendered item model', () => {
@@ -106,5 +108,15 @@ describe('CollectionDetailComponent', () => {
 
     expect(component.itemTitle({ ...item, catalogItemTitle: 'Editorial item', catalogItemEditionName: 'Edition' })).toBe('Editorial item');
     expect(component.itemTitle({ ...item, catalogItemEditionName: null })).toBe('One Piece 1');
+  });
+
+  it('uses manual identity without inventing editorial metadata', () => {
+    const component = TestBed.createComponent(CollectionDetailComponent).componentInstance;
+    const manual = { ...item, masterProductId: null, masterProductName: null, masterProductFranchise: null,
+      referenceKind: 'MANUAL' as const, manualTitle: 'Event booklet', manualDescription: 'Signed', manualType: 'Booklet',
+      unitNumber: '2', acquiredAt: '2026-07-13', notes: 'Personal note' };
+
+    expect(component.itemTitle(manual)).toBe('Event booklet');
+    expect(component.referenceLabel(manual)).toMatch(/manual/i);
   });
 });
