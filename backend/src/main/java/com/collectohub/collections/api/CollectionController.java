@@ -2,9 +2,11 @@ package com.collectohub.collections.api;
 
 import com.collectohub.auth.security.AuthenticatedUser;
 import com.collectohub.collections.application.CollectionService;
+import com.collectohub.collections.application.CollectionProgressService;
 import com.collectohub.collections.domain.CollectionVisibility;
 import com.collectohub.collections.dto.CollectionItemResponse;
 import com.collectohub.collections.dto.CollectionResponse;
+import com.collectohub.collections.dto.CollectionSeriesProgressResponse;
 import com.collectohub.collections.dto.CreateCollectionItemRequest;
 import com.collectohub.collections.dto.CreateCollectionRequest;
 import com.collectohub.collections.dto.UpdateCollectionItemRequest;
@@ -34,9 +36,11 @@ import java.util.List;
 public class CollectionController {
 
     private final CollectionService collectionService;
+    private final CollectionProgressService collectionProgressService;
 
-    public CollectionController(CollectionService collectionService) {
+    public CollectionController(CollectionService collectionService, CollectionProgressService collectionProgressService) {
         this.collectionService = collectionService;
+        this.collectionProgressService = collectionProgressService;
     }
 
     @PostMapping
@@ -66,6 +70,16 @@ public class CollectionController {
             @PathVariable Long collectionId
     ) {
         return collectionService.getCollection(user, collectionId);
+    }
+
+    @GetMapping("/{collectionId}/series/{seriesId}/progress")
+    @Operation(summary = "Calculate owner-only collection progress for a public catalog series")
+    public CollectionSeriesProgressResponse getSeriesProgress(
+            @AuthenticationPrincipal AuthenticatedUser user,
+            @PathVariable Long collectionId,
+            @PathVariable Long seriesId
+    ) {
+        return collectionProgressService.getSeriesProgress(user, collectionId, seriesId);
     }
 
     @PutMapping("/{collectionId}")

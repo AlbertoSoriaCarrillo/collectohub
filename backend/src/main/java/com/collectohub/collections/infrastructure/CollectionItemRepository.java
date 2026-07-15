@@ -17,6 +17,18 @@ public interface CollectionItemRepository extends JpaRepository<CollectionItem, 
     Optional<CollectionItem> findByIdAndCollection_IdAndDeletedAtIsNull(Long id, Long collectionId);
 
     @Query("""
+            select item from CollectionItem item
+            join fetch item.collection collection
+            join fetch item.catalogItem catalogItem
+            join fetch catalogItem.series
+            left join fetch item.catalogItemEdition
+            where collection.id = :collectionId and collection.deletedAt is null
+              and catalogItem.series.id = :seriesId and item.deletedAt is null
+            order by item.id asc
+            """)
+    List<CollectionItem> findProgressItemsByCollectionIdAndSeriesId(@Param("collectionId") Long collectionId, @Param("seriesId") Long seriesId);
+
+    @Query("""
             select item
             from CollectionItem item
             join fetch item.collection collection

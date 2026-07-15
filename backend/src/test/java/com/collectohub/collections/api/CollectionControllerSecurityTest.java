@@ -6,6 +6,7 @@ import com.collectohub.auth.security.JwtService;
 import com.collectohub.catalog.application.MasterProductNotFoundException;
 import com.collectohub.collections.application.CollectionNotFoundException;
 import com.collectohub.collections.application.CollectionService;
+import com.collectohub.collections.application.CollectionProgressService;
 import com.collectohub.collections.dto.CollectionItemResponse;
 import com.collectohub.collections.dto.CollectionResponse;
 import com.collectohub.collections.dto.LinkManualCollectionItemRequest;
@@ -557,6 +558,11 @@ class CollectionControllerSecurityTest {
         @Bean
         CollectionService collectionService() {
             return Mockito.mock(CollectionService.class);
+        }
+
+        @Bean
+        CollectionProgressService collectionProgressService() {
+            return Mockito.mock(CollectionProgressService.class);
         }
     }
 }

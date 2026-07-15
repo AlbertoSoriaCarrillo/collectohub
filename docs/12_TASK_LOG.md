@@ -2066,3 +2066,14 @@ Siguiente paso: crear el backend en la carpeta backend.
   el PUT existente sobre la misma entrada.
 - Sin backend, frontend, migraciones, endpoints, rutas, dependencias, exports,
   E2E ni Playwright. Siguiente tarea: EPIC 44F-B.
+
+## 2026-07-15 - EPIC 44F-B - Backend de OWNED, WANTED y faltantes calculados
+
+- Anadido endpoint owner-only de progreso por coleccion y serie, DTOs
+  calculados y clasificacion OWNED/WANTED/MISSING sin persistir faltantes.
+- Los estados de posesion ganan sobre WANTED; MISSING legacy genera warning sin
+  participar en listas. Las altas y asignaciones explicitas de MISSING devuelven
+  400, mientras que una fila legacy puede transicionar mediante el PUT existente.
+- Ejecutado `mvnw.cmd test`: BUILD SUCCESS, 360 tests, 0 fallos, 0 errores y 3
+  omitidos. Sin frontend, recomendaciones, migraciones, dependencias, E2E ni
+  Playwright. Siguiente tarea: EPIC 44F-C.

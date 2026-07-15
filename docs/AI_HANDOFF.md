@@ -221,13 +221,13 @@ Ultimo commit verificado:
 test: close manual catalog link frontend coverage
 ```
 
-EPIC 44F-A está implementada en el cambio actual y pendiente de verificar su
+EPIC 44F-B está implementada en el cambio actual y pendiente de verificar su
 commit en GitHub.
 
 Siguiente tarea esperada:
 
 ```text
-EPIC 44F-B - Backend de OWNED, WANTED y faltantes calculados
+EPIC 44F-C - Frontend de OWNED, WANTED y faltantes calculados
 ```
 
 La IA debe volver a comprobar GitHub antes de asumir que este estado sigue vigente.

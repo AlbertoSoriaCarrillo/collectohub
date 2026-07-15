@@ -122,3 +122,8 @@ social, filtros/orden final y E2E.
 3. Progreso inicial es por coleccion y serie.
 4. La transicion reutiliza el PUT generico sobre la misma entrada.
 5. No hay migracion ni cambio de `/wanted` en 44F-B.
+
+## Estado de implementacion
+
+EPIC 44F-B implementa el backend de este contrato. El frontend queda pendiente
+para EPIC 44F-C.

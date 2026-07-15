@@ -158,6 +158,7 @@ public class CollectionService {
     ) {
         Collection collection = findActiveCollection(collectionId);
         ensureOwner(authenticatedUser, collection);
+        rejectCalculatedMissing(request.collectionStatus());
         if (hasManualInput(request)) {
             validateNoMixedManualReference(
                     request.masterProductId(), request.catalogItemId(), request.catalogItemEditionId()
@@ -210,6 +211,7 @@ public class CollectionService {
         ensureOwner(authenticatedUser, collection);
         CollectionItem item = collectionItemRepository.findByIdAndCollection_IdAndDeletedAtIsNull(itemId, collectionId)
                 .orElseThrow(() -> new CollectionItemNotFoundException(itemId));
+        if (request.collectionStatus() == CollectionItemStatus.MISSING) rejectCalculatedMissing(request.collectionStatus());
         if (item.isManual()) {
             updateManualItem(item, request, authenticatedUser.id());
         } else {
@@ -313,6 +315,12 @@ public class CollectionService {
         return request.manualTitle() != null
                 || request.manualDescription() != null
                 || request.manualType() != null;
+    }
+
+    private void rejectCalculatedMissing(CollectionItemStatus status) {
+        if (status == CollectionItemStatus.MISSING) {
+            throw new InvalidCollectionItemStatusException("MISSING is calculated and cannot be persisted by collection item write operations");
+        }
     }
 
     private boolean hasManualInput(UpdateCollectionItemRequest request) {
