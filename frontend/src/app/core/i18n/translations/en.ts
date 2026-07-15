@@ -692,7 +692,7 @@ export const en: TranslationDictionary = {
     seriesProgressLegacyWarning: 'There is an old MISSING entry for this item. The displayed status is calculated using the current rules.',
     seriesProgressMarkOwned: 'Mark as owned',
     seriesProgressMarkingOwned: 'Updating...',
-    seriesProgressConfirmOwned: 'Mark "{{title}}" as owned by updating the same wanted entry?',
+    seriesProgressConfirmOwned: 'Mark "{{title}}" as owned by updating the same wanted entry without creating a new copy?',
     seriesProgressMultipleWanted: 'There are multiple wanted entries. Choose which one to edit.',
     seriesProgressEditWanted: 'Edit entry',
     seriesProgressInconsistentWanted: 'The received progress has a wanted entry without an editable identifier.',

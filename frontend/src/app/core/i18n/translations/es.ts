@@ -692,7 +692,7 @@ export const es: TranslationDictionary = {
     seriesProgressLegacyWarning: 'Existe una entrada MISSING antigua para este item. El estado mostrado se calcula con las reglas actuales.',
     seriesProgressMarkOwned: 'Marcar como poseido',
     seriesProgressMarkingOwned: 'Actualizando...',
-    seriesProgressConfirmOwned: 'Marcar "{{title}}" como poseido actualizando la misma entrada buscada?',
+    seriesProgressConfirmOwned: 'Marcar "{{title}}" como poseido actualizando la misma entrada buscada, sin crear una copia nueva?',
     seriesProgressMultipleWanted: 'Hay varias entradas buscadas. Elige cual editar.',
     seriesProgressEditWanted: 'Editar entrada',
     seriesProgressInconsistentWanted: 'El progreso recibido contiene una entrada buscada sin identificador editable.',

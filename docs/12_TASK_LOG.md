@@ -2129,3 +2129,21 @@ Siguiente paso: crear el backend en la carpeta backend.
   Ejecutado `npm.cmd run build`: correcto, warning conocido de bundle inicial de
   629.22 kB frente al budget de 500 kB. Sin backend, migraciones, dependencias,
   cambios en `/wanted`, E2E ni Playwright. Siguiente tarea: EPIC 44F-D.
+
+## 2026-07-15 - EPIC 44F-C-FIX - Cierre del frontend de progreso
+
+- Separados el error del PUT y el de la recarga canonica: el fallo de escritura
+  se muestra en pantalla y permite reintentar, mientras que un PUT correcto con
+  recarga fallida conserva el progreso anterior y muestra un aviso especifico.
+- Anadido estado pendiente de recarga, bloqueo de transiciones repetidas y retry
+  que ejecuta solo el GET de progreso hasta recuperar el estado canonico.
+- Ampliadas pruebas de progreso para carga, error visible, doble envio, recarga
+  posterior, retry, bloqueo y multiples entradas WANTED; cubiertos tambien los
+  enlaces de serie, alta sin MISSING y edicion de MISSING legacy.
+- Ejecutado `npm.cmd ci`: 474 paquetes instalados y 475 auditados; permanecen 7
+  vulnerabilidades conocidas (3 bajas y 4 altas), sin `npm audit fix`.
+  Ejecutado `npm.cmd test -- --watch=false`: 59 archivos y 239 tests correctos.
+  Ejecutado `npm.cmd run build`: correcto, con warning conocido de bundle inicial
+  de 629.27 kB frente al budget de 500 kB.
+- Sin backend, recomendaciones, migraciones, dependencias, exports, cambios en
+  `/wanted`, E2E ni Playwright. Siguiente tarea: EPIC 44F-D.

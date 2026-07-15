@@ -217,12 +217,12 @@ test: complete manual collection item frontend coverage
 Ultimo commit verificado:
 
 ```text
-ae748c77c8fb246a3ba25d88de198327fbe26211
-test: complete collection progress backend coverage
+f8fa00d9d322ec8bce6aad410353e2b651f67238
+feat: add collection series progress frontend
 ```
 
-EPIC 44F-C está implementada en el cambio actual y pendiente de verificar su
-commit en GitHub.
+EPIC 44F-C-FIX está implementada en el cambio actual y pendiente de verificar
+su commit en GitHub.
 
 Siguiente tarea esperada:
 

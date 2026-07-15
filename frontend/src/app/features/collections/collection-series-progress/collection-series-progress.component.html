@@ -2,7 +2,15 @@
   @if (loading()) { <p class="status-text">{{ 'collections.seriesProgressLoading' | translate }}</p> }
   @if (errorMessage()) {
     <p class="form-error" role="alert">{{ errorMessage() }}</p>
-    <button mat-stroked-button type="button" (click)="loadProgress()" data-testid="progress-retry-load">{{ 'collections.seriesProgressReload' | translate }}</button>
+  }
+  @if (transitionErrorMessage()) {
+    <p class="form-error" role="alert" data-testid="progress-transition-error">{{ transitionErrorMessage() }}</p>
+  }
+  @if (transitionAppliedAwaitingReload()) {
+    <p class="form-error" data-testid="progress-reload-required">{{ 'collections.seriesProgressUpdatedReloadFailed' | translate }}</p>
+  }
+  @if (errorMessage() || transitionAppliedAwaitingReload()) {
+    <button mat-stroked-button type="button" (click)="retryLoadProgress()" [disabled]="loading()" data-testid="progress-retry-load">{{ 'collections.seriesProgressReload' | translate }}</button>
   }
 
   @if (progress(); as currentProgress) {
@@ -55,7 +63,7 @@
           <p>{{ 'collections.seriesProgressSelectedEditions' | translate }}: {{ item.selectedEditionIds.length }}</p>
           @if (item.legacyStatusWarning) { <p class="legacy-warning" data-testid="progress-item-legacy-warning">{{ 'collections.seriesProgressLegacyWarning' | translate }}</p> }
           @if (item.calculatedStatus === 'WANTED' && item.wantedCollectionItemIds.length === 1) {
-            <button mat-flat-button type="button" (click)="markWantedAsOwned(item)" [disabled]="transitioningCollectionItemId() !== null" data-testid="progress-mark-owned">{{ transitioningCollectionItemId() === item.wantedCollectionItemIds[0] ? ('collections.seriesProgressMarkingOwned' | translate) : ('collections.seriesProgressMarkOwned' | translate) }}</button>
+            <button mat-flat-button type="button" (click)="markWantedAsOwned(item)" [disabled]="transitioningCollectionItemId() !== null || transitionAppliedAwaitingReload() || loading()" data-testid="progress-mark-owned">{{ transitioningCollectionItemId() === item.wantedCollectionItemIds[0] ? ('collections.seriesProgressMarkingOwned' | translate) : ('collections.seriesProgressMarkOwned' | translate) }}</button>
           } @else if (item.calculatedStatus === 'WANTED' && item.wantedCollectionItemIds.length > 1) {
             <div data-testid="progress-multiple-wanted"><p>{{ 'collections.seriesProgressMultipleWanted' | translate }}</p>@for (id of item.wantedCollectionItemIds; track id; let index = $index) { <a mat-button [routerLink]="itemEditLink(id)" data-testid="progress-edit-wanted-entry">{{ 'collections.seriesProgressEditWanted' | translate }} {{ index + 1 }}</a> }</div>
           } @else if (item.calculatedStatus === 'WANTED') { <p class="form-error">{{ 'collections.seriesProgressInconsistentWanted' | translate }}</p> }

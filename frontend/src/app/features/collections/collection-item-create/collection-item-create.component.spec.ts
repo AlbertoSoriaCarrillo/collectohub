@@ -49,6 +49,17 @@ describe('CollectionItemCreateComponent', () => {
     expect(collectionService.getCollection).toHaveBeenCalledWith(3);
   });
 
+  it('offers only writable collection statuses and never renders MISSING for new items', async () => {
+    await configure(); const fixture = TestBed.createComponent(CollectionItemCreateComponent); fixture.detectChanges();
+    const statuses = fixture.componentInstance.statuses;
+
+    expect(statuses).toContain('OWNED');
+    expect(statuses).toContain('WANTED');
+    expect(statuses).toContain('DUPLICATED');
+    expect(statuses).not.toContain('MISSING');
+    expect(fixture.nativeElement.textContent).not.toContain('MISSING');
+  });
+
   it('renders valid form structure and search buttons do not submit the item', async () => {
     await configure(); const fixture = TestBed.createComponent(CollectionItemCreateComponent); fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;

@@ -135,6 +135,27 @@ describe('CollectionItemEditComponent', () => {
     expect(component.form.controls.collectionStatus.value).toBe('MISSING');
   });
 
+  it('keeps MISSING visible but disabled only for a legacy item and allows changing it', async () => {
+    const fixture = TestBed.createComponent(CollectionItemEditComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+
+    expect(component.statuses()).toEqual(['MISSING', 'OWNED', 'WANTED', 'DUPLICATED']);
+    expect(fixture.nativeElement.querySelector('[data-testid="legacy-missing-status-warning"]')).not.toBeNull();
+    component.form.controls.collectionStatus.setValue('WANTED');
+    component.submit();
+    expect(collectionService.updateCollectionItem).toHaveBeenCalledWith(3, 7, expect.objectContaining({ collectionStatus: 'WANTED' }));
+  });
+
+  it('does not offer MISSING when editing a current item', async () => {
+    collectionService.getCollectionItems.mockReturnValue(of([{ ...legacyItem, collectionStatus: 'OWNED' as const }]));
+    const component = await createComponent();
+
+    expect(component.statuses()).not.toContain('MISSING');
+  });
+
   it('loads and updates a manual item without references and clears blank manual fields', async () => {
     const manualItem = { ...legacyItem, masterProductId: null, masterProductName: null,
       editorialReferenceSource: 'MANUAL' as const, referenceKind: 'MANUAL' as const,

@@ -2,7 +2,7 @@ import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angula
 import { NgTemplateOutlet } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { finalize, switchMap } from 'rxjs';
+import { finalize } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -44,6 +44,7 @@ export class CollectionSeriesProgressComponent implements OnInit {
   readonly transitioningCollectionItemId = signal<number | null>(null);
   readonly errorMessage = signal<string | null>(null);
   readonly transitionErrorMessage = signal<string | null>(null);
+  readonly transitionAppliedAwaitingReload = signal(false);
 
   readonly ownedItems = computed(() => this.groupedItems('OWNED'));
   readonly wantedItems = computed(() => this.groupedItems('WANTED'));
@@ -76,16 +77,28 @@ export class CollectionSeriesProgressComponent implements OnInit {
       .subscribe({
         next: (progress) => {
           this.progress.set(progress);
+          this.errorMessage.set(null);
           this.transitionErrorMessage.set(null);
+          this.transitionAppliedAwaitingReload.set(false);
         },
         error: (error) => {
-          this.errorMessage.set(
-            afterTransition
-              ? this.languageService.translate('collections.seriesProgressUpdatedReloadFailed')
-              : this.errorMessageService.toMessage(error)
-          );
+          if (afterTransition) {
+            this.transitionErrorMessage.set(
+              this.languageService.translate('collections.seriesProgressUpdatedReloadFailed')
+            );
+            this.transitionAppliedAwaitingReload.set(true);
+            return;
+          }
+          this.errorMessage.set(this.errorMessageService.toMessage(error));
         }
       });
+  }
+
+  retryLoadProgress(): void {
+    if (this.loading()) {
+      return;
+    }
+    this.loadProgress(this.transitionAppliedAwaitingReload());
   }
 
   markWantedAsOwned(item: CollectionSeriesProgressItemResponse): void {
@@ -96,7 +109,9 @@ export class CollectionSeriesProgressComponent implements OnInit {
       item.calculatedStatus !== 'WANTED' ||
       item.wantedCollectionItemIds.length !== 1 ||
       wantedId == null ||
-      this.transitioningCollectionItemId() !== null
+      this.transitioningCollectionItemId() !== null ||
+      this.transitionAppliedAwaitingReload() ||
+      this.loading()
     ) {
       return;
     }
@@ -110,21 +125,21 @@ export class CollectionSeriesProgressComponent implements OnInit {
 
     this.transitionErrorMessage.set(null);
     this.transitioningCollectionItemId.set(wantedId);
+    this.transitionAppliedAwaitingReload.set(false);
     this.collectionService
       .updateCollectionItem(collectionId, wantedId, { collectionStatus: 'OWNED' })
       .pipe(
-        switchMap(() => this.collectionService.getCollectionSeriesProgress(collectionId, this.seriesId()!)),
         finalize(() => this.transitioningCollectionItemId.set(null)),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe({
-        next: (progress) => {
-          this.progress.set(progress);
-          this.errorMessage.set(null);
-          this.transitionErrorMessage.set(null);
+        next: () => {
+          this.transitionAppliedAwaitingReload.set(true);
+          this.loadProgress(true);
         },
         error: (error) => {
           this.transitionErrorMessage.set(this.errorMessageService.toMessage(error));
+          this.transitionAppliedAwaitingReload.set(false);
         }
       });
   }

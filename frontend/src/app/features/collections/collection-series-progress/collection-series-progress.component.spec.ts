@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { CollectionSeriesProgressResponse } from '../../../core/models/collection.model';
 import { CollectionService } from '../../../core/services/collection.service';
 import { CollectionSeriesProgressComponent } from './collection-series-progress.component';
@@ -79,5 +79,95 @@ describe('CollectionSeriesProgressComponent', () => {
 
     expect(fixture.componentInstance.progress()).toEqual(progress);
     expect(fixture.componentInstance.transitionErrorMessage()).toBeTruthy();
+  });
+
+  it('does not request progress for invalid route identifiers', () => {
+    const fixture = TestBed.createComponent(CollectionSeriesProgressComponent);
+    fixture.componentInstance.collectionId.set(null);
+    fixture.componentInstance.seriesId.set(null);
+    fixture.componentInstance.loadProgress();
+
+    expect(collectionService.getCollectionSeriesProgress).not.toHaveBeenCalled();
+  });
+
+  it('shows a visible PUT error and allows a retry', () => {
+    collectionService.updateCollectionItem.mockReturnValueOnce(throwError(() => new Error('update failed')));
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const fixture = TestBed.createComponent(CollectionSeriesProgressComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.markWantedAsOwned(progress.items[1]);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.progress()).toEqual(progress);
+    expect(fixture.componentInstance.transitionAppliedAwaitingReload()).toBe(false);
+    expect(fixture.nativeElement.querySelector('[data-testid="progress-transition-error"]')).not.toBeNull();
+    fixture.componentInstance.markWantedAsOwned(progress.items[1]);
+    expect(collectionService.updateCollectionItem).toHaveBeenCalledTimes(2);
+    confirmSpy.mockRestore();
+  });
+
+  it('keeps the old progress and requires a canonical retry when reload fails after PUT', () => {
+    collectionService.getCollectionSeriesProgress
+      .mockReturnValueOnce(of(progress))
+      .mockReturnValueOnce(throwError(() => new Error('reload failed')));
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const fixture = TestBed.createComponent(CollectionSeriesProgressComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.markWantedAsOwned(progress.items[1]);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.progress()).toEqual(progress);
+    expect(fixture.componentInstance.transitionAppliedAwaitingReload()).toBe(true);
+    expect(fixture.nativeElement.querySelector('[data-testid="progress-reload-required"]')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('[data-testid="progress-retry-load"]')).not.toBeNull();
+    fixture.componentInstance.markWantedAsOwned(progress.items[1]);
+    expect(collectionService.updateCollectionItem).toHaveBeenCalledTimes(1);
+    confirmSpy.mockRestore();
+  });
+
+  it('retries only GET and unlocks transitions after a successful canonical reload', () => {
+    const reloaded = { ...progress, ownedItems: 2, wantedItems: 0, items: [progress.items[0], { ...progress.items[1], calculatedStatus: 'OWNED' as const, ownedCollectionItemIds: [302], wantedCollectionItemIds: [] }, progress.items[2]] };
+    collectionService.getCollectionSeriesProgress
+      .mockReturnValueOnce(of(progress))
+      .mockReturnValueOnce(throwError(() => new Error('reload failed')))
+      .mockReturnValueOnce(of(reloaded));
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const fixture = TestBed.createComponent(CollectionSeriesProgressComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.markWantedAsOwned(progress.items[1]);
+    fixture.componentInstance.retryLoadProgress();
+
+    expect(collectionService.updateCollectionItem).toHaveBeenCalledTimes(1);
+    expect(collectionService.getCollectionSeriesProgress).toHaveBeenCalledTimes(3);
+    expect(fixture.componentInstance.progress()).toEqual(reloaded);
+    expect(fixture.componentInstance.transitionAppliedAwaitingReload()).toBe(false);
+    confirmSpy.mockRestore();
+  });
+
+  it('blocks concurrent reloads while a request is pending', () => {
+    const pending = new Subject<CollectionSeriesProgressResponse>();
+    collectionService.getCollectionSeriesProgress.mockReturnValueOnce(pending);
+    const fixture = TestBed.createComponent(CollectionSeriesProgressComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.retryLoadProgress();
+
+    expect(fixture.componentInstance.loading()).toBe(true);
+    expect(collectionService.getCollectionSeriesProgress).toHaveBeenCalledTimes(1);
+    pending.next(progress);
+    pending.complete();
+    expect(fixture.componentInstance.loading()).toBe(false);
+  });
+
+  it('renders multiple wanted edit links in backend order without a direct transition', () => {
+    const multipleWanted = { ...progress, items: [{ ...progress.items[1], wantedCollectionItemIds: [901, 902] }] };
+    collectionService.getCollectionSeriesProgress.mockReturnValueOnce(of(multipleWanted));
+    const fixture = TestBed.createComponent(CollectionSeriesProgressComponent);
+    fixture.detectChanges();
+    const page = fixture.nativeElement as HTMLElement;
+
+    expect(page.querySelector('[data-testid="progress-mark-owned"]')).toBeNull();
+    expect(page.querySelector('[data-testid="progress-multiple-wanted"]')).not.toBeNull();
+    expect([...page.querySelectorAll('[data-testid="progress-edit-wanted-entry"]')].map((link) => link.getAttribute('ng-reflect-router-link'))).toHaveLength(2);
+    expect(collectionService.updateCollectionItem).not.toHaveBeenCalled();
   });
 });

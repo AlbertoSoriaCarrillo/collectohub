@@ -119,4 +119,19 @@ describe('CollectionDetailComponent', () => {
     expect(component.itemTitle(manual)).toBe('Event booklet');
     expect(component.referenceLabel(manual)).toMatch(/manual/i);
   });
+
+  it('deduplicates series progress links, excludes unlinked items and sorts by title then id', () => {
+    const component = TestBed.createComponent(CollectionDetailComponent).componentInstance;
+    component.items.set([
+      { ...item, id: 1, catalogSeriesId: 8, catalogSeriesTitle: 'zeta' },
+      { ...item, id: 2, catalogSeriesId: 4, catalogSeriesTitle: 'Alpha' },
+      { ...item, id: 3, catalogSeriesId: 8, catalogSeriesTitle: 'Zeta preferred' },
+      { ...item, id: 4, catalogSeriesId: null, manualTitle: 'Manual item' }
+    ]);
+
+    expect(component.seriesProgressLinks()).toEqual([
+      { id: 4, title: 'Alpha' },
+      { id: 8, title: 'zeta' }
+    ]);
+  });
 });
