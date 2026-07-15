@@ -17,7 +17,7 @@ import {
   EditorialCatalogItemDetail,
   EditorialCatalogSearchItem
 } from '../../../core/models/editorial-catalog.model';
-import { CollectionResponse, COLLECTION_ITEM_STATUSES, CreateCollectionItemRequest } from '../../../core/models/collection.model';
+import { CollectionResponse, WRITABLE_COLLECTION_ITEM_STATUSES, CreateCollectionItemRequest } from '../../../core/models/collection.model';
 import { PHYSICAL_CONDITIONS } from '../../../core/models/inventory.model';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { CollectionService } from '../../../core/services/collection.service';
@@ -46,7 +46,7 @@ export class CollectionItemCreateComponent implements OnInit {
   private editorialSearchRequestId = 0;
   private legacySearchRequestId = 0;
 
-  readonly statuses = COLLECTION_ITEM_STATUSES;
+  readonly statuses = WRITABLE_COLLECTION_ITEM_STATUSES;
   readonly conditions = PHYSICAL_CONDITIONS;
   readonly collectionId = signal<number | null>(null);
   readonly collection = signal<CollectionResponse | null>(null);

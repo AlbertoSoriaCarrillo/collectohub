@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -15,8 +15,9 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { MasterProductResponse } from '../../../core/models/catalog.model';
 import { EditorialCatalogItemDetail, EditorialCatalogSearchItem } from '../../../core/models/editorial-catalog.model';
 import {
-  COLLECTION_ITEM_STATUSES,
+  CollectionItemStatus,
   CollectionItemResponse,
+  WRITABLE_COLLECTION_ITEM_STATUSES,
   UpdateCollectionItemRequest
 } from '../../../core/models/collection.model';
 import { PHYSICAL_CONDITIONS } from '../../../core/models/inventory.model';
@@ -53,7 +54,11 @@ export class CollectionItemEditComponent implements OnInit {
   private manualLinkSearchRequestId = 0;
   private manualLinkDetailRequestId = 0;
 
-  readonly statuses = COLLECTION_ITEM_STATUSES;
+  readonly statuses = computed<CollectionItemStatus[]>(() =>
+    this.item()?.collectionStatus === 'MISSING'
+      ? ['MISSING', ...WRITABLE_COLLECTION_ITEM_STATUSES]
+      : WRITABLE_COLLECTION_ITEM_STATUSES
+  );
   readonly conditions = PHYSICAL_CONDITIONS;
   readonly collectionId = signal<number | null>(null);
   readonly itemId = signal<number | null>(null);

@@ -47,6 +47,15 @@
       }
     </mat-card>
 
+    @if (isOwner() && seriesProgressLinks().length > 0) {
+      <section class="series-progress-links" data-testid="collection-series-progress-section">
+        <h2>{{ 'collections.seriesProgressSection' | translate }}</h2>
+        @for (series of seriesProgressLinks(); track series.id) {
+          <a mat-stroked-button [routerLink]="['/collections', collectionDetail.id, 'series', series.id, 'progress']" data-testid="collection-series-progress-link">{{ series.title }}</a>
+        }
+      </section>
+    }
+
     @if (itemsLoading()) {
       <p class="status-text">{{ 'collections.loadingItems' | translate }}</p>
     }

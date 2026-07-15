@@ -67,6 +67,8 @@ future use, but no public route or component invokes or exposes it.
 | `/collections/:collectionId/items/:itemId/edit` - `CollectionItemEditComponent` | `EditorialCatalogService` | `GET /api/catalog/editorial/items/{itemId}/detail` | Manual-link item detail and optional edition. |
 | `/collections/:collectionId/items/:itemId/edit` - `CollectionItemEditComponent` | `CollectionService` | `PUT /api/collections/{collectionId}/items/{itemId}` | Update item. |
 | `/collections/:collectionId/items/:itemId/edit` - `CollectionItemEditComponent` | `CollectionService` | `PUT /api/collections/{collectionId}/items/{itemId}/catalog-reference` | Owner-only manual link; replaces manual identity and preserves personal data. |
+| `/collections/:collectionId/series/:seriesId/progress` - `CollectionSeriesProgressComponent` | `CollectionService` | `GET /api/collections/{collectionId}/series/{seriesId}/progress` | Owner-only calculated OWNED, WANTED and MISSING progress. |
+| `/collections/:collectionId/series/:seriesId/progress` - `CollectionSeriesProgressComponent` | `CollectionService` | `PUT /api/collections/{collectionId}/items/{itemId}` | Transitions one selected WANTED entry to OWNED, then reloads canonical progress. |
 | `/collections/:collectionId` - `CollectionDetailComponent` | `CollectionService` | `GET /api/collections/{collectionId}` | Load readable collection. |
 | `/collections/:collectionId` - `CollectionDetailComponent` | `CollectionService` | `GET /api/collections/{collectionId}/items` | Load items. |
 | `/collections/:collectionId` - `CollectionDetailComponent` | `AuthService` | `GET /api/users/me` | Conditional owner resolution. |

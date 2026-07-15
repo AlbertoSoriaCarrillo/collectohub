@@ -132,10 +132,13 @@
             <mat-form-field appearance="outline">
               <mat-label>{{ 'collections.itemStatus' | translate }}</mat-label>
               <mat-select formControlName="collectionStatus">
-                @for (status of statuses; track status) {
-                  <mat-option [value]="status">{{ 'enums.collectionStatus.' + status | translate }}</mat-option>
+                @for (status of statuses(); track status) {
+                  <mat-option [value]="status" [disabled]="status === 'MISSING'">{{ 'enums.collectionStatus.' + status | translate }}</mat-option>
                 }
               </mat-select>
+              @if (item()?.collectionStatus === 'MISSING') {
+                <mat-hint data-testid="legacy-missing-status-warning">{{ 'collections.legacyMissingStatus' | translate }}</mat-hint>
+              }
               @if (
                 form.controls.collectionStatus.hasError('required') &&
                 form.controls.collectionStatus.touched

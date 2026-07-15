@@ -2111,3 +2111,21 @@ Siguiente paso: crear el backend en la carpeta backend.
 - No se encontraron defectos funcionales ni se modifico produccion. Sin frontend,
   recomendaciones, migraciones, dependencias, exports, E2E ni Playwright.
   Siguiente tarea: EPIC 44F-C.
+
+## 2026-07-15 - EPIC 44F-C - Frontend de progreso y faltantes calculados
+
+- Anadidos modelos de progreso por serie, consumo HTTP owner-only, ruta lazy
+  protegida y pantalla con resumen, barra, grupos OWNED/WANTED/MISSING y aviso
+  para MISSING legacy.
+- La transicion simple WANTED a OWNED usa el PUT existente con payload minimo y
+  recarga el progreso canonico; multiples entradas enlazan a su edicion.
+- El detalle de coleccion ofrece enlaces deduplicados por serie solo al propietario.
+  Alta y edicion separan estados legacy de estados escribibles: MISSING no se
+  ofrece en altas y permanece legible, deshabilitado, en filas legacy.
+- Anadido i18n ES/EN, tests de servicio y componente, rutas y exports frontend.
+- Ejecutado `npm.cmd ci`: 474 paquetes instalados y 475 auditados; se mantienen
+  7 vulnerabilidades conocidas (3 bajas y 4 altas), sin ejecutar `npm audit fix`.
+  Ejecutados `npm.cmd test -- --watch=false`: 59 archivos y 229 tests correctos.
+  Ejecutado `npm.cmd run build`: correcto, warning conocido de bundle inicial de
+  629.22 kB frente al budget de 500 kB. Sin backend, migraciones, dependencias,
+  cambios en `/wanted`, E2E ni Playwright. Siguiente tarea: EPIC 44F-D.

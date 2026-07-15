@@ -10,6 +10,8 @@ export type CollectionItemStatus =
   | 'SELLABLE'
   | 'TRADABLE';
 
+export type CollectionSeriesProgressStatus = 'OWNED' | 'WANTED' | 'MISSING';
+
 export type CollectionEditorialReferenceSource = 'LEGACY' | 'VERIFIED_BRIDGE' | 'MANUAL_EDITORIAL' | 'MANUAL';
 export type CollectionItemReferenceKind =
   | 'DIRECT_CATALOG'
@@ -113,6 +115,31 @@ export interface LinkManualCollectionItemRequest {
   catalogItemEditionId?: number | null;
 }
 
+export interface CollectionSeriesProgressItemResponse {
+  catalogItemId: number;
+  title: string;
+  sequenceLabel: string | null;
+  sortOrder: number | null;
+  firstPublicationYear: number | null;
+  calculatedStatus: CollectionSeriesProgressStatus;
+  ownedCollectionItemIds: number[];
+  wantedCollectionItemIds: number[];
+  selectedEditionIds: number[];
+  legacyStatusWarning: boolean;
+}
+
+export interface CollectionSeriesProgressResponse {
+  collectionId: number;
+  seriesId: number;
+  seriesTitle: string;
+  totalCatalogItems: number;
+  ownedItems: number;
+  wantedItems: number;
+  missingItems: number;
+  completionPercentage: number;
+  items: CollectionSeriesProgressItemResponse[];
+}
+
 export interface CollectionSearchFilters {
   visibility?: CollectionVisibility | null;
   categoryCode?: string | null;
@@ -120,9 +147,8 @@ export interface CollectionSearchFilters {
 
 export const COLLECTION_VISIBILITIES: CollectionVisibility[] = ['PRIVATE', 'PUBLIC'];
 
-export const COLLECTION_ITEM_STATUSES: CollectionItemStatus[] = [
+export const WRITABLE_COLLECTION_ITEM_STATUSES: CollectionItemStatus[] = [
   'OWNED',
   'WANTED',
-  'MISSING',
   'DUPLICATED'
 ];

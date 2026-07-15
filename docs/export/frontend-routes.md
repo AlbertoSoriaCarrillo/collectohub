@@ -33,6 +33,7 @@ notably private collection reads.
 | `/collections/:collectionId/edit` | `CollectionEditComponent` | `authGuard` | Contextual | Edit an owned collection. |
 | `/collections/:collectionId/items/new` | `CollectionItemCreateComponent` | `authGuard` | Contextual | Search and add catalog item. |
 | `/collections/:collectionId/items/:itemId/edit` | `CollectionItemEditComponent` | `authGuard` | Contextual | Edit item state and metadata. |
+| `/collections/:collectionId/series/:seriesId/progress` | `CollectionSeriesProgressComponent` | `authGuard` | Contextual | Owner-only calculated series progress. |
 | `/wanted` | `RecommendationsComponent` | `authGuard` | Primary | Wanted/missing items and matches. |
 | `/profile` | `ProfileComponent` | `authGuard` | User menu | Current user's basic profile. |
 | `/catalog/new` | `MasterProductCreateComponent` | `authGuard` plus UI/backend role check | Contextual role action | Catalog write for `ADMIN` or `SHOP_OWNER`. |
@@ -92,9 +93,8 @@ a `REDIRECT` fallback route.
 
 ## Navigation values
 
-EPIC 38 does not add routes. Existing editorial item detail now displays
-creators and relationships returned by the backend facade; the total remains
-32.
+EPIC 44F-C adds the authenticated, lazy-loaded series progress route. The total
+is now 33.
 
 - `PRIMARY`: visible in the main collector navigation.
 - `HEADER`: visible in the global anonymous header.

@@ -20,7 +20,7 @@ database schema were added.
 EPIC 44C through EPIC 44E update the 2026-07-13 frontend snapshot: collection
 owner resolution, editorial item-to-edition selection, manual identities and
 the owner-only manual catalog-link action, all through existing operations.
-The frontend-backend map now contains 79 relationships, 73 direct API calls
+The frontend-backend map now contains 81 relationships, 75 direct API calls
 and 6 routes without a direct call.
 
 ## Files
@@ -84,6 +84,6 @@ This snapshot is maintained manually. When the implementation changes:
 - Recommendations have no table: the backend matches collection and inventory
   references by edition, item or legacy master product.
 - EPIC 38 raises the inventory to 11 Liquibase migrations, 22 application
-  tables, 82 endpoints and 32 routes. The frontend-backend map remains at 61
+  tables, 82 endpoints and 33 routes. The frontend-backend map remains at 81
   relationships because creators and relationships are consumed through the
   existing editorial item-detail endpoint.

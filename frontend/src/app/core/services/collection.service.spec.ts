@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { CollectionItemResponse, CollectionResponse } from '../models/collection.model';
+import { CollectionItemResponse, CollectionResponse, CollectionSeriesProgressResponse } from '../models/collection.model';
 import { CollectionService } from './collection.service';
 
 describe('CollectionService', () => {
@@ -90,6 +90,25 @@ describe('CollectionService', () => {
     const request = httpTestingController.expectOne('http://localhost:8080/api/collections/3');
     expect(request.request.method).toBe('GET');
     request.flush(collection);
+  });
+
+  it('loads typed collection series progress with the exact GET URL and no body', () => {
+    const progress: CollectionSeriesProgressResponse = {
+      collectionId: 100, seriesId: 500, seriesTitle: 'Dragon Ball', totalCatalogItems: 3,
+      ownedItems: 1, wantedItems: 1, missingItems: 1, completionPercentage: 33,
+      items: [{ catalogItemId: 501, title: 'Volume 1', sequenceLabel: '1', sortOrder: 1,
+        firstPublicationYear: 1984, calculatedStatus: 'OWNED', ownedCollectionItemIds: [301],
+        wantedCollectionItemIds: [], selectedEditionIds: [601], legacyStatusWarning: false }]
+    };
+
+    service.getCollectionSeriesProgress(100, 500).subscribe((response) => expect(response).toEqual(progress));
+
+    const request = httpTestingController.expectOne(
+      'http://localhost:8080/api/collections/100/series/500/progress'
+    );
+    expect(request.request.method).toBe('GET');
+    expect(request.request.body).toBeNull();
+    request.flush(progress);
   });
 
   it('updates a collection with the exact PUT URL and body', () => {

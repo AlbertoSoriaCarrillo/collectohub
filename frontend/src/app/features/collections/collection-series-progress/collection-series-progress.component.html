@@ -1,0 +1,66 @@
+<section class="series-progress-page" data-testid="series-progress-page">
+  @if (loading()) { <p class="status-text">{{ 'collections.seriesProgressLoading' | translate }}</p> }
+  @if (errorMessage()) {
+    <p class="form-error" role="alert">{{ errorMessage() }}</p>
+    <button mat-stroked-button type="button" (click)="loadProgress()" data-testid="progress-retry-load">{{ 'collections.seriesProgressReload' | translate }}</button>
+  }
+
+  @if (progress(); as currentProgress) {
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">{{ 'collections.seriesProgressEyebrow' | translate }}</p>
+        <h1>{{ currentProgress.seriesTitle }}</h1>
+      </div>
+      <a mat-button [routerLink]="['/collections', currentProgress.collectionId]" data-testid="series-progress-back">{{ 'collections.seriesProgressBack' | translate }}</a>
+    </header>
+
+    <mat-card data-testid="series-progress-summary">
+      <mat-card-content>
+        <div class="summary-grid">
+          <span data-testid="series-progress-total">{{ 'collections.seriesProgressTotal' | translate }}: {{ currentProgress.totalCatalogItems }}</span>
+          <span data-testid="series-progress-owned">{{ 'collections.seriesProgressOwned' | translate }}: {{ currentProgress.ownedItems }}</span>
+          <span data-testid="series-progress-wanted">{{ 'collections.seriesProgressWanted' | translate }}: {{ currentProgress.wantedItems }}</span>
+          <span data-testid="series-progress-missing">{{ 'collections.seriesProgressMissing' | translate }}: {{ currentProgress.missingItems }}</span>
+        </div>
+        <mat-progress-bar mode="determinate" [value]="currentProgress.completionPercentage" [attr.aria-label]="'collections.seriesProgressAria' | translate" data-testid="series-progress-bar"></mat-progress-bar>
+        <p data-testid="series-progress-percentage">{{ 'collections.seriesProgressPercentage' | translate }}: {{ currentProgress.completionPercentage }}%</p>
+      </mat-card-content>
+    </mat-card>
+
+    @if (currentProgress.totalCatalogItems === 0) { <p class="status-text">{{ 'collections.seriesProgressEmptySeries' | translate }}</p> }
+
+    <section class="progress-group" data-testid="progress-group-owned">
+      <h2>{{ 'collections.seriesProgressOwnedGroup' | translate }}</h2>
+      @if (ownedItems().length === 0) { <p>{{ 'collections.seriesProgressEmptyGroup' | translate }}</p> }
+      @for (item of ownedItems(); track item.catalogItemId) { <ng-container [ngTemplateOutlet]="progressItem" [ngTemplateOutletContext]="{ $implicit: item }"></ng-container> }
+    </section>
+    <section class="progress-group" data-testid="progress-group-wanted">
+      <h2>{{ 'collections.seriesProgressWantedGroup' | translate }}</h2>
+      @if (wantedItems().length === 0) { <p>{{ 'collections.seriesProgressEmptyGroup' | translate }}</p> }
+      @for (item of wantedItems(); track item.catalogItemId) { <ng-container [ngTemplateOutlet]="progressItem" [ngTemplateOutletContext]="{ $implicit: item }"></ng-container> }
+    </section>
+    <section class="progress-group" data-testid="progress-group-missing">
+      <h2>{{ 'collections.seriesProgressMissingGroup' | translate }}</h2>
+      @if (missingItems().length === 0) { <p>{{ 'collections.seriesProgressEmptyGroup' | translate }}</p> }
+      @for (item of missingItems(); track item.catalogItemId) { <ng-container [ngTemplateOutlet]="progressItem" [ngTemplateOutletContext]="{ $implicit: item }"></ng-container> }
+    </section>
+
+    <ng-template #progressItem let-item>
+      <mat-card class="progress-item" data-testid="progress-item-card">
+        <mat-card-content>
+          <h3 data-testid="progress-item-title">{{ item.title }} @if (item.sequenceLabel) { <span>{{ item.sequenceLabel }}</span> } @if (item.firstPublicationYear) { <span>({{ item.firstPublicationYear }})</span> }</h3>
+          <mat-chip-set><mat-chip data-testid="progress-item-status">{{ 'enums.collectionStatus.' + item.calculatedStatus | translate }}</mat-chip></mat-chip-set>
+          <p>{{ 'collections.seriesProgressOwnedCopies' | translate }}: {{ item.ownedCollectionItemIds.length }}</p>
+          <p>{{ 'collections.seriesProgressWantedEntries' | translate }}: {{ item.wantedCollectionItemIds.length }}</p>
+          <p>{{ 'collections.seriesProgressSelectedEditions' | translate }}: {{ item.selectedEditionIds.length }}</p>
+          @if (item.legacyStatusWarning) { <p class="legacy-warning" data-testid="progress-item-legacy-warning">{{ 'collections.seriesProgressLegacyWarning' | translate }}</p> }
+          @if (item.calculatedStatus === 'WANTED' && item.wantedCollectionItemIds.length === 1) {
+            <button mat-flat-button type="button" (click)="markWantedAsOwned(item)" [disabled]="transitioningCollectionItemId() !== null" data-testid="progress-mark-owned">{{ transitioningCollectionItemId() === item.wantedCollectionItemIds[0] ? ('collections.seriesProgressMarkingOwned' | translate) : ('collections.seriesProgressMarkOwned' | translate) }}</button>
+          } @else if (item.calculatedStatus === 'WANTED' && item.wantedCollectionItemIds.length > 1) {
+            <div data-testid="progress-multiple-wanted"><p>{{ 'collections.seriesProgressMultipleWanted' | translate }}</p>@for (id of item.wantedCollectionItemIds; track id; let index = $index) { <a mat-button [routerLink]="itemEditLink(id)" data-testid="progress-edit-wanted-entry">{{ 'collections.seriesProgressEditWanted' | translate }} {{ index + 1 }}</a> }</div>
+          } @else if (item.calculatedStatus === 'WANTED') { <p class="form-error">{{ 'collections.seriesProgressInconsistentWanted' | translate }}</p> }
+        </mat-card-content>
+      </mat-card>
+    </ng-template>
+  }
+</section>

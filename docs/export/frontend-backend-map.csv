@@ -41,6 +41,8 @@ frontend_route,component,angular_service,http_method,backend_endpoint,mvp_status
 "/collections/:collectionId/items/:itemId/edit","CollectionItemEditComponent","EditorialCatalogService","GET","/api/catalog/editorial/items/{itemId}/detail","MVP4_VISIBLE","Loads selected manual-link item and optional editions."
 "/collections/:collectionId/items/:itemId/edit","CollectionItemEditComponent","CollectionService","PUT","/api/collections/{collectionId}/items/{itemId}","MVP1_VISIBLE","Updates item state and metadata."
 "/collections/:collectionId/items/:itemId/edit","CollectionItemEditComponent","CollectionService","PUT","/api/collections/{collectionId}/items/{itemId}/catalog-reference","MVP4_VISIBLE","Owner-only manual link replaces identity and preserves personal data."
+"/collections/:collectionId/series/:seriesId/progress","CollectionSeriesProgressComponent","CollectionService","GET","/api/collections/{collectionId}/series/{seriesId}/progress","MVP4_VISIBLE","Loads owner-only calculated series progress."
+"/collections/:collectionId/series/:seriesId/progress","CollectionSeriesProgressComponent","CollectionService","PUT","/api/collections/{collectionId}/items/{itemId}","MVP4_VISIBLE","Transitions one selected WANTED entry to OWNED and reloads progress."
 "/collections/:collectionId","CollectionDetailComponent","CollectionService","GET","/api/collections/{collectionId}","MVP1_VISIBLE","Loads readable collection."
 "/collections/:collectionId","CollectionDetailComponent","CollectionService","GET","/api/collections/{collectionId}/items","MVP1_VISIBLE","Loads readable items."
 "/collections/:collectionId","CollectionDetailComponent","AuthService","GET","/api/users/me","MVP1_VISIBLE","Conditional owner resolution when session user is not cached."

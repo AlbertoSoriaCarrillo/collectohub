@@ -53,6 +53,9 @@ describe('app routes', () => {
     const editCollectionItem = children.find(
       (route) => route.path === 'collections/:collectionId/items/:itemId/edit'
     );
+    const collectionSeriesProgress = children.find(
+      (route) => route.path === 'collections/:collectionId/series/:seriesId/progress'
+    );
     const collectionDetail = children.find((route) => route.path === 'collections/:collectionId');
     const wanted = children.find((route) => route.path === 'wanted');
     const profile = children.find((route) => route.path === 'profile');
@@ -93,6 +96,8 @@ describe('app routes', () => {
     expect(editCollection?.canActivate).toContain(authGuard);
     expect(newCollectionItem?.canActivate).toContain(authGuard);
     expect(editCollectionItem?.canActivate).toContain(authGuard);
+    expect(collectionSeriesProgress?.canActivate).toContain(authGuard);
+    expect(collectionSeriesProgress?.loadComponent).toBeDefined();
     expect(collectionDetail?.canActivate).toBeUndefined();
     expect(wanted?.canActivate).toContain(authGuard);
     expect(profile?.canActivate).toContain(authGuard);

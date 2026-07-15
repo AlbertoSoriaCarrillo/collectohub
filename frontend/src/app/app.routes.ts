@@ -134,6 +134,14 @@ export const routes: Routes = [
           )
       },
       {
+        path: 'collections/:collectionId/series/:seriesId/progress',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import(
+            './features/collections/collection-series-progress/collection-series-progress.component'
+          ).then((m) => m.CollectionSeriesProgressComponent)
+      },
+      {
         path: 'collections/:collectionId',
         loadComponent: () =>
           import('./features/collections/collection-detail/collection-detail.component').then(

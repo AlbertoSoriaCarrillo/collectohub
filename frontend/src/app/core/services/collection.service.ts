@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   CollectionItemResponse,
+  CollectionSeriesProgressResponse,
   CollectionResponse,
   CollectionSearchFilters,
   CreateCollectionItemRequest,
@@ -61,6 +62,15 @@ export class CollectionService {
   getCollectionItems(collectionId: number): Observable<CollectionItemResponse[]> {
     return this.http.get<CollectionItemResponse[]>(
       `${this.apiBaseUrl}/api/collections/${collectionId}/items`
+    );
+  }
+
+  getCollectionSeriesProgress(
+    collectionId: number,
+    seriesId: number
+  ): Observable<CollectionSeriesProgressResponse> {
+    return this.http.get<CollectionSeriesProgressResponse>(
+      `${this.apiBaseUrl}/api/collections/${collectionId}/series/${seriesId}/progress`
     );
   }
 

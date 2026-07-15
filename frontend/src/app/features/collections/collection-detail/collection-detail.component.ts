@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
@@ -30,6 +30,22 @@ export class CollectionDetailComponent implements OnInit {
   readonly loading = signal(false);
   readonly itemsLoading = signal(false);
   readonly errorMessage = signal<string | null>(null);
+  readonly seriesProgressLinks = computed(() => {
+    const series = new Map<number, string>();
+    for (const item of this.items()) {
+      const id = item.catalogSeriesId;
+      if (id == null) {
+        continue;
+      }
+      const title = item.catalogSeriesTitle?.trim() || '';
+      if (!series.has(id) || (!series.get(id) && title)) {
+        series.set(id, title);
+      }
+    }
+    return [...series.entries()]
+      .map(([id, title]) => ({ id, title: title || this.languageService.translate('common.notReported') }))
+      .sort((left, right) => left.title.localeCompare(right.title, undefined, { sensitivity: 'base' }) || left.id - right.id);
+  });
 
   ngOnInit(): void {
     const collectionId = Number(this.route.snapshot.paramMap.get('collectionId'));

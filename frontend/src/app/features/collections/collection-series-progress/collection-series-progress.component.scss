@@ -1,0 +1,5 @@
+.series-progress-page { display: grid; gap: 1.25rem; }
+.summary-grid { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; }
+.progress-group { display: grid; gap: .75rem; }
+.progress-item { border-left: 3px solid var(--mat-sys-primary, #365f91); }
+.legacy-warning { color: #8a3d00; }
