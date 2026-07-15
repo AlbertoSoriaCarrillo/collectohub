@@ -2090,3 +2090,24 @@ Siguiente paso: crear el backend en la carpeta backend.
   omitidos por las integraciones condicionadas a Docker/Testcontainers.
 - Sin frontend, recomendaciones, migraciones, dependencias, E2E ni Playwright.
   Siguiente tarea: EPIC 44F-C.
+
+## 2026-07-15 - EPIC 44F-B-FIX2 - Cobertura completa del progreso backend
+
+- `CollectionProgressServiceTest` pasa de 3 a 26 tests: propiedad y existencia,
+  estados de posesion, precedencia, `MISSING` legacy, agregacion, IDs, ediciones,
+  orden determinista, porcentaje y ausencia de persistencia.
+- Anadidos 12 tests a `CollectionServiceTest` para bloquear altas y updates
+  `MISSING`, permitir la edicion de filas legacy y cubrir las transiciones a
+  `WANTED`/`OWNED` sin crear otra fila ni perder identidad o datos personales.
+- Anadidos 12 tests MVC para respuesta y privacidad del progreso, delegacion,
+  seguridad 401/403 por usuario y roles ajenos, errores 404 y mapeo 400 de
+  escrituras `MISSING`.
+- Creado 1 test PostgreSQL/Testcontainers de la query de progreso para referencias
+  directas y `VERIFIED_BRIDGE`, relaciones fetch, filtros, orden y ausencia de
+  duplicados. Fue omitido porque Docker no estaba disponible en el entorno.
+- Tests dirigidos de servicio y MVC: 112 tests, 0 fallos y 0 errores. Regresion
+  completa con `mvnw.cmd test`: BUILD SUCCESS, 411 tests, 0 fallos, 0 errores y
+  4 omitidos por integraciones condicionadas a Docker/Testcontainers.
+- No se encontraron defectos funcionales ni se modifico produccion. Sin frontend,
+  recomendaciones, migraciones, dependencias, exports, E2E ni Playwright.
+  Siguiente tarea: EPIC 44F-C.

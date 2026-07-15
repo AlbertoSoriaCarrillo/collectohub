@@ -1,14 +1,20 @@
 package com.collectohub.collections.api;
 
 import com.collectohub.TestSecurityConfiguration;
+import com.collectohub.auth.security.AuthenticatedUser;
 import com.collectohub.auth.security.JwtAuthenticationFilter;
 import com.collectohub.auth.security.JwtService;
+import com.collectohub.catalog.application.CatalogSeriesNotFoundException;
 import com.collectohub.catalog.application.MasterProductNotFoundException;
 import com.collectohub.collections.application.CollectionNotFoundException;
 import com.collectohub.collections.application.CollectionService;
 import com.collectohub.collections.application.CollectionProgressService;
+import com.collectohub.collections.application.InvalidCollectionItemStatusException;
+import com.collectohub.collections.domain.CollectionSeriesProgressStatus;
 import com.collectohub.collections.dto.CollectionItemResponse;
 import com.collectohub.collections.dto.CollectionResponse;
+import com.collectohub.collections.dto.CollectionSeriesProgressItemResponse;
+import com.collectohub.collections.dto.CollectionSeriesProgressResponse;
 import com.collectohub.collections.dto.LinkManualCollectionItemRequest;
 import com.collectohub.config.SecurityConfig;
 import com.collectohub.shared.api.GlobalExceptionHandler;
@@ -26,12 +32,14 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.mockito.ArgumentCaptor;
 import static org.mockito.Mockito.when;
@@ -64,9 +72,12 @@ class CollectionControllerSecurityTest {
     @Autowired
     private CollectionService collectionService;
 
+    @Autowired
+    private CollectionProgressService collectionProgressService;
+
     @BeforeEach
     void setUp() {
-        reset(collectionService);
+        reset(collectionService, collectionProgressService);
     }
 
     @Test
@@ -420,8 +431,201 @@ class CollectionControllerSecurityTest {
                 .andExpect(jsonPath("$.items[0].acquiredAt").value("2023-06-01"));
     }
 
+    @Test
+    void ownerGetsExactSeriesProgressSummary() throws Exception {
+        when(collectionProgressService.getSeriesProgress(any(), eq(100L), eq(500L)))
+                .thenReturn(progressResponse());
+
+        mockMvc.perform(get("/api/collections/100/series/500/progress")
+                        .header("Authorization", "Bearer " + userToken()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.collectionId").value(100))
+                .andExpect(jsonPath("$.seriesId").value(500))
+                .andExpect(jsonPath("$.seriesTitle").value("Dragon Ball"))
+                .andExpect(jsonPath("$.totalCatalogItems").value(3))
+                .andExpect(jsonPath("$.ownedItems").value(1))
+                .andExpect(jsonPath("$.wantedItems").value(1))
+                .andExpect(jsonPath("$.missingItems").value(1))
+                .andExpect(jsonPath("$.completionPercentage").value(33));
+    }
+
+    @Test
+    void seriesProgressSerializesExactItemsAndStatuses() throws Exception {
+        when(collectionProgressService.getSeriesProgress(any(), eq(100L), eq(500L)))
+                .thenReturn(progressResponse());
+
+        mockMvc.perform(get("/api/collections/100/series/500/progress")
+                        .header("Authorization", "Bearer " + userToken()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items.length()").value(3))
+                .andExpect(jsonPath("$.items[0].catalogItemId").value(501))
+                .andExpect(jsonPath("$.items[0].calculatedStatus").value("OWNED"))
+                .andExpect(jsonPath("$.items[0].ownedCollectionItemIds[0]").value(301))
+                .andExpect(jsonPath("$.items[0].selectedEditionIds[0]").value(601))
+                .andExpect(jsonPath("$.items[1].calculatedStatus").value("WANTED"))
+                .andExpect(jsonPath("$.items[1].wantedCollectionItemIds[0]").value(302))
+                .andExpect(jsonPath("$.items[2].calculatedStatus").value("MISSING"))
+                .andExpect(jsonPath("$.items[2].legacyStatusWarning").value(true));
+    }
+
+    @Test
+    void seriesProgressSerializesEmptyListsAndNoPrivateFields() throws Exception {
+        when(collectionProgressService.getSeriesProgress(any(), eq(100L), eq(500L)))
+                .thenReturn(progressResponse());
+
+        mockMvc.perform(get("/api/collections/100/series/500/progress")
+                        .header("Authorization", "Bearer " + userToken()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items[2].ownedCollectionItemIds").isArray())
+                .andExpect(jsonPath("$.items[2].ownedCollectionItemIds").isEmpty())
+                .andExpect(jsonPath("$.items[2].wantedCollectionItemIds").isEmpty())
+                .andExpect(jsonPath("$.items[2].selectedEditionIds").isEmpty())
+                .andExpect(jsonPath("$.items[0].notes").doesNotExist())
+                .andExpect(jsonPath("$.items[0].acquiredAt").doesNotExist())
+                .andExpect(jsonPath("$.items[0].physicalCondition").doesNotExist())
+                .andExpect(jsonPath("$.items[0].manualTitle").doesNotExist())
+                .andExpect(jsonPath("$.items[0].manualDescription").doesNotExist())
+                .andExpect(jsonPath("$.items[0].manualType").doesNotExist());
+    }
+
+    @Test
+    void anonymousCannotReadSeriesProgress() throws Exception {
+        mockMvc.perform(get("/api/collections/100/series/500/progress"))
+                .andExpect(status().isUnauthorized());
+
+        verifyNoInteractions(collectionProgressService);
+    }
+
+    @Test
+    void foreignUserSeriesProgressAccessMapsToForbidden() throws Exception {
+        assertProgressAccessDenied(userToken());
+    }
+
+    @Test
+    void foreignAdminSeriesProgressAccessMapsToForbidden() throws Exception {
+        assertProgressAccessDenied(adminToken());
+    }
+
+    @Test
+    void foreignEditorialAdminSeriesProgressAccessMapsToForbidden() throws Exception {
+        assertProgressAccessDenied(editorialAdminToken());
+    }
+
+    @Test
+    void missingCollectionSeriesProgressMapsToNotFound() throws Exception {
+        when(collectionProgressService.getSeriesProgress(any(), eq(100L), eq(500L)))
+                .thenThrow(new CollectionNotFoundException(100L));
+
+        mockMvc.perform(get("/api/collections/100/series/500/progress")
+                        .header("Authorization", "Bearer " + userToken()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404));
+    }
+
+    @Test
+    void missingOrNonPublicSeriesProgressMapsToNotFound() throws Exception {
+        when(collectionProgressService.getSeriesProgress(any(), eq(100L), eq(500L)))
+                .thenThrow(new CatalogSeriesNotFoundException(500L));
+
+        mockMvc.perform(get("/api/collections/100/series/500/progress")
+                        .header("Authorization", "Bearer " + userToken()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404));
+    }
+
+    @Test
+    void seriesProgressDelegatesAuthenticatedUserAndIds() throws Exception {
+        when(collectionProgressService.getSeriesProgress(any(), eq(100L), eq(500L)))
+                .thenReturn(progressResponse());
+        ArgumentCaptor<AuthenticatedUser> userCaptor = ArgumentCaptor.forClass(AuthenticatedUser.class);
+
+        mockMvc.perform(get("/api/collections/100/series/500/progress")
+                        .header("Authorization", "Bearer " + userToken()))
+                .andExpect(status().isOk());
+
+        verify(collectionProgressService).getSeriesProgress(userCaptor.capture(), eq(100L), eq(500L));
+        assertThat(userCaptor.getValue().id()).isEqualTo(42L);
+    }
+
+    @Test
+    void postMissingStatusMapsToBadRequest() throws Exception {
+        when(collectionService.addItem(any(), eq(100L), any()))
+                .thenThrow(new InvalidCollectionItemStatusException("MISSING is calculated"));
+
+        mockMvc.perform(post("/api/collections/100/items")
+                        .header("Authorization", "Bearer " + userToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"masterProductId\":200,\"collectionStatus\":\"MISSING\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400));
+    }
+
+    @Test
+    void putMissingStatusMapsToBadRequest() throws Exception {
+        when(collectionService.updateItem(any(), eq(100L), eq(300L), any()))
+                .thenThrow(new InvalidCollectionItemStatusException("MISSING is calculated"));
+
+        mockMvc.perform(put("/api/collections/100/items/300")
+                        .header("Authorization", "Bearer " + userToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"collectionStatus\":\"MISSING\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400));
+    }
+
+    private void assertProgressAccessDenied(String token) throws Exception {
+        when(collectionProgressService.getSeriesProgress(any(), eq(100L), eq(500L)))
+                .thenThrow(new AccessDeniedException("not owner"));
+
+        mockMvc.perform(get("/api/collections/100/series/500/progress")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.status").value(403));
+    }
+
+    private CollectionSeriesProgressResponse progressResponse() {
+        return new CollectionSeriesProgressResponse(
+                100L,
+                500L,
+                "Dragon Ball",
+                3,
+                1,
+                1,
+                1,
+                33,
+                List.of(
+                        new CollectionSeriesProgressItemResponse(
+                                501L, "Volume 1", "1", BigDecimal.ONE, 1984,
+                                CollectionSeriesProgressStatus.OWNED,
+                                List.of(301L), List.of(), List.of(601L), false
+                        ),
+                        new CollectionSeriesProgressItemResponse(
+                                502L, "Volume 2", "2", BigDecimal.TWO, 1984,
+                                CollectionSeriesProgressStatus.WANTED,
+                                List.of(), List.of(302L), List.of(602L), false
+                        ),
+                        new CollectionSeriesProgressItemResponse(
+                                503L, "Volume 3", "3", BigDecimal.valueOf(3), 1985,
+                                CollectionSeriesProgressStatus.MISSING,
+                                List.of(), List.of(), List.of(), true
+                        )
+                )
+        );
+    }
+
     private String userToken() {
         return jwtService.generateAccessToken(TestSecurityConfiguration.testUser("alice@example.com"));
+    }
+
+    private String adminToken() {
+        return jwtService.generateAccessToken(TestSecurityConfiguration.testUser("admin@example.com", "ADMIN"));
+    }
+
+    private String editorialAdminToken() {
+        return jwtService.generateAccessToken(TestSecurityConfiguration.testUser(
+                "editorial-admin@example.com",
+                "EDITORIAL_ADMIN"
+        ));
     }
 
     private String validCreateItemRequest() {

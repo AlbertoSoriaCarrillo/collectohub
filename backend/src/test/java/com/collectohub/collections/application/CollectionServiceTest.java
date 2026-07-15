@@ -706,6 +706,219 @@ class CollectionServiceTest {
     }
 
     @Test
+    void legacyItemCreationRejectsMissingBeforeReferenceLookupsOrSave() {
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+
+        assertThatThrownBy(() -> collectionService.addItem(
+                AuthenticatedUser.from(owner),
+                100L,
+                createMissingItemRequest(200L, null, null)
+        )).isInstanceOf(InvalidCollectionItemStatusException.class);
+
+        verify(collectionItemRepository, never()).save(any());
+        verify(masterProductRepository, never()).findByIdAndDeletedAtIsNull(any());
+        verify(catalogItemRepository, never()).findByIdAndDeletedAtIsNull(any());
+    }
+
+    @Test
+    void editorialItemCreationRejectsMissingBeforeCatalogLookup() {
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+
+        assertThatThrownBy(() -> collectionService.addItem(
+                AuthenticatedUser.from(owner),
+                100L,
+                createMissingItemRequest(null, 500L, null)
+        )).isInstanceOf(InvalidCollectionItemStatusException.class);
+
+        verify(collectionItemRepository, never()).save(any());
+        verify(catalogItemRepository, never()).findByIdAndDeletedAtIsNull(any());
+    }
+
+    @Test
+    void manualItemCreationRejectsMissingBeforeSave() {
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+
+        assertThatThrownBy(() -> collectionService.addItem(
+                AuthenticatedUser.from(owner),
+                100L,
+                createMissingItemRequest(null, null, "Manual item")
+        )).isInstanceOf(InvalidCollectionItemStatusException.class);
+
+        verify(collectionItemRepository, never()).save(any());
+        verify(masterProductRepository, never()).findByIdAndDeletedAtIsNull(any());
+        verify(catalogItemRepository, never()).findByIdAndDeletedAtIsNull(any());
+    }
+
+    @Test
+    void explicitMissingUpdateIsRejected() {
+        CollectionItem item = collectionItem(300L, privateCollection);
+        stubOwnedItem(item);
+
+        assertThatThrownBy(() -> collectionService.updateItem(
+                AuthenticatedUser.from(owner),
+                100L,
+                300L,
+                updateRequest(CollectionItemStatus.MISSING, null, null)
+        )).isInstanceOf(InvalidCollectionItemStatusException.class);
+
+        assertThat(item.getCollectionStatus()).isEqualTo(CollectionItemStatus.OWNED);
+        verify(collectionItemRepository, never()).save(any());
+    }
+
+    @Test
+    void nullStatusCanEditLegacyMissingItem() {
+        CollectionItem item = collectionItemWithStatus(CollectionItemStatus.MISSING);
+        stubOwnedItem(item);
+
+        var response = collectionService.updateItem(
+                AuthenticatedUser.from(owner),
+                100L,
+                300L,
+                updateRequest(null, PhysicalCondition.GOOD, null)
+        );
+
+        assertThat(response.collectionStatus()).isEqualTo("MISSING");
+        assertThat(response.physicalCondition()).isEqualTo("GOOD");
+    }
+
+    @Test
+    void legacyMissingCanTransitionToWanted() {
+        CollectionItem item = collectionItemWithStatus(CollectionItemStatus.MISSING);
+        stubOwnedItem(item);
+
+        var response = collectionService.updateItem(
+                AuthenticatedUser.from(owner),
+                100L,
+                300L,
+                updateRequest(CollectionItemStatus.WANTED, null, null)
+        );
+
+        assertThat(response.collectionStatus()).isEqualTo("WANTED");
+        assertThat(item.getId()).isEqualTo(300L);
+    }
+
+    @Test
+    void legacyMissingCanTransitionToOwned() {
+        CollectionItem item = collectionItemWithStatus(CollectionItemStatus.MISSING);
+        stubOwnedItem(item);
+
+        var response = collectionService.updateItem(
+                AuthenticatedUser.from(owner),
+                100L,
+                300L,
+                updateRequest(CollectionItemStatus.OWNED, null, null)
+        );
+
+        assertThat(response.collectionStatus()).isEqualTo("OWNED");
+        assertThat(item.getId()).isEqualTo(300L);
+    }
+
+    @Test
+    void wantedTransitionsToOwnedWithoutChangingIdentityOrPersonalData() {
+        CollectionItem item = editorialCollectionItem(
+                300L,
+                privateCollection,
+                com.collectohub.collections.domain.CollectionEditorialReferenceSource.VERIFIED_BRIDGE
+        );
+        item.update(
+                CollectionItemStatus.WANTED,
+                PhysicalCondition.LIKE_NEW,
+                "1",
+                50,
+                "First print",
+                LocalDate.of(2023, 6, 1),
+                owner.getId()
+        );
+        CatalogItem originalCatalogItem = item.getCatalogItem();
+        CatalogItemEdition originalEdition = item.getCatalogItemEdition();
+        stubOwnedItem(item);
+
+        var response = collectionService.updateItem(
+                AuthenticatedUser.from(owner),
+                100L,
+                300L,
+                updateRequest(CollectionItemStatus.OWNED, PhysicalCondition.GOOD, LocalDate.of(2026, 7, 15))
+        );
+
+        assertThat(response.id()).isEqualTo(300L);
+        assertThat(item.getCatalogItem()).isSameAs(originalCatalogItem);
+        assertThat(item.getCatalogItemEdition()).isSameAs(originalEdition);
+        assertThat(item.getEditorialReferenceSource())
+                .isEqualTo(com.collectohub.collections.domain.CollectionEditorialReferenceSource.VERIFIED_BRIDGE);
+        assertThat(response.collectionStatus()).isEqualTo("OWNED");
+        assertThat(response.physicalCondition()).isEqualTo("GOOD");
+        assertThat(response.acquiredAt()).isEqualTo(LocalDate.of(2026, 7, 15));
+        assertThat(response.notes()).isEqualTo("First print");
+        assertThat(response.unitNumber()).isEqualTo("1");
+        verify(collectionItemRepository, never()).save(any());
+    }
+
+    @Test
+    void repeatingOwnedUpdateKeepsSameItemAndState() {
+        CollectionItem item = collectionItemWithStatus(CollectionItemStatus.WANTED);
+        stubOwnedItem(item);
+
+        collectionService.updateItem(
+                AuthenticatedUser.from(owner),
+                100L,
+                300L,
+                updateRequest(CollectionItemStatus.OWNED, null, null)
+        );
+        var repeated = collectionService.updateItem(
+                AuthenticatedUser.from(owner),
+                100L,
+                300L,
+                updateRequest(CollectionItemStatus.OWNED, null, null)
+        );
+
+        assertThat(repeated.id()).isEqualTo(300L);
+        assertThat(repeated.collectionStatus()).isEqualTo("OWNED");
+        verify(collectionItemRepository, never()).save(any());
+    }
+
+    @Test
+    void foreignUserCannotTransitionWantedToOwned() {
+        CollectionItem item = collectionItemWithStatus(CollectionItemStatus.WANTED);
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+
+        assertThatThrownBy(() -> collectionService.updateItem(
+                AuthenticatedUser.from(otherUser),
+                100L,
+                300L,
+                updateRequest(CollectionItemStatus.OWNED, null, null)
+        )).isInstanceOf(AccessDeniedException.class);
+
+        assertThat(item.getCollectionStatus()).isEqualTo(CollectionItemStatus.WANTED);
+        verify(collectionItemRepository, never()).findByIdAndCollection_IdAndDeletedAtIsNull(any(), any());
+    }
+
+    @Test
+    void foreignAdminCannotTransitionWantedToOwned() {
+        User admin = user(44L, "admin@example.com");
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+
+        assertThatThrownBy(() -> collectionService.updateItem(
+                AuthenticatedUser.from(admin),
+                100L,
+                300L,
+                updateRequest(CollectionItemStatus.OWNED, null, null)
+        )).isInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void foreignEditorialAdminCannotTransitionWantedToOwned() {
+        User editorialAdmin = user(45L, "editorial@example.com");
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+
+        assertThatThrownBy(() -> collectionService.updateItem(
+                AuthenticatedUser.from(editorialAdmin),
+                100L,
+                300L,
+                updateRequest(CollectionItemStatus.OWNED, null, null)
+        )).isInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
     void ownerSoftDeletesItem() {
         CollectionItem item = collectionItem(300L, privateCollection);
         when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
@@ -728,6 +941,68 @@ class CollectionServiceTest {
                 "First print",
                 LocalDate.of(2023, 6, 1), null, null, null
         );
+    }
+
+    private CreateCollectionItemRequest createMissingItemRequest(
+            Long masterProductId,
+            Long catalogItemId,
+            String manualTitle
+    ) {
+        return new CreateCollectionItemRequest(
+                masterProductId,
+                catalogItemId,
+                null,
+                CollectionItemStatus.MISSING,
+                null,
+                null,
+                null,
+                null,
+                null,
+                manualTitle,
+                null,
+                null
+        );
+    }
+
+    private UpdateCollectionItemRequest updateRequest(
+            CollectionItemStatus status,
+            PhysicalCondition condition,
+            LocalDate acquiredAt
+    ) {
+        return new UpdateCollectionItemRequest(
+                null,
+                null,
+                null,
+                status,
+                condition,
+                null,
+                null,
+                null,
+                acquiredAt,
+                null,
+                null,
+                null
+        );
+    }
+
+    private CollectionItem collectionItemWithStatus(CollectionItemStatus status) {
+        CollectionItem item = collectionItem(300L, privateCollection);
+        item.update(
+                status,
+                item.getPhysicalCondition(),
+                item.getUnitNumber(),
+                item.getTotalLimitedUnits(),
+                item.getNotes(),
+                item.getAcquiredAt(),
+                owner.getId()
+        );
+        return item;
+    }
+
+    private void stubOwnedItem(CollectionItem item) {
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+        when(collectionItemRepository.findByIdAndCollection_IdAndDeletedAtIsNull(300L, 100L))
+                .thenReturn(Optional.of(item));
     }
 
     private User user(Long id, String email) {
