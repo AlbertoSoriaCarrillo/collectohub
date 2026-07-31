@@ -40,8 +40,8 @@ MVP4 sigue abierto: EPIC 44E, 44F y 44G-A a 44G-D-FIX estan completadas. El deta
 frontend presenta el resumen persistido, filtros compartibles, orden y progreso
 agregado owner-only sin exponer datos personales a lectores publicos. La
 regresion integral y la concurrencia latest-request-wins de 44G quedan cerradas.
-La siguiente tarea es
-EPIC 44H.
+EPIC 44H-A audita los datos existentes y define el cierre parcial sin marcar
+MVP4 como cerrado. La siguiente tarea es EPIC 44H-B.
 
 | Dominio | Estado actual |
 | --- | --- |
@@ -355,8 +355,8 @@ MVP 2 queda cerrado con limitaciones. El backend y frontend de progreso y
 faltantes calculados estan implementados y EPIC 44F esta cerrada. MVP4 continua
 abierto. MVP3 Admin Editorial ha completado el bloque 40A-40G, cierres 41B y
 calidad 42C, y permanece abierto para mejoras posteriores. La prioridad activa
-es MVP4: 44G-A a 44G-D-FIX cierran el detalle final, su regresion, concurrencia y exports; la
-siguiente tarea es EPIC 44H - Datos demo, validacion integral y cierre parcial de MVP4. Social, tiendas,
+es MVP4: 44G-A a 44G-D-FIX cierran el detalle final, su regresion, concurrencia y exports. 44H-A
+define el dataset y validacion; la siguiente tarea es 44H-B. Social, tiendas,
 marketplace, pagos y movil continúan en fases posteriores.
 
 EPIC 41B queda completada: el cierre parcial esta en

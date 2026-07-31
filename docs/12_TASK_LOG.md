@@ -2258,3 +2258,19 @@ Siguiente paso: crear el backend en la carpeta backend.
   631.54 kB frente al budget de 500 kB.
 - Sin backend, migraciones, dependencias, rutas, `/wanted`, E2E ni Playwright.
   EPIC 44G queda cerrada tras esta FIX. Siguiente tarea: EPIC 44H.
+
+## 2026-07-31 - EPIC 44H-A - Diseno de demo y validacion integral MVP4
+
+- Verificado `main` limpio y sincronizado con `origin/main` en `2ad586e`; el
+  commit esta publicado y es hijo directo de `495e656`.
+- Auditados los tres scripts demo: el legacy cubre MVP1, el editorial reutiliza
+  parcialmente catalogo y el de progreso valida 1 OWNED, 1 WANTED, 1 MISSING
+  calculado y 33%, pero aun no es idempotente ni integral para MVP4.
+- Identificados casos pendientes para 44H-B: manual sin enlace, legacy sin bridge,
+  bridge VERIFIED, coleccion privada, lector ajeno, filtros finales y privacidad.
+- Creado `docs/30_MVP4_DEMO_VALIDATION_DESIGN.md` con dataset exacto, personas,
+  contratos, estrategia idempotente, evidencias, rollback no destructivo y
+  criterios de `MVP4_PARTIALLY_CLOSED`.
+- Dividida 44H en A diseno, B scripts/datos idempotentes y C validacion/cierre.
+  No se ejecutaron Maven, npm, E2E ni Playwright y no se modifico codigo.
+  Siguiente tarea: EPIC 44H-B.

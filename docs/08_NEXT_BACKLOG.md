@@ -102,7 +102,8 @@ provisiona solo mediante operacion controlada, sin autoasignacion ni interfaz
 publica. EPIC 44A, EPIC 44B, EPIC 44B-FIX, EPIC 44C y EPIC 44D quedan completadas.
 EPIC 44E, EPIC 44F y EPIC 44G-A a 44G-D-FIX quedan completadas. La FIX cierra
 la concurrencia del listado y evita estados obsoletos en el detalle.
-Siguiente tarea: EPIC 44H - Datos demo, validacion integral y cierre parcial de MVP4.
+EPIC 44H-A documenta la auditoria y el diseno ejecutable. Siguiente tarea:
+EPIC 44H-B - Datos demo y scripts idempotentes.
 
 ## MVP 4 - Colecciones finales de usuario
 
@@ -157,8 +158,9 @@ Siguiente tarea: EPIC 44H - Datos demo, validacion integral y cierre parcial de 
 
 ## Reglas de backlog
 
-EPIC 44F y EPIC 44G-A a 44G-D-FIX estan completadas. Siguiente EPIC: EPIC 44H -
-Datos demo, validacion integral y cierre parcial de MVP4.
+EPIC 44F y EPIC 44G-A a 44G-D-FIX estan completadas. EPIC 44H-A queda
+implementada documentalmente. Siguiente EPIC: EPIC 44H-B - Datos demo y scripts
+idempotentes; despues 44H-C validara y cerrara parcialmente MVP4.
 
 - No adelantar una fase porque exista una tabla, rol o pantalla legacy.
 - Cada EPIC debe declarar que objetivo de producto valida.
