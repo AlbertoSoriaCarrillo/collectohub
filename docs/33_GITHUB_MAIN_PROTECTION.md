@@ -28,6 +28,25 @@ Do not enable an automatic merge or remote setting from a repository script. A r
 
 The workflow detects test, build, policy, and parser failures. Branch protection enforces that a red, pending, or missing result cannot be integrated into `main`. CI alone reports; protection prevents the unsafe merge.
 
+## Sequential automation preflight
+
+Branch protection prevents an unsafe merge but does not, by itself, prevent automation from opening overlapping delivery branches. Before starting any EPIC, scheduled automation must query GitHub for open pull requests targeting `main` from `codex/*` or `quality/*`.
+
+Any match blocks the new execution, including draft pull requests and pull requests with green, pending, red, or absent checks. The automation must not create a branch, modify files, run another EPIC, commit, or push until the previous delivery has been reviewed and merged or closed. This gate makes delivery strictly sequential.
+
+After the earlier pull request is merged or closed, use this recovery sequence before selecting work:
+
+```powershell
+git switch main
+git fetch origin
+git status --short
+git merge --ff-only origin/main
+git rev-parse HEAD
+git rev-parse origin/main
+```
+
+Continue only when the worktree is clean and both SHAs are identical. Otherwise, stop without starting an EPIC.
+
 ## Test pull request
 
 After applying the ruleset, open a disposable documentation-only pull request from a branch. Confirm:
@@ -44,4 +63,4 @@ Record the test PR URL, commit SHA, date, check results, and screenshots or sett
 
 ## Post-merge verification
 
-Fetch `origin`, confirm `main` points to the expected merge or squash SHA, and confirm the local tree is clean before starting another EPIC. A missing or altered required check blocks further delivery until the ruleset is corrected.
+Return to `main`, fetch `origin`, require a clean tree, update only by fast-forward, confirm `HEAD == origin/main` at the expected merge or squash SHA, and query GitHub again before starting another EPIC. A missing or altered required check blocks further delivery until the ruleset is corrected.

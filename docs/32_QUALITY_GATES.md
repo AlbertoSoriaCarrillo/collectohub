@@ -94,13 +94,41 @@ powershell-parse
 
 The workflow detects violations. The ruleset described in `docs/33_GITHUB_MAIN_PROTECTION.md` prevents integrating red, pending, or missing checks into `main`.
 
+## Sequential scheduled automation
+
+Scheduled Codex delivery is sequential. Before any EPIC begins, the automation must query GitHub for open pull requests targeting `main` whose head branch starts with `codex/` or `quality/`. A matching pull request blocks the next execution even when it is a draft or its checks are green. Pending, red, or absent checks also block.
+
+While a matching pull request exists, the automation must not create a branch, modify files, execute another EPIC, commit, or push. It must report:
+
+```text
+EPIC EN ESPERA DE REVISION
+PR pendiente:
+Rama:
+Checks:
+Acción necesaria:
+Cambios: NO
+Commit: NO
+Push: NO
+```
+
+Only after the prior delivery pull request is reviewed and merged or closed may a later execution return to `main`, fetch `origin`, require a clean worktree, fast-forward `main`, verify `HEAD == origin/main`, and determine the next EPIC. Closing without merge does not authorize reusing unreviewed branch contents; the next task must be determined from the resulting `main` and GitHub state.
+
 ## Future Codex automation
 
 Replace any instruction that pushes directly to `origin/main` with this exact block:
 
 ```text
 NUEVO_PROMPT_PARA_AUTOMATIZACION
-Antes de cada EPIC, actualiza las referencias remotas y exige main limpia, sin divergencia y alineada con origin/main. Crea una rama codex/<epic> y ejecuta una sola EPIC. Ejecuta las pruebas aplicables y .\scripts\quality\verify.ps1 -BaseRef origin/main. Si falla cualquier validacion, no hagas commit ni push y entrega EPIC BLOQUEADA con evidencia real. Solo con validacion local PASS, crea un unico commit logico y publica exclusivamente la rama de la EPIC; nunca hagas push directo a origin/main. Abre una pull request hacia main, espera quality-policy, backend-verify, frontend-verify y powershell-parse, y no fusiones si un check esta rojo, pendiente o ausente. Informa SHA, URL de PR, resultado de cada check, evidencia, riesgos y siguiente tarea; despues termina sin empezar otra EPIC.
+Antes de comenzar cualquier EPIC, consulta GitHub y comprueba si existe una pull request abierta hacia main cuya rama empiece por codex/ o quality/. Una PR abierta anterior bloquea la ejecucion aunque sea borrador o aunque sus checks esten verdes, pendientes, rojos o ausentes. Si existe, no crees rama, no modifiques archivos, no ejecutes otra EPIC, no hagas commit y no hagas push. Detente con este formato:
+EPIC EN ESPERA DE REVISION
+PR pendiente:
+Rama:
+Checks:
+Acción necesaria:
+Cambios: NO
+Commit: NO
+Push: NO
+Solo despues de que la PR anterior haya sido revisada y fusionada o cerrada, vuelve a main, ejecuta git fetch origin, exige arbol limpio, actualiza main exclusivamente mediante fast-forward y comprueba HEAD == origin/main. Determina entonces la siguiente EPIC. Crea una rama codex/<epic> y ejecuta una sola EPIC. Ejecuta las pruebas aplicables y .\scripts\quality\verify.ps1 -BaseRef origin/main. Si falla cualquier validacion, no hagas commit ni push y entrega EPIC BLOQUEADA con evidencia real. Solo con validacion local PASS, crea un unico commit logico y publica exclusivamente la rama de la EPIC; nunca hagas push directo a origin/main. Abre una pull request hacia main, espera quality-policy, backend-verify, frontend-verify y powershell-parse, y no fusiones si un check esta rojo, pendiente o ausente. Informa SHA, URL de PR, resultado de cada check, evidencia, riesgos y siguiente tarea; despues termina sin empezar otra EPIC.
 ```
 
 ## QUALITY-B definition (not implemented)

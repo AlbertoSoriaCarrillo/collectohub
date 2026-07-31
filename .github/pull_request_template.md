@@ -3,6 +3,7 @@
 ## Scope and acceptance criteria
 
 - [ ] This pull request contains one EPIC only.
+- [ ] No existe otra PR de entrega Codex pendiente hacia main.
 - [ ] The intended scope and excluded scope are stated.
 - [ ] Every acceptance criterion has current evidence.
 - [ ] No unrelated refactor or product behavior is included.

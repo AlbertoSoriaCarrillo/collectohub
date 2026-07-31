@@ -129,11 +129,19 @@ Nunca borrar volúmenes salvo petición explícita.
 ### 5.1 Politica permanente de calidad y entrega
 
 Desde EPIC QUALITY-A, cualquier agente debe leer `AGENTS.md` y aplicar la matriz
-de `docs/32_QUALITY_GATES.md`. El flujo obligatorio parte de `main` limpia y
-sincronizada, crea una rama `codex/<epic>` (salvo excepcion expresamente indicada),
-ejecuta una sola EPIC, usa `scripts/quality/verify.ps1`, publica solo la rama y
-abre una pull request. Nunca se publica directamente a `origin/main` ni se
-fusiona con un check requerido rojo, pendiente o ausente.
+de `docs/32_QUALITY_GATES.md`. Antes de comenzar una EPIC, la automatizacion
+consulta GitHub y se detiene si existe una PR abierta hacia `main` desde
+`codex/*` o `quality/*`, incluso si es borrador o sus checks estan verdes,
+pendientes, rojos o ausentes. Mientras exista, no crea rama, no modifica
+archivos, no ejecuta otra EPIC, no hace commit y no hace push.
+
+Tras fusionar o cerrar la entrega anterior, la siguiente ejecucion vuelve a
+`main`, ejecuta `git fetch origin`, exige arbol limpio, actualiza solo mediante
+fast-forward y comprueba `HEAD == origin/main` antes de determinar la siguiente
+EPIC. Despues crea `codex/<epic>`, ejecuta una sola EPIC, usa
+`scripts/quality/verify.ps1`, publica solo esa rama y abre una pull request.
+Nunca se publica directamente a `origin/main` ni se fusiona con un check
+requerido rojo, pendiente o ausente.
 
 La proteccion remota se configura manualmente segun
 `docs/33_GITHUB_MAIN_PROTECTION.md`; el repositorio no debe intentar cambiarla
@@ -234,10 +242,10 @@ Ultimo commit verificado:
 docs: design mvp4 demo validation
 ```
 
-EPIC 44G-D-FIX y EPIC 44H-A estan publicadas. EPIC QUALITY-A se prepara en la
-rama `quality/quality-gates` como precondicion transversal antes de continuar
-con funcionalidad. Su validacion local se registra en el task log y la evidencia
-remota solo puede confirmarse despues de publicar la rama y abrir la PR.
+EPIC 44G-D-FIX y EPIC 44H-A estan publicadas. EPIC QUALITY-A esta en la PR #2
+desde la rama `quality/quality-gates`; mientras permanezca abierta, incluso como
+borrador, bloquea cualquier nueva EPIC. QUALITY-A-FIX anade la puerta secuencial
+sin modificar producto ni los cuatro checks existentes.
 
 Siguiente tarea funcional despues de QUALITY-A:
 

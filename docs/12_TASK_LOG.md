@@ -2301,3 +2301,26 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Proteccion de `main` y checks remotos: pendientes de configuracion/observacion
   despues del push de rama y la PR. QUALITY-B queda definida, no implementada.
 - Siguiente tarea funcional tras cerrar QUALITY-A: EPIC 44H-B.
+
+## 2026-07-31 - EPIC QUALITY-A-FIX - Bloqueo de entregas Codex solapadas
+
+- La automatizacion programada pasa a ser estrictamente secuencial: antes de
+  comenzar consulta GitHub y bloquea cualquier nueva EPIC si existe una PR
+  abierta hacia `main` desde `codex/*` o `quality/*`.
+- Una PR borrador o con checks verdes, pendientes, rojos o ausentes bloquea por
+  igual. En espera no se crea rama, no se modifican archivos, no se ejecuta otra
+  EPIC y no se hace commit ni push.
+- Tras fusionar o cerrar la entrega anterior, la siguiente ejecucion vuelve a
+  `main`, hace fetch, exige arbol limpio, actualiza solo por fast-forward y
+  comprueba `HEAD == origin/main` antes de determinar la siguiente EPIC.
+- Actualizados unicamente `AGENTS.md`, plantilla de PR, politica de calidad,
+  guia de proteccion, task log y handoff. Los cuatro checks existentes permanecen
+  intactos; sin codigo funcional, workflows, scripts de producto, dependencias,
+  migraciones ni manifests.
+- Validacion local: `PASS`. `mvnw.cmd clean verify`: 424 tests, 0 fallos, 0
+  errores y 0 omitidos con Docker/Testcontainers disponible. `npm.cmd ci`:
+  16 vulnerabilidades conocidas, sin arreglos automaticos. Frontend: 59 archivos,
+  244 tests y build correctos; warning conocido de bundle inicial de 631.54 kB
+  frente al budget de 500 kB. Parser PowerShell y politica de diff: correctos.
+- Commit y push: pendientes de la revision final del alcance. PR objetivo: #2,
+  sin fusionar.

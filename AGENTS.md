@@ -65,6 +65,25 @@ Push: NO
 
 An initial branch push that is necessary to start remote checks is allowed only after all required local checks pass. Pending or absent remote checks still block merge and final closure.
 
+## Sequential delivery gate
+
+Before beginning any EPIC, query GitHub for every open pull request targeting `main` whose head branch starts with `codex/` or `quality/`. Any matching pull request blocks a new EPIC, including a draft or one with green, pending, red, or absent checks.
+
+When a matching pull request exists, do not create a branch, modify files, execute another EPIC, commit, or push. Stop with:
+
+```text
+EPIC EN ESPERA DE REVISION
+PR pendiente:
+Rama:
+Checks:
+Acción necesaria:
+Cambios: NO
+Commit: NO
+Push: NO
+```
+
+Scheduled automation is strictly sequential: one EPIC cannot begin until the prior delivery pull request has been reviewed and merged or closed. After that pull request is merged or closed, the next execution must return to `main`, run `git fetch origin`, require a clean worktree, update `main` only by fast-forward, verify `HEAD == origin/main`, and only then determine the next EPIC.
+
 ## Git and delivery
 
 1. Start from a clean, fetched, up-to-date `main`.
@@ -77,4 +96,4 @@ An initial branch push that is necessary to start remote checks is allowed only 
 
 ## Required execution loop
 
-For every future Codex EPIC: verify clean and current `main`; create `codex/<epic>`; implement one EPIC; run the applicable test matrix and `scripts/quality/verify.ps1`; do not commit on failure; commit and push only the EPIC branch after local success; open a pull request; wait for checks; do not merge red, pending, or missing checks; report the SHA, PR, checks, and evidence; then stop.
+For every future Codex EPIC: first query GitHub and stop if an open `codex/` or `quality/` delivery pull request targets `main`; otherwise return to `main`, fetch, require a clean tree, fast-forward to `origin/main`, and verify the SHAs match; create `codex/<epic>`; implement one EPIC; run the applicable test matrix and `scripts/quality/verify.ps1`; do not commit on failure; commit and push only the EPIC branch after local success; open a pull request; wait for checks; do not merge red, pending, or missing checks; report the SHA, PR, checks, and evidence; then stop.
