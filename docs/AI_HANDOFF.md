@@ -1,6 +1,6 @@
 # CollectoHub - AI Handoff
 
-Última actualización verificada: 2026-07-13
+Última actualización verificada: 2026-07-31
 Repositorio: `AlbertoSoriaCarrillo/collectohub`
 Rama principal esperada: `main`
 
@@ -217,17 +217,17 @@ test: complete manual collection item frontend coverage
 Ultimo commit verificado:
 
 ```text
-933a2590d7862440b849aa36443ec80f8a3bcd48
-fix: close collection series progress frontend
+5e2a2ac875cb55c8d9d2b522ef98d03c7a2b4201
+chore: close owned wanted and calculated missing
 ```
 
-EPIC 44F-D esta implementada en el cambio actual y pendiente de verificar su
-commit en GitHub.
+EPIC 44F-D esta publicada. EPIC 44G-A esta implementada en el cambio actual y
+pendiente de verificar su commit en GitHub.
 
 Siguiente tarea esperada:
 
 ```text
-EPIC 44G-A - Auditoria y diseno del detalle final, filtros y ordenacion
+EPIC 44G-B - Backend de listado final y resumen de progreso
 ```
 
 La IA debe volver a comprobar GitHub antes de asumir que este estado sigue vigente.
@@ -310,6 +310,10 @@ Orden previsto:
 9. EPIC 44F - OWNED, WANTED y faltantes calculados.
 10. EPIC 44G - Detalle final, filtros, ordenación y progreso.
 11. EPIC 44H - Datos demo, validación integral y cierre parcial de MVP4.
+
+Las decisiones ejecutables de EPIC 44G-A estan en
+`docs/29_MVP4_DETAIL_FILTERS_SORTING_DESIGN.md`. No adelantar 44G-B al cerrar
+la auditoria y el diseno.
 
 El orden puede adaptarse si GitHub o la implementación real muestran dependencias distintas.
 

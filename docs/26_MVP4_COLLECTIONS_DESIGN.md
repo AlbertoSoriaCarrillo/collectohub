@@ -189,8 +189,9 @@ serie ordenada. E2E/Playwright siguen pospuestos hasta un recorrido maduro.
 7. EPIC 44H - Datos demo, validacion integral y cierre parcial MVP4.
 
 Las decisiones ejecutables de 44F-A estan en
-`docs/27_MVP4_OWNED_WANTED_MISSING_DESIGN.md`; la siguiente implementacion es
-44F-B.
+`docs/27_MVP4_OWNED_WANTED_MISSING_DESIGN.md`. Las decisiones ejecutables de
+44G-A estan en `docs/29_MVP4_DETAIL_FILTERS_SORTING_DESIGN.md`; la siguiente
+implementacion es 44G-B.
 
 ## 19. Criterios de cierre MVP4
 

@@ -2166,3 +2166,16 @@ Siguiente paso: crear el backend en la carpeta backend.
   239 tests correctos; build correcto con warning de bundle inicial de 629.27 kB
   frente al budget de 500 kB. Sin cambios funcionales de backend/frontend,
   migraciones, dependencias, E2E ni Playwright. Siguiente tarea: EPIC 44G-A.
+
+## 2026-07-31 - EPIC 44G-A - Auditoria y diseno del detalle final, filtros y ordenacion
+
+- Auditado el detalle actual, los contratos de coleccion/items, la privacidad,
+  el progreso por serie de 44F y su cobertura backend/frontend.
+- Creado `docs/29_MVP4_DETAIL_FILTERS_SORTING_DESIGN.md` con el contrato aditivo
+  de filtros combinables, orden total determinista y query params del detalle.
+- Separados los recuentos de filas persistidas del MISSING calculado y definido
+  un resumen agregado owner-only por series que reutiliza 44F y evita N+1.
+- Cerradas compatibilidad legacy/manual, lectura publica, sanitizacion, estados
+  de error, accesibilidad, estrategia de tests y fuera de alcance.
+- Sin cambios funcionales, API, frontend, migraciones, dependencias, exports,
+  E2E ni Playwright. Siguiente tarea: EPIC 44G-B.

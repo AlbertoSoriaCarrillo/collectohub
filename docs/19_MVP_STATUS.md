@@ -1,6 +1,6 @@
 # CollectoHub MVP status
 
-Fecha de revision: 2026-07-12.
+Fecha de revision: 2026-07-31.
 
 ## Estado general
 
@@ -36,9 +36,10 @@ el alta editorial item -> edicion como via principal. EPIC 44E completa alta,
 edicion y enlace posterior de items manuales al catalogo, con edicion opcional,
 propiedad estricta y preservacion de datos personales. MVP3 no queda cerrado
 como producto final. La siguiente tarea es EPIC 44F.
-MVP4 sigue abierto: EPIC 44E y 44F estan completadas. El progreso owner-only por
-serie calcula MISSING, permite la transicion WANTED a OWNED y la siguiente tarea
-es EPIC 44G-A.
+MVP4 sigue abierto: EPIC 44E, 44F y 44G-A estan completadas. El progreso
+owner-only por serie calcula MISSING y permite la transicion WANTED a OWNED.
+44G-A cierra el contrato de detalle final, filtros, orden y resumen agregado;
+la siguiente tarea es EPIC 44G-B.
 
 | Dominio | Estado actual |
 | --- | --- |
