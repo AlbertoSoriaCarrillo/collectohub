@@ -135,13 +135,13 @@
     }
 
     @if (itemsLoading()) {
-      <p class="status-text">{{ 'collections.loadingItems' | translate }}</p>
+      <p class="status-text" data-testid="collection-items-loading">{{ 'collections.loadingItems' | translate }}</p>
     }
 
     @if (itemsError()) {
-      <div class="inline-error" role="alert">
+      <div class="inline-error" role="alert" data-testid="collection-items-error">
         <span>{{ itemsError() }}</span>
-        <button mat-button type="button" (click)="retryItems()">{{ 'actions.retry' | translate }}</button>
+        <button mat-button type="button" (click)="retryItems()" data-testid="collection-items-retry">{{ 'actions.retry' | translate }}</button>
       </div>
     }
 

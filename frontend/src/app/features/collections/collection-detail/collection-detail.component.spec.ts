@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { AuthService } from '../../../core/auth/auth.service';
 import {
   CollectionItemResponse,
@@ -195,6 +195,94 @@ describe('CollectionDetailComponent', () => {
     });
     expect(fixture.componentInstance.itemsError()).toBeTruthy();
     expect(fixture.componentInstance.collection()).toEqual(collection);
+  });
+
+  it('lets only the latest filtered request update items, loading and error', () => {
+    const firstRequest = new Subject<CollectionItemResponse[]>();
+    const latestRequest = new Subject<CollectionItemResponse[]>();
+    const fixture = TestBed.createComponent(CollectionDetailComponent);
+    fixture.detectChanges();
+    service.getCollectionItems.mockReturnValueOnce(firstRequest).mockReturnValueOnce(latestRequest);
+
+    fixture.componentInstance.filterForm.controls.q.setValue('first');
+    fixture.componentInstance.applyFilters();
+    expect(fixture.componentInstance.items()).toEqual([]);
+    expect(fixture.componentInstance.itemsLoading()).toBe(true);
+
+    fixture.componentInstance.filterForm.controls.q.setValue('latest');
+    fixture.componentInstance.applyFilters();
+    latestRequest.next([wantedItem]);
+    latestRequest.complete();
+
+    expect(fixture.componentInstance.items()).toEqual([wantedItem]);
+    expect(fixture.componentInstance.itemsLoading()).toBe(false);
+    expect(fixture.componentInstance.itemsError()).toBeNull();
+
+    firstRequest.next([ownedItem]);
+    firstRequest.complete();
+    expect(fixture.componentInstance.items()).toEqual([wantedItem]);
+    expect(fixture.componentInstance.itemsLoading()).toBe(false);
+    expect(fixture.componentInstance.itemsError()).toBeNull();
+  });
+
+  it('keeps the persisted summary and retries only the current filters after a list error', () => {
+    const failedRequest = new Subject<CollectionItemResponse[]>();
+    const retryRequest = new Subject<CollectionItemResponse[]>();
+    const fixture = TestBed.createComponent(CollectionDetailComponent);
+    fixture.detectChanges();
+    service.getCollectionItems.mockReturnValueOnce(failedRequest);
+    fixture.componentInstance.filterForm.patchValue({ q: 'current', status: ['WANTED'] });
+    fixture.componentInstance.applyFilters();
+
+    expect(fixture.componentInstance.items()).toEqual([]);
+    expect(fixture.componentInstance.itemsLoading()).toBe(true);
+    failedRequest.error(new Error('current list failed'));
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.persistedSummary()).toEqual({
+      total: 3, owned: 1, wanted: 1, other: 1, legacyMissing: 1
+    });
+    expect(fixture.nativeElement.querySelector('[data-testid="collection-items-error"]')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('[data-testid="collection-items-retry"]')).toBeTruthy();
+
+    service.getCollectionItems.mockReturnValueOnce(retryRequest);
+    fixture.componentInstance.retryItems();
+    fixture.componentInstance.retryItems();
+    expect(service.getCollectionItems).toHaveBeenLastCalledWith(3, {
+      q: 'current', status: ['WANTED'], referenceKind: [], seriesId: null, sort: 'CATALOG_ORDER'
+    });
+    expect(service.getCollectionItems).toHaveBeenCalledTimes(3);
+    expect(fixture.componentInstance.itemsLoading()).toBe(true);
+
+    retryRequest.next([wantedItem]);
+    retryRequest.complete();
+    expect(fixture.componentInstance.items()).toEqual([wantedItem]);
+    expect(fixture.componentInstance.itemsError()).toBeNull();
+    expect(fixture.componentInstance.itemsLoading()).toBe(false);
+  });
+
+  it('reloads metadata, the current list and owner progress canonically after deletion', () => {
+    const refreshedCollection = { ...collection, items: [ownedItem] };
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const fixture = TestBed.createComponent(CollectionDetailComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.filterForm.patchValue({ status: ['OWNED'] });
+    fixture.componentInstance.applyFilters();
+    service.getCollection.mockReturnValueOnce(of(refreshedCollection));
+    service.getCollectionItems.mockReturnValueOnce(of([ownedItem]));
+
+    fixture.componentInstance.deleteItem(item);
+
+    expect(service.deleteCollectionItem).toHaveBeenCalledWith(3, 7);
+    expect(service.getCollection).toHaveBeenCalledTimes(2);
+    expect(service.getCollectionItems).toHaveBeenLastCalledWith(3, {
+      q: null, status: ['OWNED'], referenceKind: [], seriesId: null, sort: 'CATALOG_ORDER'
+    });
+    expect(service.getCollectionSeriesProgressSummary).toHaveBeenCalledTimes(2);
+    expect(fixture.componentInstance.collection()).toEqual(refreshedCollection);
+    expect(fixture.componentInstance.items()).toEqual([ownedItem]);
+    expect(fixture.componentInstance.persistedSummary().total).toBe(1);
+    confirmSpy.mockRestore();
   });
 
   it('prefers editorial metadata and keeps reference fallbacks', () => {

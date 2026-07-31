@@ -2240,3 +2240,21 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Sin cambios de codigo, migraciones, dependencias, `pom.xml`, manifests npm,
   rutas Angular, `/wanted`, E2E ni Playwright. EPIC 44G cerrada; siguiente tarea:
   EPIC 44H.
+
+## 2026-07-31 - EPIC 44G-D-FIX - Cierre de concurrencia del detalle final
+
+- El listado aplica latest-request-wins: cancela la peticion anterior, conserva
+  un snapshot de filtros y solo la solicitud vigente actualiza items, loading y
+  error. Durante una recarga se limpian filas obsoletas.
+- Un fallo mantiene intacto el resumen persistido y ofrece retry para los filtros
+  activos. El borrado invalida cualquier listado pendiente y recarga de forma
+  canonica metadatos, listado y progreso owner-only.
+- Anadidas pruebas con respuestas controladas fuera de orden, loading, error,
+  retry sin doble envio y borrado con recarga canonica.
+- Ejecutado `npm.cmd ci`: 474 paquetes instalados y 475 auditados; permanecen 16
+  vulnerabilidades conocidas (3 bajas, 4 moderadas, 8 altas y 1 critica), sin
+  ejecutar `npm audit fix`. Ejecutado `npm.cmd test -- --watch=false`: 59 archivos
+  y 244 tests correctos. Build correcto con warning conocido de bundle inicial de
+  631.54 kB frente al budget de 500 kB.
+- Sin backend, migraciones, dependencias, rutas, `/wanted`, E2E ni Playwright.
+  EPIC 44G queda cerrada tras esta FIX. Siguiente tarea: EPIC 44H.

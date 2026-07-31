@@ -217,7 +217,7 @@ eliminacion o migracion automatica de MISSING legacy.
 
 ## Estado de implementacion
 
-44G-A a 44G-D cerradas el 2026-07-31. El backend conserva el DTO de listado y
+44G-A a 44G-D-FIX cerradas el 2026-07-31. El backend conserva el DTO de listado y
 acepta `q`, `status`, `referenceKind`, `seriesId` y `sort`; valida entradas,
 mantiene la sanitizacion publica y precarga las relaciones utilizadas al filtrar
 y ordenar. `GET /api/collections/{collectionId}/series-progress` reutiliza el
@@ -232,6 +232,11 @@ resultados filtrados no alteran los contadores completos. El progreso agregado
 se pide y muestra solo al propietario, con loading, error y retry independientes
 de metadatos y listado; un lector publico no realiza esa peticion. Borrar recarga
 snapshot, lista y progreso canonicos.
+
+44G-D-FIX completa el cierre aplicando semantica latest-request-wins al listado:
+cada nueva carga cancela la anterior, toma un snapshot de filtros, limpia filas
+obsoletas y solo la peticion vigente puede actualizar items, loading o error.
+El retry repite los filtros activos y el resumen persistido permanece independiente.
 
 La regresion final confirma los casos manuales, legacy, publicos y owner-only ya
 cubiertos, y sincroniza los inventarios de endpoints y relaciones frontend-backend

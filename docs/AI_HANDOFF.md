@@ -217,11 +217,11 @@ test: complete manual collection item frontend coverage
 Ultimo commit verificado:
 
 ```text
-34c5407fda10b62cf46a09b499eb5f6d71b6e048
-feat: complete final collection detail
+495e656780eb3a039f5ff363c5fc516244e57dd5
+docs: close final collection regression
 ```
 
-EPIC 44G-C esta publicada. EPIC 44G-D esta implementada en el cambio actual y
+EPIC 44G-D esta publicada. EPIC 44G-D-FIX esta implementada en el cambio actual y
 pendiente de verificar su commit en GitHub.
 
 Siguiente tarea esperada:

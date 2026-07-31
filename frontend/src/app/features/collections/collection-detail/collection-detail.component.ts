@@ -1,7 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { finalize } from 'rxjs';
+import { finalize, Subscription } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -59,6 +59,8 @@ export class CollectionDetailComponent implements OnInit {
   private readonly collectionService = inject(CollectionService);
   private readonly errorMessageService = inject(ErrorMessageService);
   private readonly languageService = inject(LanguageService);
+  private itemsRequestSequence = 0;
+  private itemsRequestSubscription: Subscription | null = null;
 
   readonly collection = signal<CollectionResponse | null>(null);
   readonly items = signal<CollectionItemResponse[]>([]);
@@ -156,7 +158,7 @@ export class CollectionDetailComponent implements OnInit {
 
   retryItems(): void {
     const collection = this.collection();
-    if (collection) {
+    if (collection && !this.itemsLoading()) {
       this.loadItems(collection.id);
     }
   }
@@ -183,7 +185,12 @@ export class CollectionDetailComponent implements OnInit {
 
     this.actionError.set(null);
     this.collectionService.deleteCollectionItem(collection.id, item.id).subscribe({
-      next: () => this.loadCollection(collection.id),
+      next: () => {
+        this.invalidateItemsRequest();
+        this.items.set([]);
+        this.itemsError.set(null);
+        this.loadCollection(collection.id);
+      },
       error: (error) => this.actionError.set(this.errorMessageService.toMessage(error))
     });
   }
@@ -231,15 +238,46 @@ export class CollectionDetailComponent implements OnInit {
   }
 
   private loadItems(collectionId: number): void {
+    const requestId = ++this.itemsRequestSequence;
+    this.itemsRequestSubscription?.unsubscribe();
+    const filters = this.copyFilters(this.activeFilters());
+    this.items.set([]);
     this.itemsLoading.set(true);
     this.itemsError.set(null);
-    this.collectionService
-      .getCollectionItems(collectionId, this.activeFilters())
-      .pipe(finalize(() => this.itemsLoading.set(false)))
+    this.itemsRequestSubscription = this.collectionService
+      .getCollectionItems(collectionId, filters)
+      .pipe(finalize(() => {
+        if (requestId === this.itemsRequestSequence) {
+          this.itemsLoading.set(false);
+        }
+      }))
       .subscribe({
-        next: (items) => this.items.set(items),
-        error: (error) => this.itemsError.set(this.errorMessageService.toMessage(error))
+        next: (items) => {
+          if (requestId === this.itemsRequestSequence) {
+            this.items.set(items);
+          }
+        },
+        error: (error) => {
+          if (requestId === this.itemsRequestSequence) {
+            this.itemsError.set(this.errorMessageService.toMessage(error));
+          }
+        }
       });
+  }
+
+  private invalidateItemsRequest(): void {
+    this.itemsRequestSequence++;
+    this.itemsRequestSubscription?.unsubscribe();
+    this.itemsRequestSubscription = null;
+    this.itemsLoading.set(false);
+  }
+
+  private copyFilters(filters: CollectionItemListFilters): CollectionItemListFilters {
+    return {
+      ...filters,
+      status: filters.status ? [...filters.status] : undefined,
+      referenceKind: filters.referenceKind ? [...filters.referenceKind] : undefined
+    };
   }
 
   private loadProgress(collectionId: number): void {
