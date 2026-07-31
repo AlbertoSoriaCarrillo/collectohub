@@ -105,6 +105,23 @@ la concurrencia del listado y evita estados obsoletos en el detalle.
 EPIC 44H-A documenta la auditoria y el diseno ejecutable. Siguiente tarea:
 EPIC 44H-B - Datos demo y scripts idempotentes.
 
+## Quality gates transversales
+
+Antes de continuar con EPIC 44H-B se ejecuta **EPIC QUALITY-A - Politica
+permanente y puertas de calidad** desde la base
+`51b8eff54953f78ff51d99e097d801f53dd675bf` y la rama
+`quality/quality-gates`.
+
+QUALITY-A incorpora `AGENTS.md`, matriz de pruebas, verificador local, cuatro
+checks estables de GitHub Actions, plantilla de PR, evidencia por EPIC y guia
+manual de proteccion de `main`. No cambia producto, dependencias, migraciones ni
+contratos. La proteccion remota y el cambio de la automatizacion que aun ordena
+push directo quedan como acciones supervisadas fuera del repositorio.
+
+QUALITY-B queda definida, no implementada, para cobertura con baseline real,
+analisis estatico, lint, secretos y vulnerabilidades. Tras QUALITY-A la siguiente
+tarea funcional sigue siendo 44H-B salvo riesgo bloqueante demostrado.
+
 ## MVP 4 - Colecciones finales de usuario
 
 - adopcion principal del catalogo editorial en colecciones;
@@ -157,6 +174,9 @@ EPIC 44H-B - Datos demo y scripts idempotentes.
 - herramientas avanzadas para creadores y comunidades.
 
 ## Reglas de backlog
+
+QUALITY-A debe estar validada localmente y sus cuatro checks remotos deben estar
+verdes antes de fusionarla. No empezar QUALITY-B ni 44H-B en la misma ejecucion.
 
 EPIC 44F y EPIC 44G-A a 44G-D-FIX estan completadas. EPIC 44H-A queda
 implementada documentalmente. Siguiente EPIC: EPIC 44H-B - Datos demo y scripts

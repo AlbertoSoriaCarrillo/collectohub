@@ -63,3 +63,6 @@ frontend/playwright-report/
 scripts/demo/.last-demo-data.json
 scripts/demo/.last-editorial-admin-demo-data.json
 scripts/demo/.last-mvp4-progress-demo-data.json
+
+# Local quality verification evidence
+scripts/quality/.last-quality-verification.json

@@ -126,6 +126,27 @@ docker compose down
 
 Nunca borrar volúmenes salvo petición explícita.
 
+### 5.1 Politica permanente de calidad y entrega
+
+Desde EPIC QUALITY-A, cualquier agente debe leer `AGENTS.md` y aplicar la matriz
+de `docs/32_QUALITY_GATES.md`. Antes de comenzar una EPIC, la automatizacion
+consulta GitHub y se detiene si existe una PR abierta hacia `main` desde
+`codex/*` o `quality/*`, incluso si es borrador o sus checks estan verdes,
+pendientes, rojos o ausentes. Mientras exista, no crea rama, no modifica
+archivos, no ejecuta otra EPIC, no hace commit y no hace push.
+
+Tras fusionar o cerrar la entrega anterior, la siguiente ejecucion vuelve a
+`main`, ejecuta `git fetch origin`, exige arbol limpio, actualiza solo mediante
+fast-forward y comprueba `HEAD == origin/main` antes de determinar la siguiente
+EPIC. Despues crea `codex/<epic>`, ejecuta una sola EPIC, usa
+`scripts/quality/verify.ps1`, publica solo esa rama y abre una pull request.
+Nunca se publica directamente a `origin/main` ni se fusiona con un check
+requerido rojo, pendiente o ausente.
+
+La proteccion remota se configura manualmente segun
+`docs/33_GITHUB_MAIN_PROTECTION.md`; el repositorio no debe intentar cambiarla
+automaticamente.
+
 ## 6. Resumen funcional del producto
 
 CollectoHub es una plataforma de coleccionismo con:
@@ -217,14 +238,16 @@ test: complete manual collection item frontend coverage
 Ultimo commit verificado:
 
 ```text
-2ad586e94672d5481fa8277c2989d34bed66ebf4
-fix: close final collection detail concurrency
+51b8eff54953f78ff51d99e097d801f53dd675bf
+docs: design mvp4 demo validation
 ```
 
-EPIC 44G-D-FIX esta publicada y cerrada. EPIC 44H-A esta implementada en el
-cambio documental actual y pendiente de verificar su commit en GitHub.
+EPIC 44G-D-FIX y EPIC 44H-A estan publicadas. EPIC QUALITY-A esta en la PR #2
+desde la rama `quality/quality-gates`; mientras permanezca abierta, incluso como
+borrador, bloquea cualquier nueva EPIC. QUALITY-A-FIX anade la puerta secuencial
+sin modificar producto ni los cuatro checks existentes.
 
-Siguiente tarea esperada:
+Siguiente tarea funcional despues de QUALITY-A:
 
 ```text
 EPIC 44H-B - Datos demo y scripts idempotentes
