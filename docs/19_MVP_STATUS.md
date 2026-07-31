@@ -4,12 +4,13 @@ Fecha de revision: 2026-07-31.
 
 ## Estado general
 
-EPIC QUALITY-A establece en la rama `quality/quality-gates`, desde la base
-`51b8eff54953f78ff51d99e097d801f53dd675bf`, una politica transversal de
-calidad y entrega antes de continuar con 44H-B. No modifica funcionalidad,
-dependencias, manifests, migraciones ni contratos. La configuracion remota de
-proteccion de `main` permanece pendiente de aplicacion manual y verificacion con
-una PR de prueba.
+EPIC QUALITY-A esta integrada en `main` como
+`3cb789b7e103907969b312626cd1563d92685778`, desde la base
+`51b8eff54953f78ff51d99e097d801f53dd675bf`. Establece una politica transversal
+de calidad y entrega antes de continuar con 44H-B, sin modificar funcionalidad,
+dependencias, manifests, migraciones ni contratos. Sus cuatro jobs y el workflow
+CI anterior terminaron correctamente en la PR #2. La configuracion remota de
+proteccion de `main` permanece pendiente de verificacion administrativa.
 
 Este estado corresponde a **MVP 1 - Nucleo coleccionista**, no al producto
 final. La vision completa conecta coleccionistas, catalogo comun, tiendas y
@@ -321,8 +322,9 @@ El workflow local `.github/workflows/ci.yml` define:
 QUALITY-A anade `.github/workflows/quality-gates.yml` sin eliminar el CI anterior.
 Expone cuatro jobs estables: `quality-policy`, `backend-verify`,
 `frontend-verify` y `powershell-parse`. No usa secretos, no ejecuta E2E o
-Playwright y no aplica arreglos automaticos de vulnerabilidades. La evidencia
-remota queda pendiente hasta publicar la rama y observar la PR.
+Playwright y no aplica arreglos automaticos de vulnerabilidades. La ejecucion
+remota `30660752632` y el CI anterior `30660753236` terminaron correctamente
+sobre el head `ea71a5918f917c4b7fd2e5a9eba9759044cd4c19` de la PR #2.
 
 ## Validacion realizada
 
@@ -341,7 +343,11 @@ remota queda pendiente hasta publicar la rama y observar la PR.
   critica); no se ejecuto ningun arreglo automatico.
 - Parser PowerShell y formato/sintaxis YAML mediante Prettier: correctos.
 - Proteccion de `main`: `NOT_RUN`, requiere configuracion manual.
-- Checks remotos: `NOT_RUN`, requieren push de rama y pull request.
+- PR #2: fusionada en `main` como
+  `3cb789b7e103907969b312626cd1563d92685778`.
+- Checks remotos sobre `ea71a5918f917c4b7fd2e5a9eba9759044cd4c19`:
+  `quality-policy`, `backend-verify`, `frontend-verify` y `powershell-parse`
+  correctos; workflow CI anterior correcto.
 
 ### Auditoria de cierre 2026-06-29
 
