@@ -2198,3 +2198,26 @@ Siguiente paso: crear el backend en la carpeta backend.
   verify`: BUILD SUCCESS, 424 tests, 0 fallos, 0 errores y 0 omitidos.
 - Sin frontend, migraciones, cambios de dependencias, `pom.xml`, `/wanted`, E2E
   ni Playwright. Siguiente tarea: EPIC 44G-C.
+
+## 2026-07-31 - EPIC 44G-C - Detalle final frontend
+
+- Ampliado el detalle Angular existente con resumen inmutable del snapshot
+  completo: total persistido, OWNED, WANTED, otros estados y aviso separado para
+  filas MISSING legacy; los filtros no alteran estos recuentos.
+- Anadidos busqueda, estados y tipos de referencia repetibles, serie y cinco
+  ordenes. Aplicar y limpiar sincronizan query params sin publicar valores por
+  defecto; la carga inicial hidrata criterios validos desde la URL.
+- Integrado el resumen agregado de progreso solo para el propietario, con
+  porcentaje, enlace al detalle de serie y loading/error/retry independiente.
+  Un lector publico no solicita el endpoint ni recibe acciones de propietario.
+- Separados errores de metadatos, listado, progreso y acciones. Un listado
+  filtrado vacio se distingue de una coleccion vacia; borrar recarga snapshot,
+  lista y progreso en lugar de ajustar contadores localmente.
+- Ejecutado `npm.cmd ci`: 474 paquetes instalados. Ejecutado `npm.cmd test --
+  --watch=false`: 59 archivos y 241 tests correctos. Ejecutado `npm.cmd run
+  build`: correcto, con warning conocido de bundle inicial de 631.54 kB frente
+  al budget de 500 kB.
+- Auditoria backend previa: `mvnw.cmd clean verify`, BUILD SUCCESS, 424 tests,
+  0 fallos, 0 errores y 0 omitidos. Sin cambios backend, migraciones,
+  dependencias, rutas Angular, `/wanted`, E2E ni Playwright. Siguiente tarea:
+  EPIC 44G-D.

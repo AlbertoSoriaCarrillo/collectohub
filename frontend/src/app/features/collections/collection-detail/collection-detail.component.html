@@ -3,8 +3,12 @@
     <p class="status-text">{{ 'collections.loadingOne' | translate }}</p>
   }
 
-  @if (errorMessage()) {
-    <p class="form-error" role="alert">{{ errorMessage() }}</p>
+  @if (collectionError()) {
+    <p class="form-error" role="alert">{{ collectionError() }}</p>
+  }
+
+  @if (actionError()) {
+    <p class="form-error" role="alert">{{ actionError() }}</p>
   }
 
   @if (collection(); as collectionDetail) {
@@ -24,51 +28,130 @@
           @if (collectionDetail.categoryName) {
             <mat-chip>{{ collectionDetail.categoryName }}</mat-chip>
           }
-          <mat-chip>{{ 'collections.noItems' | translate: { count: items().length } }}</mat-chip>
         </mat-chip-set>
-
         <p>{{ collectionDetail.description || ('common.noDescription' | translate) }}</p>
       </mat-card-content>
 
       @if (isOwner()) {
         <mat-card-actions>
-          <a
-            mat-flat-button
-            [routerLink]="['/collections', collectionDetail.id, 'items', 'new']"
-            data-testid="add-collection-item-link"
-          >
+          <a mat-flat-button [routerLink]="['/collections', collectionDetail.id, 'items', 'new']" data-testid="add-collection-item-link">
             {{ 'collections.addItem' | translate }}
           </a>
-          <a mat-button [routerLink]="['/collections', collectionDetail.id, 'edit']">
-            {{ 'collections.editCollection' | translate }}
-          </a>
+          <a mat-button [routerLink]="['/collections', collectionDetail.id, 'edit']">{{ 'collections.editCollection' | translate }}</a>
           <a mat-button routerLink="/wanted">{{ 'actions.viewRecommendations' | translate }}</a>
         </mat-card-actions>
       }
     </mat-card>
 
-    @if (isOwner() && seriesProgressLinks().length > 0) {
-      <section class="series-progress-links" data-testid="collection-series-progress-section">
-        <h2>{{ 'collections.seriesProgressSection' | translate }}</h2>
-        @for (series of seriesProgressLinks(); track series.id) {
-          <a mat-stroked-button [routerLink]="['/collections', collectionDetail.id, 'series', series.id, 'progress']" data-testid="collection-series-progress-link">{{ series.title }}</a>
+    <section class="persisted-summary" data-testid="collection-persisted-summary" [attr.aria-label]="'collections.persistedSummaryAria' | translate">
+      <article><strong>{{ persistedSummary().total }}</strong><span>{{ 'collections.persistedTotal' | translate }}</span></article>
+      <article><strong>{{ persistedSummary().owned }}</strong><span>{{ 'collections.seriesProgressOwned' | translate }}</span></article>
+      <article><strong>{{ persistedSummary().wanted }}</strong><span>{{ 'collections.seriesProgressWanted' | translate }}</span></article>
+      <article><strong>{{ persistedSummary().other }}</strong><span>{{ 'collections.persistedOther' | translate }}</span></article>
+    </section>
+
+    @if (persistedSummary().legacyMissing > 0) {
+      <p class="legacy-warning" role="note" data-testid="collection-legacy-missing-warning">
+        {{ 'collections.persistedLegacyMissing' | translate: { count: persistedSummary().legacyMissing } }}
+      </p>
+    }
+
+    @if (isOwner()) {
+      <section class="series-progress-summary" data-testid="collection-series-progress-section">
+        <div class="section-heading">
+          <h2>{{ 'collections.seriesProgressSection' | translate }}</h2>
+          @if (progressLoading()) { <span class="status-text">{{ 'collections.seriesProgressLoading' | translate }}</span> }
+        </div>
+        @if (progressError()) {
+          <div class="inline-error" role="alert">
+            <span>{{ progressError() }}</span>
+            <button mat-button type="button" (click)="retryProgress()">{{ 'collections.seriesProgressReload' | translate }}</button>
+          </div>
+        }
+        @if (!progressLoading() && !progressError() && progress().length === 0) {
+          <p class="status-text">{{ 'collections.seriesProgressEmptySummary' | translate }}</p>
+        }
+        @for (series of progress(); track series.seriesId) {
+          <article class="progress-row" data-testid="collection-series-progress-summary">
+            <div>
+              <a [routerLink]="['/collections', collectionDetail.id, 'series', series.seriesId, 'progress']" data-testid="collection-series-progress-link">
+                {{ series.seriesTitle }}
+              </a>
+              <span>{{ 'collections.seriesProgressCounts' | translate: { owned: series.ownedItems, wanted: series.wantedItems, missing: series.missingItems } }}</span>
+            </div>
+            <strong>{{ series.completionPercentage }}%</strong>
+            <mat-progress-bar mode="determinate" [value]="series.completionPercentage" [attr.aria-label]="'collections.seriesProgressAria' | translate"></mat-progress-bar>
+          </article>
         }
       </section>
+    }
+
+    <form class="item-filters" [formGroup]="filterForm" (ngSubmit)="applyFilters()" data-testid="collection-item-filters">
+      <h2>{{ 'collections.filtersTitle' | translate }}</h2>
+      <div class="filter-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'collections.searchItems' | translate }}</mat-label>
+          <input matInput formControlName="q" maxlength="100" data-testid="collection-item-search" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'collections.itemStatus' | translate }}</mat-label>
+          <mat-select formControlName="status" multiple data-testid="collection-item-status-filter">
+            @for (status of itemStatuses; track status) {
+              <mat-option [value]="status">{{ 'enums.collectionStatus.' + status | translate }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'collections.referenceKindFilter' | translate }}</mat-label>
+          <mat-select formControlName="referenceKind" multiple data-testid="collection-item-reference-filter">
+            @for (kind of referenceKinds; track kind) {
+              <mat-option [value]="kind">{{ 'enums.collectionItemReferenceKind.' + kind | translate }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'collections.seriesIdFilter' | translate }}</mat-label>
+          <input matInput type="number" min="1" formControlName="seriesId" data-testid="collection-item-series-filter" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'collections.sortItems' | translate }}</mat-label>
+          <mat-select formControlName="sort" data-testid="collection-item-sort">
+            @for (sort of sorts; track sort) {
+              <mat-option [value]="sort">{{ 'enums.collectionItemSort.' + sort | translate }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="filter-actions">
+        <button mat-flat-button type="submit" data-testid="collection-item-filter-apply">{{ 'actions.apply' | translate }}</button>
+        <button mat-button type="button" (click)="clearFilters()" data-testid="collection-item-filter-clear">{{ 'actions.clear' | translate }}</button>
+      </div>
+    </form>
+
+    @if (hasActiveFilters()) {
+      <p class="result-count" data-testid="collection-item-result-count">
+        {{ 'collections.filteredResults' | translate: { count: items().length } }}
+      </p>
     }
 
     @if (itemsLoading()) {
       <p class="status-text">{{ 'collections.loadingItems' | translate }}</p>
     }
 
-    @if (!itemsLoading() && items().length === 0) {
+    @if (itemsError()) {
+      <div class="inline-error" role="alert">
+        <span>{{ itemsError() }}</span>
+        <button mat-button type="button" (click)="retryItems()">{{ 'actions.retry' | translate }}</button>
+      </div>
+    }
+
+    @if (!itemsLoading() && !itemsError() && items().length === 0) {
       <mat-card class="empty-card">
         <mat-card-content>
           <span class="empty-icon" aria-hidden="true">N</span>
-          <h2>{{ 'collections.emptyItemsTitle' | translate }}</h2>
-          @if (isOwner()) {
-            <a mat-stroked-button [routerLink]="['/collections', collectionDetail.id, 'items', 'new']">
-              {{ 'collections.addItem' | translate }}
-            </a>
+          <h2>{{ (hasActiveFilters() ? 'collections.emptyFilteredItemsTitle' : 'collections.emptyItemsTitle') | translate }}</h2>
+          @if (!hasActiveFilters() && isOwner()) {
+            <a mat-stroked-button [routerLink]="['/collections', collectionDetail.id, 'items', 'new']">{{ 'collections.addItem' | translate }}</a>
           }
         </mat-card-content>
       </mat-card>
@@ -87,51 +170,27 @@
               <mat-chip-set [attr.aria-label]="'collections.itemDataAria' | translate">
                 <mat-chip>{{ 'enums.collectionStatus.' + item.collectionStatus | translate }}</mat-chip>
                 <mat-chip>{{ referenceLabel(item) }}</mat-chip>
-                @if (item.physicalCondition) {
-                  <mat-chip>{{ 'enums.physicalCondition.' + item.physicalCondition | translate }}</mat-chip>
-                }
+                @if (item.physicalCondition) { <mat-chip>{{ 'enums.physicalCondition.' + item.physicalCondition | translate }}</mat-chip> }
               </mat-chip-set>
-
               @if (item.referenceKind === 'MANUAL') {
                 @if (item.manualDescription) { <p>{{ item.manualDescription }}</p> }
               } @else { <dl>
-                <div>
-                  <dt>{{ 'common.collection' | translate }}</dt>
-                  <dd>{{ item.catalogSeriesTitle || item.masterProductCollectionName || ('common.notReported' | translate) }}</dd>
-                </div>
-                <div>
-                  <dt>{{ 'common.volume' | translate }}</dt>
-                  <dd>{{ item.catalogItemSequenceLabel || item.masterProductVolumeNumber || ('common.notReported' | translate) }}</dd>
-                </div>
+                <div><dt>{{ 'common.collection' | translate }}</dt><dd>{{ item.catalogSeriesTitle || item.masterProductCollectionName || ('common.notReported' | translate) }}</dd></div>
+                <div><dt>{{ 'common.volume' | translate }}</dt><dd>{{ item.catalogItemSequenceLabel || item.masterProductVolumeNumber || ('common.notReported' | translate) }}</dd></div>
                 @if (item.catalogItemEditionId) {
-                  <div>
-                    <dt>{{ 'collections.editorialEdition' | translate }}</dt>
-                    <dd>{{ item.catalogItemEditionName || item.catalogItemEditionFormat }}</dd>
-                  </div>
-                  <div>
-                    <dt>{{ 'collections.publisher' | translate }}</dt>
-                    <dd>{{ item.catalogPublisherName || ('common.notReported' | translate) }}</dd>
-                  </div>
+                  <div><dt>{{ 'collections.editorialEdition' | translate }}</dt><dd>{{ item.catalogItemEditionName || item.catalogItemEditionFormat }}</dd></div>
+                  <div><dt>{{ 'collections.publisher' | translate }}</dt><dd>{{ item.catalogPublisherName || ('common.notReported' | translate) }}</dd></div>
                 }
               </dl> }
               @if (item.unitNumber || item.acquiredAt) { <dl>
                 @if (item.unitNumber) { <div data-testid="collection-item-unit"><dt>{{ 'common.unit' | translate }}</dt><dd>{{ item.unitNumber }}</dd></div> }
                 @if (item.acquiredAt) { <div data-testid="collection-item-acquired-at"><dt>{{ 'collections.acquiredAt' | translate }}</dt><dd>{{ item.acquiredAt }}</dd></div> }
               </dl> }
-
-              @if (item.notes) {
-                <p class="notes">{{ item.notes }}</p>
-              }
+              @if (item.notes) { <p class="notes">{{ item.notes }}</p> }
             </mat-card-content>
-
             @if (isOwner()) {
               <mat-card-actions>
-                <a
-                  mat-button
-                  [routerLink]="['/collections', collectionDetail.id, 'items', item.id, 'edit']"
-                >
-                  {{ 'actions.edit' | translate }}
-                </a>
+                <a mat-button [routerLink]="['/collections', collectionDetail.id, 'items', item.id, 'edit']">{{ 'actions.edit' | translate }}</a>
                 <button mat-button type="button" (click)="deleteItem(item)">{{ 'actions.delete' | translate }}</button>
               </mat-card-actions>
             }

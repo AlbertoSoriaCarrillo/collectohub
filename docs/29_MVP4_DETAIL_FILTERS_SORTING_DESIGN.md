@@ -217,7 +217,7 @@ eliminacion o migracion automatica de MISSING legacy.
 
 ## Estado de implementacion
 
-44G-A y 44G-B cerradas el 2026-07-31. El backend conserva el DTO de listado y
+44G-A, 44G-B y 44G-C cerradas el 2026-07-31. El backend conserva el DTO de listado y
 acepta `q`, `status`, `referenceKind`, `seriesId` y `sort`; valida entradas,
 mantiene la sanitizacion publica y precarga las relaciones utilizadas al filtrar
 y ordenar. `GET /api/collections/{collectionId}/series-progress` reutiliza el
@@ -226,5 +226,12 @@ calculo de 44F, carga entradas y catalog items por lotes y permanece owner-only.
 Cobertura ejecutada: filtros combinados y vacios, los cinco ordenes, desempates,
 privacidad, errores 400, seguridad owner-only, precedencia de progreso, orden de
 series y consultas PostgreSQL sin filas borradas o referencias no participantes.
-No se anadieron migraciones, dependencias, frontend, rutas Angular, cambios en
-`/wanted`, E2E ni Playwright. La siguiente implementacion es EPIC 44G-C.
+44G-C mantiene la ruta existente y anade resumen de filas persistidas, aviso
+MISSING legacy, filtros combinables, orden y query params compartibles. Los
+resultados filtrados no alteran los contadores completos. El progreso agregado
+se pide y muestra solo al propietario, con loading, error y retry independientes
+de metadatos y listado; un lector publico no realiza esa peticion. Borrar recarga
+snapshot, lista y progreso canonicos.
+
+No se anadieron migraciones, dependencias, rutas Angular, cambios en `/wanted`,
+E2E ni Playwright. La siguiente implementacion es EPIC 44G-D.

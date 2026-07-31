@@ -12,6 +12,13 @@ export type CollectionItemStatus =
 
 export type CollectionSeriesProgressStatus = 'OWNED' | 'WANTED' | 'MISSING';
 
+export type CollectionItemSort =
+  | 'CATALOG_ORDER'
+  | 'TITLE_ASC'
+  | 'TITLE_DESC'
+  | 'STATUS_ASC'
+  | 'NEWEST_ENTRY';
+
 export type CollectionEditorialReferenceSource = 'LEGACY' | 'VERIFIED_BRIDGE' | 'MANUAL_EDITORIAL' | 'MANUAL';
 export type CollectionItemReferenceKind =
   | 'DIRECT_CATALOG'
@@ -140,12 +147,46 @@ export interface CollectionSeriesProgressResponse {
   items: CollectionSeriesProgressItemResponse[];
 }
 
+export interface CollectionSeriesProgressSummaryResponse {
+  seriesId: number;
+  seriesTitle: string;
+  totalCatalogItems: number;
+  ownedItems: number;
+  wantedItems: number;
+  missingItems: number;
+  completionPercentage: number;
+}
+
+export interface CollectionItemListFilters {
+  q?: string | null;
+  status?: CollectionItemStatus[];
+  referenceKind?: CollectionItemReferenceKind[];
+  seriesId?: number | null;
+  sort?: CollectionItemSort | null;
+}
+
 export interface CollectionSearchFilters {
   visibility?: CollectionVisibility | null;
   categoryCode?: string | null;
 }
 
 export const COLLECTION_VISIBILITIES: CollectionVisibility[] = ['PRIVATE', 'PUBLIC'];
+
+export const COLLECTION_ITEM_SORTS: CollectionItemSort[] = [
+  'CATALOG_ORDER',
+  'TITLE_ASC',
+  'TITLE_DESC',
+  'STATUS_ASC',
+  'NEWEST_ENTRY'
+];
+
+export const COLLECTION_ITEM_REFERENCE_KINDS: CollectionItemReferenceKind[] = [
+  'DIRECT_CATALOG',
+  'VERIFIED_BRIDGE',
+  'LEGACY_UNRESOLVED',
+  'MANUAL',
+  'INVALID_REFERENCE'
+];
 
 export const WRITABLE_COLLECTION_ITEM_STATUSES: CollectionItemStatus[] = [
   'OWNED',

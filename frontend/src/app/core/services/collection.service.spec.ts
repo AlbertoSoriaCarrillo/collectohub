@@ -1,7 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { CollectionItemResponse, CollectionResponse, CollectionSeriesProgressResponse } from '../models/collection.model';
+import {
+  CollectionItemResponse,
+  CollectionResponse,
+  CollectionSeriesProgressResponse,
+  CollectionSeriesProgressSummaryResponse
+} from '../models/collection.model';
 import { CollectionService } from './collection.service';
 
 describe('CollectionService', () => {
@@ -90,6 +95,48 @@ describe('CollectionService', () => {
     const request = httpTestingController.expectOne('http://localhost:8080/api/collections/3');
     expect(request.request.method).toBe('GET');
     request.flush(collection);
+  });
+
+  it('loads collection items with normalized repeated filters and without the default sort', () => {
+    service.getCollectionItems(3, {
+      q: '  dragon  ',
+      status: ['OWNED', 'WANTED'],
+      referenceKind: ['DIRECT_CATALOG', 'MANUAL'],
+      seriesId: 9,
+      sort: 'CATALOG_ORDER'
+    }).subscribe((response) => expect(response).toEqual([item]));
+
+    const request = httpTestingController.expectOne((candidate) =>
+      candidate.url === 'http://localhost:8080/api/collections/3/items' &&
+      candidate.params.get('q') === 'dragon' &&
+      (candidate.params.getAll('status') ?? []).join(',') === 'OWNED,WANTED' &&
+      (candidate.params.getAll('referenceKind') ?? []).join(',') === 'DIRECT_CATALOG,MANUAL' &&
+      candidate.params.get('seriesId') === '9' &&
+      !candidate.params.has('sort')
+    );
+    expect(request.request.method).toBe('GET');
+    request.flush([item]);
+  });
+
+  it('loads owner-only progress summaries with the exact GET URL', () => {
+    const progress: CollectionSeriesProgressSummaryResponse[] = [{
+      seriesId: 9,
+      seriesTitle: 'Dragon Ball',
+      totalCatalogItems: 3,
+      ownedItems: 1,
+      wantedItems: 1,
+      missingItems: 1,
+      completionPercentage: 33
+    }];
+
+    service.getCollectionSeriesProgressSummary(3).subscribe((response) => expect(response).toEqual(progress));
+
+    const request = httpTestingController.expectOne(
+      'http://localhost:8080/api/collections/3/series-progress'
+    );
+    expect(request.request.method).toBe('GET');
+    expect(request.request.body).toBeNull();
+    request.flush(progress);
   });
 
   it('loads typed collection series progress with the exact GET URL and no body', () => {

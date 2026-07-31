@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   CollectionItemResponse,
+  CollectionItemListFilters,
+  CollectionSeriesProgressSummaryResponse,
   CollectionSeriesProgressResponse,
   CollectionResponse,
   CollectionSearchFilters,
@@ -59,9 +61,21 @@ export class CollectionService {
     );
   }
 
-  getCollectionItems(collectionId: number): Observable<CollectionItemResponse[]> {
+  getCollectionItems(
+    collectionId: number,
+    filters: CollectionItemListFilters = {}
+  ): Observable<CollectionItemResponse[]> {
     return this.http.get<CollectionItemResponse[]>(
-      `${this.apiBaseUrl}/api/collections/${collectionId}/items`
+      `${this.apiBaseUrl}/api/collections/${collectionId}/items`,
+      { params: this.toItemListParams(filters) }
+    );
+  }
+
+  getCollectionSeriesProgressSummary(
+    collectionId: number
+  ): Observable<CollectionSeriesProgressSummaryResponse[]> {
+    return this.http.get<CollectionSeriesProgressSummaryResponse[]>(
+      `${this.apiBaseUrl}/api/collections/${collectionId}/series-progress`
     );
   }
 
@@ -106,5 +120,26 @@ export class CollectionService {
       const normalizedValue = value?.trim();
       return normalizedValue ? params.set(key, normalizedValue) : params;
     }, new HttpParams());
+  }
+
+  private toItemListParams(filters: CollectionItemListFilters): HttpParams {
+    let params = new HttpParams();
+    const query = filters.q?.trim();
+    if (query) {
+      params = params.set('q', query);
+    }
+    for (const status of filters.status ?? []) {
+      params = params.append('status', status);
+    }
+    for (const referenceKind of filters.referenceKind ?? []) {
+      params = params.append('referenceKind', referenceKind);
+    }
+    if (filters.seriesId != null) {
+      params = params.set('seriesId', filters.seriesId);
+    }
+    if (filters.sort && filters.sort !== 'CATALOG_ORDER') {
+      params = params.set('sort', filters.sort);
+    }
+    return params;
   }
 }

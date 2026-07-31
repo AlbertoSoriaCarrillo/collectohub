@@ -217,17 +217,17 @@ test: complete manual collection item frontend coverage
 Ultimo commit verificado:
 
 ```text
-077ff432528091770216d7f13e3efb0b6ac68a1e
-docs: design final collection detail
+90d285a393b8bba9733a9e5060df098f90bfd80b
+feat: add final collection backend listing
 ```
 
-EPIC 44G-A esta publicada. EPIC 44G-B esta implementada en el cambio actual y
+EPIC 44G-B esta publicada. EPIC 44G-C esta implementada en el cambio actual y
 pendiente de verificar su commit en GitHub.
 
 Siguiente tarea esperada:
 
 ```text
-EPIC 44G-C - Detalle final frontend
+EPIC 44G-D - Regresion y cierre
 ```
 
 La IA debe volver a comprobar GitHub antes de asumir que este estado sigue vigente.
@@ -311,9 +311,9 @@ Orden previsto:
 10. EPIC 44G - Detalle final, filtros, ordenación y progreso.
 11. EPIC 44H - Datos demo, validación integral y cierre parcial de MVP4.
 
-Las decisiones ejecutables de EPIC 44G-A y el cierre backend de 44G-B estan en
-`docs/29_MVP4_DETAIL_FILTERS_SORTING_DESIGN.md`. No adelantar 44G-D al
-implementar 44G-C.
+Las decisiones ejecutables y los cierres de 44G-B/44G-C estan en
+`docs/29_MVP4_DETAIL_FILTERS_SORTING_DESIGN.md`. La siguiente tarea es 44G-D,
+limitada a regresion y cierre.
 
 El orden puede adaptarse si GitHub o la implementación real muestran dependencias distintas.
 

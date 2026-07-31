@@ -27,7 +27,9 @@ p {
 
 .detail-card,
 .empty-card,
-.item-card {
+.item-card,
+.item-filters,
+.series-progress-summary {
   border-radius: 8px;
 }
 
@@ -56,6 +58,84 @@ dd {
   display: grid;
   gap: 16px;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.persisted-summary {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.persisted-summary article,
+.progress-row,
+.item-filters,
+.series-progress-summary {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 16px;
+}
+
+.persisted-summary article {
+  display: grid;
+  gap: 4px;
+}
+
+.persisted-summary strong {
+  font-size: 1.5rem;
+}
+
+.persisted-summary span,
+.progress-row span,
+.result-count,
+.legacy-warning {
+  color: #9fb0c1;
+}
+
+.legacy-warning {
+  border-left: 3px solid #f5b942;
+  padding-left: 12px;
+}
+
+.series-progress-summary,
+.item-filters {
+  display: grid;
+  gap: 16px;
+}
+
+.section-heading,
+.progress-row > div,
+.inline-error,
+.filter-actions {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.progress-row {
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+}
+
+.progress-row > div {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filter-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.inline-error {
+  background: rgba(255, 82, 82, 0.08);
+  border: 1px solid rgba(255, 82, 82, 0.3);
+  border-radius: 8px;
+  color: #ffb4ab;
+  padding: 8px 12px;
 }
 
 dl {
@@ -91,5 +171,15 @@ dd {
 
   dl {
     grid-template-columns: 1fr;
+  }
+
+  .persisted-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .section-heading,
+  .inline-error {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
