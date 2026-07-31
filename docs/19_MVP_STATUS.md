@@ -4,6 +4,13 @@ Fecha de revision: 2026-07-31.
 
 ## Estado general
 
+EPIC QUALITY-A establece en la rama `quality/quality-gates`, desde la base
+`51b8eff54953f78ff51d99e097d801f53dd675bf`, una politica transversal de
+calidad y entrega antes de continuar con 44H-B. No modifica funcionalidad,
+dependencias, manifests, migraciones ni contratos. La configuracion remota de
+proteccion de `main` permanece pendiente de aplicacion manual y verificacion con
+una PR de prueba.
+
 Este estado corresponde a **MVP 1 - Nucleo coleccionista**, no al producto
 final. La vision completa conecta coleccionistas, catalogo comun, tiendas y
 creadores, con matching, social y comercio desarrollados por fases.
@@ -311,9 +318,30 @@ El workflow local `.github/workflows/ci.yml` define:
 - Frontend con Node 24, `npm ci`, `npm test -- --watch=false` y `npm run build`.
 - Playwright E2E queda fuera de CI en esta fase.
 
-La revision de este archivo no encontro necesidad de cambios en esta fase.
+QUALITY-A anade `.github/workflows/quality-gates.yml` sin eliminar el CI anterior.
+Expone cuatro jobs estables: `quality-policy`, `backend-verify`,
+`frontend-verify` y `powershell-parse`. No usa secretos, no ejecuta E2E o
+Playwright y no aplica arreglos automaticos de vulnerabilidades. La evidencia
+remota queda pendiente hasta publicar la rama y observar la PR.
 
 ## Validacion realizada
+
+### EPIC QUALITY-A - 2026-07-31
+
+- Base y `origin/main`: `51b8eff54953f78ff51d99e097d801f53dd675bf`,
+  sin divergencia al iniciar.
+- Rama: `quality/quality-gates`.
+- Alcance: politica, scripts de calidad, CI y documentacion; sin codigo
+  funcional, manifests, lockfiles ni migraciones.
+- Resultado local: `PASS` con `scripts/quality/verify.ps1 -BaseRef origin/main`.
+  Backend: 424 tests, 0 fallos, 0 errores y 0 omitidos con Docker/Testcontainers
+  disponible. Frontend: 59 archivos y 244 tests, build correcto, warning conocido
+  de bundle inicial de 631.54 kB frente al budget de 500 kB.
+- `npm ci`: 16 vulnerabilidades conocidas (3 bajas, 4 moderadas, 8 altas y 1
+  critica); no se ejecuto ningun arreglo automatico.
+- Parser PowerShell y formato/sintaxis YAML mediante Prettier: correctos.
+- Proteccion de `main`: `NOT_RUN`, requiere configuracion manual.
+- Checks remotos: `NOT_RUN`, requieren push de rama y pull request.
 
 ### Auditoria de cierre 2026-06-29
 

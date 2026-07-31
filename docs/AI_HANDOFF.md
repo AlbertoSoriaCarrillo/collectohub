@@ -126,6 +126,19 @@ docker compose down
 
 Nunca borrar volúmenes salvo petición explícita.
 
+### 5.1 Politica permanente de calidad y entrega
+
+Desde EPIC QUALITY-A, cualquier agente debe leer `AGENTS.md` y aplicar la matriz
+de `docs/32_QUALITY_GATES.md`. El flujo obligatorio parte de `main` limpia y
+sincronizada, crea una rama `codex/<epic>` (salvo excepcion expresamente indicada),
+ejecuta una sola EPIC, usa `scripts/quality/verify.ps1`, publica solo la rama y
+abre una pull request. Nunca se publica directamente a `origin/main` ni se
+fusiona con un check requerido rojo, pendiente o ausente.
+
+La proteccion remota se configura manualmente segun
+`docs/33_GITHUB_MAIN_PROTECTION.md`; el repositorio no debe intentar cambiarla
+automaticamente.
+
 ## 6. Resumen funcional del producto
 
 CollectoHub es una plataforma de coleccionismo con:
@@ -217,14 +230,16 @@ test: complete manual collection item frontend coverage
 Ultimo commit verificado:
 
 ```text
-2ad586e94672d5481fa8277c2989d34bed66ebf4
-fix: close final collection detail concurrency
+51b8eff54953f78ff51d99e097d801f53dd675bf
+docs: design mvp4 demo validation
 ```
 
-EPIC 44G-D-FIX esta publicada y cerrada. EPIC 44H-A esta implementada en el
-cambio documental actual y pendiente de verificar su commit en GitHub.
+EPIC 44G-D-FIX y EPIC 44H-A estan publicadas. EPIC QUALITY-A se prepara en la
+rama `quality/quality-gates` como precondicion transversal antes de continuar
+con funcionalidad. Su validacion local se registra en el task log y la evidencia
+remota solo puede confirmarse despues de publicar la rama y abrir la PR.
 
-Siguiente tarea esperada:
+Siguiente tarea funcional despues de QUALITY-A:
 
 ```text
 EPIC 44H-B - Datos demo y scripts idempotentes

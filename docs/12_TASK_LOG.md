@@ -2274,3 +2274,30 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Dividida 44H en A diseno, B scripts/datos idempotentes y C validacion/cierre.
   No se ejecutaron Maven, npm, E2E ni Playwright y no se modifico codigo.
   Siguiente tarea: EPIC 44H-B.
+
+## 2026-07-31 - EPIC QUALITY-A - Politica permanente y puertas de calidad
+
+- Base verificada: `51b8eff54953f78ff51d99e097d801f53dd675bf`, rama
+  `quality/quality-gates`, `main` limpia y sin divergencia con `origin/main`.
+- Creada politica raiz `AGENTS.md`, matriz `docs/32_QUALITY_GATES.md`, plantilla
+  de evidencia, plantilla de PR y guia de proteccion manual de `main`.
+- Creado `scripts/quality/verify.ps1` para diff, conflictos, tests eliminados o
+  ignorados, flags de omision, parser PowerShell, Maven, npm tests y build, con
+  resumen local ignorado sin secretos.
+- Creado `.github/workflows/quality-gates.yml` con `quality-policy`,
+  `backend-verify`, `frontend-verify` y `powershell-parse`, sin E2E, Playwright,
+  secretos, `continue-on-error` ni arreglos automaticos de dependencias.
+- Auditoria real: Testcontainers, Vitest y Prettier existen; no hay JaCoCo,
+  cobertura frontend configurada, ESLint, analisis estatico Java, escaneo de
+  secretos ni de dependencias. Se conservan las 16 vulnerabilidades npm
+  historicas sin ejecutar `npm audit fix`.
+- Validacion local: `PASS`. `mvnw.cmd clean verify`: 424 tests, 0 fallos, 0
+  errores y 0 omitidos con Docker/Testcontainers disponible. `npm.cmd ci`:
+  16 vulnerabilidades conocidas, sin arreglos automaticos. Frontend: 59 archivos,
+  244 tests y build correctos; warning conocido de bundle inicial de 631.54 kB
+  frente al budget de 500 kB. Parser PowerShell y YAML con Prettier: correctos.
+- Tests eliminados: 0. Tests ignorados nuevos: 0. Sin cambios en `pom.xml`,
+  `package.json`, `package-lock.json`, migraciones o codigo funcional.
+- Proteccion de `main` y checks remotos: pendientes de configuracion/observacion
+  despues del push de rama y la PR. QUALITY-B queda definida, no implementada.
+- Siguiente tarea funcional tras cerrar QUALITY-A: EPIC 44H-B.
