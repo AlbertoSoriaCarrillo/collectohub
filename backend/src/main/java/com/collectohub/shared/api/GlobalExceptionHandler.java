@@ -21,6 +21,7 @@ import com.collectohub.catalog.application.CatalogItemRelationshipNotFoundExcept
 import com.collectohub.collections.application.CollectionItemNotFoundException;
 import com.collectohub.collections.application.CollectionNotFoundException;
 import com.collectohub.collections.application.InvalidCollectionItemReferenceException;
+import com.collectohub.collections.application.InvalidCollectionItemFilterException;
 import com.collectohub.collections.application.InvalidCollectionItemStatusException;
 import com.collectohub.collections.application.ConflictingCollectionItemReferenceException;
 import com.collectohub.inventory.application.ShopProductNotFoundException;
@@ -83,6 +84,7 @@ public class GlobalExceptionHandler {
             ProductCategoryNotFoundException.class,
             InvalidCatalogFilterException.class,
             InvalidEditorialCatalogRequestException.class,
+            InvalidCollectionItemFilterException.class,
             InvalidCollectionItemReferenceException.class,
             InvalidCollectionItemStatusException.class,
             InvalidShopProductReferenceException.class,

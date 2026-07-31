@@ -7,6 +7,7 @@ import com.collectohub.collections.domain.CollectionVisibility;
 import com.collectohub.collections.dto.CollectionItemResponse;
 import com.collectohub.collections.dto.CollectionResponse;
 import com.collectohub.collections.dto.CollectionSeriesProgressResponse;
+import com.collectohub.collections.dto.CollectionSeriesProgressSummaryResponse;
 import com.collectohub.collections.dto.CreateCollectionItemRequest;
 import com.collectohub.collections.dto.CreateCollectionRequest;
 import com.collectohub.collections.dto.UpdateCollectionItemRequest;
@@ -117,9 +118,23 @@ public class CollectionController {
     @Operation(summary = "List collection items; public reads omit private notes and acquisition dates")
     public List<CollectionItemResponse> listItems(
             @AuthenticationPrincipal AuthenticatedUser user,
+            @PathVariable Long collectionId,
+            @RequestParam(name = "q", required = false) String query,
+            @RequestParam(required = false) List<String> status,
+            @RequestParam(required = false) List<String> referenceKind,
+            @RequestParam(required = false) Long seriesId,
+            @RequestParam(required = false) String sort
+    ) {
+        return collectionService.listItems(user, collectionId, query, status, referenceKind, seriesId, sort);
+    }
+
+    @GetMapping("/{collectionId}/series-progress")
+    @Operation(summary = "Summarize owner-only collection progress for all participating public catalog series")
+    public List<CollectionSeriesProgressSummaryResponse> getSeriesProgressSummary(
+            @AuthenticationPrincipal AuthenticatedUser user,
             @PathVariable Long collectionId
     ) {
-        return collectionService.listItems(user, collectionId);
+        return collectionProgressService.getSeriesProgressSummary(user, collectionId);
     }
 
     @PutMapping("/{collectionId}/items/{itemId}")

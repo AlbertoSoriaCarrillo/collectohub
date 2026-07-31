@@ -9,6 +9,7 @@ import com.collectohub.catalog.domain.CatalogSeries;
 import com.collectohub.catalog.domain.CatalogSeriesType;
 import com.collectohub.catalog.domain.MasterProduct;
 import com.collectohub.catalog.domain.ProductCategory;
+import com.collectohub.catalog.infrastructure.CatalogItemRepository;
 import com.collectohub.collections.domain.Collection;
 import com.collectohub.collections.domain.CollectionEditorialReferenceSource;
 import com.collectohub.collections.domain.CollectionItem;
@@ -34,6 +35,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -60,6 +62,9 @@ class CollectionItemRepositoryProgressTest {
 
     @Autowired
     private CollectionItemRepository repository;
+
+    @Autowired
+    private CatalogItemRepository catalogItemRepository;
 
     @Autowired
     private EntityManager entityManager;
@@ -197,6 +202,28 @@ class CollectionItemRepositoryProgressTest {
         assertThat(result.getFirst().getCatalogItemEdition().getEditionName()).isEqualTo("Paperback");
         assertThat(result.getLast().getCatalogItemEdition()).isNull();
         assertThat(result).doesNotHaveDuplicates();
+
+        List<CollectionItem> allProgressItems = repository.findProgressItemsByCollectionId(requestedCollection.getId());
+        assertThat(allProgressItems).extracting(CollectionItem::getId)
+                .containsExactly(direct.getId(), verifiedBridge.getId(), fromOtherSeries.getId());
+
+        List<CollectionItem> detailItems = repository.findDetailItemsByCollectionId(requestedCollection.getId());
+        assertThat(detailItems).extracting(CollectionItem::getId)
+                .containsExactly(direct.getId(), verifiedBridge.getId(), fromOtherSeries.getId(), manual.getId(), legacy.getId());
+        entityManager.clear();
+        assertThat(detailItems).allSatisfy(item -> assertThat(item.getCollection().getName()).isEqualTo("Requested"));
+        assertThat(detailItems.getFirst().getCatalogItem().getSeries().getTitle()).isEqualTo("Requested series");
+        assertThat(detailItems.getFirst().getCatalogItemEdition().getEditionName()).isEqualTo("Paperback");
+        assertThat(detailItems.getLast().getMasterProduct().getCategory().getCode()).isEqualTo("MANGA_COMIC");
+
+        List<CatalogItem> activeSeriesItems = catalogItemRepository.findActiveItemsBySeriesIds(
+                Set.of(requestedSeries.getId(), otherSeries.getId()),
+                CatalogRecordStatus.ACTIVE
+        );
+        entityManager.clear();
+        assertThat(activeSeriesItems).extracting(CatalogItem::getId)
+                .containsExactlyInAnyOrder(requestedCatalogItem.getId(), otherSeriesItem.getId());
+        assertThat(activeSeriesItems).allSatisfy(item -> assertThat(item.getSeries().getTitle()).isNotBlank());
     }
 
     private Collection collection(User owner, ProductCategory category, String name) {

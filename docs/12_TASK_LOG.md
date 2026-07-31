@@ -2179,3 +2179,22 @@ Siguiente paso: crear el backend en la carpeta backend.
   de error, accesibilidad, estrategia de tests y fuera de alcance.
 - Sin cambios funcionales, API, frontend, migraciones, dependencias, exports,
   E2E ni Playwright. Siguiente tarea: EPIC 44G-B.
+
+## 2026-07-31 - EPIC 44G-B - Backend de listado final y resumen de progreso
+
+- Ampliado `GET /api/collections/{collectionId}/items` de forma aditiva con
+  `q`, estados y tipos de referencia repetibles, `seriesId` y cinco ordenes
+  cerrados; los filtros se combinan sin cambiar `CollectionItemResponse`.
+- El orden predeterminado usa serie, orden editorial, titulo e id; todos los
+  criterios tienen desempate estable. Entradas manuales y legacy permanecen
+  compatibles y los parametros vacios se ignoran tras normalizar.
+- Anadido `GET /api/collections/{collectionId}/series-progress`, estrictamente
+  owner-only, con una fila por serie ACTIVE participante y el mismo calculo
+  OWNED/WANTED/MISSING y porcentaje de 44F, sin ids ni datos personales.
+- Las consultas de detalle y progreso precargan las relaciones necesarias; el
+  resumen obtiene entradas y catalog items en lote para evitar N+1.
+- Tests dirigidos de servicio y MVC: 125 tests correctos. Test PostgreSQL/
+  Testcontainers de consultas: 1 test correcto. Ejecutado `mvnw.cmd clean
+  verify`: BUILD SUCCESS, 424 tests, 0 fallos, 0 errores y 0 omitidos.
+- Sin frontend, migraciones, cambios de dependencias, `pom.xml`, `/wanted`, E2E
+  ni Playwright. Siguiente tarea: EPIC 44G-C.

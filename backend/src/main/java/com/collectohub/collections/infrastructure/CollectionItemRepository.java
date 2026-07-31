@@ -14,6 +14,23 @@ public interface CollectionItemRepository extends JpaRepository<CollectionItem, 
 
     List<CollectionItem> findByCollection_IdAndDeletedAtIsNullOrderByIdAsc(Long collectionId);
 
+    @Query("""
+            select item from CollectionItem item
+            join fetch item.collection collection
+            left join fetch item.masterProduct masterProduct
+            left join fetch masterProduct.category
+            left join fetch item.catalogItem catalogItem
+            left join fetch catalogItem.series series
+            left join fetch series.primaryPublisher
+            left join fetch series.franchise
+            left join fetch item.catalogItemEdition edition
+            left join fetch edition.publisher
+            where collection.id = :collectionId and collection.deletedAt is null
+              and item.deletedAt is null
+            order by item.id asc
+            """)
+    List<CollectionItem> findDetailItemsByCollectionId(@Param("collectionId") Long collectionId);
+
     Optional<CollectionItem> findByIdAndCollection_IdAndDeletedAtIsNull(Long id, Long collectionId);
 
     @Query("""
@@ -27,6 +44,18 @@ public interface CollectionItemRepository extends JpaRepository<CollectionItem, 
             order by item.id asc
             """)
     List<CollectionItem> findProgressItemsByCollectionIdAndSeriesId(@Param("collectionId") Long collectionId, @Param("seriesId") Long seriesId);
+
+    @Query("""
+            select item from CollectionItem item
+            join fetch item.collection collection
+            join fetch item.catalogItem catalogItem
+            join fetch catalogItem.series
+            left join fetch item.catalogItemEdition
+            where collection.id = :collectionId and collection.deletedAt is null
+              and item.deletedAt is null
+            order by item.id asc
+            """)
+    List<CollectionItem> findProgressItemsByCollectionId(@Param("collectionId") Long collectionId);
 
     @Query("""
             select item

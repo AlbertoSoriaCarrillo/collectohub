@@ -18,6 +18,8 @@ import com.collectohub.catalog.infrastructure.MasterProductCatalogLinkRepository
 import com.collectohub.catalog.infrastructure.ProductCategoryRepository;
 import com.collectohub.collections.domain.Collection;
 import com.collectohub.collections.domain.CollectionItem;
+import com.collectohub.collections.domain.CollectionItemReferenceKind;
+import com.collectohub.collections.domain.CollectionItemSort;
 import com.collectohub.collections.domain.CollectionItemStatus;
 import com.collectohub.collections.domain.CollectionEditorialReferenceSource;
 import com.collectohub.collections.domain.CollectionVisibility;
@@ -39,10 +41,15 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Stream;
 
 @Service
 public class CollectionService {
@@ -356,9 +363,46 @@ public class CollectionService {
 
     @Transactional(readOnly = true)
     public List<CollectionItemResponse> listItems(AuthenticatedUser authenticatedUser, Long collectionId) {
+        return listItems(authenticatedUser, collectionId, null, null, null, null, null);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CollectionItemResponse> listItems(
+            AuthenticatedUser authenticatedUser,
+            Long collectionId,
+            String query,
+            List<String> statuses,
+            List<String> referenceKinds,
+            Long seriesId,
+            String sort
+    ) {
         Collection collection = findActiveCollection(collectionId);
         ensureCanRead(authenticatedUser, collection);
-        return itemResponses(collectionId, isOwner(authenticatedUser, collection));
+        String normalizedQuery = normalizeListingQuery(query);
+        Set<CollectionItemStatus> statusFilter = parseEnumFilter(statuses, CollectionItemStatus.class, "status");
+        Set<CollectionItemReferenceKind> referenceKindFilter = parseEnumFilter(
+                referenceKinds,
+                CollectionItemReferenceKind.class,
+                "referenceKind"
+        );
+        Long normalizedSeriesId = normalizeSeriesId(seriesId);
+        CollectionItemSort normalizedSort = parseSort(sort);
+        boolean includePrivateFields = isOwner(authenticatedUser, collection);
+
+        return collectionItemRepository.findDetailItemsByCollectionId(collectionId).stream()
+                .map(item -> new ListingItem(item, CollectionItemResponse.from(item, includePrivateFields)))
+                .filter(item -> statusFilter.isEmpty()
+                        || statusFilter.contains(item.item().getCollectionStatus()))
+                .filter(item -> referenceKindFilter.isEmpty()
+                        || referenceKindFilter.contains(
+                                CollectionItemReferenceKind.valueOf(item.response().referenceKind())
+                        ))
+                .filter(item -> normalizedSeriesId == null
+                        || normalizedSeriesId.equals(item.response().catalogSeriesId()))
+                .filter(item -> normalizedQuery == null || matchesQuery(item.response(), normalizedQuery))
+                .sorted(listingComparator(normalizedSort))
+                .map(ListingItem::response)
+                .toList();
     }
 
     private User currentUser(AuthenticatedUser authenticatedUser) {
@@ -553,6 +597,153 @@ public class CollectionService {
                 .toList();
     }
 
+    private String normalizeListingQuery(String value) {
+        String normalized = normalizeNullable(value);
+        if (normalized != null && normalized.length() > 100) {
+            throw new InvalidCollectionItemFilterException("q must contain at most 100 characters");
+        }
+        return normalized == null ? null : normalized.toLowerCase(Locale.ROOT);
+    }
+
+    private Long normalizeSeriesId(Long seriesId) {
+        if (seriesId != null && seriesId <= 0) {
+            throw new InvalidCollectionItemFilterException("seriesId must be greater than 0");
+        }
+        return seriesId;
+    }
+
+    private CollectionItemSort parseSort(String value) {
+        String normalized = normalizeCode(value);
+        if (normalized == null) {
+            return CollectionItemSort.CATALOG_ORDER;
+        }
+        try {
+            return CollectionItemSort.valueOf(normalized);
+        } catch (IllegalArgumentException ex) {
+            throw new InvalidCollectionItemFilterException("Unsupported sort: " + value);
+        }
+    }
+
+    private <E extends Enum<E>> Set<E> parseEnumFilter(
+            List<String> values,
+            Class<E> enumType,
+            String filterName
+    ) {
+        EnumSet<E> result = EnumSet.noneOf(enumType);
+        if (values == null) {
+            return result;
+        }
+        for (String value : values) {
+            if (value == null) {
+                continue;
+            }
+            for (String candidate : value.split(",")) {
+                String normalized = normalizeCode(candidate);
+                if (normalized == null) {
+                    continue;
+                }
+                try {
+                    result.add(Enum.valueOf(enumType, normalized));
+                } catch (IllegalArgumentException ex) {
+                    throw new InvalidCollectionItemFilterException(
+                            "Unsupported " + filterName + ": " + candidate
+                    );
+                }
+            }
+        }
+        return result;
+    }
+
+    private boolean matchesQuery(CollectionItemResponse response, String query) {
+        return Stream.of(
+                        response.catalogItemTitle(),
+                        response.catalogSeriesTitle(),
+                        response.catalogItemEditionName(),
+                        response.catalogItemEditionFormat(),
+                        response.catalogItemEditionIsbn(),
+                        response.catalogItemEditionEan(),
+                        response.catalogPublisherName(),
+                        response.catalogFranchiseName(),
+                        response.masterProductName(),
+                        response.masterProductCategoryCode(),
+                        response.masterProductFranchise(),
+                        response.masterProductCollectionName(),
+                        response.masterProductVolumeNumber(),
+                        response.manualTitle(),
+                        response.manualDescription(),
+                        response.manualType()
+                )
+                .filter(Objects::nonNull)
+                .map(field -> field.toLowerCase(Locale.ROOT))
+                .anyMatch(field -> field.contains(query));
+    }
+
+    private Comparator<ListingItem> listingComparator(CollectionItemSort sort) {
+        Comparator<ListingItem> catalogOrder = Comparator
+                .comparing(this::seriesTitle, textAscending())
+                .thenComparing(this::catalogSortOrder, Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(this::visibleTitle, textAscending())
+                .thenComparing(item -> item.response().id());
+        return switch (sort) {
+            case CATALOG_ORDER -> catalogOrder;
+            case TITLE_ASC -> Comparator
+                    .comparing(this::visibleTitle, textAscending())
+                    .thenComparing(item -> item.response().id());
+            case TITLE_DESC -> Comparator
+                    .comparing(this::visibleTitle, textDescending())
+                    .thenComparing(item -> item.response().id());
+            case STATUS_ASC -> Comparator
+                    .comparingInt(this::statusRank)
+                    .thenComparing(catalogOrder);
+            case NEWEST_ENTRY -> Comparator.comparing(
+                    (ListingItem item) -> item.response().id(),
+                    Comparator.reverseOrder()
+            );
+        };
+    }
+
+    private Comparator<String> textAscending() {
+        return Comparator.nullsLast(
+                String.CASE_INSENSITIVE_ORDER.thenComparing(Comparator.naturalOrder())
+        );
+    }
+
+    private Comparator<String> textDescending() {
+        return Comparator.nullsLast(
+                String.CASE_INSENSITIVE_ORDER.reversed().thenComparing(Comparator.reverseOrder())
+        );
+    }
+
+    private String seriesTitle(ListingItem item) {
+        return item.response().catalogSeriesTitle();
+    }
+
+    private BigDecimal catalogSortOrder(ListingItem item) {
+        return item.item().getCatalogItem() == null ? null : item.item().getCatalogItem().getSortOrder();
+    }
+
+    private String visibleTitle(ListingItem item) {
+        CollectionItemResponse response = item.response();
+        if (response.catalogItemTitle() != null) {
+            return response.catalogItemTitle();
+        }
+        if (response.manualTitle() != null) {
+            return response.manualTitle();
+        }
+        return response.masterProductName();
+    }
+
+    private int statusRank(ListingItem item) {
+        return switch (item.item().getCollectionStatus()) {
+            case OWNED -> 0;
+            case WANTED -> 1;
+            case MISSING -> 2;
+            case DUPLICATED -> 3;
+            case SELLABLE -> 4;
+            case TRADABLE -> 5;
+        };
+    }
+
     private String normalizeRequired(String value) {
         return value.trim();
     }
@@ -592,5 +783,8 @@ public class CollectionService {
             CatalogItemEdition catalogItemEdition,
             CollectionEditorialReferenceSource source
     ) {
+    }
+
+    private record ListingItem(CollectionItem item, CollectionItemResponse response) {
     }
 }

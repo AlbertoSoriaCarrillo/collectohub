@@ -4,10 +4,12 @@ import com.collectohub.catalog.domain.CatalogItem;
 import com.collectohub.catalog.domain.CatalogRecordStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-
-import java.util.Optional;
-import java.util.List;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public interface CatalogItemRepository extends
         JpaRepository<CatalogItem, Long>,
@@ -20,6 +22,18 @@ public interface CatalogItemRepository extends
     List<CatalogItem> findAllBySeries_IdAndRecordStatusAndDeletedAtIsNullOrderBySortOrderAscTitleAsc(
             Long seriesId,
             CatalogRecordStatus recordStatus
+    );
+
+    @Query("""
+            select item from CatalogItem item
+            join fetch item.series series
+            where series.id in :seriesIds
+              and series.recordStatus = :recordStatus and series.deletedAt is null
+              and item.recordStatus = :recordStatus and item.deletedAt is null
+            """)
+    List<CatalogItem> findActiveItemsBySeriesIds(
+            @Param("seriesIds") Set<Long> seriesIds,
+            @Param("recordStatus") CatalogRecordStatus recordStatus
     );
 
     boolean existsBySeries_IdAndRecordStatusAndDeletedAtIsNull(Long seriesId, CatalogRecordStatus recordStatus);

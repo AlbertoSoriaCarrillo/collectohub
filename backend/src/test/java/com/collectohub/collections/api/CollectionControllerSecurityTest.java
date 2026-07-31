@@ -10,11 +10,13 @@ import com.collectohub.collections.application.CollectionNotFoundException;
 import com.collectohub.collections.application.CollectionService;
 import com.collectohub.collections.application.CollectionProgressService;
 import com.collectohub.collections.application.InvalidCollectionItemStatusException;
+import com.collectohub.collections.application.InvalidCollectionItemFilterException;
 import com.collectohub.collections.domain.CollectionSeriesProgressStatus;
 import com.collectohub.collections.dto.CollectionItemResponse;
 import com.collectohub.collections.dto.CollectionResponse;
 import com.collectohub.collections.dto.CollectionSeriesProgressItemResponse;
 import com.collectohub.collections.dto.CollectionSeriesProgressResponse;
+import com.collectohub.collections.dto.CollectionSeriesProgressSummaryResponse;
 import com.collectohub.collections.dto.LinkManualCollectionItemRequest;
 import com.collectohub.config.SecurityConfig;
 import com.collectohub.shared.api.GlobalExceptionHandler;
@@ -37,6 +39,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -296,7 +299,8 @@ class CollectionControllerSecurityTest {
 
     @Test
     void ownerListsCollectionItems() throws Exception {
-        when(collectionService.listItems(any(), eq(100L))).thenReturn(List.of(itemResponse()));
+        when(collectionService.listItems(any(), eq(100L), isNull(), isNull(), isNull(), isNull(), isNull()))
+                .thenReturn(List.of(itemResponse()));
 
         mockMvc.perform(get("/api/collections/100/items")
                         .header("Authorization", "Bearer " + userToken()))
@@ -306,7 +310,8 @@ class CollectionControllerSecurityTest {
 
     @Test
     void publicCollectionItemsCanBeListedWithoutToken() throws Exception {
-        when(collectionService.listItems(null, 100L)).thenReturn(List.of(itemResponse()));
+        when(collectionService.listItems(isNull(), eq(100L), isNull(), isNull(), isNull(), isNull(), isNull()))
+                .thenReturn(List.of(itemResponse()));
 
         mockMvc.perform(get("/api/collections/100/items"))
                 .andExpect(status().isOk())
@@ -315,11 +320,48 @@ class CollectionControllerSecurityTest {
 
     @Test
     void privateForeignCollectionItemsAreNotExposed() throws Exception {
-        when(collectionService.listItems(null, 100L)).thenThrow(new CollectionNotFoundException(100L));
+        when(collectionService.listItems(isNull(), eq(100L), isNull(), isNull(), isNull(), isNull(), isNull()))
+                .thenThrow(new CollectionNotFoundException(100L));
 
         mockMvc.perform(get("/api/collections/100/items"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404));
+    }
+
+    @Test
+    void itemListingDelegatesRepeatedFiltersAndSort() throws Exception {
+        when(collectionService.listItems(
+                any(), eq(100L), eq("dragon"), eq(List.of("OWNED", "WANTED")),
+                eq(List.of("DIRECT_CATALOG", "MANUAL")), eq(400L), eq("TITLE_ASC")
+        )).thenReturn(List.of(itemResponse()));
+
+        mockMvc.perform(get("/api/collections/100/items")
+                        .header("Authorization", "Bearer " + userToken())
+                        .queryParam("q", "dragon")
+                        .queryParam("status", "OWNED", "WANTED")
+                        .queryParam("referenceKind", "DIRECT_CATALOG", "MANUAL")
+                        .queryParam("seriesId", "400")
+                        .queryParam("sort", "TITLE_ASC"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(300));
+
+        verify(collectionService).listItems(
+                any(), eq(100L), eq("dragon"), eq(List.of("OWNED", "WANTED")),
+                eq(List.of("DIRECT_CATALOG", "MANUAL")), eq(400L), eq("TITLE_ASC")
+        );
+    }
+
+    @Test
+    void invalidItemListingFilterMapsToBadRequest() throws Exception {
+        when(collectionService.listItems(
+                any(), eq(100L), isNull(), eq(List.of("INVALID")), isNull(), isNull(), isNull()
+        )).thenThrow(new InvalidCollectionItemFilterException("Unsupported status"));
+
+        mockMvc.perform(get("/api/collections/100/items")
+                        .header("Authorization", "Bearer " + userToken())
+                        .queryParam("status", "INVALID"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400));
     }
 
     @Test
@@ -447,6 +489,47 @@ class CollectionControllerSecurityTest {
                 .andExpect(jsonPath("$.wantedItems").value(1))
                 .andExpect(jsonPath("$.missingItems").value(1))
                 .andExpect(jsonPath("$.completionPercentage").value(33));
+    }
+
+    @Test
+    void ownerGetsAllSeriesProgressSummaryWithoutPrivateFields() throws Exception {
+        when(collectionProgressService.getSeriesProgressSummary(any(), eq(100L)))
+                .thenReturn(List.of(new CollectionSeriesProgressSummaryResponse(
+                        500L, "Dragon Ball", 3, 1, 1, 1, 33
+                )));
+
+        mockMvc.perform(get("/api/collections/100/series-progress")
+                        .header("Authorization", "Bearer " + userToken()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].seriesId").value(500))
+                .andExpect(jsonPath("$[0].seriesTitle").value("Dragon Ball"))
+                .andExpect(jsonPath("$[0].totalCatalogItems").value(3))
+                .andExpect(jsonPath("$[0].completionPercentage").value(33))
+                .andExpect(jsonPath("$[0].items").doesNotExist())
+                .andExpect(jsonPath("$[0].notes").doesNotExist())
+                .andExpect(jsonPath("$[0].acquiredAt").doesNotExist());
+    }
+
+    @Test
+    void anonymousCannotReadAllSeriesProgressSummary() throws Exception {
+        mockMvc.perform(get("/api/collections/100/series-progress"))
+                .andExpect(status().isUnauthorized());
+
+        verifyNoInteractions(collectionProgressService);
+    }
+
+    @Test
+    void foreignRolesCannotReadAllSeriesProgressSummary() throws Exception {
+        for (String token : List.of(userToken(), adminToken(), editorialAdminToken())) {
+            reset(collectionProgressService);
+            when(collectionProgressService.getSeriesProgressSummary(any(), eq(100L)))
+                    .thenThrow(new AccessDeniedException("not owner"));
+
+            mockMvc.perform(get("/api/collections/100/series-progress")
+                            .header("Authorization", "Bearer " + token))
+                    .andExpect(status().isForbidden())
+                    .andExpect(jsonPath("$.status").value(403));
+        }
     }
 
     @Test

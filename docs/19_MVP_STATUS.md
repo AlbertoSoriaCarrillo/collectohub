@@ -35,11 +35,11 @@ backend, privacidad y flujo frontend del contenedor coleccion. EPIC 44D deja
 el alta editorial item -> edicion como via principal. EPIC 44E completa alta,
 edicion y enlace posterior de items manuales al catalogo, con edicion opcional,
 propiedad estricta y preservacion de datos personales. MVP3 no queda cerrado
-como producto final. La siguiente tarea es EPIC 44F.
-MVP4 sigue abierto: EPIC 44E, 44F y 44G-A estan completadas. El progreso
-owner-only por serie calcula MISSING y permite la transicion WANTED a OWNED.
-44G-A cierra el contrato de detalle final, filtros, orden y resumen agregado;
-la siguiente tarea es EPIC 44G-B.
+como producto final; la prioridad activa continua en MVP4.
+MVP4 sigue abierto: EPIC 44E, 44F, 44G-A y 44G-B estan completadas. El listado
+backend admite busqueda, filtros combinables y orden total determinista, y el
+resumen owner-only calcula en lote el progreso de las series participantes sin
+exponer datos personales. La siguiente tarea es EPIC 44G-C.
 
 | Dominio | Estado actual |
 | --- | --- |
@@ -351,12 +351,11 @@ MVP 2 visible/foundation y redirecciones sin alterar codigo funcional.
 
 MVP 2 queda cerrado con limitaciones. El backend y frontend de progreso y
 faltantes calculados estan implementados y EPIC 44F esta cerrada. MVP4 continua
-abierto. MVP3 Admin Editorial ha completado el
-bloque 40A-40G, cierres 41B y calidad 42C, y permanece abierto para mejoras
-posteriores. La prioridad activa es MVP4: EPIC 44C cierra crear y editar
-colecciones; la siguiente tarea es EPIC 44D - Alta desde catalogo y seleccion
-de edicion. Social, tiendas, marketplace, pagos y movil continúan en fases
-posteriores.
+abierto. MVP3 Admin Editorial ha completado el bloque 40A-40G, cierres 41B y
+calidad 42C, y permanece abierto para mejoras posteriores. La prioridad activa
+es MVP4: 44G-A cierra el diseno y 44G-B el backend del detalle final; la
+siguiente tarea es EPIC 44G-C - Detalle final frontend. Social, tiendas,
+marketplace, pagos y movil continúan en fases posteriores.
 
 EPIC 41B queda completada: el cierre parcial esta en
 `docs/23_MVP3_PARTIAL_CLOSURE.md`. MVP3 sigue abierto; la siguiente tarea

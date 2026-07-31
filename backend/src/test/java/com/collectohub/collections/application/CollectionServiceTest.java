@@ -15,6 +15,7 @@ import com.collectohub.catalog.infrastructure.CatalogItemEditionRepository;
 import com.collectohub.catalog.infrastructure.MasterProductCatalogLinkRepository;
 import com.collectohub.catalog.infrastructure.ProductCategoryRepository;
 import com.collectohub.collections.domain.Collection;
+import com.collectohub.collections.domain.CollectionEditorialReferenceSource;
 import com.collectohub.collections.domain.CollectionItem;
 import com.collectohub.collections.domain.CollectionItemStatus;
 import com.collectohub.collections.domain.CollectionVisibility;
@@ -40,6 +41,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -486,7 +488,7 @@ class CollectionServiceTest {
     void ownerListsCollectionItems() {
         CollectionItem item = collectionItem(300L, privateCollection);
         when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
-        when(collectionItemRepository.findByCollection_IdAndDeletedAtIsNullOrderByIdAsc(100L)).thenReturn(List.of(item));
+        when(collectionItemRepository.findDetailItemsByCollectionId(100L)).thenReturn(List.of(item));
 
         var response = collectionService.listItems(AuthenticatedUser.from(owner), 100L);
 
@@ -501,12 +503,130 @@ class CollectionServiceTest {
         CollectionItem item = editorialCollectionItem(300L, publicCollection,
                 com.collectohub.collections.domain.CollectionEditorialReferenceSource.VERIFIED_BRIDGE);
         when(collectionRepository.findByIdAndDeletedAtIsNull(101L)).thenReturn(Optional.of(publicCollection));
-        when(collectionItemRepository.findByCollection_IdAndDeletedAtIsNullOrderByIdAsc(101L)).thenReturn(List.of(item));
+        when(collectionItemRepository.findDetailItemsByCollectionId(101L)).thenReturn(List.of(item));
 
         var response = collectionService.listItems(null, 101L);
 
         assertThat(response).hasSize(1);
         assertSanitizedPublicItem(response.getFirst());
+    }
+
+    @Test
+    void listItemsCombinesQueryStatusReferenceKindAndSeriesFilters() {
+        CollectionItem directOwned = editorialCollectionItem(
+                301L, privateCollection, 501L, "Dragon Ball 1", 400L, "Dragon Ball",
+                BigDecimal.ONE, CollectionEditorialReferenceSource.MANUAL_EDITORIAL, CollectionItemStatus.OWNED
+        );
+        CollectionItem bridgeWanted = editorialCollectionItem(
+                302L, privateCollection, 502L, "Dragon Ball 2", 400L, "Dragon Ball",
+                BigDecimal.TWO, CollectionEditorialReferenceSource.VERIFIED_BRIDGE, CollectionItemStatus.WANTED
+        );
+        CollectionItem otherSeries = editorialCollectionItem(
+                303L, privateCollection, 503L, "Dragon Quest", 401L, "Dragon Quest",
+                BigDecimal.ONE, CollectionEditorialReferenceSource.MANUAL_EDITORIAL, CollectionItemStatus.OWNED
+        );
+        CollectionItem manual = manualCollectionItem(304L, privateCollection);
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+        when(collectionItemRepository.findDetailItemsByCollectionId(100L))
+                .thenReturn(List.of(manual, bridgeWanted, otherSeries, directOwned));
+
+        var response = collectionService.listItems(
+                AuthenticatedUser.from(owner),
+                100L,
+                " dragon ball ",
+                List.of("OWNED", "WANTED,"),
+                List.of("DIRECT_CATALOG", ""),
+                400L,
+                "TITLE_ASC"
+        );
+
+        assertThat(response).extracting(item -> item.id()).containsExactly(301L);
+    }
+
+    @Test
+    void listItemsUsesCatalogOrderByDefaultAndPlacesUnseriesItemsLast() {
+        CollectionItem laterInAlpha = editorialCollectionItem(
+                305L, privateCollection, 505L, "Volume 2", 402L, "Alpha",
+                BigDecimal.TWO, CollectionEditorialReferenceSource.MANUAL_EDITORIAL, CollectionItemStatus.OWNED
+        );
+        CollectionItem firstInAlpha = editorialCollectionItem(
+                304L, privateCollection, 504L, "Volume 1", 402L, "Alpha",
+                BigDecimal.ONE, CollectionEditorialReferenceSource.MANUAL_EDITORIAL, CollectionItemStatus.OWNED
+        );
+        CollectionItem beta = editorialCollectionItem(
+                303L, privateCollection, 503L, "Volume 1", 401L, "beta",
+                BigDecimal.ONE, CollectionEditorialReferenceSource.MANUAL_EDITORIAL, CollectionItemStatus.OWNED
+        );
+        CollectionItem manual = manualCollectionItem(302L, privateCollection);
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+        when(collectionItemRepository.findDetailItemsByCollectionId(100L))
+                .thenReturn(List.of(manual, laterInAlpha, beta, firstInAlpha));
+
+        var response = collectionService.listItems(
+                AuthenticatedUser.from(owner), 100L, null, null, null, null, null
+        );
+
+        assertThat(response).extracting(item -> item.id()).containsExactly(304L, 305L, 303L, 302L);
+    }
+
+    @Test
+    void listItemsSupportsTitleStatusAndNewestSortsWithStableIds() {
+        CollectionItem alphaWanted = editorialCollectionItem(
+                301L, privateCollection, 501L, "Alpha", 400L, "Series",
+                BigDecimal.ONE, CollectionEditorialReferenceSource.MANUAL_EDITORIAL, CollectionItemStatus.WANTED
+        );
+        CollectionItem alphaOwned = editorialCollectionItem(
+                302L, privateCollection, 502L, "Alpha", 400L, "Series",
+                BigDecimal.TWO, CollectionEditorialReferenceSource.MANUAL_EDITORIAL, CollectionItemStatus.OWNED
+        );
+        CollectionItem zetaOwned = editorialCollectionItem(
+                303L, privateCollection, 503L, "Zeta", 400L, "Series",
+                BigDecimal.valueOf(3), CollectionEditorialReferenceSource.MANUAL_EDITORIAL, CollectionItemStatus.OWNED
+        );
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+        when(collectionItemRepository.findDetailItemsByCollectionId(100L))
+                .thenReturn(List.of(alphaWanted, alphaOwned, zetaOwned));
+
+        assertThat(collectionService.listItems(
+                AuthenticatedUser.from(owner), 100L, null, null, null, null, "TITLE_DESC"
+        )).extracting(item -> item.id()).containsExactly(303L, 301L, 302L);
+        assertThat(collectionService.listItems(
+                AuthenticatedUser.from(owner), 100L, null, null, null, null, "STATUS_ASC"
+        )).extracting(item -> item.id()).containsExactly(302L, 303L, 301L);
+        assertThat(collectionService.listItems(
+                AuthenticatedUser.from(owner), 100L, null, null, null, null, "NEWEST_ENTRY"
+        )).extracting(item -> item.id()).containsExactly(303L, 302L, 301L);
+    }
+
+    @Test
+    void listItemsRejectsInvalidFiltersBeforeLoadingEntries() {
+        when(collectionRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(privateCollection));
+
+        assertThatThrownBy(() -> collectionService.listItems(
+                AuthenticatedUser.from(owner), 100L, null, List.of("unknown"), null, null, null
+        )).isInstanceOf(InvalidCollectionItemFilterException.class);
+        assertThatThrownBy(() -> collectionService.listItems(
+                AuthenticatedUser.from(owner), 100L, "x".repeat(101), null, null, null, null
+        )).isInstanceOf(InvalidCollectionItemFilterException.class);
+        assertThatThrownBy(() -> collectionService.listItems(
+                AuthenticatedUser.from(owner), 100L, null, null, null, 0L, null
+        )).isInstanceOf(InvalidCollectionItemFilterException.class);
+        assertThatThrownBy(() -> collectionService.listItems(
+                AuthenticatedUser.from(owner), 100L, null, null, null, null, "oldest"
+        )).isInstanceOf(InvalidCollectionItemFilterException.class);
+
+        verify(collectionItemRepository, never()).findDetailItemsByCollectionId(100L);
+    }
+
+    @Test
+    void publicListNeverSearchesOrReturnsPrivateFields() {
+        CollectionItem item = collectionItem(300L, publicCollection);
+        when(collectionRepository.findByIdAndDeletedAtIsNull(101L)).thenReturn(Optional.of(publicCollection));
+        when(collectionItemRepository.findDetailItemsByCollectionId(101L)).thenReturn(List.of(item));
+
+        var response = collectionService.listItems(null, 101L, "First print", null, null, null, null);
+
+        assertThat(response).isEmpty();
     }
 
     @Test
@@ -1059,6 +1179,43 @@ class CollectionServiceTest {
                 50,
                 "First print",
                 LocalDate.of(2023, 6, 1),
+                collection.getUser().getId()
+        ), id);
+    }
+
+    private CollectionItem editorialCollectionItem(
+            Long id,
+            Collection collection,
+            Long catalogItemId,
+            String catalogItemTitle,
+            Long seriesId,
+            String seriesTitle,
+            BigDecimal sortOrder,
+            CollectionEditorialReferenceSource source,
+            CollectionItemStatus status
+    ) {
+        CatalogSeries series = mock(CatalogSeries.class);
+        lenient().when(series.getId()).thenReturn(seriesId);
+        lenient().when(series.getTitle()).thenReturn(seriesTitle);
+        lenient().when(series.getFranchise()).thenReturn(null);
+        CatalogItem catalogItem = mock(CatalogItem.class);
+        lenient().when(catalogItem.getId()).thenReturn(catalogItemId);
+        lenient().when(catalogItem.getTitle()).thenReturn(catalogItemTitle);
+        lenient().when(catalogItem.getSortOrder()).thenReturn(sortOrder);
+        lenient().when(catalogItem.getSeries()).thenReturn(series);
+        lenient().when(catalogItem.isPubliclyVisible()).thenReturn(true);
+        return withId(CollectionItem.create(
+                collection,
+                source == CollectionEditorialReferenceSource.VERIFIED_BRIDGE ? masterProduct : null,
+                catalogItem,
+                null,
+                source,
+                status,
+                PhysicalCondition.LIKE_NEW,
+                null,
+                null,
+                "Private note",
+                LocalDate.of(2024, 1, 1),
                 collection.getUser().getId()
         ), id);
     }
