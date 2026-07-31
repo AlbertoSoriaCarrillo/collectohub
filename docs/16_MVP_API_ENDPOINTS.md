@@ -222,7 +222,8 @@ estado permanecen visibles. Todavia no existe soporte para items manuales.
 | PUT | `/api/collections/{collectionId}` | Protegido | Propietario | Campos de `UpdateCollectionRequest` | `CollectionResponse` | `400`, `401`, `403`, `404` |
 | DELETE | `/api/collections/{collectionId}` | Protegido | Propietario | No | Sin cuerpo | `401`, `403`, `404` |
 | POST | `/api/collections/{collectionId}/items` | Protegido | Propietario | `catalogItemId`, edition opcional, `masterProductId` legacy y campos personales | `CollectionItemResponse` con `referenceKind` | `400`, `401`, `403`, `404` |
-| GET | `/api/collections/{collectionId}/items` | Publico/protegido | Coleccion publica o propietario | No | Lista de items; campos personales solo owner | `404` |
+| GET | `/api/collections/{collectionId}/items` | Publico/protegido | Coleccion publica o propietario | Filtros opcionales `q`, `status` repetible, `referenceKind` repetible, `seriesId`, `sort` | Lista de items; campos personales solo owner | `400`, `404` |
+| GET | `/api/collections/{collectionId}/series-progress` | Protegido | Propietario | No | Lista agregada de progreso por series participantes, sin datos personales | `401`, `403`, `404` |
 | PUT | `/api/collections/{collectionId}/items/{itemId}` | Protegido | Propietario | Referencia editorial canonica o legacy compatible y campos actualizables | `CollectionItemResponse` con `referenceKind` | `400`, `401`, `403`, `404` |
 | DELETE | `/api/collections/{collectionId}/items/{itemId}` | Protegido | Propietario | No | Sin cuerpo | `401`, `403`, `404` |
 

@@ -217,7 +217,7 @@ eliminacion o migracion automatica de MISSING legacy.
 
 ## Estado de implementacion
 
-44G-A, 44G-B y 44G-C cerradas el 2026-07-31. El backend conserva el DTO de listado y
+44G-A a 44G-D cerradas el 2026-07-31. El backend conserva el DTO de listado y
 acepta `q`, `status`, `referenceKind`, `seriesId` y `sort`; valida entradas,
 mantiene la sanitizacion publica y precarga las relaciones utilizadas al filtrar
 y ordenar. `GET /api/collections/{collectionId}/series-progress` reutiliza el
@@ -233,5 +233,8 @@ se pide y muestra solo al propietario, con loading, error y retry independientes
 de metadatos y listado; un lector publico no realiza esa peticion. Borrar recarga
 snapshot, lista y progreso canonicos.
 
-No se anadieron migraciones, dependencias, rutas Angular, cambios en `/wanted`,
-E2E ni Playwright. La siguiente implementacion es EPIC 44G-D.
+La regresion final confirma los casos manuales, legacy, publicos y owner-only ya
+cubiertos, y sincroniza los inventarios de endpoints y relaciones frontend-backend
+con los contratos de 44F/44G. No se anadieron migraciones, dependencias, rutas
+Angular, cambios en `/wanted`, E2E ni Playwright. La siguiente implementacion es
+EPIC 44H.

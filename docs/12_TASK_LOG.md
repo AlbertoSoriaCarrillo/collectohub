@@ -2221,3 +2221,22 @@ Siguiente paso: crear el backend en la carpeta backend.
   0 fallos, 0 errores y 0 omitidos. Sin cambios backend, migraciones,
   dependencias, rutas Angular, `/wanted`, E2E ni Playwright. Siguiente tarea:
   EPIC 44G-D.
+
+## 2026-07-31 - EPIC 44G-D - Regresion y cierre
+
+- Auditados los recorridos y tests existentes de referencias directas, bridge,
+  legacy y manuales; lectura publica sanitizada; propiedad estricta del progreso;
+  transicion WANTED a OWNED; enlace manual y borrado. No fue necesario duplicar
+  cobertura ni modificar codigo funcional.
+- Sincronizados `docs/16_MVP_API_ENDPOINTS.md` y `docs/export/` con los filtros
+  aditivos del listado, el resumen agregado owner-only y su consumo desde el
+  detalle Angular.
+- Ejecutado `mvnw.cmd clean verify`: BUILD SUCCESS, 424 tests, 0 fallos, 0
+  errores y 0 omitidos.
+- Ejecutado `npm.cmd ci`: 474 paquetes instalados. Ejecutado `npm.cmd test --
+  --watch=false`: 59 archivos y 241 tests correctos. Ejecutado `npm.cmd run
+  build`: correcto, con warning conocido de bundle inicial de 631.54 kB frente
+  al budget de 500 kB.
+- Sin cambios de codigo, migraciones, dependencias, `pom.xml`, manifests npm,
+  rutas Angular, `/wanted`, E2E ni Playwright. EPIC 44G cerrada; siguiente tarea:
+  EPIC 44H.

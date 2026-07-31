@@ -71,6 +71,7 @@ future use, but no public route or component invokes or exposes it.
 | `/collections/:collectionId/series/:seriesId/progress` - `CollectionSeriesProgressComponent` | `CollectionService` | `PUT /api/collections/{collectionId}/items/{itemId}` | Transitions one selected WANTED entry to OWNED, then reloads canonical progress. |
 | `/collections/:collectionId` - `CollectionDetailComponent` | `CollectionService` | `GET /api/collections/{collectionId}` | Load readable collection. |
 | `/collections/:collectionId` - `CollectionDetailComponent` | `CollectionService` | `GET /api/collections/{collectionId}/items` | Load items. |
+| `/collections/:collectionId` - `CollectionDetailComponent` | `CollectionService` | `GET /api/collections/{collectionId}/series-progress` | Load owner-only aggregated progress for participating series. |
 | `/collections/:collectionId` - `CollectionDetailComponent` | `AuthService` | `GET /api/users/me` | Conditional owner resolution. |
 | `/collections/:collectionId` - `CollectionDetailComponent` | `CollectionService` | `DELETE /api/collections/{collectionId}/items/{itemId}` | Owner action. |
 

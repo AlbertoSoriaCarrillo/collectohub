@@ -20,8 +20,11 @@ database schema were added.
 EPIC 44C through EPIC 44E update the 2026-07-13 frontend snapshot: collection
 owner resolution, editorial item-to-edition selection, manual identities and
 the owner-only manual catalog-link action, all through existing operations.
-The frontend-backend map now contains 81 relationships, 75 direct API calls
-and 6 routes without a direct call.
+EPIC 44F and EPIC 44G update the collection progress and final-detail contracts:
+the filtered item listing, per-series progress and owner-only aggregated
+progress are now represented in the endpoint and screen maps. The snapshot now
+contains 84 endpoints and 82 frontend-backend relationships: 76 direct API
+calls and 6 routes without a direct call.
 
 ## Files
 

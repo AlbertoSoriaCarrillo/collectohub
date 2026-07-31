@@ -45,6 +45,7 @@ frontend_route,component,angular_service,http_method,backend_endpoint,mvp_status
 "/collections/:collectionId/series/:seriesId/progress","CollectionSeriesProgressComponent","CollectionService","PUT","/api/collections/{collectionId}/items/{itemId}","MVP4_VISIBLE","Transitions one selected WANTED entry to OWNED and reloads progress."
 "/collections/:collectionId","CollectionDetailComponent","CollectionService","GET","/api/collections/{collectionId}","MVP1_VISIBLE","Loads readable collection."
 "/collections/:collectionId","CollectionDetailComponent","CollectionService","GET","/api/collections/{collectionId}/items","MVP1_VISIBLE","Loads readable items."
+"/collections/:collectionId","CollectionDetailComponent","CollectionService","GET","/api/collections/{collectionId}/series-progress","MVP4_VISIBLE","Loads owner-only aggregated progress for participating series."
 "/collections/:collectionId","CollectionDetailComponent","AuthService","GET","/api/users/me","MVP1_VISIBLE","Conditional owner resolution when session user is not cached."
 "/collections/:collectionId","CollectionDetailComponent","CollectionService","DELETE","/api/collections/{collectionId}/items/{itemId}","MVP1_VISIBLE","Owner item-delete action."
 "/wanted","RecommendationsComponent","RecommendationService","GET","/api/recommendations/my","MVP1_VISIBLE","Loads matches for wanted/missing items."
