@@ -238,14 +238,17 @@ test: complete manual collection item frontend coverage
 Ultimo commit verificado:
 
 ```text
-51b8eff54953f78ff51d99e097d801f53dd675bf
-docs: design mvp4 demo validation
+3cb789b7e103907969b312626cd1563d92685778
+chore: establish repository quality gates
 ```
 
-EPIC 44G-D-FIX y EPIC 44H-A estan publicadas. EPIC QUALITY-A esta en la PR #2
-desde la rama `quality/quality-gates`; mientras permanezca abierta, incluso como
-borrador, bloquea cualquier nueva EPIC. QUALITY-A-FIX anade la puerta secuencial
-sin modificar producto ni los cuatro checks existentes.
+EPIC 44G-D-FIX, EPIC 44H-A y EPIC QUALITY-A estan publicadas. La PR #2 de
+`quality/quality-gates` fue fusionada en `main` como `3cb789b7`; los jobs
+`quality-policy`, `backend-verify`, `frontend-verify` y `powershell-parse`, junto
+con el workflow CI anterior, terminaron correctamente sobre el head
+`ea71a5918f917c4b7fd2e5a9eba9759044cd4c19`. La configuracion remota de
+proteccion de `main` sigue siendo una accion administrativa no verificada desde
+este repositorio.
 
 Siguiente tarea funcional despues de QUALITY-A:
 
