@@ -11,6 +11,55 @@ if ($errors.Count -gt 0) {
     throw "Parser validation failed for create-mvp4-integral-demo-data.ps1: $($errors -join '; ')"
 }
 
+$windowsPowerShell = Join-Path $env:SystemRoot "System32\WindowsPowerShell\v1.0\powershell.exe"
+if (-not (Test-Path -LiteralPath $windowsPowerShell)) {
+    throw "Windows PowerShell 5.1 executable was not found."
+}
+$windowsPowerShellMajor = (& $windowsPowerShell -NoProfile -Command '$PSVersionTable.PSVersion.Major' | Out-String).Trim()
+if ($windowsPowerShellMajor -ne "5") {
+    throw "Expected Windows PowerShell 5.x but found major version '$windowsPowerShellMajor'."
+}
+
+$defaultSummary = Join-Path $PSScriptRoot ".last-mvp4-integral-demo-data.json"
+$defaultSummaryExisted = Test-Path -LiteralPath $defaultSummary
+$defaultSummaryBefore = if ($defaultSummaryExisted) {
+    $item = Get-Item -LiteralPath $defaultSummary
+    @{
+        Hash = (Get-FileHash -LiteralPath $defaultSummary -Algorithm SHA256).Hash
+        Length = $item.Length
+        LastWriteTimeUtc = $item.LastWriteTimeUtc
+    }
+}
+
+$defaultPlan = (& $windowsPowerShell -NoProfile -ExecutionPolicy Bypass -File $target `
+    -Scenario "summary-default-regression" -WhatIf 2>&1 | Out-String).Trim()
+$defaultExitCode = $LASTEXITCODE
+if ($defaultExitCode -ne 0) {
+    throw "Windows PowerShell 5.1 default SummaryPath invocation failed with exit code $defaultExitCode`: $defaultPlan"
+}
+if ($defaultPlan -notmatch [regex]::Escape($defaultSummary)) {
+    throw "WhatIf output does not contain the expected default summary path '$defaultSummary'."
+}
+if ($defaultPlan -notmatch "no HTTP, psql, or file operations") {
+    throw "Default SummaryPath WhatIf does not state the no-effects contract."
+}
+if ($defaultSummaryExisted) {
+    $item = Get-Item -LiteralPath $defaultSummary
+    $defaultSummaryAfter = @{
+        Hash = (Get-FileHash -LiteralPath $defaultSummary -Algorithm SHA256).Hash
+        Length = $item.Length
+        LastWriteTimeUtc = $item.LastWriteTimeUtc
+    }
+    if ($defaultSummaryBefore.Hash -ne $defaultSummaryAfter.Hash -or
+        $defaultSummaryBefore.Length -ne $defaultSummaryAfter.Length -or
+        $defaultSummaryBefore.LastWriteTimeUtc -ne $defaultSummaryAfter.LastWriteTimeUtc) {
+        throw "Default SummaryPath WhatIf modified the existing summary file."
+    }
+}
+elseif (Test-Path -LiteralPath $defaultSummary) {
+    throw "Default SummaryPath WhatIf created a summary file."
+}
+
 $offlineSummary = Join-Path ([IO.Path]::GetTempPath()) "collectohub-mvp4-whatif-$([guid]::NewGuid().ToString('N')).json"
 $arguments = @{
     ApiBaseUrl = "http://127.0.0.1:1"
@@ -66,4 +115,4 @@ foreach ($forbidden in @("docker compose down -v", "git clean", "TRUNCATE ", "DR
     }
 }
 
-Write-Host "PASS: parser, deterministic WhatIf, no-effects summary check, safe unavailable-backend failure, idempotence primitives and destructive-command policy."
+Write-Host "PASS: parser, Windows PowerShell 5.1 default SummaryPath, deterministic WhatIf, no-effects summary checks, explicit SummaryPath, safe unavailable-backend failure, idempotence primitives and destructive-command policy."

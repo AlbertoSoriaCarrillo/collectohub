@@ -2379,3 +2379,28 @@ Siguiente paso: crear el backend en la carpeta backend.
   proporcionadas. No se presentan como PASS.
 - Sin backend, frontend, migraciones, dependencias, manifests, lockfiles,
   exports, E2E ni Playwright. Siguiente tarea tras revision/integracion: 44H-C.
+
+## 2026-08-01 - EPIC 44H-B-FIX - SummaryPath compatible con Windows PowerShell 5.1
+
+- Base verificada `f31ab7d4a43c1786fe7068b6fe01c931cf389b86`, rama
+  `codex/44h-b-fix`, arbol inicial limpio, sincronizado y sin PR de entrega
+  abierta hacia `main`.
+- Reproducido en Windows PowerShell `5.1.19041.7548`: la invocacion mediante
+  `-File` fallaba antes de HTTP porque `Join-Path $PSScriptRoot` se evaluaba en
+  el bloque `param` con una ruta vacia.
+- `SummaryPath` pasa a resolverse despues de `Set-StrictMode` solo cuando el
+  operador no proporciona una ruta. El comportamiento de `-SummaryPath`
+  explicito y toda la logica funcional del orquestador permanecen intactos.
+- Ampliada la prueba offline para lanzar un proceso Windows PowerShell 5.1 sin
+  `-SummaryPath`, comprobar la ruta predeterminada y demostrar que `-WhatIf` no
+  crea ni modifica el resumen. Las pruebas de ruta explicita se conservan.
+- Parser de todos los `.ps1`, comando directo solicitado y prueba de regresion:
+  PASS. Tests eliminados: 0. Tests ignorados nuevos: 0. Secretos detectados: 0.
+- Verificador local: PASS mediante PowerShell con bypass puntual de la politica
+  de ejecucion del host. Backend: 424 tests, 0 fallos, 0 errores y 0 omitidos,
+  con Docker disponible. Frontend: 59 archivos y 244 tests; build PASS.
+- Warnings conservados: 16 vulnerabilidades npm sin `npm audit fix` y bundle
+  inicial de 631.54 kB frente al budget de 500 kB.
+- Sin cambios en backend, frontend, migraciones, dependencias, manifests,
+  lockfiles, Docker Compose, workflows, datos Docker ni cuentas locales. La API
+  real, DB y UI de 44H-C: `NOT_RUN`; siguiente tarea tras integrar la FIX: 44H-C.

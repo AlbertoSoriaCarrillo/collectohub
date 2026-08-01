@@ -7,11 +7,16 @@ param(
     [string]$EditorialEmail = "admin@collectohub.local",
     [Security.SecureString]$EditorialPassword,
     [Security.SecureString]$DemoUserPassword,
-    [string]$SummaryPath = (Join-Path $PSScriptRoot ".last-mvp4-integral-demo-data.json")
+    [string]$SummaryPath
 )
 
 Set-StrictMode -Version 2.0
 $ErrorActionPreference = "Stop"
+
+if ([string]::IsNullOrWhiteSpace($SummaryPath)) {
+    $SummaryPath = Join-Path -Path $PSScriptRoot `
+        -ChildPath ".last-mvp4-integral-demo-data.json"
+}
 
 function Get-PlainTextSecret {
     param(
