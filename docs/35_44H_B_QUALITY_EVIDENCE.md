@@ -74,11 +74,18 @@ Dependencias: sin cambios
 Verificador local reejecutado el 2026-08-01: PASS con
 `scripts/quality/verify.ps1 -BaseRef origin/main`; diff, conflictos, tests
 eliminados, marcadores ignorados y parser correctos
-Resultado: LOCAL_PASS_REMOTE_PENDING
-Commit: pendiente de publicacion tras revision final del diff
-Push: NO
-PR: pendiente
-Checks remotos: pendientes
+Resultado: REMOTE_PASS_PR_OPEN
+Commit: publicado en la rama codex/44h-b; el SHA final corresponde al head de la PR #4
+Push: PASS — rama publicada en origin/codex/44h-b
+PR: #4 — feat: add idempotent MVP4 demo data
+Checks remotos:
+- quality-policy: PASS
+- backend-verify: PASS
+- frontend-verify: PASS
+- powershell-parse: PASS
+- CI Validate repository structure: PASS
+- CI Backend build and tests: PASS
+- CI Frontend build and tests: PASS
 Riesgos: la idempotencia real y la matriz API/DB/manual deben demostrarse en
 44H-C; warning de bundle y 16 vulnerabilidades npm conservados; no hay cambios
 de dependencias ni se ejecuto ningun arreglo automatico
