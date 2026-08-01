@@ -122,13 +122,23 @@ permanente y puertas de calidad** desde la base
 QUALITY-A incorpora `AGENTS.md`, matriz de pruebas, verificador local, cuatro
 checks estables de GitHub Actions, plantilla de PR, evidencia por EPIC y guia
 manual de proteccion de `main`. No cambia producto, dependencias, migraciones ni
-contratos. La proteccion remota y el cambio de la automatizacion que aun ordena
-push directo quedan como acciones supervisadas fuera del repositorio.
+contratos. La proteccion remota queda como accion administrativa supervisada
+fuera del repositorio.
+
+La configuracion documental `dev -> pre -> main` queda definida en
+`docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md`. No es una EPIC funcional y no activa el
+modelo por si sola. Hasta que existan simultaneamente `origin/dev` y
+`origin/pre`, `main` sigue siendo la rama de integracion. Tras integrar esta
+configuracion, ambas ramas permanentes se crean manualmente desde el mismo
+commit de `main`; solo entonces `dev` recibe PR de `codex/*` y `quality/*`,
+`dev -> pre` requiere validacion funcional humana y `pre -> main` requiere
+autorizacion humana. La creacion de ramas y los rulesets no forman parte de esta
+entrega documental.
 
 QUALITY-B queda definida, no implementada, para cobertura con baseline real,
 analisis estatico, lint, secretos y vulnerabilidades. Tras 44H-C no se inicia
-automaticamente otra EPIC: primero debe revisarse e integrarse su PR y luego
-reconciliarse el backlog real.
+automaticamente otra EPIC: 44H-C esta integrada y el backlog funcional debe
+reconciliarse de forma explicita antes de seleccionar trabajo nuevo.
 
 ## MVP 4 - Colecciones finales de usuario
 
@@ -185,6 +195,11 @@ reconciliarse el backlog real.
 
 QUALITY-A debe estar validada localmente y sus cuatro checks remotos deben estar
 verdes antes de fusionarla. No empezar QUALITY-B ni 44H-B en la misma ejecucion.
+
+El modelo de ramas documentado no autoriza iniciar QUALITY-B ni otra EPIC. Una
+ejecucion procesa como maximo una EPIC o completa una PR pendiente, y la rama de
+integracion solo cambia de `main` a `dev` tras verificar que `origin/dev` y
+`origin/pre` existen.
 
 EPIC 44F y EPIC 44G-A a 44G-D-FIX estan completadas. EPIC 44H-A queda
 implementada documentalmente, 44H-B aporta los scripts/datos idempotentes y
