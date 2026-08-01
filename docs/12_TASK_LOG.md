@@ -2522,3 +2522,42 @@ Siguiente paso: crear el backend en la carpeta backend.
   migraciones, Docker, datos locales, cuentas, credenciales, tests eliminados,
   tests ignorados nuevos, E2E ni Playwright. No se configuran protecciones
   remotas, no se fusiona ninguna PR y no se inicia otra tarea.
+
+## 2026-08-02 - Activacion documental del modo supervisado sin enforcement
+
+- Auditoria inicial en `main`: arbol limpio, cero PR abiertas desde `codex/*`
+  o `quality/*` hacia `main` o `dev`, y
+  `HEAD == origin/main == origin/dev == origin/pre == 27e3b77cb707296912d9c1507ef2061b8e02ec02`.
+- Creada exclusivamente la rama `codex/supervised-free-activation` desde esa
+  base. No se selecciona ni inicia una EPIC funcional.
+- Definido `SUPERVISED_ACTIVE_NO_ENFORCEMENT`: `dev` sera la rama de integracion
+  efectiva sin branch protection ni rulesets enforced; los controles dependen
+  del procedimiento de Codex y revision humana, toda fusion es humana y el push
+  directo sigue prohibido por politica.
+- Hasta que el commit integrado de esta tarea este simultaneamente en
+  `origin/main`, `origin/dev` y `origin/pre`, el estado es
+  `SUPERVISED_ACTIVATION_PENDING_ALIGNMENT`, `main` sigue siendo la rama de
+  integracion y la automatizacion permanece `PAUSED`.
+- La activacion completa tambien exige adaptar la automatizacion sin permiso de
+  fusion y realizar una primera ejecucion bajo supervision humana. Esta tarea
+  no fusiona, no alinea ramas y no activa ni modifica la automatizacion.
+- Entregas futuras `codex/*` o `quality/*` hacia `dev`: siete checks,
+  autorrevision, `expected_head_sha`, resultado `HUMAN_MERGE_REQUIRED` y fusion
+  humana mediante **Squash and merge**. Las promociones permanentes mantienen
+  **Create a merge commit** y las comprobaciones de ascendencia.
+- La API de GitHub confirmo el repositorio privado, Squash merging y merge
+  commits activados, Rebase merging y auto-merge desactivados. Los endpoints de
+  rulesets y branch protection respondieron que se requiere GitHub Pro o que el
+  repositorio sea publico; no se afirma proteccion tecnica.
+- Alcance limitado a `AGENTS.md`, `docs/33_GITHUB_MAIN_PROTECTION.md`,
+  `docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md`, `docs/AI_HANDOFF.md` y
+  `docs/12_TASK_LOG.md`. Sin workflows, codigo funcional, dependencias,
+  manifests, lockfiles, migraciones, Docker, datos, cuentas o credenciales.
+- Verificador completo contra `origin/main`: `PASS`. El primer intento quedo
+  bloqueado por la red aislada al resolver Maven y se repitio sin reducir la
+  matriz con acceso de red autorizado. Backend: 424 tests, 0 fallos, 0 errores
+  y 0 omitidos. Frontend: 59 archivos, 244 tests y build `PASS`.
+- Politica: diff, conflictos y parser PowerShell en `PASS`; tests eliminados: 0;
+  tests ignorados nuevos: 0; secretos introducidos: 0. Warnings conservados: 16
+  vulnerabilidades npm sin `npm audit fix` y bundle inicial 631.54 kB frente al
+  budget de 500 kB.
