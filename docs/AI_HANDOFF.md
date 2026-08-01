@@ -129,23 +129,27 @@ Nunca borrar volúmenes salvo petición explícita.
 ### 5.1 Politica permanente de calidad y entrega
 
 Desde EPIC QUALITY-A, cualquier agente debe leer `AGENTS.md` y aplicar la matriz
-de `docs/32_QUALITY_GATES.md`. Antes de comenzar una EPIC, la automatizacion
-consulta GitHub y se detiene si existe una PR abierta hacia `main` desde
-`codex/*` o `quality/*`, incluso si es borrador o sus checks estan verdes,
-pendientes, rojos o ausentes. Mientras exista, no crea rama, no modifica
-archivos, no ejecuta otra EPIC, no hace commit y no hace push.
+de `docs/32_QUALITY_GATES.md`. El modelo normativo de ramas esta en
+`docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md` y su proteccion manual en
+`docs/33_GITHUB_MAIN_PROTECTION.md`.
 
-Tras fusionar o cerrar la entrega anterior, la siguiente ejecucion vuelve a
-`main`, ejecuta `git fetch origin`, exige arbol limpio, actualiza solo mediante
-fast-forward y comprueba `HEAD == origin/main` antes de determinar la siguiente
-EPIC. Despues crea `codex/<epic>`, ejecuta una sola EPIC, usa
-`scripts/quality/verify.ps1`, publica solo esa rama y abre una pull request.
-Nunca se publica directamente a `origin/main` ni se fusiona con un check
-requerido rojo, pendiente o ausente.
+El modelo `dev -> pre -> main` permanece en `DOCUMENTED_NOT_ACTIVE` hasta que
+existan simultaneamente `origin/dev` y `origin/pre`. Mientras falte cualquiera,
+`main` sigue siendo la rama de integracion: las ramas temporales parten de
+`main`, sus PR apuntan a `main` y no se declara que `dev` o `pre` existan.
 
-La proteccion remota se configura manualmente segun
-`docs/33_GITHUB_MAIN_PROTECTION.md`; el repositorio no debe intentar cambiarla
-automaticamente.
+Tras la activacion, `codex/<epic>` y `quality/<epic>` parten de `dev` y apuntan a
+`dev`. Los siete checks, la autorrevision y `expected_head_sha` permiten squash
+and merge automatico solo en `dev`. Las promociones `dev -> pre` exigen
+validacion funcional humana y fusion manual; las promociones `pre -> main`
+exigen autorizacion humana y fusion manual. Nunca hay push directo a una rama
+permanente.
+
+Antes de otra EPIC se consultan PR abiertas de entrega hacia la rama de
+integracion efectiva. Una coincidencia impide iniciar trabajo nuevo: la
+ejecucion solo puede completar o informar esa PR. Una ejecucion procesa como
+maximo una EPIC o una PR pendiente. La configuracion remota y la creacion
+inicial de `dev` y `pre` se realizan manualmente, nunca desde el repositorio.
 
 ## 6. Resumen funcional del producto
 
@@ -225,6 +229,22 @@ Resumen relevante:
 - EPIC 44C: flujo frontend de creación y edición de colecciones.
 
 ## 9. Estado actual verificado
+
+Fecha de verificacion: 2026-08-01
+
+`main` esta integrada en
+`f46d2a6dacc39cf47a4994a55818d748235bf5db` mediante la PR #7 de EPIC 44H-C.
+Sus siete checks remotos concluyeron en `SUCCESS`. El estado funcional es
+`MVP4_PARTIALLY_CLOSED`, con evidencia en
+`docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md` y
+`docs/38_44H_C_QUALITY_EVIDENCE.md`.
+
+La tarea documental del modelo de ramas no selecciona una EPIC funcional. El
+modelo queda en `DOCUMENTED_NOT_ACTIVE`: `main` sigue siendo la rama de
+integracion y no se considera que `dev` o `pre` existan hasta completar la
+transicion manual de `docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md`.
+
+### Registro historico conservado
 
 Fecha: 2026-07-15
 

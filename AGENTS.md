@@ -12,7 +12,8 @@ This policy applies to every automated agent working in this repository. A task-
 - Do not add or update dependencies unless the EPIC explicitly authorizes it.
 - Never reduce validation or security merely to make a check pass.
 - Keep one EPIC in one logical commit. Do not implement multiple EPICs together.
-- End after reporting the current EPIC. Do not begin the next EPIC in the same execution.
+- One execution may implement at most one EPIC or complete one pending delivery pull request.
+- End after reporting the current EPIC or pending pull request. Do not begin the next EPIC in the same execution.
 
 ## Behavior-oriented tests
 
@@ -38,7 +39,7 @@ A permitted omission must be recorded as `SKIPPED_WITH_REASON`, never as `PASS`.
 
 Do not commit or push when a validation applicable at that stage detects any of the following:
 
-- the initial worktree is dirty or the starting branch diverges from `origin/main`;
+- the initial worktree is dirty or the starting branch diverges from the effective integration branch;
 - another task is concurrently changing the repository;
 - a merge conflict or contradictory documentation exists;
 - a required test or build fails or cannot run;
@@ -65,11 +66,23 @@ Push: NO
 
 An initial branch push that is necessary to start remote checks is allowed only after all required local checks pass. Pending or absent remote checks still block merge and final closure.
 
+## Branch model and activation
+
+The normative branch model is defined in `docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md`.
+
+- `main` is the stable production branch. It accepts only manual, explicitly authorized release promotions from `pre` after the model is active.
+- `pre` is the preproduction branch. It accepts only manual promotions from `dev` after human functional validation. Do not develop features directly on `pre`.
+- `dev` is the continuous integration branch. After activation, temporary `codex/<epic>` and `quality/<epic>` branches start from `dev` and target `dev`.
+- Direct pushes are forbidden on `main`, `pre`, and `dev`.
+- Automatic merge is forbidden on `main` and `pre`. A `codex/*` or `quality/*` pull request into `dev` may use squash and merge automatically only after all seven required checks pass, self-review is recorded, and the current head equals the recorded `expected_head_sha`.
+
+The model is not active until both `origin/dev` and `origin/pre` exist. Until then, `main` remains the effective integration branch and the existing `main`-based delivery gate applies. The initial `dev` and `pre` branches must be created manually from the same `main` commit only after this documentation is merged. Do not infer activation from documentation alone.
+
 ## Sequential delivery gate
 
-Before beginning any EPIC, query GitHub for every open pull request targeting `main` whose head branch starts with `codex/` or `quality/`. Any matching pull request blocks a new EPIC, including a draft or one with green, pending, red, or absent checks.
+Before beginning any EPIC, determine the effective integration branch from the activation rule above and query GitHub for every open pull request targeting it whose head branch starts with `codex/` or `quality/`. Any matching pull request blocks a new EPIC, including a draft or one with green, pending, red, or absent checks.
 
-When a matching pull request exists, do not create a branch, modify files, execute another EPIC, commit, or push. Stop with:
+When a matching pull request exists, do not create a branch or execute another EPIC. The execution may only validate, review, report, or complete that pending pull request under the merge rules above. If it cannot be completed safely, stop with:
 
 ```text
 EPIC EN ESPERA DE REVISION
@@ -82,18 +95,20 @@ Commit: NO
 Push: NO
 ```
 
-Scheduled automation is strictly sequential: one EPIC cannot begin until the prior delivery pull request has been reviewed and merged or closed. After that pull request is merged or closed, the next execution must return to `main`, run `git fetch origin`, require a clean worktree, update `main` only by fast-forward, verify `HEAD == origin/main`, and only then determine the next EPIC.
+Scheduled automation is strictly sequential: one EPIC cannot begin until the prior delivery pull request has been reviewed and merged or closed. After that pull request is merged or closed, the next execution must return to the effective integration branch, run `git fetch origin`, require a clean worktree, update only by fast-forward, verify local `HEAD` equals the corresponding `origin/*` ref, and only then determine the next EPIC.
 
 ## Git and delivery
 
-1. Start from a clean, fetched, up-to-date `main`.
-2. Create one branch per EPIC named `codex/<epic>` unless the EPIC specifies an approved exception.
-3. Keep one logical commit per EPIC and never push directly to `main`.
-4. Open a pull request and wait for all required checks.
-5. Do not merge while a check is red, pending, or absent.
-6. Do not rewrite `main`, force-push, or use destructive Git commands.
-7. After merge, verify the expected SHA and a clean worktree before another task begins.
+1. Start from a clean, fetched, up-to-date effective integration branch: `main` during transition and `dev` after activation.
+2. Create one branch per EPIC named `codex/<epic>` or `quality/<epic>` as appropriate.
+3. Keep one logical commit per EPIC and never push directly to `main`, `pre`, or `dev`.
+4. Open a pull request to the effective integration branch and wait for all seven required checks.
+5. For a pull request into `dev`, recheck self-review and `expected_head_sha` immediately before automatic squash and merge. Do not merge while a check is red, pending, or absent.
+6. Promote `dev` to `pre` only through a manual pull request with human functional validation and no new functional changes in the promotion.
+7. Promote `pre` to `main` only through a manually authorized release pull request; prepare a tag when appropriate.
+8. Do not rewrite protected branches, force-push, or use destructive Git commands.
+9. After merge, verify the expected SHA and a clean worktree before another task begins. Delete a temporary branch only after its merge is confirmed.
 
 ## Required execution loop
 
-For every future Codex EPIC: first query GitHub and stop if an open `codex/` or `quality/` delivery pull request targets `main`; otherwise return to `main`, fetch, require a clean tree, fast-forward to `origin/main`, and verify the SHAs match; create `codex/<epic>`; implement one EPIC; run the applicable test matrix and `scripts/quality/verify.ps1`; do not commit on failure; commit and push only the EPIC branch after local success; open a pull request; wait for checks; do not merge red, pending, or missing checks; report the SHA, PR, checks, and evidence; then stop.
+For every future Codex EPIC: determine whether the model is active; query GitHub and do not start a new EPIC if an open `codex/` or `quality/` delivery pull request targets the effective integration branch; otherwise return to that branch, fetch, require a clean tree, fast-forward to its `origin/*` ref, and verify the SHAs match; create `codex/<epic>` or `quality/<epic>`; implement one EPIC; run the applicable test matrix and `scripts/quality/verify.ps1`; do not commit on failure; commit and push only the temporary branch after local success; open a pull request; wait for all seven checks; apply the merge rules for the target branch; report the SHA, PR, checks, and evidence; then stop.

@@ -2459,3 +2459,32 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Creada la revision `docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md` y evidencia
   `docs/38_44H_C_QUALITY_EVIDENCE.md`. Estado: `MVP4_PARTIALLY_CLOSED`; no se
   inicia otra EPIC antes de revisar e integrar la PR de 44H-C.
+
+## 2026-08-01 - Configuracion documental del modelo dev -> pre -> main
+
+- Auditoria inicial en `main`: arbol limpio, cero PR abiertas de entrega hacia
+  `main` y `HEAD == origin/main == f46d2a6dacc39cf47a4994a55818d748235bf5db`.
+  EPIC 44H-C esta integrada y MVP4
+  permanece en `MVP4_PARTIALLY_CLOSED`.
+- Creada exclusivamente la rama `codex/branch-model-dev-pre`; no se crean
+  `dev` ni `pre` y el modelo queda en `DOCUMENTED_NOT_ACTIVE` hasta que ambos
+  refs remotos existan.
+- Definidos roles, promociones manuales, entrega secuencial, siete checks,
+  autorrevision y `expected_head_sha` en
+  `docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md`, con reglas operativas enlazadas desde
+  handoff, backlog, estado MVP, politica de agentes y guia de proteccion.
+- `.github/workflows/quality-gates.yml` ya validaba PR hacia cualquier rama base
+  y no se modifica. En `.github/workflows/ci.yml` cambia solo el filtro
+  `pull_request` heredado de `main`/`develop` a `main`/`dev`/`pre`; versiones,
+  comandos, permisos, jobs, matriz y filtro `push` permanecen intactos.
+- Verificador completo contra `origin/main`: `PASS`. El primer intento aislado
+  no pudo acceder a Maven Central y se repitio con red autorizada. Backend: 424
+  tests, 0 fallos, 0 errores y 0 omitidos con Docker disponible. Frontend: 59
+  archivos, 244 tests y build `PASS`.
+- Politica: diff, conflictos, tests eliminados, marcadores ignorados y parser
+  PowerShell en `PASS`; tests eliminados: 0; tests ignorados nuevos: 0.
+  Warnings conocidos: 16 vulnerabilidades npm sin `npm audit fix` y bundle
+  inicial 631.54 kB frente al budget de 500 kB.
+- Sin codigo funcional, dependencias, manifests, lockfiles, migraciones, Docker,
+  datos locales de producto, cuentas, credenciales, E2E ni Playwright. No se
+  inicia una EPIC funcional ni se selecciona la siguiente tarea.

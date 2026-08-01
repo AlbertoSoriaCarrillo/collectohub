@@ -334,6 +334,13 @@ Playwright y no aplica arreglos automaticos de vulnerabilidades. La ejecucion
 remota `30660752632` y el CI anterior `30660753236` terminaron correctamente
 sobre el head `ea71a5918f917c4b7fd2e5a9eba9759044cd4c19` de la PR #2.
 
+La estrategia `dev -> pre -> main` esta documentada en
+`docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md` con estado `DOCUMENTED_NOT_ACTIVE`.
+`.github/workflows/ci.yml` permite sus tres jobs en PR hacia `dev`, `pre` y
+`main`; `.github/workflows/quality-gates.yml` ya se ejecutaba para cualquier rama
+base. En conjunto exponen los siete checks obligatorios. Esto no crea
+`origin/dev` ni `origin/pre`, no cambia reglas remotas y no activa el modelo.
+
 ## Validacion realizada
 
 ### EPIC QUALITY-A - 2026-07-31
@@ -394,8 +401,9 @@ Los estados distinguen recorrido MVP 1, base legacy/futura, infraestructura,
 MVP 2 visible/foundation y redirecciones sin alterar codigo funcional.
 
 MVP 2 queda cerrado con limitaciones. El backend y frontend de progreso y
-faltantes calculados estan implementados y EPIC 44F esta cerrada. MVP4 continua
-abierto. MVP3 Admin Editorial ha completado el bloque 40A-40G, cierres 41B y
+faltantes calculados estan implementados y EPIC 44F esta cerrada. MVP4 queda en
+`MVP4_PARTIALLY_CLOSED` tras integrar 44H-C. MVP3 Admin Editorial ha completado
+el bloque 40A-40G, cierres 41B y
 calidad 42C, y permanece abierto para mejoras posteriores. La prioridad activa
 es MVP4: 44G-A a 44G-D-FIX cierran el detalle final, su regresion, concurrencia y exports. 44H-A
 define el dataset, 44H-B implementa su orquestador, 44H-C-FIX corrige las respuestas vacias
