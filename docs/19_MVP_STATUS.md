@@ -1,6 +1,6 @@
 # CollectoHub MVP status
 
-Fecha de revision: 2026-07-31.
+Fecha de revision: 2026-08-02.
 
 ## Estado general
 
@@ -43,21 +43,20 @@ backend, privacidad y flujo frontend del contenedor coleccion. EPIC 44D deja
 el alta editorial item -> edicion como via principal. EPIC 44E completa alta,
 edicion y enlace posterior de items manuales al catalogo, con edicion opcional,
 propiedad estricta y preservacion de datos personales. MVP3 no queda cerrado
-como producto final; la prioridad activa continua en MVP4.
-MVP4 sigue abierto: EPIC 44E, 44F y 44G-A a 44G-D-FIX estan completadas. El detalle
-frontend presenta el resumen persistido, filtros compartibles, orden y progreso
-agregado owner-only sin exponer datos personales a lectores publicos. La
-regresion integral y la concurrencia latest-request-wins de 44G quedan cerradas.
-EPIC 44H-A audita los datos existentes y define el cierre parcial sin marcar
-MVP4 como cerrado. EPIC 44H-B implementa el orquestador idempotente del dataset
-integral, WhatIf sin efectos, reanudacion por fases y resumen local sin secretos.
-EPIC 44H-B-FIX corrige el `SummaryPath` predeterminado para Windows PowerShell
-5.1 sin ejecutar el escenario integral. La primera ejecucion de 44H-C detecta
-que una pagina vacia se convierte en `null`; EPIC 44H-C-FIX corrige ese contrato.
-EPIC 44H-C completa despues la doble ejecucion del escenario `44hc3`, API/DB,
-privacidad, propiedad, filtros, ordenaciones, progreso y recorrido UI humano.
-MVP4 queda `MVP4_PARTIALLY_CLOSED` en el grado definido por 44H-C, no cerrado
-como producto.
+como producto final; sus mejoras futuras no alteran el cierre de MVP4 ni la
+seleccion documental de MVP5.
+MVP4 queda `MVP4_CLOSED_WITH_LIMITATIONS`. EPIC 44E, 44F, 44G-A a 44G-D-FIX y
+44H-A a 44H-C demuestran alta editorial con edicion opcional, items manuales y
+enlace posterior, WANTED/OWNED, missing calculado, privacidad, propiedad,
+filtros, ordenaciones, progreso, compatibilidad legacy y el escenario integral
+con recorrido UI humano. Este cierre no presenta MVP4 como producto final
+completo y conserva las limitaciones documentadas.
+
+El modo operativo actual es `SUPERVISED_ACTIVE_NO_ENFORCEMENT`. `dev` es la
+rama de integracion efectiva, toda fusion es humana, la automatizacion nunca
+fusiona y una entrega termina en `HUMAN_MERGE_REQUIRED`. GitHub no aplica
+protecciones enforced. La siguiente tarea unica seleccionada es EPIC 45A,
+documental; no se inicia en este cierre.
 
 | Dominio | Estado actual |
 | --- | --- |
@@ -65,7 +64,7 @@ como producto.
 | Catalog Knowledge Base | Parcial; fundamentos MVP 2, fachada de lectura, frontend editorial publico, creators y relaciones de items implementados |
 | User Collections | Alta, edicion y enlace catalogado de items manuales cerrados; datos personales preservados |
 | Social | Futuro |
-| Shops & Inventory | Inventario legacy/editorial implementado; fuera del recorrido principal |
+| Shops & Inventory | Base legacy/editorial implementada; auditoria y diseno ejecutable seleccionados como EPIC 45A |
 | Matching | Recomendaciones por edicion, item y fallback legacy |
 | Commerce | Reservas sin pago; resto futuro |
 | Content Creators | Base editorial de creators implementada; herramientas sociales/creador futuras |
@@ -194,9 +193,15 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 - Algunos filtros frontend MVP son numericos/manuales, como `shopId`, `userId` o `shopProductId`.
 - No hay subida real de imagenes; los productos y colecciones se gestionan sin archivos.
 - El Docker frontend usa `apiBaseUrl = "http://localhost:8080"` y depende del backend publicado en el host.
-- `npm ci` informa 7 vulnerabilidades en dependencias de desarrollo/transitivas; no se han actualizado versiones fuera del alcance de esta fase.
+- `npm ci` mantiene el baseline conocido de 16 vulnerabilidades en dependencias
+  de desarrollo/transitivas; no se han actualizado versiones fuera del alcance
+  de esta fase ni se ha ejecutado `npm audit fix`.
 - Los tests Testcontainers se saltan si Docker no esta disponible.
 - Los E2E Playwright no se ejecutan en CI y requieren entorno local ya levantado.
+- MVP4 conserva como limitaciones imagenes y almacenamiento real, `quantity`
+  frente a ejemplares separados, paginacion avanzada y decisiones de taxonomia
+  y MISSING legacy/persistido.
+- Produccion, social, marketplace y pagos permanecen fuera de MVP4.
 
 ## Decisiones vigentes relevantes
 
@@ -334,12 +339,13 @@ Playwright y no aplica arreglos automaticos de vulnerabilidades. La ejecucion
 remota `30660752632` y el CI anterior `30660753236` terminaron correctamente
 sobre el head `ea71a5918f917c4b7fd2e5a9eba9759044cd4c19` de la PR #2.
 
-La estrategia `dev -> pre -> main` esta documentada en
-`docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md` con estado `DOCUMENTED_NOT_ACTIVE`.
-`.github/workflows/ci.yml` permite sus tres jobs en PR hacia `dev`, `pre` y
-`main`; `.github/workflows/quality-gates.yml` ya se ejecutaba para cualquier rama
-base. En conjunto exponen los siete checks obligatorios. Esto no crea
-`origin/dev` ni `origin/pre`, no cambia reglas remotas y no activa el modelo.
+La estrategia `dev -> pre -> main` esta activa como
+`SUPERVISED_ACTIVE_NO_ENFORCEMENT` y documentada en
+`docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md`. `.github/workflows/ci.yml` permite sus
+tres jobs en PR hacia `dev`, `pre` y `main`; junto con
+`.github/workflows/quality-gates.yml` expone los siete checks obligatorios. Su
+cumplimiento es procedimental porque GitHub no aplica branch protection ni
+rulesets enforced en el plan actual.
 
 ## Validacion realizada
 
@@ -393,41 +399,25 @@ base. En conjunto exponen los siete checks obligatorios. Esto no crea
 - Playwright headless: `npm run e2e` correcto con smoke, auth/colecciones, i18n y flujo MVP principal.
 - Playwright headed: `npm run e2e:headed` correcto.
 
-## Siguientes pasos recomendados
+## Siguiente EPIC seleccionada
 
-La referencia tecnica descargable queda versionada en `docs/export/`: 22 tablas
-de aplicacion, 82 endpoints, 32 rutas Angular y 61 relaciones pantalla-backend.
-Los estados distinguen recorrido MVP 1, base legacy/futura, infraestructura,
-MVP 2 visible/foundation y redirecciones sin alterar codigo funcional.
+**EPIC 45A - Auditoria y diseno ejecutable de MVP5: tiendas profesionales,
+inventario editorial y reservas.**
 
-MVP 2 queda cerrado con limitaciones. El backend y frontend de progreso y
-faltantes calculados estan implementados y EPIC 44F esta cerrada. MVP4 queda en
-`MVP4_PARTIALLY_CLOSED` tras integrar 44H-C. MVP3 Admin Editorial ha completado
-el bloque 40A-40G, cierres 41B y
-calidad 42C, y permanece abierto para mejoras posteriores. La prioridad activa
-es MVP4: 44G-A a 44G-D-FIX cierran el detalle final, su regresion, concurrencia y exports. 44H-A
-define el dataset, 44H-B implementa su orquestador, 44H-C-FIX corrige las respuestas vacias
-y 44H-C demuestra el recorrido integral. Social, tiendas,
-marketplace, pagos y movil continúan en fases posteriores.
+Es una EPIC exclusivamente documental. Debe auditar backend, frontend, esquema,
+seguridad, pruebas y documentacion de tiendas, miembros, inventario y reservas;
+distinguir vigente, legacy, incompleto y futuro; definir los recorridos de
+`SHOP_OWNER` y usuario normal; adoptar `catalogItemId` y
+`catalogItemEditionId`; y fijar propiedad, permisos, stock, reservas sin pagos,
+compatibilidad legacy, concurrencia, idempotencia, contratos y orden de EPICs.
 
-EPIC 41B queda completada: el cierre parcial esta en
-`docs/23_MVP3_PARTIAL_CLOSURE.md`. MVP3 sigue abierto; la siguiente tarea
-recomendada es EPIC 41C - E2E basico Admin Editorial y validacion con datos demo.
+Sus criterios de aceptacion son un inventario real de capacidades, mapa
+backend/frontend/schema/tests, limites funcionales, decisiones de identidad
+editorial, permisos y privacidad, reglas de stock/reservas, riesgos de
+concurrencia, estrategia de compatibilidad, plan numerado y matriz de pruebas.
 
-EPIC 42A documenta reglas de calidad editorial y prepara warnings visuales no
-bloqueantes. Los E2E se posponen para una fase mas madura; siguiente tarea:
-EPIC 42B - Hardening admin editorial y validaciones backend selectivas.
-
-EPIC 42B endurece de forma selectiva creators y confirma las reglas existentes
-de credits, relationships y master links. La calidad avanzada sigue pendiente;
-siguiente tarea recomendada: EPIC 42C - Calidad editorial avanzada y reporte de duplicados.
-
-1. Preparar capturas reales para `docs/assets/screenshots/` y enlazarlas desde el README.
-2. Revisar el rediseño visual en desktop y movil real, anadir capturas a `docs/assets/screenshots/`.
-3. Revisar vulnerabilidades npm transitivas y compatibilidad de versiones Angular/Node antes de compartir el entorno.
-4. Valorar un job E2E opcional/separado en CI cuando Docker Compose en Actions sea estable.
-5. Endurecer seguridad antes de produccion: gestion de secretos, estrategia de refresh/logout, cookies o almacenamiento revisado y cabeceras.
-6. Definir la siguiente fase funcional sin ampliar accidentalmente pagos, chat, marketplace u OAuth.
+Quedan excluidos pagos, pedidos, envios, marketplace completo, social, movil y
+produccion. No se debe iniciar otra EPIC ni QUALITY-B en paralelo.
 
 Vision, alcance y roadmap: `docs/00_PRODUCT_VISION.md`,
 `docs/01_ROADMAP.md`, `docs/02_MVP1_SCOPE.md` y

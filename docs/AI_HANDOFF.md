@@ -2,8 +2,8 @@
 
 Última actualización verificada: 2026-08-02
 Repositorio: `AlbertoSoriaCarrillo/collectohub`
-Rama de integracion esperada: `main` durante la alineacion supervisada; `dev`
-solo despues de `SUPERVISED_ACTIVE_NO_ENFORCEMENT`.
+Rama de integracion efectiva: `dev` en
+`SUPERVISED_ACTIVE_NO_ENFORCEMENT`.
 
 ## 1. Propósito de este documento
 
@@ -134,18 +134,21 @@ de `docs/32_QUALITY_GATES.md`. El modelo normativo de ramas esta en
 `docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md` y el procedimiento supervisado en
 `docs/33_GITHUB_MAIN_PROTECTION.md`.
 
-El objetivo es `SUPERVISED_ACTIVE_NO_ENFORCEMENT`: `dev` es la rama de
+El estado actual es `SUPERVISED_ACTIVE_NO_ENFORCEMENT`: `dev` es la rama de
 integracion efectiva, GitHub no aplica branch protection ni rulesets enforced,
 y todos los controles dependen del procedimiento de Codex y revision humana.
 No se debe describir ninguna rama como tecnicamente protegida. El push directo
 esta prohibido por politica aunque GitHub no pueda impedirlo.
 
-Hasta que el commit de activacion este presente simultaneamente en
-`origin/main`, `origin/dev` y `origin/pre`, el estado es
-`SUPERVISED_ACTIVATION_PENDING_ALIGNMENT`, `main` sigue siendo la rama efectiva
-y la automatizacion permanece `PAUSED`. La activacion completa tambien exige
-adaptar la automatizacion sin permiso de fusion y realizar la primera ejecucion
-bajo supervision humana.
+El commit de activacion `5f5c45c6cec89e442c246508eb421ac641f8a967` esta
+presente simultaneamente en `origin/main`, `origin/dev` y `origin/pre`. La
+primera ejecucion supervisada se completo correctamente con arbol limpio,
+fast-forward exclusivo de `dev`, cero PR de entrega, cero cambios de producto y
+cero commit, push, PR o fusion. Se detuvo porque la siguiente EPIC aun no estaba
+seleccionada.
+
+La automatizacion nunca fusiona. El horario automatico no se activa en este
+cierre y requiere autorizacion separada.
 
 Despues de activar, `codex/<epic>` y `quality/<epic>` parten de `origin/dev`
 actualizado y apuntan a `dev`. Los siete checks, la autorrevision y
@@ -229,7 +232,17 @@ Los E2E continúan pospuestos.
 
 ### MVP4
 
-En curso: colecciones finales de usuario sobre catálogo editorial.
+Cerrado con limitaciones: alta editorial, edicion opcional, items manuales,
+enlace posterior, WANTED/OWNED, missing calculado, privacidad, propiedad,
+filtros, ordenaciones, progreso, compatibilidad legacy y recorrido integral
+demostrados. Estado: `MVP4_CLOSED_WITH_LIMITATIONS`; no equivale a producto
+final completo.
+
+### MVP5
+
+Siguiente fase seleccionada. EPIC 45A auditara y disenara de forma ejecutable
+tiendas profesionales, inventario editorial y reservas sin implementar
+funcionalidad.
 
 ## 8. EPICs recientes completadas
 
@@ -244,29 +257,34 @@ Resumen relevante:
 - EPIC 44B: contrato backend de `collection_items` y compatibilidad editorial.
 - EPIC 44B-FIX: cierre de tests de privacidad, `referenceKind`, documentación y exports.
 - EPIC 44C: flujo frontend de creación y edición de colecciones.
+- EPIC 44D a 44G-D-FIX: alta editorial, items manuales, progreso, detalle final
+  y regresion.
+- EPIC 44H-A a 44H-C: dataset, validacion integral y evidencia de cierre MVP4.
+- Activacion supervisada: alineacion de `main`/`dev`/`pre` y primera ejecucion
+  supervisada completadas.
 
 ## 9. Estado actual verificado
 
 Fecha de verificacion: 2026-08-02
 
-`main` esta integrada en
-`f46d2a6dacc39cf47a4994a55818d748235bf5db` mediante la PR #7 de EPIC 44H-C.
-Sus siete checks remotos concluyeron en `SUCCESS`. El estado funcional es
-`MVP4_PARTIALLY_CLOSED`, con evidencia en
+`origin/main`, `origin/dev` y `origin/pre` contienen el commit de activacion
+`5f5c45c6cec89e442c246508eb421ac641f8a967`. El estado operativo es
+`SUPERVISED_ACTIVE_NO_ENFORCEMENT` y `dev` es la rama de integracion efectiva.
+
+La primera ejecucion supervisada comprobo remoto correcto, arbol limpio,
+alineacion de refs, fast-forward exclusivo de `dev` y cero PR abiertas desde
+`codex/*` o `quality/*` hacia `dev`. No hizo cambios de producto, commit, push,
+PR ni fusion; se detuvo porque la siguiente EPIC no estaba seleccionada.
+
+MVP4 queda `MVP4_CLOSED_WITH_LIMITATIONS`, con evidencia en
 `docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md` y
-`docs/38_44H_C_QUALITY_EVIDENCE.md`.
+`docs/38_44H_C_QUALITY_EVIDENCE.md`. Se conserva como limitaciones
+E2E/Playwright, imagenes y almacenamiento real, `quantity` frente a ejemplares
+separados, paginacion avanzada, decisiones de taxonomia y MISSING
+legacy/persistido, produccion, social, marketplace y pagos.
 
-La activacion supervisada es una tarea documental y no selecciona una EPIC
-funcional. Su auditoria inicial demostro
-`HEAD == origin/main == origin/dev == origin/pre == 27e3b77cb707296912d9c1507ef2061b8e02ec02`
-y cero PR abiertas de entrega hacia `main` o `dev`.
-
-Esta entrega permanece en `SUPERVISED_ACTIVATION_PENDING_ALIGNMENT`: la PR debe
-fusionarse manualmente en `main` y el commit integrado debe alinearse por
-fast-forward en `dev` y `pre`. Hasta entonces `main` sigue siendo la rama de
-integracion y la automatizacion permanece `PAUSED`. No se activa
-`SUPERVISED_ACTIVE_NO_ENFORCEMENT` hasta completar tambien la adaptacion de la
-automatizacion sin permiso de fusion y una primera ejecucion supervisada.
+La siguiente tarea unica es EPIC 45A, exclusivamente documental. El horario
+automatico no se activa en este cierre.
 
 La API de GitHub confirmo repositorio privado, Squash merging y merge commits
 activados, Rebase merging y auto-merge desactivados. Los endpoints de rulesets
@@ -388,62 +406,46 @@ Reglas principales:
 - datos privados sanitizados en lecturas públicas;
 - propietario recibe respuesta completa.
 
-## 12. Plan actual de MVP4
+## 12. Cierre actual de MVP4
 
-Orden previsto:
+EPIC 44A a 44H-C estan completadas. MVP4 queda
+`MVP4_CLOSED_WITH_LIMITATIONS`, no como producto final completo. Estan
+demostrados alta editorial, edicion opcional, items manuales, enlace posterior,
+WANTED/OWNED, missing calculado, privacidad, propiedad, filtros, ordenaciones,
+progreso, compatibilidad legacy y recorrido integral con UI humana.
 
-1. EPIC 44A - Diseño y auditoría. Completada.
-2. EPIC 44B - Contrato backend y compatibilidad editorial. Completada.
-3. EPIC 44B-FIX - Tests y documentación. Completada.
-4. EPIC 44C - Flujo frontend de creación y edición de colecciones. Completada.
-5. EPIC 44D - Alta desde catálogo y selección de edición. Completada.
-6. EPIC 44E-A1 - Esquema y contrato base de items manuales. Completada.
-7. EPIC 44E-A2 - Creación y edición backend de items manuales. Implementada en el cambio actual; pendiente de verificar su commit publicado.
-8. EPIC 44E-A3 - Enlace posterior de item manual al catálogo.
-9. EPIC 44F - OWNED, WANTED y faltantes calculados.
-10. EPIC 44G - Detalle final, filtros, ordenación y progreso.
-11. EPIC 44H - Datos demo, validación integral y cierre parcial de MVP4.
+Permanecen como limitaciones E2E/Playwright, imagenes y almacenamiento real,
+`quantity` frente a ejemplares separados, paginacion avanzada, decisiones de
+taxonomia y MISSING legacy/persistido, produccion, social, marketplace y pagos.
 
-Las decisiones ejecutables y el cierre de 44G-A a 44G-D-FIX estan en
-`docs/29_MVP4_DETAIL_FILTERS_SORTING_DESIGN.md`. El diseno ejecutable de 44H esta
-en `docs/30_MVP4_DEMO_VALIDATION_DESIGN.md`; 44H-B implementa el orquestador,
-44H-C-FIX corrige respuestas vacias y 44H-C demuestra el recorrido integral en
-`docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md`.
+## 13. Siguiente EPIC unica: 45A
 
-El orden puede adaptarse si GitHub o la implementación real muestran dependencias distintas.
+**EPIC 45A - Auditoria y diseno ejecutable de MVP5: tiendas profesionales,
+inventario editorial y reservas.**
 
-## 13. Alcance recomendado para EPIC 44C
+Objetivo:
 
-EPIC 44C debería centrarse solo en el contenedor colección:
+- auditar backend, frontend, esquema, seguridad, pruebas y documentacion de
+  tiendas, miembros, inventario y reservas;
+- distinguir funcionalidad vigente, legacy, incompleta y futura;
+- definir el recorrido MVP5 de `SHOP_OWNER` y del usuario normal;
+- definir adopcion de `catalogItemId`/`catalogItemEditionId` en inventario;
+- definir propiedad y permisos de tienda;
+- definir stock y reservas sin pagos;
+- definir compatibilidad legacy, concurrencia e idempotencia;
+- definir contratos y orden de EPICs ejecutables;
+- no implementar funcionalidad.
 
-- creación;
-- edición;
-- nombre;
-- descripción;
-- visibilidad;
-- categoría actual;
-- validaciones;
-- loading/error/saving;
-- navegación correcta;
-- tests frontend;
-- i18n;
-- mejoras mínimas de listado y detalle para cerrar el recorrido.
+Criterios de aceptacion:
 
-No debería incluir todavía:
-
-- selección de catalog item;
-- selección de edición;
-- items manuales;
-- enlace manual;
-- OWNED/WANTED/MISSING;
-- missing calculado;
-- progreso;
-- estadísticas;
-- imágenes reales;
-- filtros avanzados;
-- rutas nuevas;
-- backend;
-- migraciones.
+- inventario real de capacidades actuales;
+- mapa backend/frontend/schema/tests;
+- limites funcionales y decisiones de identidad editorial;
+- permisos, privacidad y reglas de stock/reservas;
+- riesgos de concurrencia y estrategia de compatibilidad;
+- plan numerado de EPICs y matriz de pruebas;
+- exclusiones expresas: pagos, pedidos, envios, marketplace completo, social,
+  movil y produccion.
 
 ## 14. Documentos prioritarios para reconstruir contexto
 
@@ -559,13 +561,14 @@ Trabajaremos igual que hasta ahora:
 - no comandos Docker destructivos;
 - no asumas que una salida local está publicada hasta verla en GitHub.
 
-Estado esperado al crear este documento:
+Estado esperado al continuar:
 
-- EPIC 44A completada;
-- EPIC 44B completada;
-- EPIC 44B-FIX completada;
-- EPIC 44C completada localmente; pendiente de verificar su commit publicado;
-- siguiente tarea esperada: EPIC 44D.
+- modo `SUPERVISED_ACTIVE_NO_ENFORCEMENT`;
+- `dev` como rama de integracion efectiva;
+- MVP4 `MVP4_CLOSED_WITH_LIMITATIONS`;
+- siguiente tarea unica: EPIC 45A documental;
+- horario automatico no activado;
+- ninguna automatizacion puede fusionar.
 
 Empieza revisando GitHub.
 ```

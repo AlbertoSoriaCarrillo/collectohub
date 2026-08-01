@@ -2561,3 +2561,34 @@ Siguiente paso: crear el backend en la carpeta backend.
   tests ignorados nuevos: 0; secretos introducidos: 0. Warnings conservados: 16
   vulnerabilidades npm sin `npm audit fix` y bundle inicial 631.54 kB frente al
   budget de 500 kB.
+
+## 2026-08-02 - Cierre de activacion supervisada y reconciliacion del backlog
+
+- Preflight en `dev`: arbol limpio, `HEAD == origin/dev == origin/main ==
+  origin/pre == 5f5c45c6cec89e442c246508eb421ac641f8a967`, commit de activacion
+  ancestro de las tres ramas y cero PR abiertas desde `codex/*` o `quality/*`
+  hacia `dev`.
+- Creada exclusivamente `quality/supervised-activation-closeout` desde `dev`.
+  No se inicia una EPIC funcional.
+- Registrada como completada la primera ejecucion supervisada: remoto correcto,
+  arbol limpio, fast-forward exclusivo de `dev`, cero PR de entrega, cero
+  cambios de producto y detencion segura por ausencia de siguiente EPIC. No
+  hizo commit, push, PR ni fusion.
+- Estado operativo actual: `SUPERVISED_ACTIVE_NO_ENFORCEMENT`; `dev` es la rama
+  de integracion efectiva, GitHub no aplica protecciones enforced, la
+  automatizacion nunca fusiona, toda entrega termina en
+  `HUMAN_MERGE_REQUIRED` y toda fusion es humana.
+- MVP4 queda `MVP4_CLOSED_WITH_LIMITATIONS`. Se reconocen como demostrados alta
+  editorial, edicion opcional, items manuales y enlace posterior, WANTED/OWNED,
+  missing calculado, privacidad, propiedad, filtros, ordenaciones, progreso,
+  compatibilidad legacy y recorrido integral/UI humano.
+- Se conservan como limitaciones E2E/Playwright, imagenes y almacenamiento real,
+  `quantity` frente a ejemplares separados, paginacion avanzada, decisiones de
+  taxonomia y MISSING legacy/persistido, produccion, social, marketplace y
+  pagos.
+- Siguiente tarea unica seleccionada: EPIC 45A - Auditoria y diseno ejecutable
+  de MVP5: tiendas profesionales, inventario editorial y reservas. Es
+  exclusivamente documental y no se inicia en esta entrega.
+- El horario automatico no se activa. No se modifican workflows, backend,
+  frontend, scripts, Docker, migraciones, dependencias, manifests, lockfiles ni
+  tests.
