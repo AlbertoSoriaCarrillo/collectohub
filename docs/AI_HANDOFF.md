@@ -235,11 +235,11 @@ f5e870cad152ab7589d3245f8f19f44098e85043
 test: complete manual collection item frontend coverage
 ```
 
-Base verificada para EPIC 44H-B-FIX:
+Base verificada para EPIC 44H-C-FIX:
 
 ```text
-f31ab7d4a43c1786fe7068b6fe01c931cf389b86
-feat: add idempotent MVP4 demo data
+2cb6a68c2c95dc707f201b99eb6d05798ea285ba
+fix: resolve mvp4 demo summary path on powershell 5
 ```
 
 EPIC 44G-D-FIX, EPIC 44H-A y EPIC QUALITY-A estan publicadas. EPIC
@@ -251,13 +251,13 @@ con el workflow CI anterior, terminaron correctamente sobre el head
 proteccion de `main` sigue siendo una accion administrativa no verificada desde
 este repositorio.
 
-EPIC 44H-B esta integrada en `main`. EPIC 44H-B-FIX corrige en
-`codex/44h-b-fix` el valor predeterminado de `SummaryPath` para que Windows
-PowerShell 5.1 pueda invocar el orquestador mediante `-File` sin fallar durante
-el enlace de parametros. La regresion valida ruta predeterminada, ruta explicita
-y `WhatIf` sin efectos. No se ejecuta el escenario real de 44H-C en esta FIX.
+EPIC 44H-B y EPIC 44H-B-FIX estan integradas en `main`. La primera ejecucion
+real de 44H-C detecto que Windows PowerShell 5.1 convertia una pagina con
+`content=[]` en `null`, bloqueando la busqueda-creacion antes del catalogo. EPIC
+44H-C-FIX corrige en `codex/44h-c-fix` el contrato de colecciones vacias y
+conserva la deteccion de ambiguedad. No ejecuta el escenario real, API, DB ni UI.
 
-Siguiente tarea funcional despues de revisar e integrar 44H-B-FIX:
+Siguiente tarea funcional despues de revisar e integrar 44H-C-FIX:
 
 ```text
 EPIC 44H-C - Validacion integral y cierre parcial de MVP4
@@ -347,7 +347,7 @@ Orden previsto:
 Las decisiones ejecutables y el cierre de 44G-A a 44G-D-FIX estan en
 `docs/29_MVP4_DETAIL_FILTERS_SORTING_DESIGN.md`. El diseno ejecutable de 44H esta
 en `docs/30_MVP4_DEMO_VALIDATION_DESIGN.md`; 44H-B implementa el orquestador y
-la siguiente tarea es 44H-C.
+44H-C-FIX debe integrarse antes de reanudar 44H-C.
 
 El orden puede adaptarse si GitHub o la implementación real muestran dependencias distintas.
 

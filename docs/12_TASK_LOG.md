@@ -2404,3 +2404,26 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Sin cambios en backend, frontend, migraciones, dependencias, manifests,
   lockfiles, Docker Compose, workflows, datos Docker ni cuentas locales. La API
   real, DB y UI de 44H-C: `NOT_RUN`; siguiente tarea tras integrar la FIX: 44H-C.
+
+## 2026-08-01 - EPIC 44H-C-FIX - Respuestas paginadas vacias en PowerShell 5.1
+
+- Base verificada `2cb6a68c2c95dc707f201b99eb6d05798ea285ba`, rama
+  `codex/44h-c-fix`, arbol inicial limpio, sincronizado y sin PR de entrega
+  abierta hacia `main`. La rama local `codex/44h-c` se conserva sin cambios.
+- Reproducido antes de la correccion: una pagina con `content=[]` producia cero
+  objetos en el pipeline y el llamador recibia `null`; `Select-UniqueMatch`
+  rechazaba entonces el parametro obligatorio `Items` antes de crear catalogo.
+- `Get-ResponseItems` construye explicitamente `@()` para respuesta nula,
+  `content=null` y `content=[]`, y lo emite sin enumerar. `Select-UniqueMatch`
+  acepta colecciones vacias y null defensivo, manteniendo el error cuando hay
+  dos coincidencias exactas.
+- Regresion aislada en Windows PowerShell 5.1: cero resultados para los tres
+  vacios, una coincidencia, seleccion unica entre dos, ambiguedad y objeto no
+  paginado: PASS. Parser de 56 scripts y WhatIf sin efectos: PASS.
+- Verificador completo: PASS. Backend: 424 tests, 0 fallos, 0 errores y 0
+  omitidos. Frontend: 59 archivos, 244 tests y build PASS; 16 vulnerabilidades
+  conocidas sin `npm audit fix` y warning de bundle 631.54 kB/500 kB.
+- Tests eliminados: 0. Tests ignorados nuevos: 0. Sin backend, frontend,
+  migraciones, dependencias, Docker Compose, workflows, cuentas o datos locales.
+- Escenario real, API, DB y UI de 44H-C: `NOT_RUN`; 44H-C sigue siendo la
+  siguiente EPIC tras revisar e integrar esta FIX. MVP4 permanece abierto.
