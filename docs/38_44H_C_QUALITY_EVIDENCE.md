@@ -96,10 +96,19 @@ Pruebas ignoradas nuevas: 0
 - verificador PowerShell y politica de alcance: PASS
 - `git diff --check`: PASS
 
-Resultado local: PASS
-Commit: un unico commit de `codex/44h-c`
-Push: pendiente
-PR: pendiente; debe abrirse en borrador
-Checks remotos: NOT_RUN, se ejecutan despues de publicar la rama
+Resultado: REMOTE_PASS_PR_OPEN
+Commit funcional/documental inicial:
+842c5151d035c784012ec4619feae710c95efc02
+Push: PASS — rama publicada en `origin/codex/44h-c`
+PR: #7 — 44H-C: validate integral MVP4 demo and partial closure
+Estado de la PR: abierta, borrador y sin fusionar
+Checks remotos del head validado:
+- quality-policy: PASS
+- backend-verify: PASS
+- frontend-verify: PASS
+- powershell-parse: PASS
+- CI Validate repository structure: PASS
+- CI Backend build and tests: PASS
+- CI Frontend build and tests: PASS
 Riesgos: warnings npm/bundle conocidos; limites de MVP4 enumerados en el informe
 Siguiente tarea: revision e integracion humana de 44H-C; no iniciar otra EPIC
