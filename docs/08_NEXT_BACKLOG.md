@@ -102,8 +102,9 @@ provisiona solo mediante operacion controlada, sin autoasignacion ni interfaz
 publica. EPIC 44A, EPIC 44B, EPIC 44B-FIX, EPIC 44C y EPIC 44D quedan completadas.
 EPIC 44E, EPIC 44F y EPIC 44G-A a 44G-D-FIX quedan completadas. La FIX cierra
 la concurrencia del listado y evita estados obsoletos en el detalle.
-EPIC 44H-A documenta la auditoria y el diseno ejecutable. Siguiente tarea:
-EPIC 44H-B - Datos demo y scripts idempotentes.
+EPIC 44H-A documenta la auditoria y el diseno ejecutable. EPIC 44H-B implementa
+el orquestador idempotente, WhatIf sin efectos, resumen seguro y prueba offline.
+Siguiente tarea: EPIC 44H-C - Validacion integral y cierre parcial.
 
 ## Quality gates transversales
 
@@ -119,8 +120,8 @@ contratos. La proteccion remota y el cambio de la automatizacion que aun ordena
 push directo quedan como acciones supervisadas fuera del repositorio.
 
 QUALITY-B queda definida, no implementada, para cobertura con baseline real,
-analisis estatico, lint, secretos y vulnerabilidades. Tras QUALITY-A la siguiente
-tarea funcional sigue siendo 44H-B salvo riesgo bloqueante demostrado.
+analisis estatico, lint, secretos y vulnerabilidades. Tras 44H-B la siguiente
+tarea funcional es 44H-C salvo riesgo bloqueante demostrado.
 
 ## MVP 4 - Colecciones finales de usuario
 
@@ -179,8 +180,9 @@ QUALITY-A debe estar validada localmente y sus cuatro checks remotos deben estar
 verdes antes de fusionarla. No empezar QUALITY-B ni 44H-B en la misma ejecucion.
 
 EPIC 44F y EPIC 44G-A a 44G-D-FIX estan completadas. EPIC 44H-A queda
-implementada documentalmente. Siguiente EPIC: EPIC 44H-B - Datos demo y scripts
-idempotentes; despues 44H-C validara y cerrara parcialmente MVP4.
+implementada documentalmente y 44H-B aporta los scripts/datos idempotentes.
+Siguiente EPIC: 44H-C, que ejecutara la validacion integral y cerrara
+parcialmente MVP4 si toda la evidencia es satisfactoria.
 
 - No adelantar una fase porque exista una tabla, rol o pantalla legacy.
 - Cada EPIC debe declarar que objetivo de producto valida.
