@@ -40,6 +40,8 @@ protecciones y metodos de fusion se configuren, prueben y documenten.
 - No admite push directo.
 - Recibe PR desde `codex/<epic>` y `quality/<epic>`.
 - Puede exigir historial lineal.
+- Usa status checks en modo strict: **Require branches to be up to date before
+  merging** esta activado para entregas temporales.
 - No requiere aprobacion humana para cada EPIC.
 - Autoriza squash and merge automatico exclusivamente cuando los siete
   controles obligatorios estan en `PASS`, la autorrevision esta registrada y
@@ -74,6 +76,10 @@ Solo si los siete concluyen en `SUCCESS`, la autorrevision no detecta un
 bloqueo y el SHA esperado sigue siendo el head real se permite squash and merge
 automatico. Un check rojo, pendiente o ausente bloquea la fusion.
 
+**Require branches to be up to date before merging** esta activado. Si `dev`
+cambia, la rama temporal debe actualizarse con `dev`, repetir los siete checks y
+registrar su nuevo head como `expected_head_sha`.
+
 El metodo de entrega es **Squash and merge**. Cada PR contiene una unica tarea y
 la rama temporal solo se elimina despues de confirmar la fusion.
 
@@ -81,10 +87,19 @@ la rama temporal solo se elimina despues de confirmar la fusion.
 
 - PR de promocion con head exacto `dev` y base exacta `pre`.
 - Validacion funcional humana y siete checks en `SUCCESS`.
+- Status checks en modo loose: **Require branches to be up to date before
+  merging** esta desactivado. Los siete checks siguen siendo obligatorios.
+- No se fusiona `pre` de vuelta hacia `dev` para actualizar la PR.
 - Ninguna funcionalidad nueva dentro de la promocion.
 - Fusion manual mediante **Create a merge commit**.
 - Squash and merge y Rebase and merge estan prohibidos.
 - `pre` no exige historial lineal.
+- Inmediatamente antes de fusionar se vuelven a comprobar el SHA actual de
+  `dev`, el SHA actual de `pre`, el head de la PR sin cambios, la base de la PR
+  sin cambios desde la revision final, el diff sin cambios inesperados y los
+  siete checks en `SUCCESS`.
+- Si `dev`, `pre` o la PR cambian despues de la validacion, se detiene la
+  promocion y se repite la revision aplicable.
 - Despues de fusionar debe cumplirse:
 
 ```powershell
@@ -95,9 +110,18 @@ git merge-base --is-ancestor origin/dev origin/pre
 
 - PR de release con head exacto `pre` y base exacta `main`.
 - Autorizacion humana explicita y siete checks en `SUCCESS`.
+- Status checks en modo loose: **Require branches to be up to date before
+  merging** esta desactivado. Los siete checks siguen siendo obligatorios.
+- No se fusiona `main` de vuelta hacia `pre` para actualizar la PR.
 - Fusion manual mediante **Create a merge commit**.
 - Squash and merge y Rebase and merge estan prohibidos.
 - `main` no exige historial lineal.
+- Inmediatamente antes de fusionar se vuelven a comprobar el SHA actual de
+  `pre`, el SHA actual de `main`, el head de la PR sin cambios, la base de la PR
+  sin cambios desde la autorizacion, el diff sin cambios inesperados y los
+  siete checks en `SUCCESS`.
+- Si `pre`, `main` o la PR cambian despues de la autorizacion, se detiene la
+  promocion y se solicita una nueva autorizacion explicita.
 - Despues de fusionar debe cumplirse:
 
 ```powershell
@@ -147,6 +171,11 @@ temporales hacia `dev` y Merge commits para promociones `dev` -> `pre` y
 releases `pre` -> `main`. Rebase merging no forma parte del flujo acordado. No
 debe existir una regla global de historial lineal que impida merge commits en
 `pre` o `main`.
+
+Los required status checks usan modo strict solo para entregas temporales hacia
+`dev`. Las promociones hacia `pre` y `main` usan modo loose, con los mismos siete
+checks obligatorios, para no forzar sincronizaciones inversas de los merge
+commits historicos de la rama destino.
 
 Ningun workflow o script del repositorio debe cambiar protecciones, fusionar en
 `pre` o `main`, ni declarar el modelo activo sin verificar refs, reglas y

@@ -20,9 +20,21 @@ Pull requests targeting `dev`, `pre`, or `main` must run these seven checks:
 6. `frontend-verify`
 7. `powershell-parse`
 
-Configure each protected branch to require its branch to be up to date, block
-force pushes and deletion, require resolved review conversations, and apply the
-rules to administrators or prevent routine bypass. Do not permit direct pushes.
+Configure each protected branch to block force pushes and deletion, require
+resolved review conversations, and apply the rules to administrators or prevent
+routine bypass. Do not permit direct pushes.
+
+All three branches require the same seven status checks, but their synchronization
+mode is intentionally different:
+
+- `dev` uses strict status checks: **Require branches to be up to date before
+  merging** is enabled for temporary delivery pull requests;
+- `pre` and `main` use loose status checks: **Require branches to be up to date
+  before merging** is disabled for permanent-branch promotions.
+
+Loose mode does not weaken validation: every one of the seven checks remains
+mandatory. It only avoids incorporating historical merge commits from the
+target branch back into the source branch.
 
 Do not apply a shared linear-history rule: `dev` may require linear history,
 but `pre` and `main` must permit merge commits so promotions preserve Git
@@ -46,6 +58,9 @@ After activation, create an active ruleset for `dev` that:
    finds a blocker, or when the expected SHA no longer matches.
 7. May require linear history and uses squash and merge for deliveries from
    `codex/*` or `quality/*`.
+8. Enables **Require branches to be up to date before merging**. If `dev`
+   changes, the temporary branch must be updated with `dev`, its checks must run
+   again, and the new head must become the recorded `expected_head_sha`.
 
 ## Ruleset for `pre`
 
@@ -59,7 +74,14 @@ After activation, create an active ruleset for `pre` that:
 5. Does not require linear history and permits merge commits.
 6. Requires **Create a merge commit**; forbids Squash and merge and Rebase and
    merge.
-7. After merge, requires
+7. Disables **Require branches to be up to date before merging** and therefore
+   uses loose status checks. Do not merge `pre` back into `dev` to update the PR.
+8. Immediately before merge, rechecks the current `dev` SHA, current `pre` SHA,
+   unchanged PR head, unchanged PR base since final review, expected diff, and
+   all seven checks in `SUCCESS`.
+9. If `dev`, `pre`, or the PR changes after functional validation, stops and
+   repeats the applicable review before any merge.
+10. After merge, requires
    `git merge-base --is-ancestor origin/dev origin/pre` to succeed.
 
 ## Ruleset for `main`
@@ -75,12 +97,20 @@ Keep `main` stable and production-ready. Configure an active ruleset that:
 6. Does not require linear history and permits merge commits.
 7. Requires **Create a merge commit**; forbids Squash and merge and Rebase and
    merge.
-8. After merge, requires
+8. Disables **Require branches to be up to date before merging** and therefore
+   uses loose status checks. Do not merge `main` back into `pre` to update the
+   PR.
+9. Immediately before merge, rechecks the current `pre` SHA, current `main` SHA,
+   unchanged PR head, unchanged PR base since authorization, expected diff, and
+   all seven checks in `SUCCESS`.
+10. If `pre`, `main`, or the PR changes after authorization, stops and requires
+   new explicit human authorization before any merge.
+11. After merge, requires
    `git merge-base --is-ancestor origin/pre origin/main` to succeed.
-9. Does not require an approval that the sole repository owner cannot obtain;
+12. Does not require an approval that the sole repository owner cannot obtain;
    explicit owner authorization after green checks and resolved conversations
    is sufficient.
-10. Includes tag preparation in the release procedure when appropriate.
+13. Includes tag preparation in the release procedure when appropriate.
 
 During `DOCUMENTED_NOT_ACTIVE`, `main` remains the integration branch and the
 existing sequential delivery process continues even though `origin/dev` and
@@ -148,7 +178,9 @@ Use disposable documentation-only pull requests where needed. Confirm:
 - direct push to each protected branch is rejected;
 - all seven exact checks appear and complete for each target branch;
 - merge is unavailable while any required check is pending or red;
-- an outdated branch must be updated;
+- an outdated temporary branch targeting `dev` must be updated and revalidated;
+- promotions to `pre` and `main` use loose status checks without reverse-merging
+  the target branch into the source;
 - an unresolved conversation blocks merge;
 - only `dev` delivery PRs can use the guarded automatic squash flow;
 - `pre` and `main` always require manual human action and Create a merge commit;

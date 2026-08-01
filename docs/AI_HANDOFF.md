@@ -142,18 +142,27 @@ las ramas temporales parten de `main` y apuntan a `main`.
 Tras la activacion, `codex/<epic>` y `quality/<epic>` parten de `dev` y apuntan a
 `dev`. Los siete checks, la autorrevision y `expected_head_sha` permiten Squash
 and merge automatico solo para `codex/*` o `quality/*` hacia `dev`; `dev` puede
-exigir historial lineal. Las promociones `dev -> pre` exigen head `dev`, base
-`pre`, validacion funcional humana y **Create a merge commit**. Las promociones
-`pre -> main` exigen head `pre`, base `main`, autorizacion humana y **Create a
-merge commit**. Squash y rebase estan prohibidos entre ramas permanentes; `pre`
-y `main` no exigen historial lineal. Nunca hay push directo a una rama
-permanente.
+exigir historial lineal. Estas entregas usan status checks strict: **Require
+branches to be up to date before merging** esta activado y la rama temporal se
+actualiza con `dev` si cambia.
+
+Las promociones `dev -> pre` y `pre -> main` conservan los siete checks
+obligatorios, pero usan status checks loose: **Require branches to be up to date
+before merging** esta desactivado. Exigen head/base exactos, validacion funcional
+o autorizacion humana segun corresponda, y **Create a merge commit**. Justo antes
+de fusionar se vuelven a comprobar los SHA de ambas ramas, el head y la base de
+la PR sin cambios desde la revision o autorizacion, el diff esperado y los siete
+checks en `SUCCESS`. Cualquier cambio posterior detiene la promocion y obliga a
+repetir la revision aplicable; para `pre -> main` requiere nueva autorizacion.
+Squash y rebase estan prohibidos entre ramas permanentes; `pre` y `main` no
+exigen historial lineal. Nunca hay push directo a una rama permanente.
 
 Despues de promocionar se demuestra la ascendencia con
 `git merge-base --is-ancestor origin/dev origin/pre` o
 `git merge-base --is-ancestor origin/pre origin/main`, segun corresponda. No se
-fusiona `pre` o `main` de vuelta hacia `dev` salvo que `main` reciba una
-correccion excepcional ausente de `dev`.
+fusiona `pre` hacia `dev` ni `main` hacia `pre` para actualizar una PR de
+promocion. La sincronizacion inversa queda reservada para una correccion
+excepcional presente en `main` y ausente de `dev`.
 
 Antes de otra EPIC se consultan PR abiertas de entrega hacia la rama de
 integracion efectiva. Una coincidencia impide iniciar trabajo nuevo: la
