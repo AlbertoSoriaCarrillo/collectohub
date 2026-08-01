@@ -70,14 +70,33 @@ An initial branch push that is necessary to start remote checks is allowed only 
 
 The normative branch model is defined in `docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md`.
 
-- `main` is the stable production branch. It accepts only manual, explicitly authorized release promotions from `pre` after the model is active. Releases must use **Create a merge commit**; squash and rebase are forbidden, and `main` must not require linear history.
-- `pre` is the preproduction branch. It accepts only manual promotions from `dev` after human functional validation. Promotions must use **Create a merge commit**; squash and rebase are forbidden, and `pre` must not require linear history. Do not develop features directly on `pre`.
-- `dev` is the continuous integration branch. After activation, temporary `codex/<epic>` and `quality/<epic>` branches start from `dev` and target `dev` using squash and merge. These delivery pull requests use strict required status checks: **Require branches to be up to date before merging** is enabled, so the temporary branch must be updated when `dev` changes. `dev` may require linear history.
-- Direct pushes are forbidden on `main`, `pre`, and `dev`.
-- Automatic merge is forbidden on `main` and `pre`. A `codex/*` or `quality/*` pull request into `dev` may use squash and merge automatically only after all seven required checks pass, self-review is recorded, and the current head equals the recorded `expected_head_sha`.
-- Promotions `dev` -> `pre` and releases `pre` -> `main` use loose required status checks: all seven checks remain mandatory, but **Require branches to be up to date before merging** is disabled. Do not merge the target branch back into the source merely to update a promotion pull request.
-
-The existence of `origin/dev` and `origin/pre` is necessary but not sufficient for activation. The model remains `DOCUMENTED_NOT_ACTIVE`, and `main` remains the effective integration branch, until all three branch protections and merge methods are configured, tested, evidenced, and explicitly declared active. Do not infer activation from branch existence or documentation alone.
+- The target operating state is `SUPERVISED_ACTIVE_NO_ENFORCEMENT`. In that
+  state `dev` is the effective integration branch, but GitHub does not enforce
+  branch protection or rulesets. Every guarantee below is a Codex procedure
+  plus human review, never a claim of technical branch protection.
+- Until the commit that defines this policy is present simultaneously in
+  `origin/main`, `origin/dev`, and `origin/pre`, the state is
+  `SUPERVISED_ACTIVATION_PENDING_ALIGNMENT`, `main` remains the effective
+  integration branch, and scheduled automation remains `PAUSED`.
+- Full activation also requires the policy pull request to be merged manually
+  into `main`, `dev` and `pre` to be fast-forwarded to that integrated commit,
+  the automation to be adapted without merge permission, and the first run to
+  be performed under human supervision.
+- `main` is the stable production branch. It accepts only manual, explicitly
+  authorized release promotions from `pre`. Releases use **Create a merge
+  commit**; squash and rebase are forbidden.
+- `pre` is the preproduction branch. It accepts only manual promotions from
+  `dev` after human functional validation. Promotions use **Create a merge
+  commit**; squash and rebase are forbidden. Do not develop features directly
+  on `pre`.
+- After activation, temporary `codex/<epic>` and `quality/<epic>` branches
+  start from an updated `origin/dev` and target `dev`. Their delivery method is
+  manual **Squash and merge** after the seven checks, self-review, and
+  `expected_head_sha` verification all pass.
+- Direct pushes to `main`, `pre`, and `dev` are forbidden by policy even though
+  GitHub cannot technically block them on the current plan.
+- Automatic merge is forbidden on every branch. Every pull request merge
+  requires human intervention.
 
 ## Sequential delivery gate
 
@@ -104,12 +123,12 @@ Scheduled automation is strictly sequential: one EPIC cannot begin until the pri
 2. Create one branch per EPIC named `codex/<epic>` or `quality/<epic>` as appropriate.
 3. Keep one logical commit per EPIC and never push directly to `main`, `pre`, or `dev`.
 4. Open a pull request to the effective integration branch and wait for all seven required checks.
-5. For a pull request into `dev`, require strict status checks and update the temporary branch if `dev` changes. Immediately before automatic squash and merge, recheck self-review, all seven successful checks, and `expected_head_sha`. Do not merge while a check is red, pending, or absent.
-6. Promote `dev` to `pre` only through a manual pull request whose exact head is `dev` and exact base is `pre`, with loose status checks, human functional validation, all seven checks successful, and no new functional changes. Do not merge `pre` back into `dev`. Immediately before **Create a merge commit**, recheck the current `dev` and `pre` SHAs, unchanged PR head, unchanged PR base since final review, expected diff, and seven successful checks. If `dev`, `pre`, or the PR changed after validation, stop and repeat the applicable review. Never squash or rebase. After merge, require `git merge-base --is-ancestor origin/dev origin/pre` to succeed.
-7. Promote `pre` to `main` only through a manually authorized release pull request whose exact head is `pre` and exact base is `main`, with loose status checks and all seven checks successful. Do not merge `main` back into `pre`. Immediately before **Create a merge commit**, recheck the current `pre` and `main` SHAs, unchanged PR head, unchanged PR base since authorization, expected diff, and seven successful checks. If `pre`, `main`, or the PR changed after authorization, stop and request new authorization. Never squash or rebase. After merge, require `git merge-base --is-ancestor origin/pre origin/main` to succeed and prepare a tag when appropriate.
-8. Do not rewrite protected branches, force-push, or use destructive Git commands.
+5. For a pull request into `dev`, record a self-review and `expected_head_sha`. A person must recheck the current head, exact `dev` base, expected diff, seven successful checks, unresolved conversations, and absence of post-review changes before manual **Squash and merge**. If `dev`, the head, or the diff changes, repeat the review. End the automation with `HUMAN_MERGE_REQUIRED`; it must never merge the pull request.
+6. Promote `dev` to `pre` only through a manual pull request whose exact head is `dev` and exact base is `pre`, with human functional validation, all seven checks successful, and no new functional changes. Do not merge `pre` back into `dev`. Immediately before **Create a merge commit**, recheck the current `dev` and `pre` SHAs, unchanged PR head, unchanged PR base since final review, expected diff, and seven successful checks. If `dev`, `pre`, or the PR changed after validation, stop and repeat the applicable review. Never squash or rebase. After merge, require `git merge-base --is-ancestor origin/dev origin/pre` to succeed.
+7. Promote `pre` to `main` only through a manually authorized release pull request whose exact head is `pre` and exact base is `main`, with all seven checks successful. Do not merge `main` back into `pre`. Immediately before **Create a merge commit**, recheck the current `pre` and `main` SHAs, unchanged PR head, unchanged PR base since authorization, expected diff, and seven successful checks. If `pre`, `main`, or the PR changed after authorization, stop and request new authorization. Never squash or rebase. After merge, require `git merge-base --is-ancestor origin/pre origin/main` to succeed and prepare a tag when appropriate.
+8. Do not rewrite permanent branches, force-push, or use destructive Git commands.
 9. After merge, verify the expected SHA, required ancestry, and a clean worktree before another task begins. Delete a temporary branch only after its merge is confirmed. Do not merge `pre` or `main` back into `dev` after a normal ancestry-preserving promotion; reverse synchronization is only for an exceptional correction present in `main` but absent from `dev`.
 
 ## Required execution loop
 
-For every future Codex EPIC: determine whether the model is active; query GitHub and do not start a new EPIC if an open `codex/` or `quality/` delivery pull request targets the effective integration branch; otherwise return to that branch, fetch, require a clean tree, fast-forward to its `origin/*` ref, and verify the SHAs match; create `codex/<epic>` or `quality/<epic>`; implement one EPIC; run the applicable test matrix and `scripts/quality/verify.ps1`; do not commit on failure; commit and push only the temporary branch after local success; open a pull request; wait for all seven checks; apply the merge rules for the target branch; report the SHA, PR, checks, and evidence; then stop.
+For every future Codex EPIC: determine the current activation state; query GitHub and do not start a new EPIC if an open `codex/` or `quality/` delivery pull request targets the effective integration branch; otherwise return to that branch, fetch, require a clean tree, fast-forward to its `origin/*` ref, and verify the SHAs match; create `codex/<epic>` or `quality/<epic>`; implement one EPIC; run the applicable test matrix and `scripts/quality/verify.ps1`; do not commit on failure; commit and push only the temporary branch after local success; open a pull request; wait for all seven checks; record self-review and `expected_head_sha`; report `HUMAN_MERGE_REQUIRED` with the SHA, PR, individual checks, and evidence; then stop without merging or starting another EPIC.

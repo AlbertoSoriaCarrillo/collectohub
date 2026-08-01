@@ -1,8 +1,9 @@
 # CollectoHub - AI Handoff
 
-Última actualización verificada: 2026-07-31
+Última actualización verificada: 2026-08-02
 Repositorio: `AlbertoSoriaCarrillo/collectohub`
-Rama principal esperada: `main`
+Rama de integracion esperada: `main` durante la alineacion supervisada; `dev`
+solo despues de `SUPERVISED_ACTIVE_NO_ENFORCEMENT`.
 
 ## 1. Propósito de este documento
 
@@ -130,45 +131,42 @@ Nunca borrar volúmenes salvo petición explícita.
 
 Desde EPIC QUALITY-A, cualquier agente debe leer `AGENTS.md` y aplicar la matriz
 de `docs/32_QUALITY_GATES.md`. El modelo normativo de ramas esta en
-`docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md` y su proteccion manual en
+`docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md` y el procedimiento supervisado en
 `docs/33_GITHUB_MAIN_PROTECTION.md`.
 
-El modelo `dev -> pre -> main` permanece en `DOCUMENTED_NOT_ACTIVE`.
-`origin/main`, `origin/dev` y `origin/pre` existen desde el mismo commit, pero
-la existencia de las ramas no basta: hasta configurar, probar y documentar las
-protecciones y metodos de fusion, `main` sigue siendo la rama de integracion y
-las ramas temporales parten de `main` y apuntan a `main`.
+El objetivo es `SUPERVISED_ACTIVE_NO_ENFORCEMENT`: `dev` es la rama de
+integracion efectiva, GitHub no aplica branch protection ni rulesets enforced,
+y todos los controles dependen del procedimiento de Codex y revision humana.
+No se debe describir ninguna rama como tecnicamente protegida. El push directo
+esta prohibido por politica aunque GitHub no pueda impedirlo.
 
-Tras la activacion, `codex/<epic>` y `quality/<epic>` parten de `dev` y apuntan a
-`dev`. Los siete checks, la autorrevision y `expected_head_sha` permiten Squash
-and merge automatico solo para `codex/*` o `quality/*` hacia `dev`; `dev` puede
-exigir historial lineal. Estas entregas usan status checks strict: **Require
-branches to be up to date before merging** esta activado y la rama temporal se
-actualiza con `dev` si cambia.
+Hasta que el commit de activacion este presente simultaneamente en
+`origin/main`, `origin/dev` y `origin/pre`, el estado es
+`SUPERVISED_ACTIVATION_PENDING_ALIGNMENT`, `main` sigue siendo la rama efectiva
+y la automatizacion permanece `PAUSED`. La activacion completa tambien exige
+adaptar la automatizacion sin permiso de fusion y realizar la primera ejecucion
+bajo supervision humana.
 
-Las promociones `dev -> pre` y `pre -> main` conservan los siete checks
-obligatorios, pero usan status checks loose: **Require branches to be up to date
-before merging** esta desactivado. Exigen head/base exactos, validacion funcional
-o autorizacion humana segun corresponda, y **Create a merge commit**. Justo antes
-de fusionar se vuelven a comprobar los SHA de ambas ramas, el head y la base de
-la PR sin cambios desde la revision o autorizacion, el diff esperado y los siete
-checks en `SUCCESS`. Cualquier cambio posterior detiene la promocion y obliga a
-repetir la revision aplicable; para `pre -> main` requiere nueva autorizacion.
-Squash y rebase estan prohibidos entre ramas permanentes; `pre` y `main` no
-exigen historial lineal. Nunca hay push directo a una rama permanente.
+Despues de activar, `codex/<epic>` y `quality/<epic>` parten de `origin/dev`
+actualizado y apuntan a `dev`. Los siete checks, la autorrevision y
+`expected_head_sha` son obligatorios. Codex informa `HUMAN_MERGE_REQUIRED` y
+termina; una persona vuelve a comprobar head, base `dev`, diff, checks,
+conversaciones y cambios posteriores antes de usar **Squash and merge**.
+
+Las promociones `dev -> pre` y `pre -> main` conservan los siete checks y
+requieren head/base exactos, validacion funcional o autorizacion humana segun
+corresponda, y **Create a merge commit**. Squash y rebase estan prohibidos entre
+ramas permanentes. Cualquier cambio posterior obliga a repetir la revision y,
+para `pre -> main`, a obtener nueva autorizacion.
 
 Despues de promocionar se demuestra la ascendencia con
 `git merge-base --is-ancestor origin/dev origin/pre` o
-`git merge-base --is-ancestor origin/pre origin/main`, segun corresponda. No se
-fusiona `pre` hacia `dev` ni `main` hacia `pre` para actualizar una PR de
-promocion. La sincronizacion inversa queda reservada para una correccion
-excepcional presente en `main` y ausente de `dev`.
+`git merge-base --is-ancestor origin/pre origin/main`. No se fusiona la rama
+destino de vuelta hacia la fuente para actualizar una PR.
 
-Antes de otra EPIC se consultan PR abiertas de entrega hacia la rama de
-integracion efectiva. Una coincidencia impide iniciar trabajo nuevo: la
-ejecucion solo puede completar o informar esa PR. Una ejecucion procesa como
-maximo una EPIC o una PR pendiente. La configuracion remota y la creacion
-inicial de `dev` y `pre` se realizan manualmente, nunca desde el repositorio.
+Antes de otra EPIC se consultan PR abiertas de entrega hacia la rama efectiva.
+Una coincidencia impide iniciar trabajo nuevo. Una ejecucion procesa como
+maximo una EPIC o una PR pendiente, nunca fusiona y termina despues de informar.
 
 ## 6. Resumen funcional del producto
 
@@ -249,7 +247,7 @@ Resumen relevante:
 
 ## 9. Estado actual verificado
 
-Fecha de verificacion: 2026-08-01
+Fecha de verificacion: 2026-08-02
 
 `main` esta integrada en
 `f46d2a6dacc39cf47a4994a55818d748235bf5db` mediante la PR #7 de EPIC 44H-C.
@@ -258,12 +256,22 @@ Sus siete checks remotos concluyeron en `SUCCESS`. El estado funcional es
 `docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md` y
 `docs/38_44H_C_QUALITY_EVIDENCE.md`.
 
-La tarea documental del modelo de ramas no selecciona una EPIC funcional. El
-modelo queda en `DOCUMENTED_NOT_ACTIVE`: `origin/main`, `origin/dev` y
-`origin/pre` existen desde
-`b669a3fc2a9cd64346f400bbbfaf583cc184ab46`, pero `main` sigue siendo la rama de
-integracion hasta completar y probar las protecciones y metodos de fusion de
-`docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md`.
+La activacion supervisada es una tarea documental y no selecciona una EPIC
+funcional. Su auditoria inicial demostro
+`HEAD == origin/main == origin/dev == origin/pre == 27e3b77cb707296912d9c1507ef2061b8e02ec02`
+y cero PR abiertas de entrega hacia `main` o `dev`.
+
+Esta entrega permanece en `SUPERVISED_ACTIVATION_PENDING_ALIGNMENT`: la PR debe
+fusionarse manualmente en `main` y el commit integrado debe alinearse por
+fast-forward en `dev` y `pre`. Hasta entonces `main` sigue siendo la rama de
+integracion y la automatizacion permanece `PAUSED`. No se activa
+`SUPERVISED_ACTIVE_NO_ENFORCEMENT` hasta completar tambien la adaptacion de la
+automatizacion sin permiso de fusion y una primera ejecucion supervisada.
+
+La API de GitHub confirmo repositorio privado, Squash merging y merge commits
+activados, Rebase merging y auto-merge desactivados. Los endpoints de rulesets
+y branch protection responden que se requiere GitHub Pro o repositorio publico;
+por tanto no existe garantia tecnica de proteccion en el plan actual.
 
 ### Registro historico conservado
 

@@ -1,68 +1,97 @@
-# Modelo de ramas dev -> pre -> main
+# Modelo supervisado de ramas dev -> pre -> main
 
-Fecha: 2026-08-01
+Fecha: 2026-08-02
 Repositorio: `AlbertoSoriaCarrillo/collectohub`
-Estado: `DOCUMENTED_NOT_ACTIVE`
+Estado de esta entrega: `SUPERVISED_ACTIVATION_PENDING_ALIGNMENT`
+Estado objetivo: `SUPERVISED_ACTIVE_NO_ENFORCEMENT`
 
-Este documento define la estrategia normativa de ramas. No crea ni configura
-ramas o reglas remotas por si mismo. `origin/main`, `origin/dev` y `origin/pre`
-existen desde el mismo commit, pero el modelo no esta activo hasta que sus
-protecciones y metodos de fusion se configuren, prueben y documenten.
+Este documento define la estrategia normativa de ramas. No crea ramas, no
+configura rulesets o branch protection, no fusiona pull requests y no activa
+automatizaciones.
+
+## Significado del estado objetivo
+
+`SUPERVISED_ACTIVE_NO_ENFORCEMENT` significa:
+
+- `dev` es la rama de integracion efectiva;
+- GitHub no aplica tecnicamente branch protection ni rulesets enforced;
+- los controles se aplican mediante el procedimiento de Codex y revision
+  humana;
+- no se afirma que ninguna rama este tecnicamente protegida;
+- la automatizacion no puede fusionar pull requests;
+- toda fusion requiere intervencion humana;
+- `main`, `dev` y `pre` son ramas permanentes;
+- el push directo esta prohibido por politica, aunque GitHub no lo bloquee.
+
+Este estado no equivale a `PROTECTED_ACTIVE`.
+
+## Activacion condicional
+
+La PR que introduce este cambio parte de `main` y apunta a `main` porque el modo
+supervisado aun no esta integrado. Antes de esa integracion, `main` sigue siendo
+la rama de integracion efectiva.
+
+Hasta que el commit integrado que contiene esta politica este presente
+simultaneamente en `origin/main`, `origin/dev` y `origin/pre`, el estado es
+`SUPERVISED_ACTIVATION_PENDING_ALIGNMENT` y la automatizacion permanece
+`PAUSED`.
+
+La activacion operativa completa exige, en este orden:
+
+1. fusion manual de esta PR en `main`;
+2. actualizacion manual por fast-forward de `dev` y `pre` al commit integrado;
+3. igualdad demostrada de `origin/main`, `origin/dev` y `origin/pre`;
+4. adaptacion de la automatizacion al flujo supervisado, sin permiso de fusion;
+5. primera ejecucion bajo supervision humana.
+
+La igualdad de las tres refs es una condicion necesaria. Si se alcanza pero la
+automatizacion no esta adaptada o no se ha realizado la primera ejecucion
+supervisada, la alineacion esta completa pero la activacion operativa sigue
+pendiente y la automatizacion continua `PAUSED`.
 
 ## Ramas permanentes
 
 ### `main`
 
 - Es la rama estable y de produccion.
-- No admite push directo ni fusion automatica.
-- No exige historial lineal y debe permitir merge commits de release.
-- Una vez activo el modelo, recibe unicamente promociones desde `pre`.
-- Cada promocion requiere una PR de release, validacion humana y autorizacion
-  explicita para fusionar mediante **Create a merge commit**.
+- No admite push directo por politica ni fusion automatica.
+- Recibe unicamente promociones desde `pre` despues de la activacion.
+- Cada release requiere PR, siete checks en `SUCCESS`, autorizacion humana
+  explicita y fusion manual mediante **Create a merge commit**.
 - Squash and merge y Rebase and merge estan prohibidos para releases.
-- Se prepara un tag cuando corresponda al release.
 
 ### `pre`
 
 - Es la rama de preproduccion.
-- No admite push directo ni fusion automatica.
-- No exige historial lineal y debe permitir merge commits de promocion.
+- No admite push directo por politica ni fusion automatica.
 - Recibe promociones desde `dev` mediante PR.
-- Requiere validacion funcional humana antes de la fusion manual.
-- La promocion usa obligatoriamente **Create a merge commit**; Squash and merge
-  y Rebase and merge estan prohibidos.
-- No se desarrolla funcionalidad directamente en `pre` y una PR de promocion
-  no incorpora cambios funcionales nuevos.
+- Requiere siete checks en `SUCCESS` y validacion funcional humana.
+- La promocion se fusiona manualmente mediante **Create a merge commit**.
+- Squash and merge y Rebase and merge estan prohibidos.
+- No se desarrolla funcionalidad directamente en `pre`.
 
 ### `dev`
 
-- Es la rama de integracion continua una vez activo el modelo.
-- No admite push directo.
+- Es la rama de integracion efectiva solo en
+  `SUPERVISED_ACTIVE_NO_ENFORCEMENT`.
+- No admite push directo por politica.
 - Recibe PR desde `codex/<epic>` y `quality/<epic>`.
-- Puede exigir historial lineal.
-- Usa status checks en modo strict: **Require branches to be up to date before
-  merging** esta activado para entregas temporales.
-- No requiere aprobacion humana para cada EPIC.
-- Autoriza squash and merge automatico exclusivamente cuando los siete
-  controles obligatorios estan en `PASS`, la autorrevision esta registrada y
-  el head actual coincide con el `expected_head_sha` registrado.
-- Una ejecucion procesa como maximo una EPIC o completa una PR pendiente.
+- La entrega se fusiona manualmente mediante **Squash and merge**.
+- La automatizacion valida e informa, pero no fusiona.
 
 ## Ramas temporales
 
-`codex/<epic>` y `quality/<epic>`:
+Despues de la activacion, `codex/<epic>` y `quality/<epic>`:
 
-- parten de `dev` cuando el modelo esta activo;
+- parten siempre de `origin/dev` actualizado;
+- apuntan a `dev`;
 - contienen una unica tarea y un unico commit logico;
-- no admiten alcance funcional ajeno a la tarea;
-- se eliminan solo despues de confirmar su fusion.
+- no incorporan alcance ajeno a la tarea;
+- no se eliminan automaticamente.
 
-## Promociones y controles
+Una ejecucion procesa como maximo una EPIC o una PR pendiente.
 
-### `codex/<epic>` o `quality/<epic>` -> `dev`
-
-La PR requiere validacion tecnica automatica, autorrevision y comprobacion de
-`expected_head_sha`. Los siete checks obligatorios son:
+## Siete checks obligatorios
 
 1. `Validate repository structure`;
 2. `Backend build and tests`;
@@ -72,115 +101,106 @@ La PR requiere validacion tecnica automatica, autorrevision y comprobacion de
 6. `frontend-verify`;
 7. `powershell-parse`.
 
-Solo si los siete concluyen en `SUCCESS`, la autorrevision no detecta un
-bloqueo y el SHA esperado sigue siendo el head real se permite squash and merge
-automatico. Un check rojo, pendiente o ausente bloquea la fusion.
+Los checks se ejecutan en GitHub, pero su obligatoriedad no esta enforced por
+rulesets en el plan actual. Codex y la persona que fusiona deben comprobar que
+los siete estan en `SUCCESS`. Un resultado rojo, pendiente o ausente bloquea la
+fusion humana.
 
-**Require branches to be up to date before merging** esta activado. Si `dev`
-cambia, la rama temporal debe actualizarse con `dev`, repetir los siete checks y
-registrar su nuevo head como `expected_head_sha`.
+## Entrega `codex/<epic>` o `quality/<epic>` -> `dev`
 
-El metodo de entrega es **Squash and merge**. Cada PR contiene una unica tarea y
-la rama temporal solo se elimina despues de confirmar la fusion.
+1. Crear la rama desde `origin/dev` actualizado y limpio.
+2. Implementar como maximo una EPIC.
+3. Ejecutar validacion local y abrir una PR con base exacta `dev`.
+4. Esperar los siete checks.
+5. Realizar autorrevision y registrar `expected_head_sha`.
+6. Informar `HUMAN_MERGE_REQUIRED` y terminar.
 
-### `dev` -> `pre`
+Codex y la automatizacion no tienen permiso para fusionar. Antes de la fusion,
+una persona comprueba:
 
-- PR de promocion con head exacto `dev` y base exacta `pre`.
-- Validacion funcional humana y siete checks en `SUCCESS`.
-- Status checks en modo loose: **Require branches to be up to date before
-  merging** esta desactivado. Los siete checks siguen siendo obligatorios.
-- No se fusiona `pre` de vuelta hacia `dev` para actualizar la PR.
-- Ninguna funcionalidad nueva dentro de la promocion.
-- Fusion manual mediante **Create a merge commit**.
-- Squash and merge y Rebase and merge estan prohibidos.
-- `pre` no exige historial lineal.
-- Inmediatamente antes de fusionar se vuelven a comprobar el SHA actual de
-  `dev`, el SHA actual de `pre`, el head de la PR sin cambios, la base de la PR
-  sin cambios desde la revision final, el diff sin cambios inesperados y los
-  siete checks en `SUCCESS`.
-- Si `dev`, `pre` o la PR cambian despues de la validacion, se detiene la
-  promocion y se repite la revision aplicable.
-- Despues de fusionar debe cumplirse:
+- head actual igual a `expected_head_sha`;
+- base exacta `dev`;
+- diff esperado;
+- siete checks en `SUCCESS`;
+- ausencia de conversaciones o bloqueos pendientes;
+- ausencia de cambios posteriores a la revision.
+
+La fusion humana usa **Squash and merge**. Si cambia `dev`, el head o el diff,
+se actualiza lo necesario y se repiten la revision y los checks aplicables.
+
+## Promocion `dev` -> `pre`
+
+- PR con head exacto `dev` y base exacta `pre`;
+- siete checks en `SUCCESS`;
+- validacion funcional humana;
+- ningun cambio funcional nuevo dentro de la promocion;
+- comprobacion inmediatamente anterior de refs, head, base y diff sin cambios;
+- fusion manual mediante **Create a merge commit**;
+- nunca Squash and merge;
+- nunca Rebase and merge.
+
+Si `dev`, `pre` o la PR cambian despues de la validacion, se repite la revision.
+No se fusiona `pre` de vuelta hacia `dev`. Despues de fusionar debe pasar:
 
 ```powershell
 git merge-base --is-ancestor origin/dev origin/pre
 ```
 
-### `pre` -> `main`
+## Promocion `pre` -> `main`
 
-- PR de release con head exacto `pre` y base exacta `main`.
-- Autorizacion humana explicita y siete checks en `SUCCESS`.
-- Status checks en modo loose: **Require branches to be up to date before
-  merging** esta desactivado. Los siete checks siguen siendo obligatorios.
-- No se fusiona `main` de vuelta hacia `pre` para actualizar la PR.
-- Fusion manual mediante **Create a merge commit**.
-- Squash and merge y Rebase and merge estan prohibidos.
-- `main` no exige historial lineal.
-- Inmediatamente antes de fusionar se vuelven a comprobar el SHA actual de
-  `pre`, el SHA actual de `main`, el head de la PR sin cambios, la base de la PR
-  sin cambios desde la autorizacion, el diff sin cambios inesperados y los
-  siete checks en `SUCCESS`.
-- Si `pre`, `main` o la PR cambian despues de la autorizacion, se detiene la
-  promocion y se solicita una nueva autorizacion explicita.
-- Despues de fusionar debe cumplirse:
+- PR con head exacto `pre` y base exacta `main`;
+- siete checks en `SUCCESS`;
+- autorizacion humana explicita;
+- comprobacion inmediatamente anterior de refs, head, base y diff sin cambios;
+- fusion manual mediante **Create a merge commit**;
+- nunca Squash and merge;
+- nunca Rebase and merge.
+
+Si `pre`, `main` o la PR cambian despues de la autorizacion, se solicita una
+nueva autorizacion explicita. No se fusiona `main` de vuelta hacia `pre`.
+Despues de fusionar debe pasar:
 
 ```powershell
 git merge-base --is-ancestor origin/pre origin/main
 ```
 
-- Preparacion de tag cuando corresponda.
+Se prepara un tag cuando corresponda.
 
 ## Entrega secuencial
 
 Antes de iniciar una EPIC se consulta GitHub por PR abiertas desde `codex/*` o
-`quality/*` hacia la rama de integracion efectiva. Cualquier coincidencia impide
-iniciar otra EPIC, con independencia de que sea borrador o de que sus checks
-esten verdes, pendientes, rojos o ausentes. La ejecucion puede dedicarse
-unicamente a validar, revisar, informar o completar esa PR pendiente.
+`quality/*` hacia la rama de integracion efectiva. Cualquier coincidencia
+bloquea una nueva EPIC, con independencia de que sea borrador o de que sus
+checks esten verdes, pendientes, rojos o ausentes. La ejecucion solo puede
+validar, revisar o informar esa PR pendiente; nunca fusionarla.
 
-Tras cerrar o fusionar la entrega anterior se vuelve a la rama de integracion
-efectiva, se ejecuta `git fetch origin`, se exige arbol limpio, se actualiza solo
-por fast-forward y se comprueba que `HEAD` coincide con el ref remoto antes de
-seleccionar otra EPIC.
+Despues de que una persona fusione o cierre la entrega anterior, la siguiente
+ejecucion vuelve a la rama efectiva, ejecuta `git fetch origin`, exige arbol
+limpio, actualiza solo por fast-forward y demuestra que `HEAD` coincide con el
+ref remoto antes de seleccionar trabajo.
 
-## Transicion y activacion
+## Configuracion esperada del repositorio
 
-Estado verificado de bootstrap: `origin/main`, `origin/dev` y `origin/pre`
-parten de `b669a3fc2a9cd64346f400bbbfaf583cc184ab46`. Esta igualdad no activa el
-modelo por si sola.
+- `Allow squash merging`: activado;
+- `Allow merge commits`: activado;
+- `Allow rebase merging`: desactivado;
+- auto-merge nativo de GitHub: no necesario.
 
-Mientras las protecciones y metodos de fusion no esten configurados, probados y
-documentados:
+La API de GitHub confirmo esos cuatro valores el 2026-08-02. Esta observacion no
+equivale a branch protection: GitHub no garantiza que se elija el metodo
+correcto, por lo que la persona que fusiona debe aplicar el metodo asociado a
+cada tipo de PR.
 
-- el modelo permanece en `DOCUMENTED_NOT_ACTIVE`;
-- `main` sigue siendo la rama de integracion efectiva;
-- las ramas temporales siguen partiendo de `main` y apuntando a `main` bajo las
-  puertas secuenciales existentes;
-- no se activa la automatizacion programada para integrar en `dev`.
+## Limitaciones y futura proteccion real
 
-La activacion exige aplicar y probar las protecciones descritas en
-`docs/33_GITHUB_MAIN_PROTECTION.md`, conservar evidencia y declarar el estado
-explicitamente `ACTIVE`. Solo entonces `dev` pasa a ser la rama de integracion
-efectiva.
+En el plan gratuito actual GitHub no bloquea tecnicamente push directo, force
+push o borrado mediante rulesets enforced; tampoco garantiza los checks ni el
+metodo de fusion. La politica prohibe esas acciones, pero la garantia es
+procedimental.
 
-## Configuracion fuera del repositorio
+Cuando exista GitHub Pro, Team o equivalente se debe crear una tarea separada
+para configurar, probar y evidenciar branch protection y rulesets reales. No se
+debe declarar `PROTECTED_ACTIVE` hasta completar esa tarea.
 
-Los rulesets, las restricciones de push y las opciones de fusion se configuran
-manualmente en GitHub. El repositorio debe permitir Squash merging para entregas
-temporales hacia `dev` y Merge commits para promociones `dev` -> `pre` y
-releases `pre` -> `main`. Rebase merging no forma parte del flujo acordado. No
-debe existir una regla global de historial lineal que impida merge commits en
-`pre` o `main`.
-
-Los required status checks usan modo strict solo para entregas temporales hacia
-`dev`. Las promociones hacia `pre` y `main` usan modo loose, con los mismos siete
-checks obligatorios, para no forzar sincronizaciones inversas de los merge
-commits historicos de la rama destino.
-
-Ningun workflow o script del repositorio debe cambiar protecciones, fusionar en
-`pre` o `main`, ni declarar el modelo activo sin verificar refs, reglas y
-evidencia.
-
-No es necesario fusionar `pre` o `main` de vuelta hacia `dev` cuando las
-promociones preservan la ascendencia. Una sincronizacion inversa solo se realiza
-si `main` recibe una correccion excepcional que `dev` todavia no contiene.
+La guia operativa y la evidencia de los ajustes remotos estan en
+`docs/33_GITHUB_MAIN_PROTECTION.md`.
