@@ -1,7 +1,8 @@
 # CollectoHub backlog after MVP 1
 
-Estado: backlog posterior al cierre de MVP 1. El orden funcional sigue
-`docs/01_ROADMAP.md`.
+Estado actual: modo `SUPERVISED_ACTIVE_NO_ENFORCEMENT`, MVP4
+`MVP4_CLOSED_WITH_LIMITATIONS` y una unica siguiente tarea seleccionada:
+EPIC 45A. El orden funcional sigue `docs/01_ROADMAP.md`.
 
 ## Must fix antes de ensenar portfolio
 
@@ -11,7 +12,8 @@ Antes de cada demo se debe confirmar:
 - [ ] no hay errores visuales evidentes en desktop y mobile;
 - [ ] Home, Login, Catalogo, Colecciones, Buscados y Perfil cargan sin errores;
 - [ ] Docker alcanza `healthy` y `/api/health` devuelve `UP`;
-- [ ] tests frontend/backend y E2E siguen verdes;
+- [ ] tests frontend/backend siguen verdes; E2E se registra como
+      `SKIPPED_WITH_REASON` mientras permanezca pospuesto;
 - [ ] no reaparecen enlaces principales a tiendas, inventario o reservas.
 
 Pulido recomendado para portfolio, no bloqueante del MVP:
@@ -46,13 +48,13 @@ Estado recomendado: `MVP2_CLOSED_WITH_LIMITATIONS`. MVP 2 puede cerrarse como
 biblioteca editorial comun y adopcion gradual, dejando fuera admin editorial,
 moderacion, carga masiva, marketplace, pagos, social y movil.
 
-Siguiente tarea: EPIC 39 - Cierre formal MVP2 y preparacion de MVP3 Admin
+Secuencia historica: EPIC 39 cerro formalmente MVP2 y preparo MVP3 Admin
 Editorial.
 
 EPIC 39C cierra la preparacion de MVP3 mediante
 `docs/21_MVP3_ADMIN_EDITORIAL_PLAN.md`. EPIC 40A-40G completa el primer bloque
-parcial de administracion editorial y validacion local. Siguiente tarea
-recomendada: EPIC 41A - Auditoria UX/Admin editorial y bugs de usabilidad.
+parcial de administracion editorial y validacion local. EPIC 41A, tambien
+completada, audito UX/Admin editorial y bugs de usabilidad.
 
 MVP 3 ya no es Social basico. MVP 3 pasa a ser Admin editorial y carga real de
 datos. Social basico pasa a MVP 6. El cambio de orden evita saltar a
@@ -79,25 +81,24 @@ Orden recomendado MVP3:
    Completada el 2026-07-10.
 
 EPIC 41A - Auditoria UX/Admin editorial y bugs de usabilidad. Completada el
-2026-07-10. Siguiente tarea recomendada: EPIC 41B - Cierre
-documental/exportable MVP3 parcial.
+2026-07-10. EPIC 41B - Cierre documental/exportable MVP3 parcial, tambien
+completada.
 
 EPIC 41B - Cierre documental/exportable MVP3 parcial. Completada el
-2026-07-10. Siguiente tarea recomendada: EPIC 41C - E2E basico Admin Editorial
-y validacion con datos demo.
+2026-07-10. EPIC 41C - E2E basico Admin Editorial y validacion con datos demo
+quedo pospuesta.
 
 Decision: los E2E se posponen hasta recorridos mas maduros. EPIC 42A - Calidad
-de datos editorial y reglas anti-duplicados. Completada el 2026-07-10.
-Siguiente tarea recomendada: EPIC 42B - Hardening admin editorial y
-validaciones backend selectivas.
+de datos editorial y reglas anti-duplicados, y EPIC 42B - Hardening admin
+editorial y validaciones backend selectivas, estan completadas.
 
-EPIC 42B completada el 2026-07-10. Siguiente tarea recomendada: EPIC 42C -
-Calidad editorial avanzada y reporte de duplicados.
+EPIC 42B quedo completada el 2026-07-10 y EPIC 42C - Calidad editorial avanzada
+y reporte de duplicados, tambien se completo.
 
 EPIC 42C, 42C-FIX y 42C-FIX2 completadas el 2026-07-12. EPIC 43A - Diseno de
 roles editoriales separados de ADMIN queda completada el 2026-07-12. El diseno
-recomienda `EDITORIAL_ADMIN` sin implementarlo todavia. Siguiente tarea:
-EPIC 43B, 43C y 43D quedan completadas el 2026-07-12. `EDITORIAL_ADMIN` se
+recomendo `EDITORIAL_ADMIN`; EPIC 43B, 43C y 43D quedaron completadas el
+2026-07-12. `EDITORIAL_ADMIN` se
 provisiona solo mediante operacion controlada, sin autoasignacion ni interfaz
 publica. EPIC 44A, EPIC 44B, EPIC 44B-FIX, EPIC 44C y EPIC 44D quedan completadas.
 EPIC 44E, EPIC 44F y EPIC 44G-A a 44G-D-FIX quedan completadas. La FIX cierra
@@ -109,8 +110,10 @@ PowerShell 5.1 sin cambiar el alcance funcional. La primera ejecucion real de
 44H-C detecta que una pagina vacia se convierte en `null`; EPIC 44H-C-FIX
 corrige exclusivamente ese contrato. Tras integrar la FIX, EPIC 44H-C completa
 el escenario `44hc3`, su doble ejecucion idempotente, API/DB, privacidad,
-propiedad, filtros, ordenaciones, progreso y recorrido UI humano. Resultado:
-`MVP4_PARTIALLY_CLOSED` en `docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md`.
+propiedad, filtros, ordenaciones, progreso y recorrido UI humano. Su resultado
+inicial fue `MVP4_PARTIALLY_CLOSED`; la decision posterior vigente es
+`MVP4_CLOSED_WITH_LIMITATIONS` en
+`docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md`.
 
 ## Quality gates transversales
 
@@ -125,22 +128,30 @@ manual de proteccion de `main`. No cambia producto, dependencias, migraciones ni
 contratos. La proteccion remota queda como accion administrativa supervisada
 fuera del repositorio.
 
-La configuracion documental `dev -> pre -> main` queda definida en
-`docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md`. No es una EPIC funcional y no activa el
-modelo por si sola. Hasta que existan simultaneamente `origin/dev` y
-`origin/pre`, `main` sigue siendo la rama de integracion. Tras integrar esta
-configuracion, ambas ramas permanentes se crean manualmente desde el mismo
-commit de `main`; solo entonces `dev` recibe PR de `codex/*` y `quality/*`,
-`dev -> pre` requiere validacion funcional humana y `pre -> main` requiere
-autorizacion humana. La creacion de ramas y los rulesets no forman parte de esta
-entrega documental.
+El modelo `dev -> pre -> main` esta activo como
+`SUPERVISED_ACTIVE_NO_ENFORCEMENT`. El commit de activacion
+`5f5c45c6cec89e442c246508eb421ac641f8a967` esta en `origin/main`, `origin/dev`
+y `origin/pre`, y la primera ejecucion supervisada termino correctamente sin
+cambios de producto, commit, push, PR ni fusion. `dev` es la rama de integracion
+efectiva. La automatizacion nunca fusiona, las entregas terminan en
+`HUMAN_MERGE_REQUIRED` y toda fusion es humana. GitHub no aplica protecciones
+enforced y este estado no equivale a `PROTECTED_ACTIVE`. Cualquier PR abierta
+desde `codex/*` o `quality/*` hacia `dev` bloquea otra EPIC.
 
-QUALITY-B queda definida, no implementada, para cobertura con baseline real,
-analisis estatico, lint, secretos y vulnerabilidades. Tras 44H-C no se inicia
-automaticamente otra EPIC: 44H-C esta integrada y el backlog funcional debe
-reconciliarse de forma explicita antes de seleccionar trabajo nuevo.
+El horario automatico no se activa en este cierre. QUALITY-B permanece definida
+y no implementada; no compite con la unica siguiente tarea seleccionada.
 
 ## MVP 4 - Colecciones finales de usuario
+
+Estado: `MVP4_CLOSED_WITH_LIMITATIONS`. Quedan demostrados la alta editorial,
+edicion opcional, items manuales y enlace posterior, WANTED/OWNED, missing
+calculado, privacidad, propiedad, filtros, ordenaciones, progreso,
+compatibilidad legacy y el recorrido integral con UI humana.
+
+Limitaciones conservadas: E2E/Playwright, imagenes y almacenamiento real,
+`quantity` frente a ejemplares separados, paginacion avanzada, decisiones de
+taxonomia y MISSING legacy/persistido, y produccion, social, marketplace y pagos
+fuera de MVP4.
 
 - adopcion principal del catalogo editorial en colecciones;
 - seleccion refinada de item y edicion;
@@ -153,6 +164,33 @@ reconciliarse de forma explicita antes de seleccionar trabajo nuevo.
 - inventario profesional con referencias editoriales;
 - reservas simples con reglas claras;
 - metricas basicas para tienda.
+
+Siguiente tarea unica seleccionada:
+
+**EPIC 45A - Auditoria y diseno ejecutable de MVP5: tiendas profesionales,
+inventario editorial y reservas.**
+
+EPIC 45A es exclusivamente documental. Debe:
+
+- auditar el estado real de backend, frontend, esquema, seguridad, pruebas y
+  documentacion de tiendas, miembros, inventario y reservas;
+- distinguir funcionalidad vigente, legacy, incompleta y futura;
+- definir los recorridos MVP5 de `SHOP_OWNER` y del usuario normal;
+- definir adopcion de `catalogItemId`/`catalogItemEditionId` en inventario;
+- definir propiedad y permisos de tienda, stock y reservas sin pagos;
+- definir compatibilidad legacy y riesgos de concurrencia e idempotencia;
+- definir contratos y el orden de EPICs ejecutables;
+- no implementar funcionalidad.
+
+Criterios de aceptacion de 45A:
+
+- inventario real de capacidades actuales y mapa backend/frontend/schema/tests;
+- limites funcionales y decisiones de identidad editorial;
+- permisos, privacidad, reglas de stock y reservas;
+- riesgos de concurrencia y estrategia de compatibilidad;
+- plan numerado de EPICs y matriz de pruebas;
+- exclusiones expresas: pagos, pedidos, envios, marketplace completo, social,
+  movil y produccion.
 
 ## MVP 6 - Social basico
 
@@ -201,13 +239,11 @@ ejecucion procesa como maximo una EPIC o completa una PR pendiente, y la rama de
 integracion solo cambia de `main` a `dev` tras verificar que `origin/dev` y
 `origin/pre` existen.
 
-EPIC 44F y EPIC 44G-A a 44G-D-FIX estan completadas. EPIC 44H-A queda
-implementada documentalmente, 44H-B aporta los scripts/datos idempotentes y
-44H-B-FIX resuelve la compatibilidad de `SummaryPath` con Windows PowerShell
-5.1. EPIC 44H-C-FIX acepta respuestas vacias sin debilitar la ambiguedad. EPIC
-44H-C completa la validacion integral y deja MVP4 en
-`MVP4_PARTIALLY_CLOSED`; los limites restantes se enumeran en el informe de
-cierre.
+EPIC 44F, EPIC 44G-A a 44G-D-FIX y EPIC 44H-A a 44H-C estan completadas. MVP4
+queda `MVP4_CLOSED_WITH_LIMITATIONS`; los limites se enumeran en
+`docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md`. La siguiente ejecucion debe encontrar
+inequivocamente EPIC 45A como unica siguiente tarea y no iniciar QUALITY-B ni
+otra EPIC en paralelo.
 
 - No adelantar una fase porque exista una tabla, rol o pantalla legacy.
 - Cada EPIC debe declarar que objetivo de producto valida.
