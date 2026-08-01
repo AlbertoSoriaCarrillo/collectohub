@@ -51,8 +51,9 @@ regresion integral y la concurrencia latest-request-wins de 44G quedan cerradas.
 EPIC 44H-A audita los datos existentes y define el cierre parcial sin marcar
 MVP4 como cerrado. EPIC 44H-B implementa el orquestador idempotente del dataset
 integral, WhatIf sin efectos, reanudacion por fases y resumen local sin secretos.
-La ejecucion real doble, la comprobacion DB y el recorrido manual quedan para
-EPIC 44H-C; MVP4 sigue abierto hasta esa evidencia.
+EPIC 44H-B-FIX corrige el `SummaryPath` predeterminado para Windows PowerShell
+5.1 sin ejecutar el escenario integral. La ejecucion real doble, la comprobacion
+DB y el recorrido manual quedan para EPIC 44H-C; MVP4 sigue abierto hasta esa evidencia.
 
 | Dominio | Estado actual |
 | --- | --- |

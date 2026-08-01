@@ -235,11 +235,11 @@ f5e870cad152ab7589d3245f8f19f44098e85043
 test: complete manual collection item frontend coverage
 ```
 
-Base verificada para EPIC 44H-B:
+Base verificada para EPIC 44H-B-FIX:
 
 ```text
-6862d251f5ee9453bab7179d0e36a6566d284bfc
-docs: sync quality-a post-merge status
+f31ab7d4a43c1786fe7068b6fe01c931cf389b86
+feat: add idempotent MVP4 demo data
 ```
 
 EPIC 44G-D-FIX, EPIC 44H-A y EPIC QUALITY-A estan publicadas. EPIC
@@ -251,12 +251,13 @@ con el workflow CI anterior, terminaron correctamente sobre el head
 proteccion de `main` sigue siendo una accion administrativa no verificada desde
 este repositorio.
 
-EPIC 44H-B queda implementada en `codex/44h-b` con el orquestador integral,
-WhatIf sin efectos, reanudacion por escenario, resumen seguro y prueba offline.
-La ejecucion API doble, DB y recorrido manual no forman parte de este cierre y
-deben realizarse con servicios y credenciales locales en la siguiente EPIC.
+EPIC 44H-B esta integrada en `main`. EPIC 44H-B-FIX corrige en
+`codex/44h-b-fix` el valor predeterminado de `SummaryPath` para que Windows
+PowerShell 5.1 pueda invocar el orquestador mediante `-File` sin fallar durante
+el enlace de parametros. La regresion valida ruta predeterminada, ruta explicita
+y `WhatIf` sin efectos. No se ejecuta el escenario real de 44H-C en esta FIX.
 
-Siguiente tarea funcional despues de revisar e integrar 44H-B:
+Siguiente tarea funcional despues de revisar e integrar 44H-B-FIX:
 
 ```text
 EPIC 44H-C - Validacion integral y cierre parcial de MVP4
