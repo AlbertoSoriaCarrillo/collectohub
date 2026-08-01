@@ -249,11 +249,11 @@ usar `docker compose down -v`, prune, truncate o borrado global como rollback.
    `scripts/demo/create-mvp4-integral-demo-data.ps1`: orquestador, dataset
    completo, WhatIf, reanudacion, resumen seguro y prueba offline de
    parser/idempotencia/fallo seguro.
-3. **44H-C - Validacion integral y cierre parcial.** Regresion backend/frontend,
-   ejecucion API/DB/manual segun disponibilidad, evidencias y revision
-   `MVP4_PARTIALLY_CLOSED`.
+3. **44H-C - Validacion integral y cierre parcial.** Completada sobre el
+   escenario `44hc3`: doble ejecucion real, API/DB, recorrido UI humano,
+   regresion backend/frontend, rotacion final local y revision
+   `docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md`.
 
-Siguiente tarea tras 44H-B: EPIC 44H-C. Debe ejecutar dos veces el escenario
-real con servicios y credenciales locales proporcionadas, completar validacion
-API/DB/manual y producir `docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md`; no debe
-interpretar el WhatIf offline como validacion integral.
+Resultado de 44H-C: `MVP4_PARTIALLY_CLOSED`. Este estado demuestra los
+recorridos implementados sin cerrar MVP4 como producto ni incorporar los
+elementos expresamente fuera de alcance de la seccion 14.

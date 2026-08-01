@@ -257,13 +257,24 @@ real de 44H-C detecto que Windows PowerShell 5.1 convertia una pagina con
 44H-C-FIX corrige en `codex/44h-c-fix` el contrato de colecciones vacias y
 conserva la deteccion de ambiguedad. No ejecuta el escenario real, API, DB ni UI.
 
-Siguiente tarea funcional despues de revisar e integrar 44H-C-FIX:
+EPIC 44H-C-FIX fue integrada en `main` como
+`309d5db6069354577ffc606620dd33307063ad19`. EPIC 44H-C se ejecuto sobre esa
+base y el escenario local `44hc3`: doble ejecucion idempotente, API/DB,
+privacidad, propiedad, filtros, ordenaciones, progreso, restauracion y recorrido
+UI humano estan en PASS. La credencial temporal se roto al terminar y las
+variables demo quedaron ausentes en Process y User.
+
+Estado funcional al publicar 44H-C:
 
 ```text
-EPIC 44H-C - Validacion integral y cierre parcial de MVP4
+MVP4_PARTIALLY_CLOSED
 ```
 
-La IA debe volver a comprobar GitHub antes de asumir que este estado sigue vigente.
+Evidencia: `docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md` y
+`docs/38_44H_C_QUALITY_EVIDENCE.md`. La siguiente tarea funcional no queda
+seleccionada automaticamente: primero debe revisarse e integrarse la PR de
+44H-C y despues reconciliar GitHub, `main` y el backlog. La IA debe volver a
+comprobar GitHub antes de asumir que este estado sigue vigente.
 
 ## 10. Decisiones vigentes de MVP4
 
@@ -346,8 +357,9 @@ Orden previsto:
 
 Las decisiones ejecutables y el cierre de 44G-A a 44G-D-FIX estan en
 `docs/29_MVP4_DETAIL_FILTERS_SORTING_DESIGN.md`. El diseno ejecutable de 44H esta
-en `docs/30_MVP4_DEMO_VALIDATION_DESIGN.md`; 44H-B implementa el orquestador y
-44H-C-FIX debe integrarse antes de reanudar 44H-C.
+en `docs/30_MVP4_DEMO_VALIDATION_DESIGN.md`; 44H-B implementa el orquestador,
+44H-C-FIX corrige respuestas vacias y 44H-C demuestra el recorrido integral en
+`docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md`.
 
 El orden puede adaptarse si GitHub o la implementación real muestran dependencias distintas.
 
