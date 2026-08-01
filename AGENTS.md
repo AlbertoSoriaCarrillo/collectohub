@@ -70,13 +70,13 @@ An initial branch push that is necessary to start remote checks is allowed only 
 
 The normative branch model is defined in `docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md`.
 
-- `main` is the stable production branch. It accepts only manual, explicitly authorized release promotions from `pre` after the model is active.
-- `pre` is the preproduction branch. It accepts only manual promotions from `dev` after human functional validation. Do not develop features directly on `pre`.
-- `dev` is the continuous integration branch. After activation, temporary `codex/<epic>` and `quality/<epic>` branches start from `dev` and target `dev`.
+- `main` is the stable production branch. It accepts only manual, explicitly authorized release promotions from `pre` after the model is active. Releases must use **Create a merge commit**; squash and rebase are forbidden, and `main` must not require linear history.
+- `pre` is the preproduction branch. It accepts only manual promotions from `dev` after human functional validation. Promotions must use **Create a merge commit**; squash and rebase are forbidden, and `pre` must not require linear history. Do not develop features directly on `pre`.
+- `dev` is the continuous integration branch. After activation, temporary `codex/<epic>` and `quality/<epic>` branches start from `dev` and target `dev` using squash and merge. `dev` may require linear history.
 - Direct pushes are forbidden on `main`, `pre`, and `dev`.
 - Automatic merge is forbidden on `main` and `pre`. A `codex/*` or `quality/*` pull request into `dev` may use squash and merge automatically only after all seven required checks pass, self-review is recorded, and the current head equals the recorded `expected_head_sha`.
 
-The model is not active until both `origin/dev` and `origin/pre` exist. Until then, `main` remains the effective integration branch and the existing `main`-based delivery gate applies. The initial `dev` and `pre` branches must be created manually from the same `main` commit only after this documentation is merged. Do not infer activation from documentation alone.
+The existence of `origin/dev` and `origin/pre` is necessary but not sufficient for activation. The model remains `DOCUMENTED_NOT_ACTIVE`, and `main` remains the effective integration branch, until all three branch protections and merge methods are configured, tested, evidenced, and explicitly declared active. Do not infer activation from branch existence or documentation alone.
 
 ## Sequential delivery gate
 
@@ -104,10 +104,10 @@ Scheduled automation is strictly sequential: one EPIC cannot begin until the pri
 3. Keep one logical commit per EPIC and never push directly to `main`, `pre`, or `dev`.
 4. Open a pull request to the effective integration branch and wait for all seven required checks.
 5. For a pull request into `dev`, recheck self-review and `expected_head_sha` immediately before automatic squash and merge. Do not merge while a check is red, pending, or absent.
-6. Promote `dev` to `pre` only through a manual pull request with human functional validation and no new functional changes in the promotion.
-7. Promote `pre` to `main` only through a manually authorized release pull request; prepare a tag when appropriate.
+6. Promote `dev` to `pre` only through a manual pull request whose exact head is `dev` and exact base is `pre`, with human functional validation, all seven checks successful, and no new functional changes. Use **Create a merge commit**; never squash or rebase. After merge, require `git merge-base --is-ancestor origin/dev origin/pre` to succeed.
+7. Promote `pre` to `main` only through a manually authorized release pull request whose exact head is `pre` and exact base is `main`, with all seven checks successful. Use **Create a merge commit**; never squash or rebase. After merge, require `git merge-base --is-ancestor origin/pre origin/main` to succeed and prepare a tag when appropriate.
 8. Do not rewrite protected branches, force-push, or use destructive Git commands.
-9. After merge, verify the expected SHA and a clean worktree before another task begins. Delete a temporary branch only after its merge is confirmed.
+9. After merge, verify the expected SHA, required ancestry, and a clean worktree before another task begins. Delete a temporary branch only after its merge is confirmed. Do not merge `pre` or `main` back into `dev` after a normal ancestry-preserving promotion; reverse synchronization is only for an exceptional correction present in `main` but absent from `dev`.
 
 ## Required execution loop
 
