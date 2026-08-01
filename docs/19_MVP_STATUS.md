@@ -53,9 +53,11 @@ MVP4 como cerrado. EPIC 44H-B implementa el orquestador idempotente del dataset
 integral, WhatIf sin efectos, reanudacion por fases y resumen local sin secretos.
 EPIC 44H-B-FIX corrige el `SummaryPath` predeterminado para Windows PowerShell
 5.1 sin ejecutar el escenario integral. La primera ejecucion de 44H-C detecta
-que una pagina vacia se convierte en `null`; EPIC 44H-C-FIX corrige ese contrato
-sin ejecutar API/DB/UI integral. La doble ejecucion, comprobacion DB y recorrido
-manual siguen en 44H-C; MVP4 permanece abierto hasta esa evidencia.
+que una pagina vacia se convierte en `null`; EPIC 44H-C-FIX corrige ese contrato.
+EPIC 44H-C completa despues la doble ejecucion del escenario `44hc3`, API/DB,
+privacidad, propiedad, filtros, ordenaciones, progreso y recorrido UI humano.
+MVP4 queda `MVP4_PARTIALLY_CLOSED` en el grado definido por 44H-C, no cerrado
+como producto.
 
 | Dominio | Estado actual |
 | --- | --- |
@@ -396,8 +398,8 @@ faltantes calculados estan implementados y EPIC 44F esta cerrada. MVP4 continua
 abierto. MVP3 Admin Editorial ha completado el bloque 40A-40G, cierres 41B y
 calidad 42C, y permanece abierto para mejoras posteriores. La prioridad activa
 es MVP4: 44G-A a 44G-D-FIX cierran el detalle final, su regresion, concurrencia y exports. 44H-A
-define el dataset, 44H-B implementa su orquestador y 44H-C-FIX corrige las respuestas vacias;
-la siguiente tarea tras integrar la FIX es 44H-C. Social, tiendas,
+define el dataset, 44H-B implementa su orquestador, 44H-C-FIX corrige las respuestas vacias
+y 44H-C demuestra el recorrido integral. Social, tiendas,
 marketplace, pagos y movil continúan en fases posteriores.
 
 EPIC 41B queda completada: el cierre parcial esta en

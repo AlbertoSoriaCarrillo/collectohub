@@ -2427,3 +2427,35 @@ Siguiente paso: crear el backend en la carpeta backend.
   migraciones, dependencias, Docker Compose, workflows, cuentas o datos locales.
 - Escenario real, API, DB y UI de 44H-C: `NOT_RUN`; 44H-C sigue siendo la
   siguiente EPIC tras revisar e integrar esta FIX. MVP4 permanece abierto.
+
+## 2026-08-01 - EPIC 44H-C - Validacion integral y cierre parcial de MVP4
+
+- Base verificada `309d5db6069354577ffc606620dd33307063ad19`, rama
+  `codex/44h-c`, arbol inicial limpio y sincronizado; cero PR de entrega abierta
+  hacia `main`.
+- Escenario `44hc3` completado dos veces durante 44H-C. Segunda pasada y
+  revalidaciones: cero usuarios, colecciones o items creados; se conservan IDs
+  49-51, 17-18 y 15-20. El dataset no se reejecuta tras el recorrido UI humano.
+- API y DB: PASS para matriz D1-D3/M1/B1/L1/P1, bridge VERIFIED, legacy,
+  filtros, ordenaciones, privacidad, propiedad, progreso y restauracion. D3 no
+  tiene fila persistida.
+- Recorrido UI humano owner ID 50 y reader ID 51: PASS, incluidos resumen,
+  busqueda, vacio filtrado, ordenaciones, cards, `/wanted`, transicion de
+  progreso, ocultacion de datos privados, denegacion de coleccion PRIVATE,
+  error/retry y logout.
+- Rotacion local final: PASS. Una transaccion actualiza solo `password_hash` de
+  49-51, exactamente tres filas, cero inserciones y cero eliminaciones; 47/48,
+  roles, estado, timestamps, propiedad y datos quedan sin cambios. Login y
+  `/api/users/me` pasan para los tres actores; negativo HTTP 401. Variables demo
+  ausentes en Process y User. No se documentan valores, hashes ni tokens.
+- Prueba PowerShell especifica y parser de 56 `.ps1`: PASS. Backend: 424 tests,
+  0 fallos, 0 errores y 0 omitidos con Testcontainers/PostgreSQL. Frontend: 59
+  archivos, 244 tests y build PASS.
+- Warnings conservados: bundle inicial 631.54 kB frente al budget de 500 kB;
+  `@angular/animations` deprecado y cuatro scripts npm pendientes de
+  `allowScripts`. Sin `npm audit fix`.
+- Tests eliminados: 0. Tests ignorados nuevos: 0. Sin cambios en dependencias,
+  lockfiles, migraciones, workflows, backend, frontend o scripts funcionales.
+- Creada la revision `docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md` y evidencia
+  `docs/38_44H_C_QUALITY_EVIDENCE.md`. Estado: `MVP4_PARTIALLY_CLOSED`; no se
+  inicia otra EPIC antes de revisar e integrar la PR de 44H-C.

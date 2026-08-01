@@ -107,8 +107,10 @@ el orquestador idempotente, WhatIf sin efectos, resumen seguro y prueba offline.
 EPIC 44H-B-FIX corrige la resolucion predeterminada de `SummaryPath` en Windows
 PowerShell 5.1 sin cambiar el alcance funcional. La primera ejecucion real de
 44H-C detecta que una pagina vacia se convierte en `null`; EPIC 44H-C-FIX
-corrige exclusivamente ese contrato. Tras integrar la FIX, la siguiente tarea
-es EPIC 44H-C - Validacion integral y cierre parcial.
+corrige exclusivamente ese contrato. Tras integrar la FIX, EPIC 44H-C completa
+el escenario `44hc3`, su doble ejecucion idempotente, API/DB, privacidad,
+propiedad, filtros, ordenaciones, progreso y recorrido UI humano. Resultado:
+`MVP4_PARTIALLY_CLOSED` en `docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md`.
 
 ## Quality gates transversales
 
@@ -124,8 +126,9 @@ contratos. La proteccion remota y el cambio de la automatizacion que aun ordena
 push directo quedan como acciones supervisadas fuera del repositorio.
 
 QUALITY-B queda definida, no implementada, para cobertura con baseline real,
-analisis estatico, lint, secretos y vulnerabilidades. EPIC 44H-C permanece
-bloqueada hasta integrar 44H-C-FIX; despues vuelve a ser la siguiente tarea.
+analisis estatico, lint, secretos y vulnerabilidades. Tras 44H-C no se inicia
+automaticamente otra EPIC: primero debe revisarse e integrarse su PR y luego
+reconciliarse el backlog real.
 
 ## MVP 4 - Colecciones finales de usuario
 
@@ -186,9 +189,10 @@ verdes antes de fusionarla. No empezar QUALITY-B ni 44H-B en la misma ejecucion.
 EPIC 44F y EPIC 44G-A a 44G-D-FIX estan completadas. EPIC 44H-A queda
 implementada documentalmente, 44H-B aporta los scripts/datos idempotentes y
 44H-B-FIX resuelve la compatibilidad de `SummaryPath` con Windows PowerShell
-5.1. EPIC 44H-C-FIX acepta respuestas vacias sin debilitar la ambiguedad.
-Siguiente EPIC tras integrar esta FIX: 44H-C, que ejecutara la validacion
-integral y cerrara parcialmente MVP4 si toda la evidencia es satisfactoria.
+5.1. EPIC 44H-C-FIX acepta respuestas vacias sin debilitar la ambiguedad. EPIC
+44H-C completa la validacion integral y deja MVP4 en
+`MVP4_PARTIALLY_CLOSED`; los limites restantes se enumeran en el informe de
+cierre.
 
 - No adelantar una fase porque exista una tabla, rol o pantalla legacy.
 - Cada EPIC debe declarar que objetivo de producto valida.
