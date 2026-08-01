@@ -77,10 +77,17 @@ Verificador local: PASS con
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\quality\verify.ps1 -BaseRef origin/main`;
 la invocacion directa inicial fue bloqueada por la Execution Policy del host y
 no se conto como PASS
-Resultado: LOCAL_PASS
-Commit: pendiente de crear tras la revision final
-Push: pendiente
-PR: pendiente
-Checks remotos: pendientes
+Resultado: REMOTE_PASS_PR_OPEN
+Commit: publicado en codex/44h-b-fix; el SHA final corresponde al head de la PR #5
+Push: PASS — rama publicada en origin/codex/44h-b-fix
+PR: #5 — 44H-B-FIX: resolve PowerShell 5 summary path
+Checks remotos:
+- quality-policy: PASS
+- backend-verify: PASS
+- frontend-verify: PASS
+- powershell-parse: PASS
+- CI Validate repository structure: PASS
+- CI Backend build and tests: PASS
+- CI Frontend build and tests: PASS
 Riesgos: warnings npm/bundle conocidos; no se cambia el alcance funcional
 Siguiente tarea: EPIC 44H-C - Validacion integral y cierre parcial de MVP4
