@@ -100,9 +100,22 @@ function Invoke-Mvp4Api {
 function Get-ResponseItems {
     param([object]$Response)
 
-    if ($null -eq $Response) { return @() }
-    if ($null -ne $Response.PSObject.Properties["content"]) { return @($Response.content) }
-    return @($Response)
+    if ($null -eq $Response) {
+        $items = @()
+    }
+    elseif ($null -ne $Response.PSObject.Properties["content"]) {
+        if ($null -eq $Response.content) {
+            $items = @()
+        }
+        else {
+            $items = @($Response.content)
+        }
+    }
+    else {
+        $items = @($Response)
+    }
+
+    Write-Output -NoEnumerate $items
 }
 
 function Assert-Compatible {
@@ -129,12 +142,15 @@ function Assert-Compatible {
 
 function Select-UniqueMatch {
     param(
-        [Parameter(Mandatory = $true)][object[]]$Items,
+        [Parameter(Mandatory = $true)]
+        [AllowNull()]
+        [AllowEmptyCollection()]
+        [object[]]$Items,
         [Parameter(Mandatory = $true)][scriptblock]$Predicate,
         [Parameter(Mandatory = $true)][string]$Label
     )
 
-    $matches = @($Items | Where-Object { & $Predicate $_ })
+    $matches = @(@($Items) | Where-Object { & $Predicate $_ })
     if ($matches.Count -gt 1) {
         throw "$Label is ambiguous: found $($matches.Count) exact resources."
     }
