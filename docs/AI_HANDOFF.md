@@ -235,14 +235,15 @@ f5e870cad152ab7589d3245f8f19f44098e85043
 test: complete manual collection item frontend coverage
 ```
 
-Ultimo commit verificado:
+Base verificada para EPIC 44H-B:
 
 ```text
-3cb789b7e103907969b312626cd1563d92685778
-chore: establish repository quality gates
+6862d251f5ee9453bab7179d0e36a6566d284bfc
+docs: sync quality-a post-merge status
 ```
 
-EPIC 44G-D-FIX, EPIC 44H-A y EPIC QUALITY-A estan publicadas. La PR #2 de
+EPIC 44G-D-FIX, EPIC 44H-A y EPIC QUALITY-A estan publicadas. EPIC
+QUALITY-A-FIX2 esta integrada en la base anterior. La PR #2 de
 `quality/quality-gates` fue fusionada en `main` como `3cb789b7`; los jobs
 `quality-policy`, `backend-verify`, `frontend-verify` y `powershell-parse`, junto
 con el workflow CI anterior, terminaron correctamente sobre el head
@@ -250,10 +251,15 @@ con el workflow CI anterior, terminaron correctamente sobre el head
 proteccion de `main` sigue siendo una accion administrativa no verificada desde
 este repositorio.
 
-Siguiente tarea funcional despues de QUALITY-A:
+EPIC 44H-B queda implementada en `codex/44h-b` con el orquestador integral,
+WhatIf sin efectos, reanudacion por escenario, resumen seguro y prueba offline.
+La ejecucion API doble, DB y recorrido manual no forman parte de este cierre y
+deben realizarse con servicios y credenciales locales en la siguiente EPIC.
+
+Siguiente tarea funcional despues de revisar e integrar 44H-B:
 
 ```text
-EPIC 44H-B - Datos demo y scripts idempotentes
+EPIC 44H-C - Validacion integral y cierre parcial de MVP4
 ```
 
 La IA debe volver a comprobar GitHub antes de asumir que este estado sigue vigente.
@@ -339,7 +345,8 @@ Orden previsto:
 
 Las decisiones ejecutables y el cierre de 44G-A a 44G-D-FIX estan en
 `docs/29_MVP4_DETAIL_FILTERS_SORTING_DESIGN.md`. El diseno ejecutable de 44H esta
-en `docs/30_MVP4_DEMO_VALIDATION_DESIGN.md`; la siguiente tarea es 44H-B.
+en `docs/30_MVP4_DEMO_VALIDATION_DESIGN.md`; 44H-B implementa el orquestador y
+la siguiente tarea es 44H-C.
 
 El orden puede adaptarse si GitHub o la implementación real muestran dependencias distintas.
 

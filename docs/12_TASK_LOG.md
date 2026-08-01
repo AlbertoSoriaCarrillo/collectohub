@@ -2346,3 +2346,36 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Sin codigo funcional, workflows, scripts de producto, dependencias, manifests,
   lockfiles, migraciones, E2E ni Playwright. Siguiente tarea funcional: EPIC
   44H-B.
+
+## 2026-07-31 - EPIC 44H-B - Datos demo y scripts idempotentes
+
+- Base verificada `6862d251f5ee9453bab7179d0e36a6566d284bfc`, rama
+  `codex/44h-b`, arbol inicial limpio y sin divergencia con `origin/main`; no
+  existian PR abiertas hacia `main` al iniciar.
+- Creado `create-mvp4-integral-demo-data.ps1` con `SupportsShouldProcess`, clave
+  determinista por escenario, busqueda-validacion-creacion, rechazo de
+  incompatibilidades/duplicados, resumen atomico por fases y ausencia de
+  limpieza destructiva.
+- El orquestador cubre catalogo editorial, creator/credit/relationship, master
+  products y bridge VERIFIED, owner/reader, colecciones PUBLIC/PRIVATE y matriz
+  D1-D3, M1, B1, L1 y P1. Valida MISSING no persistido, progreso 1/1/1 y 33%,
+  cinco sorts, filtros, sanitizacion publica, privacidad y owner-only.
+- Credenciales solo por `SecureString` o variables de entorno del proceso; el
+  resumen no guarda passwords, tokens, headers, hashes ni datos reales.
+- Creada prueba PowerShell offline: parser, dos WhatIf deterministas contra una
+  URL inalcanzable, ausencia de HTTP/psql/ficheros, fallo seguro sin resumen,
+  primitivas idempotentes y prohibiciones destructivas: PASS.
+- Backend `mvnw.cmd clean verify`: BUILD SUCCESS, 424 tests, 0 fallos, 0 errores
+  y 0 omitidos; Docker/Testcontainers disponible.
+- Frontend `npm.cmd ci`: 474 paquetes. Suite: 59 archivos y 244 tests correctos.
+  Build: PASS; 16 vulnerabilidades registradas por el verificador, sin ejecutar
+  arreglos automaticos, y warning conocido de bundle inicial 631.54 kB frente a
+  500 kB.
+- Verificador obligatorio `scripts/quality/verify.ps1 -BaseRef origin/main`:
+  PASS; diff, conflictos, tests eliminados, marcadores ignorados y parser
+  PowerShell correctos.
+- Doble ejecucion API, SELECT DB y recorrido manual: `NOT_RUN`; pertenecen a
+  44H-C y este entorno no tenia backend activo ni credenciales locales
+  proporcionadas. No se presentan como PASS.
+- Sin backend, frontend, migraciones, dependencias, manifests, lockfiles,
+  exports, E2E ni Playwright. Siguiente tarea tras revision/integracion: 44H-C.

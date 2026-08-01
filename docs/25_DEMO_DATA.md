@@ -164,6 +164,51 @@ Acepta `ApiBaseUrl`, `FrontendBaseUrl`, `AdminEmail`, `AdminPassword`,
 `scripts/demo/.last-mvp4-progress-demo-data.json`; nunca guarda contrasenas ni
 tokens. `MISSING` nuevo no se persiste.
 
+## Demo integral MVP4 idempotente
+
+`create-mvp4-integral-demo-data.ps1` prepara el dataset D1-D3, M1, B1, L1 y
+P1 definido en `docs/30_MVP4_DEMO_VALIDATION_DESIGN.md`. Usa una clave estable
+por escenario, busca y valida cada recurso antes de crearlo, rechaza duplicados
+ambiguos o datos incompatibles y no realiza limpieza automatica.
+
+Primero revisa el plan sin efectos:
+
+```powershell
+.\scripts\demo\create-mvp4-integral-demo-data.ps1 `
+  -Scenario "local" `
+  -WhatIf
+```
+
+Para la ejecucion real, proporciona las credenciales solo en el proceso local.
+Tambien se pueden pasar como `SecureString` mediante `-EditorialPassword` y
+`-DemoUserPassword`:
+
+```powershell
+$env:COLLECTOHUB_DEMO_EDITORIAL_PASSWORD = "<local-admin-password>"
+$env:COLLECTOHUB_DEMO_USER_PASSWORD = "<local-demo-password>"
+.\scripts\demo\create-mvp4-integral-demo-data.ps1 `
+  -Scenario "local" `
+  -EditorialEmail "admin@collectohub.local"
+```
+
+El operador editorial debe tener `ADMIN`: el script crea master products y
+verifica un bridge exacto, operaciones que `EDITORIAL_ADMIN` por si solo no
+cubre. El resumen reanudable se escribe atomicamente tras cada fase en
+`scripts/demo/.last-mvp4-integral-demo-data.json`. Contiene IDs, emails `.local`,
+estados y URLs; no contiene passwords, tokens, headers ni hashes.
+
+La ejecucion valida cinco filas persistidas en la coleccion publica, D3 como
+`MISSING` calculado sin fila, los cinco sorts, filtros representativos,
+sanitizacion publica, privacidad de la coleccion privada y progreso owner-only.
+Repetir el mismo escenario reutiliza exclusivamente recursos compatibles.
+
+Prueba offline de parser, `WhatIf` repetido, ausencia de efectos y fallo seguro:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+  -File .\scripts\demo\test-mvp4-integral-demo-data.ps1
+```
+
 ## Limpiar base local
 
 El script no borra datos ni ejecuta limpieza automatica.

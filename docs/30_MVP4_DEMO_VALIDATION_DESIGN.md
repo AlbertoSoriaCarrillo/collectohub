@@ -245,10 +245,15 @@ usar `docker compose down -v`, prune, truncate o borrado global como rollback.
 ## 17. Division de EPIC 44H
 
 1. **44H-A - Auditoria y diseno.** Este documento y estado operativo.
-2. **44H-B - Datos demo y scripts idempotentes.** Orquestador, dataset completo,
-   WhatIf, reanudacion, resumen seguro y pruebas de parser/idempotencia.
+2. **44H-B - Datos demo y scripts idempotentes.** Implementada en
+   `scripts/demo/create-mvp4-integral-demo-data.ps1`: orquestador, dataset
+   completo, WhatIf, reanudacion, resumen seguro y prueba offline de
+   parser/idempotencia/fallo seguro.
 3. **44H-C - Validacion integral y cierre parcial.** Regresion backend/frontend,
    ejecucion API/DB/manual segun disponibilidad, evidencias y revision
    `MVP4_PARTIALLY_CLOSED`.
 
-Siguiente tarea tras este diseno: EPIC 44H-B.
+Siguiente tarea tras 44H-B: EPIC 44H-C. Debe ejecutar dos veces el escenario
+real con servicios y credenciales locales proporcionadas, completar validacion
+API/DB/manual y producir `docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md`; no debe
+interpretar el WhatIf offline como validacion integral.
