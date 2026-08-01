@@ -74,10 +74,17 @@ Verificador completo:
 - doble ejecucion real: `NOT_RUN`
 - MVP4: no cerrado
 
-Resultado local: PASS
-Commit: un unico commit de `codex/44h-c-fix`
-Push: pendiente de la revision final del diff
-PR: pendiente; debe quedar en borrador
-Checks remotos: `NOT_RUN`, se ejecutan despues de publicar la rama
+Resultado: REMOTE_PASS_PR_OPEN
+Commit: publicado en `codex/44h-c-fix`; el SHA final corresponde al head de la PR #6
+Push: PASS — rama publicada en `origin/codex/44h-c-fix`
+PR: #6 — 44H-C-FIX: handle empty paged demo responses
+Checks remotos:
+- quality-policy: PASS
+- backend-verify: PASS
+- frontend-verify: PASS
+- powershell-parse: PASS
+- CI Validate repository structure: PASS
+- CI Backend build and tests: PASS
+- CI Frontend build and tests: PASS
 Riesgos: warnings npm/bundle conocidos; el escenario real sigue pendiente
 Siguiente tarea: EPIC 44H-C tras revisar e integrar esta FIX
