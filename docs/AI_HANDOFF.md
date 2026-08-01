@@ -133,17 +133,36 @@ de `docs/32_QUALITY_GATES.md`. El modelo normativo de ramas esta en
 `docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md` y su proteccion manual en
 `docs/33_GITHUB_MAIN_PROTECTION.md`.
 
-El modelo `dev -> pre -> main` permanece en `DOCUMENTED_NOT_ACTIVE` hasta que
-existan simultaneamente `origin/dev` y `origin/pre`. Mientras falte cualquiera,
-`main` sigue siendo la rama de integracion: las ramas temporales parten de
-`main`, sus PR apuntan a `main` y no se declara que `dev` o `pre` existan.
+El modelo `dev -> pre -> main` permanece en `DOCUMENTED_NOT_ACTIVE`.
+`origin/main`, `origin/dev` y `origin/pre` existen desde el mismo commit, pero
+la existencia de las ramas no basta: hasta configurar, probar y documentar las
+protecciones y metodos de fusion, `main` sigue siendo la rama de integracion y
+las ramas temporales parten de `main` y apuntan a `main`.
 
 Tras la activacion, `codex/<epic>` y `quality/<epic>` parten de `dev` y apuntan a
-`dev`. Los siete checks, la autorrevision y `expected_head_sha` permiten squash
-and merge automatico solo en `dev`. Las promociones `dev -> pre` exigen
-validacion funcional humana y fusion manual; las promociones `pre -> main`
-exigen autorizacion humana y fusion manual. Nunca hay push directo a una rama
-permanente.
+`dev`. Los siete checks, la autorrevision y `expected_head_sha` permiten Squash
+and merge automatico solo para `codex/*` o `quality/*` hacia `dev`; `dev` puede
+exigir historial lineal. Estas entregas usan status checks strict: **Require
+branches to be up to date before merging** esta activado y la rama temporal se
+actualiza con `dev` si cambia.
+
+Las promociones `dev -> pre` y `pre -> main` conservan los siete checks
+obligatorios, pero usan status checks loose: **Require branches to be up to date
+before merging** esta desactivado. Exigen head/base exactos, validacion funcional
+o autorizacion humana segun corresponda, y **Create a merge commit**. Justo antes
+de fusionar se vuelven a comprobar los SHA de ambas ramas, el head y la base de
+la PR sin cambios desde la revision o autorizacion, el diff esperado y los siete
+checks en `SUCCESS`. Cualquier cambio posterior detiene la promocion y obliga a
+repetir la revision aplicable; para `pre -> main` requiere nueva autorizacion.
+Squash y rebase estan prohibidos entre ramas permanentes; `pre` y `main` no
+exigen historial lineal. Nunca hay push directo a una rama permanente.
+
+Despues de promocionar se demuestra la ascendencia con
+`git merge-base --is-ancestor origin/dev origin/pre` o
+`git merge-base --is-ancestor origin/pre origin/main`, segun corresponda. No se
+fusiona `pre` hacia `dev` ni `main` hacia `pre` para actualizar una PR de
+promocion. La sincronizacion inversa queda reservada para una correccion
+excepcional presente en `main` y ausente de `dev`.
 
 Antes de otra EPIC se consultan PR abiertas de entrega hacia la rama de
 integracion efectiva. Una coincidencia impide iniciar trabajo nuevo: la
@@ -240,9 +259,11 @@ Sus siete checks remotos concluyeron en `SUCCESS`. El estado funcional es
 `docs/38_44H_C_QUALITY_EVIDENCE.md`.
 
 La tarea documental del modelo de ramas no selecciona una EPIC funcional. El
-modelo queda en `DOCUMENTED_NOT_ACTIVE`: `main` sigue siendo la rama de
-integracion y no se considera que `dev` o `pre` existan hasta completar la
-transicion manual de `docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md`.
+modelo queda en `DOCUMENTED_NOT_ACTIVE`: `origin/main`, `origin/dev` y
+`origin/pre` existen desde
+`b669a3fc2a9cd64346f400bbbfaf583cc184ab46`, pero `main` sigue siendo la rama de
+integracion hasta completar y probar las protecciones y metodos de fusion de
+`docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md`.
 
 ### Registro historico conservado
 

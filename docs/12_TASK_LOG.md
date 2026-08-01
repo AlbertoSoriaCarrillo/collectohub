@@ -2488,3 +2488,37 @@ Siguiente paso: crear el backend en la carpeta backend.
 - Sin codigo funcional, dependencias, manifests, lockfiles, migraciones, Docker,
   datos locales de producto, cuentas, credenciales, E2E ni Playwright. No se
   inicia una EPIC funcional ni se selecciona la siguiente tarea.
+
+## 2026-08-01 - Correccion de ascendencia en promociones dev -> pre -> main
+
+- Auditoria inicial: rama `main`, arbol limpio, cero PR abiertas de entrega
+  hacia `main` y
+  `HEAD == origin/main == origin/dev == origin/pre == b669a3fc2a9cd64346f400bbbfaf583cc184ab46`.
+  `origin/main` es ancestro de `origin/dev` y `origin/pre`.
+- Recuperada sin descartar cambios la rama
+  `codex/branch-model-promotion-fix`. El problema documental era una regla
+  compartida de historial lineal incompatible con los merge commits necesarios
+  para preservar la ascendencia entre ramas permanentes.
+- Entregas `codex/*` o `quality/*` -> `dev`: **Squash and merge**, siete checks
+  en `SUCCESS`, autorrevision sin bloqueos y `expected_head_sha`; `dev` puede
+  exigir historial lineal.
+- Promociones `dev` -> `pre` y releases `pre` -> `main`: fusion manual mediante
+  **Create a merge commit**. Squash and merge y Rebase and merge quedan
+  prohibidos; `pre` y `main` no exigen historial lineal.
+- Las promociones exigen head/base exactos, siete checks, validacion humana
+  aplicable y comprobacion posterior mediante `git merge-base --is-ancestor`.
+  No se requiere sincronizacion inversa salvo correccion excepcional presente
+  en `main` y ausente de `dev`.
+- El modelo permanece `DOCUMENTED_NOT_ACTIVE`: las ramas existen, pero no se
+  activa `dev` ni la automatizacion hasta configurar, probar y evidenciar
+  protecciones y metodos de fusion.
+- Verificador completo contra `origin/main`: `PASS`. Backend: 424 tests, 0
+  fallos, 0 errores y 0 omitidos con Docker disponible. Frontend: 59 archivos,
+  244 tests y build `PASS`. Parser PowerShell, diff, conflictos, tests eliminados
+  y marcadores ignorados: `PASS`.
+- Warnings conocidos: 16 vulnerabilidades npm sin `npm audit fix` y bundle
+  inicial de 631.54 kB frente al budget de 500 kB.
+- Sin workflows, codigo funcional, dependencias, manifests, lockfiles,
+  migraciones, Docker, datos locales, cuentas, credenciales, tests eliminados,
+  tests ignorados nuevos, E2E ni Playwright. No se configuran protecciones
+  remotas, no se fusiona ninguna PR y no se inicia otra tarea.
