@@ -106,7 +106,7 @@ versionados encontrados; no son resultados de ejecucion.
 - Frontend: gestion interna, alta/edicion legacy/editorial, detalle publico y
   reserva. La seleccion editorial usa la fachada existente. No hay paginacion,
   orden configurable ni control de cambios concurrentes.
-- Pruebas versionadas: 22 casos de servicio y 11 MVC; 6 casos HTTP y 13 de
+- Pruebas versionadas: 21 casos de servicio y 12 MVC; 6 casos HTTP y 13 de
   componentes. Cubren referencias editoriales y autorizacion, pero no lock,
   idempotencia, filtros editoriales completos ni sanitizacion por DTO separado.
 
@@ -124,7 +124,7 @@ versionados encontrados; no son resultados de ejecucion.
   inventario puede fallar al reservarse o proyectarse.
 - Frontend: recorridos de usuario y tienda existen, con filtros numericos y
   acciones basicas. El modelo exige `masterProductId` y `productName` legacy.
-- Pruebas versionadas: 21 casos de servicio y 13 MVC; 6 casos HTTP y 5 de
+- Pruebas versionadas: 22 casos de servicio y 14 MVC; 6 casos HTTP y 5 de
   componentes. Todos los fixtures de reserva usan `MasterProduct`; no cubren
   identidad editorial pura, concurrencia, reintento idempotente o expiracion.
 
@@ -178,6 +178,16 @@ Reglas objetivo:
 El rol global `SHOP_OWNER` solo habilita UX/capacidad general. Toda autorizacion
 de una tienda se resuelve con membership activa y `shopId`; `ADMIN` no sustituye
 propiedad salvo un endpoint administrativo futuro expresamente separado.
+
+El rol canonico de dominio, persistencia y API es `EMPLOYEE`, como define
+`ShopMemberRole`. En los artefactos versionados auditados, `STAFF` es un nombre
+legacy presente solo en documentacion, exports y claves de traduccion; no
+representa un cuarto rol. 45C
+debe mapear cualquier valor legacy `STAFF` a `EMPLOYEE`, devolver siempre
+`EMPLOYEE` y reconciliar `docs/16_MVP_API_ENDPOINTS.md` y los exports. 45D debe
+reconciliar las claves de traduccion. Las pruebas de upgrade deben demostrar
+que las memberships conservan usuario, tienda, estado y permisos durante el
+mapeo.
 
 | Accion | OWNER | MANAGER | EMPLOYEE | Usuario autenticado | Visitante |
 | --- | --- | --- | --- | --- | --- |
@@ -240,6 +250,16 @@ Una reserva mantiene cantidad cuando esta `PENDING` o `ACCEPTED` y
 stock. Al pasar a `COMPLETED`, la cantidad se descuenta una sola vez de
 `stockQuantity`; la reserva pasa a terminal y deja de contar como hold en la
 misma transaccion.
+
+Estas reglas solo se aplican a reservas creadas con la contabilidad MVP5. 45G
+debe introducir un marcador persistente no nulo con dos valores:
+`LEGACY_REQUEST` y `MVP5_HOLD`. La migracion asigna `LEGACY_REQUEST` a todas las
+filas preexistentes, sin backfill de holds ni cambio de estado, cantidad,
+expiracion o stock; las nuevas reservas creadas por el flujo MVP5 se guardan
+explicitamente como `MVP5_HOLD`. Una `LEGACY_REQUEST`, incluso `PENDING` o
+`ACCEPTED`, nunca cuenta en `activeHeldQuantity`, y completarla no descuenta
+stock. Conserva las transiciones legacy hasta quedar terminal. No se convierte
+automaticamente una reserva legacy a `MVP5_HOLD`.
 
 Reglas:
 
@@ -319,7 +339,7 @@ limites de texto, propiedad, sanitizacion y compatibilidad.
 | --- | --- |
 | Dominio/servicio | exito, null/vacio, limites, estados incompatibles, idempotencia y efectos laterales |
 | API/MVC | forma DTO, validacion, `400/401/403/404/409`, ownership y no inferencia |
-| Persistencia PostgreSQL | constraints, locks, dos reservas concurrentes, retry idempotente, update de stock y expiracion repetida |
+| Persistencia PostgreSQL | constraints, locks, dos reservas concurrentes, retry idempotente, update de stock, expiracion repetida y cutover legacy/MVP5 |
 | Identidad editorial | item puro, item+edicion, puente verificado, legacy sin puente, conflicto y edicion ajena |
 | Privacidad | DTO publico sin `notes`/membership/auditoria; usuario sin reservas ajenas; tienda sin colecciones privadas |
 | Frontend HTTP | paths, params, header idempotente, errores y tipos nullable editorial/legacy |
@@ -330,6 +350,13 @@ limites de texto, propiedad, sanitizacion y compatibilidad.
 Una prueba de concurrencia debe usar PostgreSQL real/Testcontainers y demostrar
 que dos solicitudes simultaneas nunca superan la disponibilidad. Las pruebas
 MVC con servicios mockeados no sustituyen esa evidencia.
+
+Las pruebas de upgrade de 45G deben partir de reservas legacy `PENDING`,
+`ACCEPTED` y `COMPLETED`, demostrar que todas quedan `LEGACY_REQUEST`, que la
+disponibilidad y el stock no cambian al migrar, y que completar una legacy
+aceptada no descuenta stock. Un escenario mixto debe demostrar que solo las
+nuevas `MVP5_HOLD` retienen disponibilidad, liberan hold y descuentan stock una
+sola vez.
 
 ## 15. Plan numerado de EPICs ejecutables
 
