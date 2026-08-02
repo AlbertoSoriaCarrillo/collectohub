@@ -2592,3 +2592,28 @@ Siguiente paso: crear el backend en la carpeta backend.
 - El horario automatico no se activa. No se modifican workflows, backend,
   frontend, scripts, Docker, migraciones, dependencias, manifests, lockfiles ni
   tests.
+
+## 2026-08-02 - EPIC 45A auditoria y diseno ejecutable de MVP5
+
+- Base real `origin/dev`:
+  `522ce0b99812ba635e6f3bedefd21e3c11249463`; rama exclusiva
+  `codex/45a-mvp5-audit-design`.
+- Auditados backend, frontend, changelogs, seguridad, pruebas y documentos de
+  tiendas, miembros, inventario, matching y reservas. No se implementa codigo.
+- La base vigente permite tienda, OWNER/MANAGER, inventario legacy/editorial y
+  reservas basicas, pero no incluye administracion de miembros, stock
+  transaccional, idempotencia, expiracion efectiva o metricas.
+- Hallazgos prioritarios: `ShopProductResponse` se reutiliza en lectura publica
+  e interna y expone `notes`; las reservas asumen `masterProduct` aunque el
+  inventario admite ofertas editoriales puras; la comprobacion de stock no usa
+  locks y un retry puede duplicar reservas.
+- Definidos identidad editorial principal, fallback legacy, matriz de permisos,
+  proyecciones publicas/internas, disponibilidad por holds, locks PostgreSQL,
+  clave idempotente, expiracion repetible y recorridos OWNER/usuario.
+- Plan ejecutable dividido en 45B-45J y matriz de pruebas con persistencia real,
+  concurrencia, privacidad, frontend y QA integral.
+- Archivos permitidos limitados a diseno, evidencia y cuatro documentos de
+  estado. Sin backend, frontend, scripts, exports, migraciones, workflows,
+  Docker, manifests, lockfiles, dependencias ni tests.
+- Siguiente tarea unica tras revision/integracion humana de 45A: EPIC 45B -
+  contratos seguros y compatibilidad editorial de reservas.

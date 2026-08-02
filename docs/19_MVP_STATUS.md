@@ -56,7 +56,8 @@ El modo operativo actual es `SUPERVISED_ACTIVE_NO_ENFORCEMENT`. `dev` es la
 rama de integracion efectiva, toda fusion es humana, la automatizacion nunca
 fusiona y una entrega termina en `HUMAN_MERGE_REQUIRED`. GitHub no aplica
 protecciones enforced. La siguiente tarea unica seleccionada es EPIC 45A,
-documental; no se inicia en este cierre.
+documental y pendiente de revision/integracion humana. Despues, la siguiente
+tarea unica es EPIC 45B.
 
 | Dominio | Estado actual |
 | --- | --- |
@@ -64,7 +65,7 @@ documental; no se inicia en este cierre.
 | Catalog Knowledge Base | Parcial; fundamentos MVP 2, fachada de lectura, frontend editorial publico, creators y relaciones de items implementados |
 | User Collections | Alta, edicion y enlace catalogado de items manuales cerrados; datos personales preservados |
 | Social | Futuro |
-| Shops & Inventory | Base legacy/editorial implementada; auditoria y diseno ejecutable seleccionados como EPIC 45A |
+| Shops & Inventory | Base legacy/editorial parcial; auditoria y diseno 45A entregados, contratos seguros 45B siguientes tras integracion |
 | Matching | Recomendaciones por edicion, item y fallback legacy |
 | Commerce | Reservas sin pago; resto futuro |
 | Content Creators | Base editorial de creators implementada; herramientas sociales/creador futuras |
@@ -399,25 +400,25 @@ rulesets enforced en el plan actual.
 - Playwright headless: `npm run e2e` correcto con smoke, auth/colecciones, i18n y flujo MVP principal.
 - Playwright headed: `npm run e2e:headed` correcto.
 
-## Siguiente EPIC seleccionada
+## EPIC 45A y siguiente EPIC seleccionada
 
-**EPIC 45A - Auditoria y diseno ejecutable de MVP5: tiendas profesionales,
-inventario editorial y reservas.**
+EPIC 45A audita y disena MVP5 en
+`docs/40_MVP5_SHOPS_INVENTORY_RESERVATIONS_DESIGN.md`. La base actual queda
+clasificada como parcial: soporta tiendas, inventario legacy/editorial y
+reservas basicas, pero comparte DTO publico/interno, no soporta reservas de
+oferta editorial pura y no implementa holds, locks, idempotencia, expiracion
+efectiva, gestion de miembros o metricas.
 
-Es una EPIC exclusivamente documental. Debe auditar backend, frontend, esquema,
-seguridad, pruebas y documentacion de tiendas, miembros, inventario y reservas;
-distinguir vigente, legacy, incompleto y futuro; definir los recorridos de
-`SHOP_OWNER` y usuario normal; adoptar `catalogItemId` y
-`catalogItemEditionId`; y fijar propiedad, permisos, stock, reservas sin pagos,
-compatibilidad legacy, concurrencia, idempotencia, contratos y orden de EPICs.
+El diseno fija identidad editorial, compatibilidad legacy, permisos,
+privacidad, reglas de stock, concurrencia, recorridos y plan 45B-45J. Pagos,
+pedidos, envios, marketplace completo, social, movil y produccion permanecen
+excluidos.
 
-Sus criterios de aceptacion son un inventario real de capacidades, mapa
-backend/frontend/schema/tests, limites funcionales, decisiones de identidad
-editorial, permisos y privacidad, reglas de stock/reservas, riesgos de
-concurrencia, estrategia de compatibilidad, plan numerado y matriz de pruebas.
+Despues de revision e integracion humana de 45A, la siguiente tarea unica es:
 
-Quedan excluidos pagos, pedidos, envios, marketplace completo, social, movil y
-produccion. No se debe iniciar otra EPIC ni QUALITY-B en paralelo.
+**EPIC 45B - Contratos seguros y compatibilidad editorial de reservas.**
+
+Mientras la PR de 45A este abierta no se inicia 45B, QUALITY-B ni otra EPIC.
 
 Vision, alcance y roadmap: `docs/00_PRODUCT_VISION.md`,
 `docs/01_ROADMAP.md`, `docs/02_MVP1_SCOPE.md` y
