@@ -1,9 +1,12 @@
 # CollectoHub quality gates
 
 Date established: 2026-07-31
+Last operational update: 2026-08-02
 Scope: permanent repository policy, local verification, CI, pull requests, and auditable evidence.
 
 An EPIC is not complete merely because code exists. Closure requires the checks applicable to its actual diff, real evidence, a focused pull request, and green required checks. An unexecuted requirement is `SKIPPED_WITH_REASON`, `NOT_RUN`, or `BLOCKED`; it is never `PASS`.
+
+The current delivery mode is `SUPERVISED_ACTIVE_NO_ENFORCEMENT`. `dev` is the effective integration branch. GitHub does not enforce branch protection or rulesets for this private repository on the current plan, so checks and merge rules are enforced procedurally by Codex and human review. This state is not `PROTECTED_ACTIVE`.
 
 ## Current tooling audit
 
@@ -17,7 +20,9 @@ There is no configured JaCoCo threshold, frontend coverage gate, ESLint, Java st
 - Review `git diff --check`, conflicts, deleted tests, new ignored-test markers, skip flags, manifests, lockfiles, migrations, secrets, and scope.
 - Never weaken a check or assertion to obtain green output.
 - A required check that cannot run blocks commit. An intentionally inapplicable check must have a precise reason.
-- Local success permits a branch push; only green remote checks and branch protection permit merge.
+- Local success permits pushing only a temporary `codex/*` or `quality/*` branch.
+- A delivery pull request targets `dev` and requires all seven remote checks in `SUCCESS`, final self-review, exact `expected_head_sha`, and human authorization before merge.
+- The automation never merges, never enables auto-merge, and never pushes directly to `dev`, `pre`, or `main`.
 - Use `docs/templates/EPIC_QUALITY_EVIDENCE.md` for durable EPIC evidence.
 
 ## Quality matrix
@@ -71,7 +76,7 @@ For a visible EPIC, cover owner, reader, visitor, initial/loading/success/error/
 From the repository root:
 
 ```powershell
-.\scripts\quality\verify.ps1 -BaseRef origin/main
+.\scripts\quality\verify.ps1 -BaseRef origin/dev
 ```
 
 Options:
@@ -83,22 +88,39 @@ The verifier checks the diff and scope indicators, parses PowerShell, runs the a
 
 ## GitHub checks and delivery
 
-`.github/workflows/quality-gates.yml` exposes stable required jobs:
+The complete required check set is:
 
 ```text
+Validate repository structure
+Backend build and tests
+Frontend build and tests
 quality-policy
 backend-verify
 frontend-verify
 powershell-parse
 ```
 
-The workflow detects violations. The ruleset described in `docs/33_GITHUB_MAIN_PROTECTION.md` prevents integrating red, pending, or missing checks into `main`.
+The workflows detect structural, backend, frontend, policy, parser, and verification failures. GitHub does not technically prevent merge on this private repository under the current plan. Therefore, a red, pending, absent, or stale result blocks human authorization procedurally. The reviewer must confirm all seven checks against the current head SHA immediately before merge.
+
+A temporary delivery pull request into `dev` uses manual **Squash and merge** only after:
+
+- exact base `dev`;
+- head equal to the recorded `expected_head_sha`;
+- expected single-EPIC diff;
+- seven checks in `SUCCESS`;
+- self-review without blocking findings;
+- zero unresolved conversations;
+- no post-review changes.
+
+The automation must finish with `HUMAN_MERGE_REQUIRED`. It must not merge, close the pull request, enable auto-merge, delete the branch, or update permanent branches directly.
+
+Promotions `dev -> pre` and `pre -> main` are outside ordinary EPIC delivery and follow `docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md`.
 
 ## Sequential scheduled automation
 
-Scheduled Codex delivery is sequential. Before any EPIC begins, the automation must query GitHub for open pull requests targeting `main` whose head branch starts with `codex/` or `quality/`. A matching pull request blocks the next execution even when it is a draft or its checks are green. Pending, red, or absent checks also block.
+Scheduled Codex delivery is sequential. Before any EPIC begins, the automation must query GitHub for open pull requests targeting `dev` whose head branch starts with `codex/` or `quality/`. A matching pull request blocks the next execution even when it is a draft or its checks are green. Pending, red, or absent checks also block.
 
-While a matching pull request exists, the automation must not create a branch, modify files, execute another EPIC, commit, or push. It must report:
+While a matching pull request exists, the automation must not create another branch, modify files for a new EPIC, execute another EPIC, commit, or push. It may inspect and, when explicitly safe, repair only that same pending delivery. Otherwise it must report:
 
 ```text
 EPIC EN ESPERA DE REVISION
@@ -111,28 +133,24 @@ Commit: NO
 Push: NO
 ```
 
-Only after the prior delivery pull request is reviewed and merged or closed may a later execution return to `main`, fetch `origin`, require a clean worktree, fast-forward `main`, verify `HEAD == origin/main`, and determine the next EPIC. Closing without merge does not authorize reusing unreviewed branch contents; the next task must be determined from the resulting `main` and GitHub state.
+Only after the prior delivery pull request is reviewed and merged or closed may a later execution return to `dev`, fetch `origin`, require a clean worktree, fast-forward `dev`, verify `HEAD == origin/dev`, and determine the next EPIC. Closing without merge does not authorize reusing unreviewed branch contents; the next task must be determined from the resulting `dev` and GitHub state.
 
-## Future Codex automation
+## Current Codex automation contract
 
-Replace any instruction that pushes directly to `origin/main` with this exact block:
+Before starting an EPIC, Codex must:
 
-```text
-NUEVO_PROMPT_PARA_AUTOMATIZACION
-Antes de comenzar cualquier EPIC, consulta GitHub y comprueba si existe una pull request abierta hacia main cuya rama empiece por codex/ o quality/. Una PR abierta anterior bloquea la ejecucion aunque sea borrador o aunque sus checks esten verdes, pendientes, rojos o ausentes. Si existe, no crees rama, no modifiques archivos, no ejecutes otra EPIC, no hagas commit y no hagas push. Detente con este formato:
-EPIC EN ESPERA DE REVISION
-PR pendiente:
-Rama:
-Checks:
-Acción necesaria:
-Cambios: NO
-Commit: NO
-Push: NO
-Solo despues de que la PR anterior haya sido revisada y fusionada o cerrada, vuelve a main, ejecuta git fetch origin, exige arbol limpio, actualiza main exclusivamente mediante fast-forward y comprueba HEAD == origin/main. Determina entonces la siguiente EPIC. Crea una rama codex/<epic> y ejecuta una sola EPIC. Ejecuta las pruebas aplicables y .\scripts\quality\verify.ps1 -BaseRef origin/main. Si falla cualquier validacion, no hagas commit ni push y entrega EPIC BLOQUEADA con evidencia real. Solo con validacion local PASS, crea un unico commit logico y publica exclusivamente la rama de la EPIC; nunca hagas push directo a origin/main. Abre una pull request hacia main, espera quality-policy, backend-verify, frontend-verify y powershell-parse, y no fusiones si un check esta rojo, pendiente o ausente. Informa SHA, URL de PR, resultado de cada check, evidencia, riesgos y siguiente tarea; despues termina sin empezar otra EPIC.
-```
+1. Query GitHub for open `codex/*` or `quality/*` pull requests with base `dev`.
+2. Stop new work when one exists.
+3. Return to `dev`, fetch, require a clean worktree, update only by fast-forward, and verify `HEAD == origin/dev`.
+4. Determine exactly one documented EPIC.
+5. Create one temporary branch from the updated `dev`.
+6. Run the applicable tests and `scripts/quality/verify.ps1 -BaseRef origin/dev`.
+7. Push only the temporary branch and open a pull request with base `dev`.
+8. Wait for the seven required checks, perform self-review, and record the current head as `expected_head_sha`.
+9. Finish with `HUMAN_MERGE_REQUIRED` and stop without merging or starting another EPIC.
 
 ## QUALITY-B definition (not implemented)
 
 `EPIC QUALITY-B - Coverage, static analysis, and dependency security` will establish baselines from measured results before choosing thresholds. It should add JaCoCo, compatible Vitest/Angular coverage, a no-coverage-regression policy, Java static analysis, frontend lint, secret scanning, and dependency assessment with an explicit baseline for existing vulnerabilities. It must review the 16 historically recorded npm vulnerabilities under controlled updates, prohibit automatic fixes, and introduce gradual thresholds. It must not invent percentages or impose an arbitrary 100% target.
 
-After QUALITY-A, the next functional task remains EPIC 44H-B unless a blocking quality or security risk is demonstrated.
+QUALITY-B remains defined but not implemented. The single next documented task is EPIC 45A, a documentation-only audit and executable design for MVP5 shops, editorial inventory, and reservations. This quality-gates correction does not start EPIC 45A.
