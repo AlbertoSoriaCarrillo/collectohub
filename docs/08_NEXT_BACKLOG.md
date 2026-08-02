@@ -2,7 +2,8 @@
 
 Estado actual: modo `SUPERVISED_ACTIVE_NO_ENFORCEMENT`, MVP4
 `MVP4_CLOSED_WITH_LIMITATIONS` y una unica siguiente tarea seleccionada:
-EPIC 45A. El orden funcional sigue `docs/01_ROADMAP.md`.
+EPIC 45B despues de revision e integracion humana de 45A. El orden funcional
+sigue `docs/01_ROADMAP.md`.
 
 ## Must fix antes de ensenar portfolio
 
@@ -165,32 +166,20 @@ fuera de MVP4.
 - reservas simples con reglas claras;
 - metricas basicas para tienda.
 
-Siguiente tarea unica seleccionada:
+EPIC 45A deja auditado y disenado MVP5 en
+`docs/40_MVP5_SHOPS_INVENTORY_RESERVATIONS_DESIGN.md`. No implementa
+funcionalidad. El plan ejecutable queda dividido en 45B-45J.
 
-**EPIC 45A - Auditoria y diseno ejecutable de MVP5: tiendas profesionales,
-inventario editorial y reservas.**
+Siguiente tarea unica seleccionada despues de revision e integracion humana de
+45A:
 
-EPIC 45A es exclusivamente documental. Debe:
+**EPIC 45B - Contratos seguros y compatibilidad editorial de reservas.**
 
-- auditar el estado real de backend, frontend, esquema, seguridad, pruebas y
-  documentacion de tiendas, miembros, inventario y reservas;
-- distinguir funcionalidad vigente, legacy, incompleta y futura;
-- definir los recorridos MVP5 de `SHOP_OWNER` y del usuario normal;
-- definir adopcion de `catalogItemId`/`catalogItemEditionId` en inventario;
-- definir propiedad y permisos de tienda, stock y reservas sin pagos;
-- definir compatibilidad legacy y riesgos de concurrencia e idempotencia;
-- definir contratos y el orden de EPICs ejecutables;
-- no implementar funcionalidad.
-
-Criterios de aceptacion de 45A:
-
-- inventario real de capacidades actuales y mapa backend/frontend/schema/tests;
-- limites funcionales y decisiones de identidad editorial;
-- permisos, privacidad, reglas de stock y reservas;
-- riesgos de concurrencia y estrategia de compatibilidad;
-- plan numerado de EPICs y matriz de pruebas;
-- exclusiones expresas: pagos, pedidos, envios, marketplace completo, social,
-  movil y produccion.
+45B debe separar DTO publicos e internos de tienda/inventario, impedir que
+`notes` internos aparezcan en lectura publica, hacer que reservas y su frontend
+soporten ofertas editoriales puras sin asumir `masterProductId`, preservar
+clientes legacy y anadir regresiones de API, privacidad y autorizacion. No
+implementa todavia locks, holds o idempotencia de stock, reservados a 45G.
 
 ## MVP 6 - Social basico
 
@@ -241,9 +230,10 @@ integracion solo cambia de `main` a `dev` tras verificar que `origin/dev` y
 
 EPIC 44F, EPIC 44G-A a 44G-D-FIX y EPIC 44H-A a 44H-C estan completadas. MVP4
 queda `MVP4_CLOSED_WITH_LIMITATIONS`; los limites se enumeran en
-`docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md`. La siguiente ejecucion debe encontrar
-inequivocamente EPIC 45A como unica siguiente tarea y no iniciar QUALITY-B ni
-otra EPIC en paralelo.
+`docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md`. EPIC 45A queda disenada en su PR de
+entrega. Mientras esa PR siga abierta no se inicia otra EPIC. Tras su
+integracion, la siguiente ejecucion debe encontrar inequivocamente EPIC 45B y
+no iniciar QUALITY-B ni otra EPIC en paralelo.
 
 - No adelantar una fase porque exista una tabla, rol o pantalla legacy.
 - Cada EPIC debe declarar que objetivo de producto valida.

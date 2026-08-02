@@ -283,8 +283,9 @@ E2E/Playwright, imagenes y almacenamiento real, `quantity` frente a ejemplares
 separados, paginacion avanzada, decisiones de taxonomia y MISSING
 legacy/persistido, produccion, social, marketplace y pagos.
 
-La siguiente tarea unica es EPIC 45A, exclusivamente documental. El horario
-automatico no se activa en este cierre.
+EPIC 45A deja la auditoria y el diseno ejecutable de MVP5. Mientras su PR de
+entrega permanezca abierta no se inicia otra EPIC; despues de integrarla, la
+siguiente tarea unica es 45B. El horario automatico no se activa en este cierre.
 
 La API de GitHub confirmo repositorio privado, Squash merging y merge commits
 activados, Rebase merging y auto-merge desactivados. Los endpoints de rulesets
@@ -418,34 +419,27 @@ Permanecen como limitaciones E2E/Playwright, imagenes y almacenamiento real,
 `quantity` frente a ejemplares separados, paginacion avanzada, decisiones de
 taxonomia y MISSING legacy/persistido, produccion, social, marketplace y pagos.
 
-## 13. Siguiente EPIC unica: 45A
+## 13. EPIC 45A y siguiente EPIC unica: 45B
 
-**EPIC 45A - Auditoria y diseno ejecutable de MVP5: tiendas profesionales,
-inventario editorial y reservas.**
+EPIC 45A audita la base real y deja el diseno ejecutable de MVP5 en
+`docs/40_MVP5_SHOPS_INVENTORY_RESERVATIONS_DESIGN.md`. Identifica como
+prerrequisitos la separacion de DTO publicos/internos, la sanitizacion de notas,
+la compatibilidad de reservas con inventario editorial puro y la posterior
+consistencia transaccional de stock. No implementa funcionalidad.
 
-Objetivo:
+Despues de revision e integracion humana de 45A, la siguiente tarea unica es:
 
-- auditar backend, frontend, esquema, seguridad, pruebas y documentacion de
-  tiendas, miembros, inventario y reservas;
-- distinguir funcionalidad vigente, legacy, incompleta y futura;
-- definir el recorrido MVP5 de `SHOP_OWNER` y del usuario normal;
-- definir adopcion de `catalogItemId`/`catalogItemEditionId` en inventario;
-- definir propiedad y permisos de tienda;
-- definir stock y reservas sin pagos;
-- definir compatibilidad legacy, concurrencia e idempotencia;
-- definir contratos y orden de EPICs ejecutables;
-- no implementar funcionalidad.
+**EPIC 45B - Contratos seguros y compatibilidad editorial de reservas.**
 
-Criterios de aceptacion:
+Objetivo de 45B:
 
-- inventario real de capacidades actuales;
-- mapa backend/frontend/schema/tests;
-- limites funcionales y decisiones de identidad editorial;
-- permisos, privacidad y reglas de stock/reservas;
-- riesgos de concurrencia y estrategia de compatibilidad;
-- plan numerado de EPICs y matriz de pruebas;
-- exclusiones expresas: pagos, pedidos, envios, marketplace completo, social,
-  movil y produccion.
+- separar proyecciones publicas y gestionadas de tienda/inventario;
+- impedir la exposicion publica de `notes` y campos internos;
+- hacer nullable/editorial la identidad de producto en reservas;
+- soportar reserva de item editorial puro con fallback legacy;
+- preservar los endpoints/clientes legacy de forma aditiva;
+- probar DTO, privacidad, propiedad, errores y regresion editorial;
+- no implementar todavia holds, locks, idempotencia o expiracion automatica.
 
 ## 14. Documentos prioritarios para reconstruir contexto
 
@@ -566,7 +560,8 @@ Estado esperado al continuar:
 - modo `SUPERVISED_ACTIVE_NO_ENFORCEMENT`;
 - `dev` como rama de integracion efectiva;
 - MVP4 `MVP4_CLOSED_WITH_LIMITATIONS`;
-- siguiente tarea unica: EPIC 45A documental;
+- EPIC 45A documental pendiente de revision/integracion humana;
+- siguiente tarea unica tras integrarla: EPIC 45B;
 - horario automatico no activado;
 - ninguna automatizacion puede fusionar.
 
