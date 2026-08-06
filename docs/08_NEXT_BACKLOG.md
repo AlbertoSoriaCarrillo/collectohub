@@ -1,9 +1,8 @@
 # CollectoHub backlog after MVP 1
 
 Estado actual: modo `SUPERVISED_ACTIVE_NO_ENFORCEMENT`, MVP4
-`MVP4_CLOSED_WITH_LIMITATIONS` y una unica siguiente tarea seleccionada:
-EPIC 45B despues de revision e integracion humana de 45A. El orden funcional
-sigue `docs/01_ROADMAP.md`.
+`MVP4_CLOSED_WITH_LIMITATIONS` y EPIC 45C iniciada por una fase backend pequena
+de lectura segura de miembros. El orden funcional sigue `docs/01_ROADMAP.md`.
 
 ## Must fix antes de ensenar portfolio
 
@@ -170,8 +169,7 @@ EPIC 45A deja auditado y disenado MVP5 en
 `docs/40_MVP5_SHOPS_INVENTORY_RESERVATIONS_DESIGN.md`. No implementa
 funcionalidad. El plan ejecutable queda dividido en 45B-45J.
 
-EPIC 45B esta implementada y validada en su rama temporal. Hasta que su PR sea
-revisada e integrada humanamente no se inicia otra EPIC.
+EPIC 45B esta integrada en `dev`.
 
 **EPIC 45B - Contratos seguros y compatibilidad editorial de reservas.**
 
@@ -181,9 +179,14 @@ soporten ofertas editoriales puras sin asumir `masterProductId`, preservar
 clientes legacy y anadir regresiones de API, privacidad y autorizacion. No
 implementa todavia locks, holds o idempotencia de stock, reservados a 45G.
 
-Siguiente tarea unica tras integrar 45B:
-
 **EPIC 45C - Perfil profesional y miembros de tienda.**
+
+La primera fase de 45C anade solo lectura backend de memberships activas en
+orden estable mediante `GET /api/shops/{shopId}/members`. Solo OWNER y MANAGER
+activos de esa tienda pueden leerla; la respuesta no expone email ni perfil de
+usuario. 45C permanece abierta: no existen todavia altas, cambios de rol,
+desactivacion, invariantes del ultimo OWNER, esquema aditivo ni edicion de
+perfil profesional.
 
 ## MVP 6 - Social basico
 
@@ -234,10 +237,9 @@ integracion solo cambia de `main` a `dev` tras verificar que `origin/dev` y
 
 EPIC 44F, EPIC 44G-A a 44G-D-FIX y EPIC 44H-A a 44H-C estan completadas. MVP4
 queda `MVP4_CLOSED_WITH_LIMITATIONS`; los limites se enumeran en
-`docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md`. EPIC 45A queda disenada en su PR de
-entrega. Mientras esa PR siga abierta no se inicia otra EPIC. Tras su
-integracion, la siguiente ejecucion debe encontrar inequivocamente EPIC 45B y
-no iniciar QUALITY-B ni otra EPIC en paralelo.
+`docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md`. EPIC 45A, 45B y la fase de lectura de
+miembros de 45C conservan el orden secuencial; no iniciar QUALITY-B ni otra EPIC
+en paralelo mientras exista una entrega abierta.
 
 - No adelantar una fase porque exista una tabla, rol o pantalla legacy.
 - Cada EPIC debe declarar que objetivo de producto valida.

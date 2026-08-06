@@ -209,6 +209,48 @@ class ShopServiceTest {
         assertThat(response.currentUserMembership().role()).isEqualTo("OWNER");
     }
 
+    @Test
+    void managerCanListActiveShopMembersInRepositoryOrder() {
+        Shop shop = shop(owner, 100L, "Collector Cave");
+        ShopMember manager = member(shop, owner, 200L, ShopMemberRole.MANAGER);
+        User employeeUser = user(43L, "employee@example.com");
+        ShopMember employee = member(shop, employeeUser, 201L, ShopMemberRole.EMPLOYEE);
+        when(shopRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(shop));
+        when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
+                100L,
+                42L,
+                ShopMemberStatus.ACTIVE
+        )).thenReturn(Optional.of(manager));
+        when(shopMemberRepository.findByShop_IdAndStatusAndDeletedAtIsNullOrderByIdAsc(
+                100L,
+                ShopMemberStatus.ACTIVE
+        )).thenReturn(List.of(manager, employee));
+
+        var members = shopService.listMembers(authenticatedOwner, 100L);
+
+        assertThat(members).extracting(response -> response.id()).containsExactly(200L, 201L);
+        assertThat(members).extracting(response -> response.userId()).containsExactly(42L, 43L);
+        assertThat(members).extracting(response -> response.role()).containsExactly("MANAGER", "EMPLOYEE");
+    }
+
+    @Test
+    void employeeCannotListShopMembers() {
+        Shop shop = shop(owner, 100L, "Collector Cave");
+        ShopMember employee = member(shop, owner, 200L, ShopMemberRole.EMPLOYEE);
+        when(shopRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(shop));
+        when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
+                100L,
+                42L,
+                ShopMemberStatus.ACTIVE
+        )).thenReturn(Optional.of(employee));
+
+        assertThatThrownBy(() -> shopService.listMembers(authenticatedOwner, 100L))
+                .isInstanceOf(AccessDeniedException.class);
+
+        verify(shopMemberRepository, never())
+                .findByShop_IdAndStatusAndDeletedAtIsNullOrderByIdAsc(any(), any());
+    }
+
     private User user(Long id, String email) {
         User user = User.register(email, "$2a$10$test-password-hash", "Test User", new Role("USER", "User"));
         ReflectionTestUtils.setField(user, "id", id);
@@ -218,6 +260,12 @@ class ShopServiceTest {
     private Shop shop(User owner, Long id, String name) {
         Shop shop = Shop.create(owner, name, null, null, null, null, "EUR", 48, null);
         return withId(shop, id);
+    }
+
+    private ShopMember member(Shop shop, User user, Long id, ShopMemberRole role) {
+        ShopMember member = withId(ShopMember.owner(shop, user), id);
+        ReflectionTestUtils.setField(member, "role", role);
+        return member;
     }
 
     private <T> T withId(T target, Long id) {

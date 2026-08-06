@@ -6,6 +6,7 @@ import com.collectohub.shops.domain.ShopMember;
 import com.collectohub.shops.domain.ShopMemberRole;
 import com.collectohub.shops.domain.ShopMemberStatus;
 import com.collectohub.shops.dto.CreateShopRequest;
+import com.collectohub.shops.dto.ShopMemberResponse;
 import com.collectohub.shops.dto.ShopResponse;
 import com.collectohub.shops.dto.UpdateShopRequest;
 import com.collectohub.shops.infrastructure.ShopMemberRepository;
@@ -99,6 +100,25 @@ public class ShopService {
     public ShopResponse getPublicShop(Long shopId) {
         Shop shop = findActiveShop(shopId);
         return ShopResponse.publicFrom(shop);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ShopMemberResponse> listMembers(AuthenticatedUser authenticatedUser, Long shopId) {
+        findActiveShop(shopId);
+        shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
+                        shopId,
+                        authenticatedUser.id(),
+                        ShopMemberStatus.ACTIVE
+                )
+                .filter(ShopMember::canManageShop)
+                .orElseThrow(() -> new AccessDeniedException("User cannot list this shop's members"));
+
+        return shopMemberRepository.findByShop_IdAndStatusAndDeletedAtIsNullOrderByIdAsc(
+                        shopId,
+                        ShopMemberStatus.ACTIVE
+                ).stream()
+                .map(ShopMemberResponse::from)
+                .toList();
     }
 
     @Transactional
