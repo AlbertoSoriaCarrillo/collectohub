@@ -13,8 +13,12 @@ export interface ReservationResponse {
   shopId: number;
   shopName: string;
   shopProductId: number;
-  masterProductId: number;
+  masterProductId: number | null;
   productName: string;
+  catalogItemId?: number | null;
+  catalogItemTitle?: string | null;
+  catalogItemEditionId?: number | null;
+  catalogItemEditionName?: string | null;
   quantity: number;
   status: ReservationStatus;
   userMessage: string | null;

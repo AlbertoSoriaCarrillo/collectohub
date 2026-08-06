@@ -1,6 +1,6 @@
 # CollectoHub MVP status
 
-Fecha de revision: 2026-08-02.
+Fecha de revision: 2026-08-06.
 
 ## Estado general
 
@@ -55,9 +55,9 @@ completo y conserva las limitaciones documentadas.
 El modo operativo actual es `SUPERVISED_ACTIVE_NO_ENFORCEMENT`. `dev` es la
 rama de integracion efectiva, toda fusion es humana, la automatizacion nunca
 fusiona y una entrega termina en `HUMAN_MERGE_REQUIRED`. GitHub no aplica
-protecciones enforced. La siguiente tarea unica seleccionada es EPIC 45A,
-documental y pendiente de revision/integracion humana. Despues, la siguiente
-tarea unica es EPIC 45B.
+protecciones enforced. EPIC 45B esta implementada y validada en su rama
+temporal, pendiente de PR y revision/integracion humana. Despues, la siguiente
+tarea unica es EPIC 45C.
 
 | Dominio | Estado actual |
 | --- | --- |
@@ -65,7 +65,7 @@ tarea unica es EPIC 45B.
 | Catalog Knowledge Base | Parcial; fundamentos MVP 2, fachada de lectura, frontend editorial publico, creators y relaciones de items implementados |
 | User Collections | Alta, edicion y enlace catalogado de items manuales cerrados; datos personales preservados |
 | Social | Futuro |
-| Shops & Inventory | Base legacy/editorial parcial; auditoria y diseno 45A entregados, contratos seguros 45B siguientes tras integracion |
+| Shops & Inventory | Base legacy/editorial parcial; 45A integrada y contratos seguros/compatibilidad de reservas 45B pendientes de integracion |
 | Matching | Recomendaciones por edicion, item y fallback legacy |
 | Commerce | Reservas sin pago; resto futuro |
 | Content Creators | Base editorial de creators implementada; herramientas sociales/creador futuras |
@@ -400,7 +400,7 @@ rulesets enforced en el plan actual.
 - Playwright headless: `npm run e2e` correcto con smoke, auth/colecciones, i18n y flujo MVP principal.
 - Playwright headed: `npm run e2e:headed` correcto.
 
-## EPIC 45A y siguiente EPIC seleccionada
+## EPIC 45B y siguiente EPIC seleccionada
 
 EPIC 45A audita y disena MVP5 en
 `docs/40_MVP5_SHOPS_INVENTORY_RESERVATIONS_DESIGN.md`. La base actual queda
@@ -414,11 +414,15 @@ privacidad, reglas de stock, concurrencia, recorridos y plan 45B-45J. Pagos,
 pedidos, envios, marketplace completo, social, movil y produccion permanecen
 excluidos.
 
-Despues de revision e integracion humana de 45A, la siguiente tarea unica es:
+EPIC 45B separa el DTO publico de inventario del gestionado para que `notes`
+no salga en lecturas publicas. Las reservas y sus tipos frontend aceptan ofertas
+editoriales puras con `masterProductId` nullable y proyeccion de item/edicion,
+manteniendo clientes legacy. La matriz local completa pasa sin migraciones ni
+dependencias nuevas.
 
-**EPIC 45B - Contratos seguros y compatibilidad editorial de reservas.**
-
-Mientras la PR de 45A este abierta no se inicia 45B, QUALITY-B ni otra EPIC.
+Mientras la PR de 45B este abierta no se inicia 45C, QUALITY-B ni otra EPIC.
+Tras su integracion, la siguiente tarea unica es **EPIC 45C - Perfil profesional
+y miembros de tienda**.
 
 Vision, alcance y roadmap: `docs/00_PRODUCT_VISION.md`,
 `docs/01_ROADMAP.md`, `docs/02_MVP1_SCOPE.md` y

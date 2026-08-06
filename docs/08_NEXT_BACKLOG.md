@@ -170,8 +170,8 @@ EPIC 45A deja auditado y disenado MVP5 en
 `docs/40_MVP5_SHOPS_INVENTORY_RESERVATIONS_DESIGN.md`. No implementa
 funcionalidad. El plan ejecutable queda dividido en 45B-45J.
 
-Siguiente tarea unica seleccionada despues de revision e integracion humana de
-45A:
+EPIC 45B esta implementada y validada en su rama temporal. Hasta que su PR sea
+revisada e integrada humanamente no se inicia otra EPIC.
 
 **EPIC 45B - Contratos seguros y compatibilidad editorial de reservas.**
 
@@ -180,6 +180,10 @@ Siguiente tarea unica seleccionada despues de revision e integracion humana de
 soporten ofertas editoriales puras sin asumir `masterProductId`, preservar
 clientes legacy y anadir regresiones de API, privacidad y autorizacion. No
 implementa todavia locks, holds o idempotencia de stock, reservados a 45G.
+
+Siguiente tarea unica tras integrar 45B:
+
+**EPIC 45C - Perfil profesional y miembros de tienda.**
 
 ## MVP 6 - Social basico
 

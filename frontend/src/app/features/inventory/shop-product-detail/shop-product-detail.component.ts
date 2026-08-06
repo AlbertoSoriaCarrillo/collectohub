@@ -11,7 +11,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
-import { ShopProductResponse } from '../../../core/models/inventory.model';
+import { PublicShopProductResponse } from '../../../core/models/inventory.model';
 import { ShopResponse } from '../../../core/models/shop.model';
 import { InventoryService } from '../../../core/services/inventory.service';
 import { ReservationService } from '../../../core/services/reservation.service';
@@ -43,7 +43,7 @@ export class ShopProductDetailComponent implements OnInit {
   private readonly errorMessageService = inject(ErrorMessageService);
   private readonly languageService = inject(LanguageService);
 
-  readonly product = signal<ShopProductResponse | null>(null);
+  readonly product = signal<PublicShopProductResponse | null>(null);
   readonly shop = signal<ShopResponse | null>(null);
   readonly loading = signal(false);
   readonly creatingReservation = signal(false);
@@ -74,15 +74,15 @@ export class ShopProductDetailComponent implements OnInit {
     });
   }
 
-  priceLabel(product: ShopProductResponse): string {
+  priceLabel(product: PublicShopProductResponse): string {
     return `${product.priceAmount} ${product.currency}`;
   }
 
-  title(product: ShopProductResponse | null): string {
+  title(product: PublicShopProductResponse | null): string {
     return product?.catalogItemTitle || product?.masterProductName || '';
   }
 
-  referenceSourceKey(product: ShopProductResponse): string {
+  referenceSourceKey(product: PublicShopProductResponse): string {
     return `inventory.referenceSource.${product.editorialReferenceSource ?? 'LEGACY'}`;
   }
 
@@ -90,7 +90,7 @@ export class ShopProductDetailComponent implements OnInit {
     return this.authService.isAuthenticated();
   }
 
-  createReservation(product: ShopProductResponse): void {
+  createReservation(product: PublicShopProductResponse): void {
     if (this.reservationForm.invalid) {
       this.reservationForm.markAllAsTouched();
       return;

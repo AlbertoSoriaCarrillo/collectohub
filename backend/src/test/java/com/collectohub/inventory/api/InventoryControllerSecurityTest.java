@@ -8,6 +8,7 @@ import com.collectohub.config.SecurityConfig;
 import com.collectohub.inventory.application.InventoryService;
 import com.collectohub.inventory.application.ShopProductNotFoundException;
 import com.collectohub.inventory.dto.ShopProductResponse;
+import com.collectohub.inventory.dto.PublicShopProductResponse;
 import com.collectohub.shared.api.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -157,12 +158,13 @@ class InventoryControllerSecurityTest {
     @Test
     void publicShopProductsCanBeListedWithoutToken() throws Exception {
         when(inventoryService.publicShopProducts(100L, null, null, null, null, null, null, null))
-                .thenReturn(List.of(shopProductResponse()));
+                .thenReturn(List.of(PublicShopProductResponse.from(shopProductResponse())));
 
         mockMvc.perform(get("/api/shops/100/products"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].visible").value(true))
-                .andExpect(jsonPath("$[0].commercialStatus").value("AVAILABLE"));
+                .andExpect(jsonPath("$[0].commercialStatus").value("AVAILABLE"))
+                .andExpect(jsonPath("$[0].notes").doesNotExist());
     }
 
     @Test
