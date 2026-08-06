@@ -36,6 +36,8 @@ export interface ShopProductResponse {
   notes: string | null;
 }
 
+export type PublicShopProductResponse = Omit<ShopProductResponse, 'notes'>;
+
 export interface CreateShopProductRequest {
   masterProductId?: number | null;
   catalogItemId?: number | null;

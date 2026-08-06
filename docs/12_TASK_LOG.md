@@ -1,5 +1,20 @@
 # Registro de avance
 
+## 2026-08-06 - EPIC 45B - Contratos seguros y reservas editoriales
+
+- Separada la respuesta publica de inventario de la respuesta gestionada; las
+  lecturas publicas ya no serializan `notes`, mientras miembros autorizados
+  conservan el contrato interno.
+- Las reservas aceptan ofertas editoriales puras sin asumir
+  `masterProductId`; la respuesta expone identidad editorial nullable y el
+  frontend conserva compatibilidad con ofertas legacy.
+- Anadidas regresiones de privacidad API y de creacion de reserva editorial.
+- Validacion dirigida: backend 70 tests y frontend 244 tests correctos.
+- `scripts/quality/verify.ps1 -BaseRef origin/dev`: PASS; E2E/Playwright
+  `SKIPPED_WITH_REASON` por exclusion expresa del alcance.
+- Sin migraciones, dependencias nuevas, locks, holds, idempotencia ni cambios
+  de stock. Entrega pendiente de PR y fusion humana; despues corresponde 45C.
+
 ## 2026-07-13 - EPIC 44D-FIX2 - Validacion final e invalidacion de busquedas obsoletas
 
 - Protegidas busquedas editorial y legacy con identificadores vigentes; cambios

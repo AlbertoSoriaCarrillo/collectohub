@@ -2,11 +2,13 @@ package com.collectohub.reservations.application;
 
 import com.collectohub.auth.security.AuthenticatedUser;
 import com.collectohub.catalog.domain.MasterProduct;
+import com.collectohub.catalog.domain.CatalogItem;
 import com.collectohub.catalog.domain.ProductCategory;
 import com.collectohub.inventory.application.ShopProductNotFoundException;
 import com.collectohub.inventory.domain.PhysicalCondition;
 import com.collectohub.inventory.domain.ShopProduct;
 import com.collectohub.inventory.domain.ShopProductCommercialStatus;
+import com.collectohub.inventory.domain.ShopProductEditorialReferenceSource;
 import com.collectohub.inventory.infrastructure.ShopProductRepository;
 import com.collectohub.reservations.domain.Reservation;
 import com.collectohub.reservations.domain.ReservationStatus;
@@ -41,6 +43,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -106,6 +109,30 @@ class ReservationServiceTest {
         assertThat(response.quantity()).isEqualTo(1);
         assertThat(response.status()).isEqualTo("PENDING");
         assertThat(response.expiresAt()).isNotNull();
+    }
+
+    @Test
+    void createsReservationForPureEditorialShopProduct() {
+        CatalogItem catalogItem = mock(CatalogItem.class);
+        when(catalogItem.getId()).thenReturn(501L);
+        when(catalogItem.getTitle()).thenReturn("Akira 1");
+        when(catalogItem.isPubliclyVisible()).thenReturn(true);
+        ShopProduct editorialProduct = withId(ShopProduct.create(
+                shop, null, catalogItem, null, ShopProductEditorialReferenceSource.MANUAL_EDITORIAL,
+                BigDecimal.TEN, "EUR", 2, ShopProductCommercialStatus.AVAILABLE,
+                PhysicalCondition.NEW, true, null, null, null, owner.getId()
+        ), 901L);
+        when(userRepository.findById(42L)).thenReturn(Optional.of(user));
+        when(shopProductRepository.findByIdAndDeletedAtIsNull(901L)).thenReturn(Optional.of(editorialProduct));
+        when(reservationRepository.save(any(Reservation.class)))
+                .thenAnswer(invocation -> withId(invocation.getArgument(0), 701L));
+
+        var response = reservationService.createReservation(
+                AuthenticatedUser.from(user), new CreateReservationRequest(901L, 1, null));
+
+        assertThat(response.masterProductId()).isNull();
+        assertThat(response.productName()).isEqualTo("Akira 1");
+        assertThat(response.catalogItemId()).isEqualTo(501L);
     }
 
     @Test

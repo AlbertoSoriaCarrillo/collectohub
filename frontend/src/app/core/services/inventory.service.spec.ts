@@ -124,12 +124,14 @@ describe('InventoryService', () => {
   });
 
   it('loads a public shop product', () => {
+    const { notes: _internalNotes, ...publicProduct } = product;
     service.getPublicShopProduct(11).subscribe((response) => {
-      expect(response).toEqual(product);
+      expect(response).toEqual(publicProduct);
+      expect(response).not.toHaveProperty('notes');
     });
 
     const request = httpTestingController.expectOne('http://localhost:8080/api/shop-products/11');
     expect(request.request.method).toBe('GET');
-    request.flush(product);
+    request.flush(publicProduct);
   });
 });

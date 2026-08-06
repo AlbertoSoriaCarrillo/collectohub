@@ -1,9 +1,13 @@
 # CollectoHub - AI Handoff
 
-Última actualización verificada: 2026-08-02
+Última actualización verificada: 2026-08-06
 Repositorio: `AlbertoSoriaCarrillo/collectohub`
 Rama de integracion efectiva: `dev` en
 `SUPERVISED_ACTIVE_NO_ENFORCEMENT`.
+
+Estado de entrega: EPIC 45B esta implementada y validada en
+`codex/45b-safe-reservation-contracts`, pendiente de PR, checks remotos y
+revision/fusion humana. No iniciar 45C mientras esa entrega permanezca abierta.
 
 ## 1. Propósito de este documento
 
@@ -240,9 +244,10 @@ final completo.
 
 ### MVP5
 
-Siguiente fase seleccionada. EPIC 45A auditara y disenara de forma ejecutable
-tiendas profesionales, inventario editorial y reservas sin implementar
-funcionalidad.
+EPIC 45A esta integrada. EPIC 45B implementa contratos publicos sanitizados de
+inventario y compatibilidad de reservas con ofertas editoriales puras; su
+entrega permanece pendiente de revision humana. La siguiente tarea, solo tras
+integrarla, es 45C.
 
 ## 8. EPICs recientes completadas
 
@@ -283,9 +288,10 @@ E2E/Playwright, imagenes y almacenamiento real, `quantity` frente a ejemplares
 separados, paginacion avanzada, decisiones de taxonomia y MISSING
 legacy/persistido, produccion, social, marketplace y pagos.
 
-EPIC 45A deja la auditoria y el diseno ejecutable de MVP5. Mientras su PR de
-entrega permanezca abierta no se inicia otra EPIC; despues de integrarla, la
-siguiente tarea unica es 45B. El horario automatico no se activa en este cierre.
+EPIC 45A deja la auditoria y el diseno ejecutable de MVP5. EPIC 45B esta
+implementada y validada en su rama temporal; mientras su PR de entrega siga
+abierta no se inicia otra EPIC. Despues de integrarla, la siguiente tarea unica
+es 45C. El horario automatico no se activa en este cierre.
 
 La API de GitHub confirmo repositorio privado, Squash merging y merge commits
 activados, Rebase merging y auto-merge desactivados. Los endpoints de rulesets
