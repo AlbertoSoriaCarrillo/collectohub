@@ -61,13 +61,17 @@ public class ShopMember {
     }
 
     public static ShopMember owner(Shop shop, User user) {
+        return active(shop, user, ShopMemberRole.OWNER, user.getId());
+    }
+
+    public static ShopMember active(Shop shop, User user, ShopMemberRole role, Long createdBy) {
         ShopMember member = new ShopMember();
         member.shop = shop;
         member.user = user;
-        member.role = ShopMemberRole.OWNER;
+        member.role = role;
         member.status = ShopMemberStatus.ACTIVE;
         member.createdAt = Instant.now();
-        member.createdBy = user.getId();
+        member.createdBy = createdBy;
         return member;
     }
 
@@ -89,6 +93,10 @@ public class ShopMember {
 
     public ShopMemberStatus getStatus() {
         return status;
+    }
+
+    public Long getCreatedBy() {
+        return createdBy;
     }
 
     public Instant getDeletedAt() {

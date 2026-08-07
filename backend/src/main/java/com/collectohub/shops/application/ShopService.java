@@ -6,6 +6,7 @@ import com.collectohub.shops.domain.ShopMember;
 import com.collectohub.shops.domain.ShopMemberRole;
 import com.collectohub.shops.domain.ShopMemberStatus;
 import com.collectohub.shops.dto.CreateShopRequest;
+import com.collectohub.shops.dto.AddShopMemberRequest;
 import com.collectohub.shops.dto.ShopMemberResponse;
 import com.collectohub.shops.dto.ShopResponse;
 import com.collectohub.shops.dto.UpdateShopRequest;
@@ -16,7 +17,9 @@ import com.collectohub.users.domain.Role;
 import com.collectohub.users.domain.User;
 import com.collectohub.users.infrastructure.RoleRepository;
 import com.collectohub.users.infrastructure.UserRepository;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +35,7 @@ public class ShopService {
             ShopMemberRole.MANAGER
     );
     private static final String SHOP_OWNER_GLOBAL_ROLE = "SHOP_OWNER";
+    private static final String SHOP_MEMBERSHIP_UNIQUE_CONSTRAINT = "uk_shop_members_shop_user";
 
     private final ShopRepository shopRepository;
     private final ShopMemberRepository shopMemberRepository;
@@ -122,6 +126,49 @@ public class ShopService {
     }
 
     @Transactional
+    public ShopMemberResponse addMember(
+            AuthenticatedUser authenticatedUser,
+            Long shopId,
+            AddShopMemberRequest request
+    ) {
+        Shop shop = findActiveShop(shopId);
+        shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
+                        shopId,
+                        authenticatedUser.id(),
+                        ShopMemberStatus.ACTIVE
+                )
+                .filter(member -> member.getRole() == ShopMemberRole.OWNER)
+                .orElseThrow(() -> new AccessDeniedException("User cannot add members to this shop"));
+
+        if (request.role() == ShopMemberRole.OWNER) {
+            throw new InvalidShopMemberRoleException();
+        }
+
+        String email = request.email().trim().toLowerCase(Locale.ROOT);
+        User user = userRepository.findByEmailIgnoreCaseAndDeletedAtIsNull(email)
+                .filter(User::isActive)
+                .orElseThrow(ShopMemberCandidateNotFoundException::new);
+        if (shopMemberRepository.findByShop_IdAndUser_Id(shopId, user.getId()).isPresent()) {
+            throw new ShopMembershipAlreadyExistsException();
+        }
+
+        try {
+            ShopMember member = shopMemberRepository.saveAndFlush(ShopMember.active(
+                    shop,
+                    user,
+                    request.role(),
+                    authenticatedUser.id()
+            ));
+            return ShopMemberResponse.from(member);
+        } catch (DataIntegrityViolationException ex) {
+            if (isConstraintViolation(ex, SHOP_MEMBERSHIP_UNIQUE_CONSTRAINT)) {
+                throw new ShopMembershipAlreadyExistsException();
+            }
+            throw ex;
+        }
+    }
+
+    @Transactional
     public ShopResponse updateShop(AuthenticatedUser authenticatedUser, Long shopId, UpdateShopRequest request) {
         Shop shop = findActiveShop(shopId);
         ShopMember member = shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
@@ -208,5 +255,17 @@ public class ShopService {
 
     private String normalizeCurrencyOrExisting(String value, String existing) {
         return value == null ? existing : normalizeUppercase(value);
+    }
+
+    private boolean isConstraintViolation(Throwable throwable, String constraintName) {
+        Throwable current = throwable;
+        while (current != null) {
+            if (current instanceof ConstraintViolationException violation
+                    && constraintName.equalsIgnoreCase(violation.getConstraintName())) {
+                return true;
+            }
+            current = current.getCause();
+        }
+        return false;
     }
 }

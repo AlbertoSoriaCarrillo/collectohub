@@ -3,6 +3,7 @@ package com.collectohub.shops.api;
 import com.collectohub.auth.security.AuthenticatedUser;
 import com.collectohub.shops.application.ShopService;
 import com.collectohub.shops.dto.CreateShopRequest;
+import com.collectohub.shops.dto.AddShopMemberRequest;
 import com.collectohub.shops.dto.ShopMemberResponse;
 import com.collectohub.shops.dto.ShopResponse;
 import com.collectohub.shops.dto.UpdateShopRequest;
@@ -62,6 +63,17 @@ public class ShopController {
             @PathVariable Long shopId
     ) {
         return shopService.listMembers(user, shopId);
+    }
+
+    @PostMapping("/{shopId}/members")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Add an existing user as a shop member when the authenticated user is the owner")
+    public ShopMemberResponse addMember(
+            @AuthenticationPrincipal AuthenticatedUser user,
+            @PathVariable Long shopId,
+            @Valid @RequestBody AddShopMemberRequest request
+    ) {
+        return shopService.addMember(user, shopId, request);
     }
 
     @PutMapping("/{shopId}")

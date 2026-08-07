@@ -181,12 +181,13 @@ implementa todavia locks, holds o idempotencia de stock, reservados a 45G.
 
 **EPIC 45C - Perfil profesional y miembros de tienda.**
 
-La primera fase de 45C anade solo lectura backend de memberships activas en
-orden estable mediante `GET /api/shops/{shopId}/members`. Solo OWNER y MANAGER
-activos de esa tienda pueden leerla; la respuesta no expone email ni perfil de
-usuario. 45C permanece abierta: no existen todavia altas, cambios de rol,
-desactivacion, invariantes del ultimo OWNER, esquema aditivo ni edicion de
-perfil profesional.
+45C incorpora lectura backend de memberships activas en orden estable mediante
+`GET /api/shops/{shopId}/members` para OWNER/MANAGER y alta acotada mediante
+`POST /api/shops/{shopId}/members` solo para OWNER. El alta referencia una cuenta
+activa existente por email normalizado, admite MANAGER/EMPLOYEE, no devuelve
+datos personales y rechaza duplicados de forma estable. 45C permanece abierta:
+no existen todavia cambios de rol, desactivacion, invariantes del ultimo OWNER,
+esquema aditivo ni edicion de perfil profesional.
 
 ## MVP 6 - Social basico
 

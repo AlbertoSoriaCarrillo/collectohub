@@ -19,6 +19,8 @@ public interface ShopMemberRepository extends JpaRepository<ShopMember, Long> {
             ShopMemberStatus status
     );
 
+    Optional<ShopMember> findByShop_IdAndUser_Id(Long shopId, Long userId);
+
     List<ShopMember> findByShop_IdAndStatusAndDeletedAtIsNullOrderByIdAsc(
             Long shopId,
             ShopMemberStatus status

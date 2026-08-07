@@ -1,5 +1,25 @@
 # Registro de avance
 
+## 2026-08-07 - EPIC 45C - Fase de alta segura de miembros
+
+- Anadido `POST /api/shops/{shopId}/members` para que un OWNER activo incorpore
+  una cuenta activa existente por email exacto normalizado como MANAGER o
+  EMPLOYEE; MANAGER y EMPLOYEE no pueden mutar memberships.
+- La respuesta conserva la proyeccion minima sin email ni nombre. OWNER no se
+  puede autoasignar por este contrato; cuentas ausentes/inactivas producen un
+  error generico y las altas repetidas o concurrentes un conflicto estable.
+- Anadidas regresiones de servicio y API para autenticacion, autorizacion,
+  validacion, privacidad, normalizacion, auditoria y duplicados. Sin cambios de
+  rol, desactivacion, migraciones, frontend, dependencias, E2E ni Playwright.
+- Regresion previa demostrada por fallo de compilacion. Validacion dirigida: 27
+  tests backend, 0 fallos, errores u omitidos. Matriz final
+  `scripts/quality/verify.ps1 -BaseRef origin/dev`: PASS; backend 439 tests,
+  frontend 59 archivos/244 tests y build correcto. E2E/Playwright:
+  `SKIPPED_WITH_REASON` por exclusion expresa.
+- 45C permanece abierta: quedan perfil profesional, cambio/desactivacion de
+  miembros, compatibilidad `STAFF`, esquema aditivo e invariante del ultimo
+  OWNER.
+
 ## 2026-08-07 - EPIC 45C - Fase de lectura segura de miembros
 
 - Anadido `GET /api/shops/{shopId}/members` como contrato backend protegido.
