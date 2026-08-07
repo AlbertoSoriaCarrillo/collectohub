@@ -8,7 +8,8 @@ Rama de integracion efectiva: `dev` en
 Estado de entrega: la lectura y el alta segura de miembros de EPIC 45C estan
 integradas en `dev`. La rama `codex/45c-change-member-role` contiene la siguiente
 fase backend, limitada al cambio auditado entre MANAGER y EMPLOYEE por un OWNER
-activo. Requiere commit, checks remotos y revision/fusion humana.
+activo. La PR #18 incorpora el contrato API que faltaba tras la revision y
+requiere nuevos checks remotos y revision/fusion humana.
 
 ## 1. Propósito de este documento
 

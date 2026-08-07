@@ -88,6 +88,7 @@ Notas:
 | GET | `/api/shops/{shopId}` | Publico | Datos publicos basicos | No | `ShopResponse` sin datos internos sensibles | `404` |
 | GET | `/api/shops/{shopId}/members` | Protegido | `shop_members` OWNER o MANAGER | No | Lista ordenada de `ShopMemberResponse` sin datos personales | `401`, `403`, `404` |
 | POST | `/api/shops/{shopId}/members` | Protegido | `shop_members` OWNER | `email`, `role` MANAGER o EMPLOYEE | `ShopMemberResponse` sin datos personales | `400`, `401`, `403`, `404`, `409` |
+| PUT | `/api/shops/{shopId}/members/{memberId}/role` | Protegido | `shop_members` OWNER | `role` MANAGER o EMPLOYEE | `ShopMemberResponse` sin datos personales | `400`, `401`, `403`, `404` |
 | PUT | `/api/shops/{shopId}` | Protegido | `shop_members` OWNER o MANAGER | Campos de `UpdateShopRequest` | `ShopResponse` | `400`, `401`, `403`, `404` |
 
 Valores por defecto:
