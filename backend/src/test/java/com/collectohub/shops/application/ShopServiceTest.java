@@ -15,6 +15,7 @@ import com.collectohub.users.domain.Role;
 import com.collectohub.users.domain.User;
 import com.collectohub.users.infrastructure.RoleRepository;
 import com.collectohub.users.infrastructure.UserRepository;
+import jakarta.persistence.LockModeType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.sql.SQLException;
@@ -313,7 +315,7 @@ class ShopServiceTest {
         when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
                 100L, 42L, ShopMemberStatus.ACTIVE
         )).thenReturn(Optional.of(ownerMember));
-        when(shopMemberRepository.findByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+        when(shopMemberRepository.findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull(
                 201L, 100L, ShopMemberStatus.ACTIVE
         )).thenReturn(Optional.of(employee));
 
@@ -348,7 +350,7 @@ class ShopServiceTest {
         )).isInstanceOf(AccessDeniedException.class);
 
         verify(shopMemberRepository, never())
-                .findByIdAndShop_IdAndStatusAndDeletedAtIsNull(any(), any(), any());
+                .findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull(any(), any(), any());
     }
 
     @Test
@@ -359,7 +361,7 @@ class ShopServiceTest {
         when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
                 100L, 42L, ShopMemberStatus.ACTIVE
         )).thenReturn(Optional.of(ownerMember));
-        when(shopMemberRepository.findByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+        when(shopMemberRepository.findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull(
                 200L, 100L, ShopMemberStatus.ACTIVE
         )).thenReturn(Optional.of(ownerMember));
 
@@ -381,7 +383,7 @@ class ShopServiceTest {
         when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
                 100L, 42L, ShopMemberStatus.ACTIVE
         )).thenReturn(Optional.of(ownerMember));
-        when(shopMemberRepository.findByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+        when(shopMemberRepository.findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull(
                 999L, 100L, ShopMemberStatus.ACTIVE
         )).thenReturn(Optional.empty());
 
@@ -404,7 +406,7 @@ class ShopServiceTest {
         when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
                 100L, 42L, ShopMemberStatus.ACTIVE
         )).thenReturn(Optional.of(ownerMember));
-        when(shopMemberRepository.findByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+        when(shopMemberRepository.findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull(
                 201L, 100L, ShopMemberStatus.ACTIVE
         )).thenReturn(Optional.of(employee));
 
@@ -412,6 +414,21 @@ class ShopServiceTest {
 
         assertThat(employee.getStatus()).isEqualTo(ShopMemberStatus.INACTIVE);
         assertThat(employee.getUpdatedBy()).isEqualTo(42L);
+    }
+
+    @Test
+    void membershipMutationFinderUsesPessimisticWriteLock() throws NoSuchMethodException {
+        var method = ShopMemberRepository.class.getMethod(
+                "findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull",
+                Long.class,
+                Long.class,
+                ShopMemberStatus.class
+        );
+
+        assertThat(method.getAnnotation(Lock.class))
+                .isNotNull()
+                .extracting(Lock::value)
+                .isEqualTo(LockModeType.PESSIMISTIC_WRITE);
     }
 
     @Test
@@ -427,7 +444,7 @@ class ShopServiceTest {
                 .isInstanceOf(AccessDeniedException.class);
 
         verify(shopMemberRepository, never())
-                .findByIdAndShop_IdAndStatusAndDeletedAtIsNull(any(), any(), any());
+                .findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull(any(), any(), any());
     }
 
     @Test
@@ -438,7 +455,7 @@ class ShopServiceTest {
         when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
                 100L, 42L, ShopMemberStatus.ACTIVE
         )).thenReturn(Optional.of(ownerMember));
-        when(shopMemberRepository.findByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+        when(shopMemberRepository.findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull(
                 200L, 100L, ShopMemberStatus.ACTIVE
         )).thenReturn(Optional.of(ownerMember));
 
@@ -457,7 +474,7 @@ class ShopServiceTest {
         when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
                 100L, 42L, ShopMemberStatus.ACTIVE
         )).thenReturn(Optional.of(ownerMember));
-        when(shopMemberRepository.findByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+        when(shopMemberRepository.findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull(
                 999L, 100L, ShopMemberStatus.ACTIVE
         )).thenReturn(Optional.empty());
 

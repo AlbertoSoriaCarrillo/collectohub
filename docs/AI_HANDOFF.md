@@ -5,9 +5,9 @@ Repositorio: `AlbertoSoriaCarrillo/collectohub`
 Rama de integracion efectiva: `dev` en
 `SUPERVISED_ACTIVE_NO_ENFORCEMENT`.
 
-Estado de entrega: la lectura, el alta segura y el cambio de rol de miembros de
-EPIC 45C estan integrados en `dev`. La rama `codex/45c-deactivate-member`
-contiene la siguiente fase backend, limitada a la desactivacion auditada de
+Estado de entrega: las EPIC 45C-A, 45C-B y 45C-C de lectura, alta segura y cambio
+de rol de miembros estan integradas en `dev`. La rama
+`codex/45c-deactivate-member` contiene la EPIC 45C-D, limitada a la desactivacion auditada de
 MANAGER o EMPLOYEE por un OWNER activo, sin permitir desactivar al OWNER.
 Requiere checks remotos y revision/fusion humana.
 

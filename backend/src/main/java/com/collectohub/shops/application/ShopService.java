@@ -189,7 +189,7 @@ public class ShopService {
             throw new InvalidShopMemberRoleException();
         }
 
-        ShopMember member = shopMemberRepository.findByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+        ShopMember member = shopMemberRepository.findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull(
                         memberId,
                         shopId,
                         ShopMemberStatus.ACTIVE
@@ -218,7 +218,7 @@ public class ShopService {
                 .filter(member -> member.getRole() == ShopMemberRole.OWNER)
                 .orElseThrow(() -> new AccessDeniedException("User cannot deactivate members in this shop"));
 
-        ShopMember member = shopMemberRepository.findByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+        ShopMember member = shopMemberRepository.findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull(
                         memberId,
                         shopId,
                         ShopMemberStatus.ACTIVE

@@ -55,10 +55,10 @@ completo y conserva las limitaciones documentadas.
 El modo operativo actual es `SUPERVISED_ACTIVE_NO_ENFORCEMENT`. `dev` es la
 rama de integracion efectiva, toda fusion es humana, la automatizacion nunca
 fusiona y una entrega termina en `HUMAN_MERGE_REQUIRED`. GitHub no aplica
-protecciones enforced. EPIC 45B esta integrada. EPIC 45C tiene integradas la
-lectura, el alta acotada y el cambio seguro de rol; la desactivacion backend
-esta pendiente de entrega y 45C permanece abierta para perfil, compatibilidad
-`STAFF` y cierre del esquema aditivo.
+protecciones enforced. EPIC 45B esta integrada. Las EPIC 45C-A, 45C-B y 45C-C
+tienen integradas la lectura, el alta acotada y el cambio seguro de rol; 45C-D
+contiene la desactivacion backend pendiente de entrega. Perfil, compatibilidad
+`STAFF` y cierre del esquema aditivo requieren EPICs posteriores independientes.
 
 | Dominio | Estado actual |
 | --- | --- |

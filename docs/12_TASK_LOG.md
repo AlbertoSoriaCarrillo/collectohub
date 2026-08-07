@@ -1,6 +1,6 @@
 # Registro de avance
 
-## 2026-08-07 - EPIC 45C - Fase de desactivacion segura de miembros
+## 2026-08-07 - EPIC 45C-D - Desactivacion segura de miembros
 
 - Anadido `DELETE /api/shops/{shopId}/members/{memberId}` para que solo un
   OWNER activo desactive una membership activa MANAGER o EMPLOYEE de la misma
@@ -12,9 +12,13 @@
   aislamiento por tienda/estado, proteccion del OWNER y auditoria. Regresion
   previa demostrada por fallo de compilacion; validacion dirigida final: 44
   tests backend, 0 fallos, errores u omitidos.
+- El cambio de rol y la desactivacion cargan la membership objetivo con el mismo
+  bloqueo pesimista de escritura, evitando que una actualizacion concurrente
+  restaure por error el estado `ACTIVE` despues de un `204`.
 - Sin transferencia de ownership, migraciones, compatibilidad `STAFF`, frontend,
-  dependencias, E2E ni Playwright. 45C permanece abierta para esas fases y el
-  perfil profesional.
+  dependencias, E2E ni Playwright. Esta entrega queda formalmente cerrada como
+  EPIC 45C-D; el perfil profesional y el resto del antiguo alcance paraguas de
+  45C requieren EPICs posteriores independientes.
 
 ## 2026-08-07 - EPIC 45C - Fase de cambio seguro de rol
 
