@@ -204,6 +204,34 @@ public class ShopService {
     }
 
     @Transactional
+    public void deactivateMember(
+            AuthenticatedUser authenticatedUser,
+            Long shopId,
+            Long memberId
+    ) {
+        findActiveShop(shopId);
+        shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
+                        shopId,
+                        authenticatedUser.id(),
+                        ShopMemberStatus.ACTIVE
+                )
+                .filter(member -> member.getRole() == ShopMemberRole.OWNER)
+                .orElseThrow(() -> new AccessDeniedException("User cannot deactivate members in this shop"));
+
+        ShopMember member = shopMemberRepository.findByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+                        memberId,
+                        shopId,
+                        ShopMemberStatus.ACTIVE
+                )
+                .orElseThrow(ShopMemberNotFoundException::new);
+        if (member.getRole() == ShopMemberRole.OWNER) {
+            throw new ShopOwnerCannotBeDeactivatedException();
+        }
+
+        member.deactivate(authenticatedUser.id());
+    }
+
+    @Transactional
     public ShopResponse updateShop(AuthenticatedUser authenticatedUser, Long shopId, UpdateShopRequest request) {
         Shop shop = findActiveShop(shopId);
         ShopMember member = shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(

@@ -56,9 +56,9 @@ El modo operativo actual es `SUPERVISED_ACTIVE_NO_ENFORCEMENT`. `dev` es la
 rama de integracion efectiva, toda fusion es humana, la automatizacion nunca
 fusiona y una entrega termina en `HUMAN_MERGE_REQUIRED`. GitHub no aplica
 protecciones enforced. EPIC 45B esta integrada. EPIC 45C tiene integradas la
-lectura segura y el alta acotada de miembros; el cambio de rol backend esta
-pendiente de entrega y 45C permanece abierta para perfil, desactivacion e
-invariantes del ultimo OWNER.
+lectura, el alta acotada y el cambio seguro de rol; la desactivacion backend
+esta pendiente de entrega y 45C permanece abierta para perfil, compatibilidad
+`STAFF` y cierre del esquema aditivo.
 
 | Dominio | Estado actual |
 | --- | --- |
@@ -66,7 +66,7 @@ invariantes del ultimo OWNER.
 | Catalog Knowledge Base | Parcial; fundamentos MVP 2, fachada de lectura, frontend editorial publico, creators y relaciones de items implementados |
 | User Collections | Alta, edicion y enlace catalogado de items manuales cerrados; datos personales preservados |
 | Social | Futuro |
-| Shops & Inventory | Base legacy/editorial parcial; 45B integrada, lectura/alta 45C integradas y cambio de rol pendiente de entrega |
+| Shops & Inventory | Base legacy/editorial parcial; 45B integrada, lectura/alta/cambio de rol 45C integrados y desactivacion pendiente de entrega |
 | Matching | Recomendaciones por edicion, item y fallback legacy |
 | Commerce | Reservas sin pago; resto futuro |
 | Content Creators | Base editorial de creators implementada; herramientas sociales/creador futuras |
@@ -423,13 +423,12 @@ dependencias nuevas.
 
 45B esta integrada en `dev`. **EPIC 45C - Perfil profesional y miembros de
 tienda** incorpora el listado backend protegido de memberships activas, con
-orden estable y proyeccion sin datos personales. OWNER y MANAGER
-pueden leer; EMPLOYEE y no miembros no. Solo OWNER puede dar de alta una cuenta
-activa existente como MANAGER o EMPLOYEE, sin exponer datos personales. 45C no
-se considera cerrada. La fase pendiente de entrega permite solo al OWNER cambiar
-una membership activa entre MANAGER y EMPLOYEE sin modificar al OWNER. Quedan el
-perfil profesional, desactivacion de miembros, compatibilidad `STAFF`, el esquema
-aditivo y el cierre integral de la invariante del ultimo OWNER.
+orden estable y proyeccion sin datos personales. OWNER y MANAGER pueden leer;
+EMPLOYEE y no miembros no. Solo OWNER puede dar de alta una cuenta activa como
+MANAGER o EMPLOYEE y cambiar su rol, sin exponer datos personales. 45C no se
+considera cerrada. La fase pendiente de entrega desactiva MANAGER o EMPLOYEE,
+conserva la fila y audita el actor sin permitir desactivar al OWNER. Quedan el
+perfil profesional, compatibilidad `STAFF` y el cierre del esquema aditivo.
 
 Vision, alcance y roadmap: `docs/00_PRODUCT_VISION.md`,
 `docs/01_ROADMAP.md`, `docs/02_MVP1_SCOPE.md` y

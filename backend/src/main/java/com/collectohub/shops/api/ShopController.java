@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -86,6 +87,17 @@ public class ShopController {
             @Valid @RequestBody ChangeShopMemberRoleRequest request
     ) {
         return shopService.changeMemberRole(user, shopId, memberId, request);
+    }
+
+    @DeleteMapping("/{shopId}/members/{memberId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Deactivate an active shop member when the authenticated user is the owner")
+    public void deactivateMember(
+            @AuthenticationPrincipal AuthenticatedUser user,
+            @PathVariable Long shopId,
+            @PathVariable Long memberId
+    ) {
+        shopService.deactivateMember(user, shopId, memberId);
     }
 
     @PutMapping("/{shopId}")
