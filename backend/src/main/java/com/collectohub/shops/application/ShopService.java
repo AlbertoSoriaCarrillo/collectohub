@@ -17,6 +17,7 @@ import com.collectohub.users.domain.Role;
 import com.collectohub.users.domain.User;
 import com.collectohub.users.infrastructure.RoleRepository;
 import com.collectohub.users.infrastructure.UserRepository;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ public class ShopService {
             ShopMemberRole.MANAGER
     );
     private static final String SHOP_OWNER_GLOBAL_ROLE = "SHOP_OWNER";
+    private static final String SHOP_MEMBERSHIP_UNIQUE_CONSTRAINT = "uk_shop_members_shop_user";
 
     private final ShopRepository shopRepository;
     private final ShopMemberRepository shopMemberRepository;
@@ -159,7 +161,10 @@ public class ShopService {
             ));
             return ShopMemberResponse.from(member);
         } catch (DataIntegrityViolationException ex) {
-            throw new ShopMembershipAlreadyExistsException();
+            if (isConstraintViolation(ex, SHOP_MEMBERSHIP_UNIQUE_CONSTRAINT)) {
+                throw new ShopMembershipAlreadyExistsException();
+            }
+            throw ex;
         }
     }
 
@@ -250,5 +255,17 @@ public class ShopService {
 
     private String normalizeCurrencyOrExisting(String value, String existing) {
         return value == null ? existing : normalizeUppercase(value);
+    }
+
+    private boolean isConstraintViolation(Throwable throwable, String constraintName) {
+        Throwable current = throwable;
+        while (current != null) {
+            if (current instanceof ConstraintViolationException violation
+                    && constraintName.equalsIgnoreCase(violation.getConstraintName())) {
+                return true;
+            }
+            current = current.getCause();
+        }
+        return false;
     }
 }

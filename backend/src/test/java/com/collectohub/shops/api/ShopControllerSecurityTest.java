@@ -7,6 +7,7 @@ import com.collectohub.config.SecurityConfig;
 import com.collectohub.shared.api.GlobalExceptionHandler;
 import com.collectohub.shops.application.ShopService;
 import com.collectohub.shops.application.ShopMembershipAlreadyExistsException;
+import com.collectohub.shops.dto.AddShopMemberRequest;
 import com.collectohub.shops.dto.ShopMemberResponse;
 import com.collectohub.shops.dto.ShopResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +28,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -218,6 +220,27 @@ class ShopControllerSecurityTest {
                 .andExpect(jsonPath("$.role").value("EMPLOYEE"))
                 .andExpect(jsonPath("$.email").doesNotExist())
                 .andExpect(jsonPath("$.name").doesNotExist());
+    }
+
+    @Test
+    void addMemberNormalizesEmailBeforeValidation() throws Exception {
+        when(shopService.addMember(any(), eq(100L), any()))
+                .thenReturn(new ShopMemberResponse(201L, 43L, "EMPLOYEE", "ACTIVE"));
+
+        mockMvc.perform(post("/api/shops/100/members")
+                        .header("Authorization", "Bearer " + token())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "email": " EMPLOYEE@EXAMPLE.COM ",
+                                  "role": "EMPLOYEE"
+                                }
+                                """))
+                .andExpect(status().isCreated());
+
+        verify(shopService).addMember(any(), eq(100L),
+                org.mockito.ArgumentMatchers.argThat((AddShopMemberRequest request) ->
+                        request.email().equals("EMPLOYEE@EXAMPLE.COM")));
     }
 
     @Test

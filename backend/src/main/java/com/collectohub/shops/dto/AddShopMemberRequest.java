@@ -11,6 +11,12 @@ public record AddShopMemberRequest(
         @NotNull ShopMemberRole role
 ) {
 
+    public AddShopMemberRequest {
+        if (email != null) {
+            email = email.trim();
+        }
+    }
+
     @AssertTrue(message = "role must be MANAGER or EMPLOYEE")
     public boolean isAssignableRole() {
         return role == null || role == ShopMemberRole.MANAGER || role == ShopMemberRole.EMPLOYEE;

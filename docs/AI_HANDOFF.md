@@ -6,8 +6,9 @@ Rama de integracion efectiva: `dev` en
 `SUPERVISED_ACTIVE_NO_ENFORCEMENT`.
 
 Estado de entrega: la lectura segura de miembros de EPIC 45C esta integrada en
-`dev`. `codex/45c-add-member-contract` contiene la siguiente fase backend,
-limitada al alta segura de una cuenta existente; queda pendiente de PR, checks
+`dev`. La PR #17 desde `codex/45c-add-member-contract` contiene la siguiente
+fase backend, limitada al alta segura de una cuenta existente. Dos observaciones
+P2 de revision quedaron corregidas localmente y requieren nuevo commit, checks
 remotos y revision/fusion humana.
 
 ## 1. Propósito de este documento
@@ -291,8 +292,10 @@ legacy/persistido, produccion, social, marketplace y pagos.
 
 EPIC 45A deja la auditoria y el diseno ejecutable de MVP5 y 45B esta integrada.
 La lectura segura de 45C esta integrada. La fase de alta queda en
-`codex/45c-add-member-contract`; mientras su PR de entrega siga abierta no se
-inicia otra fase ni otra EPIC. El horario automatico no se activa en este cierre.
+la PR #17 desde `codex/45c-add-member-contract`; sus correcciones de revision
+normalizan el email antes de Bean Validation y limitan el 409 concurrente a la
+restriccion `uk_shop_members_shop_user`. Mientras la PR siga abierta no se inicia
+otra fase ni otra EPIC. El horario automatico no se activa en este cierre.
 
 La API de GitHub confirmo repositorio privado, Squash merging y merge commits
 activados, Rebase merging y auto-merge desactivados. Los endpoints de rulesets

@@ -24,6 +24,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -337,7 +338,7 @@ class ShopServiceTest {
                 .thenReturn(Optional.of(employee));
         when(shopMemberRepository.findByShop_IdAndUser_Id(100L, 43L)).thenReturn(Optional.empty());
         when(shopMemberRepository.saveAndFlush(any(ShopMember.class)))
-                .thenThrow(new DataIntegrityViolationException("unique constraint"));
+                .thenThrow(integrityViolation("uk_shop_members_shop_user"));
 
         assertThatThrownBy(() -> shopService.addMember(
                 authenticatedOwner,
@@ -345,6 +346,28 @@ class ShopServiceTest {
                 new AddShopMemberRequest("employee@example.com", ShopMemberRole.EMPLOYEE)
         )).isInstanceOf(ShopMembershipAlreadyExistsException.class)
                 .hasMessage("Shop membership already exists");
+    }
+
+    @Test
+    void unrelatedIntegrityViolationIsNotReportedAsDuplicateMembership() {
+        Shop shop = shop(owner, 100L, "Collector Cave");
+        ShopMember ownerMember = member(shop, owner, 200L, ShopMemberRole.OWNER);
+        User employee = user(43L, "employee@example.com");
+        when(shopRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(shop));
+        when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
+                100L, 42L, ShopMemberStatus.ACTIVE
+        )).thenReturn(Optional.of(ownerMember));
+        when(userRepository.findByEmailIgnoreCaseAndDeletedAtIsNull("employee@example.com"))
+                .thenReturn(Optional.of(employee));
+        when(shopMemberRepository.findByShop_IdAndUser_Id(100L, 43L)).thenReturn(Optional.empty());
+        DataIntegrityViolationException violation = integrityViolation("fk_shop_members_user");
+        when(shopMemberRepository.saveAndFlush(any(ShopMember.class))).thenThrow(violation);
+
+        assertThatThrownBy(() -> shopService.addMember(
+                authenticatedOwner,
+                100L,
+                new AddShopMemberRequest("employee@example.com", ShopMemberRole.EMPLOYEE)
+        )).isSameAs(violation);
     }
 
     @Test
@@ -390,6 +413,15 @@ class ShopServiceTest {
         User user = User.register(email, "$2a$10$test-password-hash", "Test User", new Role("USER", "User"));
         ReflectionTestUtils.setField(user, "id", id);
         return user;
+    }
+
+    private DataIntegrityViolationException integrityViolation(String constraintName) {
+        var cause = new org.hibernate.exception.ConstraintViolationException(
+                "constraint violation",
+                new SQLException("constraint violation"),
+                constraintName
+        );
+        return new DataIntegrityViolationException("constraint violation", cause);
     }
 
     private Shop shop(User owner, Long id, String name) {
