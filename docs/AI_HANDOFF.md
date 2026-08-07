@@ -1,13 +1,13 @@
 # CollectoHub - AI Handoff
 
-Última actualización verificada: 2026-08-06
+Última actualización verificada: 2026-08-07
 Repositorio: `AlbertoSoriaCarrillo/collectohub`
 Rama de integracion efectiva: `dev` en
 `SUPERVISED_ACTIVE_NO_ENFORCEMENT`.
 
-Estado de entrega: EPIC 45B esta implementada y validada en
-`codex/45b-safe-reservation-contracts`, pendiente de PR, checks remotos y
-revision/fusion humana. No iniciar 45C mientras esa entrega permanezca abierta.
+Estado de entrega: EPIC 45B esta integrada en `dev`. EPIC 45C ha iniciado en
+`codex/45c-member-read-contract` con una fase backend limitada al listado seguro
+de miembros; queda pendiente de PR, checks remotos y revision/fusion humana.
 
 ## 1. Propósito de este documento
 
@@ -244,10 +244,9 @@ final completo.
 
 ### MVP5
 
-EPIC 45A esta integrada. EPIC 45B implementa contratos publicos sanitizados de
-inventario y compatibilidad de reservas con ofertas editoriales puras; su
-entrega permanece pendiente de revision humana. La siguiente tarea, solo tras
-integrarla, es 45C.
+EPIC 45A y 45B estan integradas. EPIC 45C inicia con lectura backend protegida
+de miembros activos para OWNER/MANAGER, sin datos personales. 45C permanece
+abierta para perfil profesional, mutaciones e invariantes del ultimo OWNER.
 
 ## 8. EPICs recientes completadas
 
@@ -288,10 +287,10 @@ E2E/Playwright, imagenes y almacenamiento real, `quantity` frente a ejemplares
 separados, paginacion avanzada, decisiones de taxonomia y MISSING
 legacy/persistido, produccion, social, marketplace y pagos.
 
-EPIC 45A deja la auditoria y el diseno ejecutable de MVP5. EPIC 45B esta
-implementada y validada en su rama temporal; mientras su PR de entrega siga
-abierta no se inicia otra EPIC. Despues de integrarla, la siguiente tarea unica
-es 45C. El horario automatico no se activa en este cierre.
+EPIC 45A deja la auditoria y el diseno ejecutable de MVP5 y 45B esta integrada.
+La primera fase de 45C queda en su rama temporal; mientras su PR de entrega siga
+abierta no se inicia otra fase ni otra EPIC. El horario automatico no se activa
+en este cierre.
 
 La API de GitHub confirmo repositorio privado, Squash merging y merge commits
 activados, Rebase merging y auto-merge desactivados. Los endpoints de rulesets
@@ -425,7 +424,7 @@ Permanecen como limitaciones E2E/Playwright, imagenes y almacenamiento real,
 `quantity` frente a ejemplares separados, paginacion avanzada, decisiones de
 taxonomia y MISSING legacy/persistido, produccion, social, marketplace y pagos.
 
-## 13. EPIC 45A y siguiente EPIC unica: 45B
+## 13. EPIC 45C en curso
 
 EPIC 45A audita la base real y deja el diseno ejecutable de MVP5 en
 `docs/40_MVP5_SHOPS_INVENTORY_RESERVATIONS_DESIGN.md`. Identifica como
@@ -433,19 +432,15 @@ prerrequisitos la separacion de DTO publicos/internos, la sanitizacion de notas,
 la compatibilidad de reservas con inventario editorial puro y la posterior
 consistencia transaccional de stock. No implementa funcionalidad.
 
-Despues de revision e integracion humana de 45A, la siguiente tarea unica es:
+45B completo los contratos seguros de inventario y reservas editoriales. La
+primera fase de 45C anade `GET /api/shops/{shopId}/members`: devuelve memberships
+activas en orden de id solo a OWNER/MANAGER activos y no incluye email, nombre
+ni otros campos personales. EMPLOYEE y usuarios ajenos reciben `403`; el acceso
+anonimo recibe `401`.
 
-**EPIC 45B - Contratos seguros y compatibilidad editorial de reservas.**
-
-Objetivo de 45B:
-
-- separar proyecciones publicas y gestionadas de tienda/inventario;
-- impedir la exposicion publica de `notes` y campos internos;
-- hacer nullable/editorial la identidad de producto en reservas;
-- soportar reserva de item editorial puro con fallback legacy;
-- preservar los endpoints/clientes legacy de forma aditiva;
-- probar DTO, privacidad, propiedad, errores y regresion editorial;
-- no implementar todavia holds, locks, idempotencia o expiracion automatica.
+45C permanece abierta. No se han implementado todavia perfil profesional,
+alta/cambio/desactivacion de miembros, compatibilidad `STAFF`, esquema aditivo o
+la invariante del ultimo OWNER.
 
 ## 14. Documentos prioritarios para reconstruir contexto
 
@@ -566,8 +561,8 @@ Estado esperado al continuar:
 - modo `SUPERVISED_ACTIVE_NO_ENFORCEMENT`;
 - `dev` como rama de integracion efectiva;
 - MVP4 `MVP4_CLOSED_WITH_LIMITATIONS`;
-- EPIC 45A documental pendiente de revision/integracion humana;
-- siguiente tarea unica tras integrarla: EPIC 45B;
+- EPIC 45A y 45B integradas;
+- EPIC 45C iniciada y pendiente de entrega de su fase de lectura de miembros;
 - horario automatico no activado;
 - ninguna automatizacion puede fusionar.
 

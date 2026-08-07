@@ -86,6 +86,7 @@ Notas:
 | POST | `/api/shops` | Protegido | Usuario autenticado | `name`, `description`, `contactEmail`, `contactPhone`, `country`, `currency`, `defaultReservationExpirationHours`, `logoUrl` | `ShopResponse` con `currentUserMembership` OWNER | `400`, `401` |
 | GET | `/api/shops/my` | Protegido | Miembro de tiendas propias | No | Lista de `ShopResponse` | `401` |
 | GET | `/api/shops/{shopId}` | Publico | Datos publicos basicos | No | `ShopResponse` sin datos internos sensibles | `404` |
+| GET | `/api/shops/{shopId}/members` | Protegido | `shop_members` OWNER o MANAGER | No | Lista ordenada de `ShopMemberResponse` sin datos personales | `401`, `403`, `404` |
 | PUT | `/api/shops/{shopId}` | Protegido | `shop_members` OWNER o MANAGER | Campos de `UpdateShopRequest` | `ShopResponse` | `400`, `401`, `403`, `404` |
 
 Valores por defecto:

@@ -19,6 +19,11 @@ public interface ShopMemberRepository extends JpaRepository<ShopMember, Long> {
             ShopMemberStatus status
     );
 
+    List<ShopMember> findByShop_IdAndStatusAndDeletedAtIsNullOrderByIdAsc(
+            Long shopId,
+            ShopMemberStatus status
+    );
+
     boolean existsByShop_IdAndUser_IdAndRoleInAndStatusAndDeletedAtIsNull(
             Long shopId,
             Long userId,

@@ -3,6 +3,7 @@ package com.collectohub.shops.api;
 import com.collectohub.auth.security.AuthenticatedUser;
 import com.collectohub.shops.application.ShopService;
 import com.collectohub.shops.dto.CreateShopRequest;
+import com.collectohub.shops.dto.ShopMemberResponse;
 import com.collectohub.shops.dto.ShopResponse;
 import com.collectohub.shops.dto.UpdateShopRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,6 +53,15 @@ public class ShopController {
     @Operation(summary = "Get public shop details")
     public ShopResponse getShop(@PathVariable Long shopId) {
         return shopService.getPublicShop(shopId);
+    }
+
+    @GetMapping("/{shopId}/members")
+    @Operation(summary = "List active shop members when the authenticated user can manage the shop")
+    public List<ShopMemberResponse> listMembers(
+            @AuthenticationPrincipal AuthenticatedUser user,
+            @PathVariable Long shopId
+    ) {
+        return shopService.listMembers(user, shopId);
     }
 
     @PutMapping("/{shopId}")

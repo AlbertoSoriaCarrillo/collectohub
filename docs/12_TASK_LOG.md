@@ -1,5 +1,22 @@
 # Registro de avance
 
+## 2026-08-07 - EPIC 45C - Fase de lectura segura de miembros
+
+- Anadido `GET /api/shops/{shopId}/members` como contrato backend protegido.
+- OWNER y MANAGER activos de la tienda pueden listar memberships activas en
+  orden estable; EMPLOYEE, usuarios ajenos y anonimos no obtienen acceso.
+- La respuesta reutiliza la proyeccion minima de membership y no expone email,
+  nombre ni otros datos personales del usuario.
+- Anadidas regresiones de servicio y API para orden, roles, privacidad y
+  autenticacion. Sin mutaciones de miembros, migraciones, frontend,
+  dependencias, holds, stock, E2E ni Playwright.
+- Validacion dirigida: 18 tests backend, 0 fallos, errores u omitidos.
+  `scripts/quality/verify.ps1 -BaseRef origin/dev`: PASS; backend 430 tests,
+  frontend 59 archivos/244 tests y build correcto. E2E/Playwright:
+  `SKIPPED_WITH_REASON` por exclusion expresa.
+- 45C permanece abierta: quedan perfil profesional, alta/cambio/desactivacion
+  de miembros e invariantes del ultimo OWNER.
+
 ## 2026-08-06 - EPIC 45B - Contratos seguros y reservas editoriales
 
 - Separada la respuesta publica de inventario de la respuesta gestionada; las
