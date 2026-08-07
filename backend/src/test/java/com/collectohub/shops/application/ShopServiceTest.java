@@ -6,6 +6,7 @@ import com.collectohub.shops.domain.ShopMember;
 import com.collectohub.shops.domain.ShopMemberRole;
 import com.collectohub.shops.domain.ShopMemberStatus;
 import com.collectohub.shops.dto.AddShopMemberRequest;
+import com.collectohub.shops.dto.ChangeShopMemberRoleRequest;
 import com.collectohub.shops.dto.CreateShopRequest;
 import com.collectohub.shops.dto.UpdateShopRequest;
 import com.collectohub.shops.infrastructure.ShopMemberRepository;
@@ -300,6 +301,97 @@ class ShopServiceTest {
         )).isInstanceOf(AccessDeniedException.class);
 
         verify(userRepository, never()).findByEmailIgnoreCaseAndDeletedAtIsNull(any());
+    }
+
+    @Test
+    void ownerChangesActiveEmployeeToManager() {
+        Shop shop = shop(owner, 100L, "Collector Cave");
+        ShopMember ownerMember = member(shop, owner, 200L, ShopMemberRole.OWNER);
+        User employeeUser = user(43L, "employee@example.com");
+        ShopMember employee = member(shop, employeeUser, 201L, ShopMemberRole.EMPLOYEE);
+        when(shopRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(shop));
+        when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
+                100L, 42L, ShopMemberStatus.ACTIVE
+        )).thenReturn(Optional.of(ownerMember));
+        when(shopMemberRepository.findByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+                201L, 100L, ShopMemberStatus.ACTIVE
+        )).thenReturn(Optional.of(employee));
+
+        var response = shopService.changeMemberRole(
+                authenticatedOwner,
+                100L,
+                201L,
+                new ChangeShopMemberRoleRequest(ShopMemberRole.MANAGER)
+        );
+
+        assertThat(response.id()).isEqualTo(201L);
+        assertThat(response.userId()).isEqualTo(43L);
+        assertThat(response.role()).isEqualTo("MANAGER");
+        assertThat(employee.getRole()).isEqualTo(ShopMemberRole.MANAGER);
+        assertThat(employee.getUpdatedBy()).isEqualTo(42L);
+    }
+
+    @Test
+    void managerCannotChangeShopMemberRole() {
+        Shop shop = shop(owner, 100L, "Collector Cave");
+        ShopMember manager = member(shop, owner, 200L, ShopMemberRole.MANAGER);
+        when(shopRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(shop));
+        when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
+                100L, 42L, ShopMemberStatus.ACTIVE
+        )).thenReturn(Optional.of(manager));
+
+        assertThatThrownBy(() -> shopService.changeMemberRole(
+                authenticatedOwner,
+                100L,
+                201L,
+                new ChangeShopMemberRoleRequest(ShopMemberRole.MANAGER)
+        )).isInstanceOf(AccessDeniedException.class);
+
+        verify(shopMemberRepository, never())
+                .findByIdAndShop_IdAndStatusAndDeletedAtIsNull(any(), any(), any());
+    }
+
+    @Test
+    void ownerMembershipCannotBeChangedThroughRoleEndpoint() {
+        Shop shop = shop(owner, 100L, "Collector Cave");
+        ShopMember ownerMember = member(shop, owner, 200L, ShopMemberRole.OWNER);
+        when(shopRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(shop));
+        when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
+                100L, 42L, ShopMemberStatus.ACTIVE
+        )).thenReturn(Optional.of(ownerMember));
+        when(shopMemberRepository.findByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+                200L, 100L, ShopMemberStatus.ACTIVE
+        )).thenReturn(Optional.of(ownerMember));
+
+        assertThatThrownBy(() -> shopService.changeMemberRole(
+                authenticatedOwner,
+                100L,
+                200L,
+                new ChangeShopMemberRoleRequest(ShopMemberRole.EMPLOYEE)
+        )).isInstanceOf(InvalidShopMemberRoleException.class);
+
+        assertThat(ownerMember.getRole()).isEqualTo(ShopMemberRole.OWNER);
+    }
+
+    @Test
+    void inactiveOrForeignMemberCannotBeChanged() {
+        Shop shop = shop(owner, 100L, "Collector Cave");
+        ShopMember ownerMember = member(shop, owner, 200L, ShopMemberRole.OWNER);
+        when(shopRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(shop));
+        when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
+                100L, 42L, ShopMemberStatus.ACTIVE
+        )).thenReturn(Optional.of(ownerMember));
+        when(shopMemberRepository.findByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+                999L, 100L, ShopMemberStatus.ACTIVE
+        )).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> shopService.changeMemberRole(
+                authenticatedOwner,
+                100L,
+                999L,
+                new ChangeShopMemberRoleRequest(ShopMemberRole.MANAGER)
+        )).isInstanceOf(ShopMemberNotFoundException.class)
+                .hasMessage("Shop member not found");
     }
 
     @Test

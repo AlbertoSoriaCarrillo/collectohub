@@ -21,6 +21,12 @@ public interface ShopMemberRepository extends JpaRepository<ShopMember, Long> {
 
     Optional<ShopMember> findByShop_IdAndUser_Id(Long shopId, Long userId);
 
+    Optional<ShopMember> findByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+            Long id,
+            Long shopId,
+            ShopMemberStatus status
+    );
+
     List<ShopMember> findByShop_IdAndStatusAndDeletedAtIsNullOrderByIdAsc(
             Long shopId,
             ShopMemberStatus status

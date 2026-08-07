@@ -7,7 +7,9 @@ import com.collectohub.config.SecurityConfig;
 import com.collectohub.shared.api.GlobalExceptionHandler;
 import com.collectohub.shops.application.ShopService;
 import com.collectohub.shops.application.ShopMembershipAlreadyExistsException;
+import com.collectohub.shops.application.ShopMemberNotFoundException;
 import com.collectohub.shops.dto.AddShopMemberRequest;
+import com.collectohub.shops.dto.ChangeShopMemberRoleRequest;
 import com.collectohub.shops.dto.ShopMemberResponse;
 import com.collectohub.shops.dto.ShopResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -290,6 +292,68 @@ class ShopControllerSecurityTest {
                                 """))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.status").value(409));
+    }
+
+    @Test
+    void ownerCanChangeMemberRoleWithoutPersonalFieldsInResponse() throws Exception {
+        when(shopService.changeMemberRole(any(), eq(100L), eq(201L), any()))
+                .thenReturn(new ShopMemberResponse(201L, 43L, "MANAGER", "ACTIVE"));
+
+        mockMvc.perform(put("/api/shops/100/members/201/role")
+                        .header("Authorization", "Bearer " + token())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "role": "MANAGER"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(201))
+                .andExpect(jsonPath("$.userId").value(43))
+                .andExpect(jsonPath("$.role").value("MANAGER"))
+                .andExpect(jsonPath("$.email").doesNotExist())
+                .andExpect(jsonPath("$.name").doesNotExist());
+
+        verify(shopService).changeMemberRole(any(), eq(100L), eq(201L),
+                org.mockito.ArgumentMatchers.argThat((ChangeShopMemberRoleRequest request) ->
+                        request.role() == com.collectohub.shops.domain.ShopMemberRole.MANAGER));
+    }
+
+    @Test
+    void changeMemberRoleRequiresAuthenticationAndRejectsOwnerRole() throws Exception {
+        String body = """
+                {
+                  "role": "OWNER"
+                }
+                """;
+
+        mockMvc.perform(put("/api/shops/100/members/201/role")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(put("/api/shops/100/members/201/role")
+                        .header("Authorization", "Bearer " + token())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void changeMemberRoleMapsUnavailableMembershipToNotFound() throws Exception {
+        when(shopService.changeMemberRole(any(), eq(100L), eq(999L), any()))
+                .thenThrow(new ShopMemberNotFoundException());
+
+        mockMvc.perform(put("/api/shops/100/members/999/role")
+                        .header("Authorization", "Bearer " + token())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "role": "EMPLOYEE"
+                                }
+                                """))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Shop member not found"));
     }
 
     private String token() {

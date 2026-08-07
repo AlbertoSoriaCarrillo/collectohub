@@ -5,11 +5,10 @@ Repositorio: `AlbertoSoriaCarrillo/collectohub`
 Rama de integracion efectiva: `dev` en
 `SUPERVISED_ACTIVE_NO_ENFORCEMENT`.
 
-Estado de entrega: la lectura segura de miembros de EPIC 45C esta integrada en
-`dev`. La PR #17 desde `codex/45c-add-member-contract` contiene la siguiente
-fase backend, limitada al alta segura de una cuenta existente. Dos observaciones
-P2 de revision quedaron corregidas localmente y requieren nuevo commit, checks
-remotos y revision/fusion humana.
+Estado de entrega: la lectura y el alta segura de miembros de EPIC 45C estan
+integradas en `dev`. La rama `codex/45c-change-member-role` contiene la siguiente
+fase backend, limitada al cambio auditado entre MANAGER y EMPLOYEE por un OWNER
+activo. Requiere commit, checks remotos y revision/fusion humana.
 
 ## 1. Propósito de este documento
 
@@ -247,9 +246,9 @@ final completo.
 ### MVP5
 
 EPIC 45A y 45B estan integradas. EPIC 45C incorpora lectura backend protegida
-de miembros activos para OWNER/MANAGER y prepara el alta acotada solo para OWNER,
-sin datos personales. 45C permanece abierta para perfil profesional,
-cambio/desactivacion e invariantes del ultimo OWNER.
+de miembros activos para OWNER/MANAGER y alta acotada solo para OWNER, sin datos
+personales. El cambio de rol backend esta pendiente de entrega; 45C permanece
+abierta para perfil profesional, desactivacion e invariantes del ultimo OWNER.
 
 ## 8. EPICs recientes completadas
 
@@ -291,11 +290,11 @@ separados, paginacion avanzada, decisiones de taxonomia y MISSING
 legacy/persistido, produccion, social, marketplace y pagos.
 
 EPIC 45A deja la auditoria y el diseno ejecutable de MVP5 y 45B esta integrada.
-La lectura segura de 45C esta integrada. La fase de alta queda en
-la PR #17 desde `codex/45c-add-member-contract`; sus correcciones de revision
-normalizan el email antes de Bean Validation y limitan el 409 concurrente a la
-restriccion `uk_shop_members_shop_user`. Mientras la PR siga abierta no se inicia
-otra fase ni otra EPIC. El horario automatico no se activa en este cierre.
+La lectura y el alta segura de 45C estan integradas. La siguiente fase queda en
+`codex/45c-change-member-role`: solo un OWNER activo puede cambiar una membership
+activa entre MANAGER y EMPLOYEE, sin modificar al OWNER ni exponer datos
+personales. Mientras su entrega siga abierta no se inicia otra fase ni otra
+EPIC. El horario automatico no se activa en este cierre.
 
 La API de GitHub confirmo repositorio privado, Squash merging y merge commits
 activados, Rebase merging y auto-merge desactivados. Los endpoints de rulesets
@@ -445,9 +444,14 @@ cuenta activa existente por email normalizado como MANAGER o EMPLOYEE. Las
 respuestas no incluyen email, nombre ni otros campos personales; los duplicados
 se rechazan con conflicto estable.
 
+La fase siguiente incorpora `PUT /api/shops/{shopId}/members/{memberId}/role`:
+solo un OWNER activo puede cambiar una membership activa de la misma tienda
+entre MANAGER y EMPLOYEE. El OWNER no es mutable por este contrato, la respuesta
+conserva la proyeccion minima y la mutacion registra `updatedBy`.
+
 45C permanece abierta. No se han implementado todavia perfil profesional,
-cambio/desactivacion de miembros, compatibilidad `STAFF`, esquema aditivo o la
-invariante del ultimo OWNER.
+desactivacion de miembros, compatibilidad `STAFF`, esquema aditivo o el cierre
+integral de la invariante del ultimo OWNER.
 
 ## 14. Documentos prioritarios para reconstruir contexto
 
@@ -569,7 +573,7 @@ Estado esperado al continuar:
 - `dev` como rama de integracion efectiva;
 - MVP4 `MVP4_CLOSED_WITH_LIMITATIONS`;
 - EPIC 45A y 45B integradas;
-- EPIC 45C iniciada y pendiente de entrega de su fase de lectura de miembros;
+- EPIC 45C con lectura y alta integradas, y cambio de rol pendiente de entrega;
 - horario automatico no activado;
 - ninguna automatizacion puede fusionar.
 

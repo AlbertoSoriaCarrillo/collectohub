@@ -4,6 +4,7 @@ import com.collectohub.auth.security.AuthenticatedUser;
 import com.collectohub.shops.application.ShopService;
 import com.collectohub.shops.dto.CreateShopRequest;
 import com.collectohub.shops.dto.AddShopMemberRequest;
+import com.collectohub.shops.dto.ChangeShopMemberRoleRequest;
 import com.collectohub.shops.dto.ShopMemberResponse;
 import com.collectohub.shops.dto.ShopResponse;
 import com.collectohub.shops.dto.UpdateShopRequest;
@@ -74,6 +75,17 @@ public class ShopController {
             @Valid @RequestBody AddShopMemberRequest request
     ) {
         return shopService.addMember(user, shopId, request);
+    }
+
+    @PutMapping("/{shopId}/members/{memberId}/role")
+    @Operation(summary = "Change an active shop member role when the authenticated user is the owner")
+    public ShopMemberResponse changeMemberRole(
+            @AuthenticationPrincipal AuthenticatedUser user,
+            @PathVariable Long shopId,
+            @PathVariable Long memberId,
+            @Valid @RequestBody ChangeShopMemberRoleRequest request
+    ) {
+        return shopService.changeMemberRole(user, shopId, memberId, request);
     }
 
     @PutMapping("/{shopId}")
