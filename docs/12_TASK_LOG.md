@@ -1,5 +1,23 @@
 # Registro de avance
 
+## 2026-08-07 - EPIC 45C - Fase de cambio seguro de rol
+
+- Anadido `PUT /api/shops/{shopId}/members/{memberId}/role` para que solo un
+  OWNER activo cambie una membership activa de la misma tienda entre MANAGER y
+  EMPLOYEE.
+- El contrato no permite asignar ni modificar OWNER, conserva la respuesta
+  minima sin datos personales, limita la consulta a la tienda y registra el
+  actor en `updatedBy`.
+- Regresion previa demostrada por fallo de compilacion. Validacion dirigida: 36
+  tests backend, 0 fallos, errores u omitidos. Matriz completa
+  `scripts/quality/verify.ps1 -BaseRef origin/dev`: PASS; backend 448 tests,
+  frontend 59 archivos/244 tests y build correcto. Cuatro tests backend
+  condicionados a Docker: `SKIPPED_WITH_REASON` porque Docker no estaba
+  disponible y esta fase no modifica migraciones. E2E/Playwright:
+  `SKIPPED_WITH_REASON` por exclusion expresa.
+- Sin desactivacion, transferencia de ownership, migraciones, frontend,
+  dependencias ni compatibilidad `STAFF`. 45C permanece abierta para esas fases.
+
 ## 2026-08-07 - EPIC 45C - Fase de alta segura de miembros
 
 - Anadido `POST /api/shops/{shopId}/members` para que un OWNER activo incorpore

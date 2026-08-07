@@ -1,8 +1,9 @@
 # CollectoHub backlog after MVP 1
 
 Estado actual: modo `SUPERVISED_ACTIVE_NO_ENFORCEMENT`, MVP4
-`MVP4_CLOSED_WITH_LIMITATIONS` y EPIC 45C iniciada por una fase backend pequena
-de lectura segura de miembros. El orden funcional sigue `docs/01_ROADMAP.md`.
+`MVP4_CLOSED_WITH_LIMITATIONS` y EPIC 45C con lectura y alta segura de miembros
+integradas; el cambio de rol backend esta pendiente de entrega. El orden
+funcional sigue `docs/01_ROADMAP.md`.
 
 ## Must fix antes de ensenar portfolio
 
@@ -186,8 +187,10 @@ implementa todavia locks, holds o idempotencia de stock, reservados a 45G.
 `POST /api/shops/{shopId}/members` solo para OWNER. El alta referencia una cuenta
 activa existente por email normalizado, admite MANAGER/EMPLOYEE, no devuelve
 datos personales y rechaza duplicados de forma estable. 45C permanece abierta:
-no existen todavia cambios de rol, desactivacion, invariantes del ultimo OWNER,
-esquema aditivo ni edicion de perfil profesional.
+la fase pendiente de entrega permite solo al OWNER cambiar una membership activa
+entre MANAGER y EMPLOYEE, sin modificar al OWNER. No existen todavia
+desactivacion, cierre integral de la invariante del ultimo OWNER, esquema aditivo
+ni edicion de perfil profesional.
 
 ## MVP 6 - Social basico
 

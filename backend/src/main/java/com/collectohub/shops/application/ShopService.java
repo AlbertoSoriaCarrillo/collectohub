@@ -7,6 +7,7 @@ import com.collectohub.shops.domain.ShopMemberRole;
 import com.collectohub.shops.domain.ShopMemberStatus;
 import com.collectohub.shops.dto.CreateShopRequest;
 import com.collectohub.shops.dto.AddShopMemberRequest;
+import com.collectohub.shops.dto.ChangeShopMemberRoleRequest;
 import com.collectohub.shops.dto.ShopMemberResponse;
 import com.collectohub.shops.dto.ShopResponse;
 import com.collectohub.shops.dto.UpdateShopRequest;
@@ -166,6 +167,40 @@ public class ShopService {
             }
             throw ex;
         }
+    }
+
+    @Transactional
+    public ShopMemberResponse changeMemberRole(
+            AuthenticatedUser authenticatedUser,
+            Long shopId,
+            Long memberId,
+            ChangeShopMemberRoleRequest request
+    ) {
+        findActiveShop(shopId);
+        shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
+                        shopId,
+                        authenticatedUser.id(),
+                        ShopMemberStatus.ACTIVE
+                )
+                .filter(member -> member.getRole() == ShopMemberRole.OWNER)
+                .orElseThrow(() -> new AccessDeniedException("User cannot change members in this shop"));
+
+        if (request.role() == ShopMemberRole.OWNER) {
+            throw new InvalidShopMemberRoleException();
+        }
+
+        ShopMember member = shopMemberRepository.findByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+                        memberId,
+                        shopId,
+                        ShopMemberStatus.ACTIVE
+                )
+                .orElseThrow(ShopMemberNotFoundException::new);
+        if (member.getRole() == ShopMemberRole.OWNER) {
+            throw new InvalidShopMemberRoleException();
+        }
+
+        member.changeRole(request.role(), authenticatedUser.id());
+        return ShopMemberResponse.from(member);
     }
 
     @Transactional

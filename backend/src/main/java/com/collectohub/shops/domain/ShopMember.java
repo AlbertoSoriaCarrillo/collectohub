@@ -99,11 +99,21 @@ public class ShopMember {
         return createdBy;
     }
 
+    public Long getUpdatedBy() {
+        return updatedBy;
+    }
+
     public Instant getDeletedAt() {
         return deletedAt;
     }
 
     public boolean canManageShop() {
         return status == ShopMemberStatus.ACTIVE && deletedAt == null && role.canManageShop();
+    }
+
+    public void changeRole(ShopMemberRole role, Long updatedBy) {
+        this.role = role;
+        this.updatedAt = Instant.now();
+        this.updatedBy = updatedBy;
     }
 }
