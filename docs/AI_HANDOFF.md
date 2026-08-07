@@ -5,9 +5,10 @@ Repositorio: `AlbertoSoriaCarrillo/collectohub`
 Rama de integracion efectiva: `dev` en
 `SUPERVISED_ACTIVE_NO_ENFORCEMENT`.
 
-Estado de entrega: EPIC 45B esta integrada en `dev`. EPIC 45C ha iniciado en
-`codex/45c-member-read-contract` con una fase backend limitada al listado seguro
-de miembros; queda pendiente de PR, checks remotos y revision/fusion humana.
+Estado de entrega: la lectura segura de miembros de EPIC 45C esta integrada en
+`dev`. `codex/45c-add-member-contract` contiene la siguiente fase backend,
+limitada al alta segura de una cuenta existente; queda pendiente de PR, checks
+remotos y revision/fusion humana.
 
 ## 1. Propósito de este documento
 
@@ -244,9 +245,10 @@ final completo.
 
 ### MVP5
 
-EPIC 45A y 45B estan integradas. EPIC 45C inicia con lectura backend protegida
-de miembros activos para OWNER/MANAGER, sin datos personales. 45C permanece
-abierta para perfil profesional, mutaciones e invariantes del ultimo OWNER.
+EPIC 45A y 45B estan integradas. EPIC 45C incorpora lectura backend protegida
+de miembros activos para OWNER/MANAGER y prepara el alta acotada solo para OWNER,
+sin datos personales. 45C permanece abierta para perfil profesional,
+cambio/desactivacion e invariantes del ultimo OWNER.
 
 ## 8. EPICs recientes completadas
 
@@ -288,9 +290,9 @@ separados, paginacion avanzada, decisiones de taxonomia y MISSING
 legacy/persistido, produccion, social, marketplace y pagos.
 
 EPIC 45A deja la auditoria y el diseno ejecutable de MVP5 y 45B esta integrada.
-La primera fase de 45C queda en su rama temporal; mientras su PR de entrega siga
-abierta no se inicia otra fase ni otra EPIC. El horario automatico no se activa
-en este cierre.
+La lectura segura de 45C esta integrada. La fase de alta queda en
+`codex/45c-add-member-contract`; mientras su PR de entrega siga abierta no se
+inicia otra fase ni otra EPIC. El horario automatico no se activa en este cierre.
 
 La API de GitHub confirmo repositorio privado, Squash merging y merge commits
 activados, Rebase merging y auto-merge desactivados. Los endpoints de rulesets
@@ -432,15 +434,17 @@ prerrequisitos la separacion de DTO publicos/internos, la sanitizacion de notas,
 la compatibilidad de reservas con inventario editorial puro y la posterior
 consistencia transaccional de stock. No implementa funcionalidad.
 
-45B completo los contratos seguros de inventario y reservas editoriales. La
-primera fase de 45C anade `GET /api/shops/{shopId}/members`: devuelve memberships
-activas en orden de id solo a OWNER/MANAGER activos y no incluye email, nombre
-ni otros campos personales. EMPLOYEE y usuarios ajenos reciben `403`; el acceso
-anonimo recibe `401`.
+45B completo los contratos seguros de inventario y reservas editoriales. 45C
+anade `GET /api/shops/{shopId}/members`: devuelve memberships activas en
+orden de id solo a OWNER/MANAGER activos. Tambien incorpora
+`POST /api/shops/{shopId}/members` para que solo un OWNER activo agregue una
+cuenta activa existente por email normalizado como MANAGER o EMPLOYEE. Las
+respuestas no incluyen email, nombre ni otros campos personales; los duplicados
+se rechazan con conflicto estable.
 
 45C permanece abierta. No se han implementado todavia perfil profesional,
-alta/cambio/desactivacion de miembros, compatibilidad `STAFF`, esquema aditivo o
-la invariante del ultimo OWNER.
+cambio/desactivacion de miembros, compatibilidad `STAFF`, esquema aditivo o la
+invariante del ultimo OWNER.
 
 ## 14. Documentos prioritarios para reconstruir contexto
 

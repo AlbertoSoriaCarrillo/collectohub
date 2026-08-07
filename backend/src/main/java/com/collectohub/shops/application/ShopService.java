@@ -6,6 +6,7 @@ import com.collectohub.shops.domain.ShopMember;
 import com.collectohub.shops.domain.ShopMemberRole;
 import com.collectohub.shops.domain.ShopMemberStatus;
 import com.collectohub.shops.dto.CreateShopRequest;
+import com.collectohub.shops.dto.AddShopMemberRequest;
 import com.collectohub.shops.dto.ShopMemberResponse;
 import com.collectohub.shops.dto.ShopResponse;
 import com.collectohub.shops.dto.UpdateShopRequest;
@@ -17,6 +18,7 @@ import com.collectohub.users.domain.User;
 import com.collectohub.users.infrastructure.RoleRepository;
 import com.collectohub.users.infrastructure.UserRepository;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -119,6 +121,46 @@ public class ShopService {
                 ).stream()
                 .map(ShopMemberResponse::from)
                 .toList();
+    }
+
+    @Transactional
+    public ShopMemberResponse addMember(
+            AuthenticatedUser authenticatedUser,
+            Long shopId,
+            AddShopMemberRequest request
+    ) {
+        Shop shop = findActiveShop(shopId);
+        shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
+                        shopId,
+                        authenticatedUser.id(),
+                        ShopMemberStatus.ACTIVE
+                )
+                .filter(member -> member.getRole() == ShopMemberRole.OWNER)
+                .orElseThrow(() -> new AccessDeniedException("User cannot add members to this shop"));
+
+        if (request.role() == ShopMemberRole.OWNER) {
+            throw new InvalidShopMemberRoleException();
+        }
+
+        String email = request.email().trim().toLowerCase(Locale.ROOT);
+        User user = userRepository.findByEmailIgnoreCaseAndDeletedAtIsNull(email)
+                .filter(User::isActive)
+                .orElseThrow(ShopMemberCandidateNotFoundException::new);
+        if (shopMemberRepository.findByShop_IdAndUser_Id(shopId, user.getId()).isPresent()) {
+            throw new ShopMembershipAlreadyExistsException();
+        }
+
+        try {
+            ShopMember member = shopMemberRepository.saveAndFlush(ShopMember.active(
+                    shop,
+                    user,
+                    request.role(),
+                    authenticatedUser.id()
+            ));
+            return ShopMemberResponse.from(member);
+        } catch (DataIntegrityViolationException ex) {
+            throw new ShopMembershipAlreadyExistsException();
+        }
     }
 
     @Transactional

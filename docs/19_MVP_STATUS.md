@@ -56,8 +56,8 @@ El modo operativo actual es `SUPERVISED_ACTIVE_NO_ENFORCEMENT`. `dev` es la
 rama de integracion efectiva, toda fusion es humana, la automatizacion nunca
 fusiona y una entrega termina en `HUMAN_MERGE_REQUIRED`. GitHub no aplica
 protecciones enforced. EPIC 45B esta integrada. EPIC 45C ha iniciado con un
-contrato backend de lectura segura de miembros; permanece abierta para perfil,
-mutaciones e invariantes del ultimo OWNER.
+contrato backend de lectura segura y alta acotada de miembros; permanece
+abierta para perfil, cambio/desactivacion e invariantes del ultimo OWNER.
 
 | Dominio | Estado actual |
 | --- | --- |
@@ -65,7 +65,7 @@ mutaciones e invariantes del ultimo OWNER.
 | Catalog Knowledge Base | Parcial; fundamentos MVP 2, fachada de lectura, frontend editorial publico, creators y relaciones de items implementados |
 | User Collections | Alta, edicion y enlace catalogado de items manuales cerrados; datos personales preservados |
 | Social | Futuro |
-| Shops & Inventory | Base legacy/editorial parcial; 45B integrada y primera fase backend de miembros de 45C pendiente de entrega |
+| Shops & Inventory | Base legacy/editorial parcial; 45B integrada y 45C con lectura y alta backend de miembros pendiente de entrega |
 | Matching | Recomendaciones por edicion, item y fallback legacy |
 | Commerce | Reservas sin pago; resto futuro |
 | Content Creators | Base editorial de creators implementada; herramientas sociales/creador futuras |
@@ -420,12 +420,14 @@ editoriales puras con `masterProductId` nullable y proyeccion de item/edicion,
 manteniendo clientes legacy. La matriz local completa pasa sin migraciones ni
 dependencias nuevas.
 
-45B esta integrada en `dev`. La primera fase de **EPIC 45C - Perfil profesional
-y miembros de tienda** incorpora el listado backend protegido de memberships
-activas, con orden estable y proyeccion sin datos personales. OWNER y MANAGER
-pueden leer; EMPLOYEE y no miembros no. 45C no se considera cerrada: quedan el
-perfil profesional, las mutaciones de miembros, el esquema aditivo y la
-invariante del ultimo OWNER.
+45B esta integrada en `dev`. **EPIC 45C - Perfil profesional y miembros de
+tienda** incorpora el listado backend protegido de memberships activas, con
+orden estable y proyeccion sin datos personales. OWNER y MANAGER
+pueden leer; EMPLOYEE y no miembros no. Solo OWNER puede dar de alta una cuenta
+activa existente como MANAGER o EMPLOYEE, sin exponer datos personales. 45C no
+se considera cerrada: quedan el perfil profesional, cambio/desactivacion de
+miembros, compatibilidad `STAFF`, el esquema aditivo y la invariante del ultimo
+OWNER.
 
 Vision, alcance y roadmap: `docs/00_PRODUCT_VISION.md`,
 `docs/01_ROADMAP.md`, `docs/02_MVP1_SCOPE.md` y

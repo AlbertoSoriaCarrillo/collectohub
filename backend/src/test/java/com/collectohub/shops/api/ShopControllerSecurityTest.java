@@ -6,6 +6,7 @@ import com.collectohub.auth.security.JwtService;
 import com.collectohub.config.SecurityConfig;
 import com.collectohub.shared.api.GlobalExceptionHandler;
 import com.collectohub.shops.application.ShopService;
+import com.collectohub.shops.application.ShopMembershipAlreadyExistsException;
 import com.collectohub.shops.dto.ShopMemberResponse;
 import com.collectohub.shops.dto.ShopResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -195,6 +196,77 @@ class ShopControllerSecurityTest {
                         .header("Authorization", "Bearer " + token()))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.status").value(403));
+    }
+
+    @Test
+    void ownerCanAddMemberWithoutPersonalFieldsInResponse() throws Exception {
+        when(shopService.addMember(any(), eq(100L), any()))
+                .thenReturn(new ShopMemberResponse(201L, 43L, "EMPLOYEE", "ACTIVE"));
+
+        mockMvc.perform(post("/api/shops/100/members")
+                        .header("Authorization", "Bearer " + token())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "email": "employee@example.com",
+                                  "role": "EMPLOYEE"
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(201))
+                .andExpect(jsonPath("$.userId").value(43))
+                .andExpect(jsonPath("$.role").value("EMPLOYEE"))
+                .andExpect(jsonPath("$.email").doesNotExist())
+                .andExpect(jsonPath("$.name").doesNotExist());
+    }
+
+    @Test
+    void addMemberRequiresAuthenticationAndValidEmail() throws Exception {
+        String body = """
+                {
+                  "email": "not-an-email",
+                  "role": "EMPLOYEE"
+                }
+                """;
+
+        mockMvc.perform(post("/api/shops/100/members")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(post("/api/shops/100/members")
+                        .header("Authorization", "Bearer " + token())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void addMemberRejectsOwnerRoleAndMapsDuplicateToConflict() throws Exception {
+        mockMvc.perform(post("/api/shops/100/members")
+                        .header("Authorization", "Bearer " + token())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "email": "employee@example.com",
+                                  "role": "OWNER"
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+
+        when(shopService.addMember(any(), eq(100L), any()))
+                .thenThrow(new ShopMembershipAlreadyExistsException());
+        mockMvc.perform(post("/api/shops/100/members")
+                        .header("Authorization", "Bearer " + token())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "email": "employee@example.com",
+                                  "role": "EMPLOYEE"
+                                }
+                                """))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409));
     }
 
     private String token() {
