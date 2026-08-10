@@ -8,6 +8,7 @@ import com.collectohub.shared.api.GlobalExceptionHandler;
 import com.collectohub.shops.application.ShopService;
 import com.collectohub.shops.application.ShopMembershipAlreadyExistsException;
 import com.collectohub.shops.application.ShopMemberNotFoundException;
+import com.collectohub.shops.application.ShopOwnerCannotBeDeactivatedException;
 import com.collectohub.shops.dto.AddShopMemberRequest;
 import com.collectohub.shops.dto.ChangeShopMemberRoleRequest;
 import com.collectohub.shops.dto.ShopMemberResponse;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -354,6 +356,43 @@ class ShopControllerSecurityTest {
                                 """))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Shop member not found"));
+    }
+
+    @Test
+    void ownerCanDeactivateMember() throws Exception {
+        mockMvc.perform(delete("/api/shops/100/members/201")
+                        .header("Authorization", "Bearer " + token()))
+                .andExpect(status().isNoContent());
+
+        verify(shopService).deactivateMember(any(), eq(100L), eq(201L));
+    }
+
+    @Test
+    void deactivateMemberRequiresAuthentication() throws Exception {
+        mockMvc.perform(delete("/api/shops/100/members/201"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void deactivateMemberMapsUnavailableMembershipToNotFound() throws Exception {
+        org.mockito.Mockito.doThrow(new ShopMemberNotFoundException())
+                .when(shopService).deactivateMember(any(), eq(100L), eq(999L));
+
+        mockMvc.perform(delete("/api/shops/100/members/999")
+                        .header("Authorization", "Bearer " + token()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Shop member not found"));
+    }
+
+    @Test
+    void deactivateMemberRejectsOwnerMembership() throws Exception {
+        org.mockito.Mockito.doThrow(new ShopOwnerCannotBeDeactivatedException())
+                .when(shopService).deactivateMember(any(), eq(100L), eq(200L));
+
+        mockMvc.perform(delete("/api/shops/100/members/200")
+                        .header("Authorization", "Bearer " + token()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Shop owner membership cannot be deactivated"));
     }
 
     private String token() {

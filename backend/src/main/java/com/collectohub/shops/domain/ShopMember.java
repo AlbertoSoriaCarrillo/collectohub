@@ -116,4 +116,10 @@ public class ShopMember {
         this.updatedAt = Instant.now();
         this.updatedBy = updatedBy;
     }
+
+    public void deactivate(Long updatedBy) {
+        this.status = ShopMemberStatus.INACTIVE;
+        this.updatedAt = Instant.now();
+        this.updatedBy = updatedBy;
+    }
 }

@@ -1,8 +1,8 @@
 # CollectoHub backlog after MVP 1
 
 Estado actual: modo `SUPERVISED_ACTIVE_NO_ENFORCEMENT`, MVP4
-`MVP4_CLOSED_WITH_LIMITATIONS` y EPIC 45C con lectura y alta segura de miembros
-integradas; el cambio de rol backend esta pendiente de entrega. El orden
+`MVP4_CLOSED_WITH_LIMITATIONS` y EPIC 45C con lectura, alta y cambio seguro de
+rol integrados; la desactivacion backend esta pendiente de entrega. El orden
 funcional sigue `docs/01_ROADMAP.md`.
 
 ## Must fix antes de ensenar portfolio
@@ -180,17 +180,20 @@ soporten ofertas editoriales puras sin asumir `masterProductId`, preservar
 clientes legacy y anadir regresiones de API, privacidad y autorizacion. No
 implementa todavia locks, holds o idempotencia de stock, reservados a 45G.
 
-**EPIC 45C - Perfil profesional y miembros de tienda.**
+**EPIC 45C - Perfil profesional y miembros de tienda (desglosada).**
 
 45C incorpora lectura backend de memberships activas en orden estable mediante
 `GET /api/shops/{shopId}/members` para OWNER/MANAGER y alta acotada mediante
 `POST /api/shops/{shopId}/members` solo para OWNER. El alta referencia una cuenta
 activa existente por email normalizado, admite MANAGER/EMPLOYEE, no devuelve
-datos personales y rechaza duplicados de forma estable. 45C permanece abierta:
-la fase pendiente de entrega permite solo al OWNER cambiar una membership activa
-entre MANAGER y EMPLOYEE, sin modificar al OWNER. No existen todavia
-desactivacion, cierre integral de la invariante del ultimo OWNER, esquema aditivo
-ni edicion de perfil profesional.
+datos personales y rechaza duplicados de forma estable. El cambio seguro entre
+MANAGER y EMPLOYEE tambien esta integrado. Estas unidades quedan identificadas
+como 45C-A (lectura), 45C-B (alta) y 45C-C (cambio de rol). La EPIC 45C-D,
+cerrada por esta entrega, permite solo al OWNER desactivar una membership activa
+MANAGER o EMPLOYEE, sin desactivar al OWNER y con auditoria del actor. No existen
+todavia transferencia de ownership, reconciliacion `STAFF`, cierre del esquema
+aditivo ni edicion de perfil profesional; cada alcance restante debe definirse
+como una EPIC independiente antes de implementarse.
 
 ## MVP 6 - Social basico
 

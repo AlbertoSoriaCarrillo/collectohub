@@ -189,7 +189,7 @@ public class ShopService {
             throw new InvalidShopMemberRoleException();
         }
 
-        ShopMember member = shopMemberRepository.findByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+        ShopMember member = shopMemberRepository.findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull(
                         memberId,
                         shopId,
                         ShopMemberStatus.ACTIVE
@@ -201,6 +201,34 @@ public class ShopService {
 
         member.changeRole(request.role(), authenticatedUser.id());
         return ShopMemberResponse.from(member);
+    }
+
+    @Transactional
+    public void deactivateMember(
+            AuthenticatedUser authenticatedUser,
+            Long shopId,
+            Long memberId
+    ) {
+        findActiveShop(shopId);
+        shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
+                        shopId,
+                        authenticatedUser.id(),
+                        ShopMemberStatus.ACTIVE
+                )
+                .filter(member -> member.getRole() == ShopMemberRole.OWNER)
+                .orElseThrow(() -> new AccessDeniedException("User cannot deactivate members in this shop"));
+
+        ShopMember member = shopMemberRepository.findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+                        memberId,
+                        shopId,
+                        ShopMemberStatus.ACTIVE
+                )
+                .orElseThrow(ShopMemberNotFoundException::new);
+        if (member.getRole() == ShopMemberRole.OWNER) {
+            throw new ShopOwnerCannotBeDeactivatedException();
+        }
+
+        member.deactivate(authenticatedUser.id());
     }
 
     @Transactional

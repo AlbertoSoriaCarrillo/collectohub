@@ -15,6 +15,7 @@ import com.collectohub.users.domain.Role;
 import com.collectohub.users.domain.User;
 import com.collectohub.users.infrastructure.RoleRepository;
 import com.collectohub.users.infrastructure.UserRepository;
+import jakarta.persistence.LockModeType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.sql.SQLException;
@@ -313,7 +315,7 @@ class ShopServiceTest {
         when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
                 100L, 42L, ShopMemberStatus.ACTIVE
         )).thenReturn(Optional.of(ownerMember));
-        when(shopMemberRepository.findByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+        when(shopMemberRepository.findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull(
                 201L, 100L, ShopMemberStatus.ACTIVE
         )).thenReturn(Optional.of(employee));
 
@@ -348,7 +350,7 @@ class ShopServiceTest {
         )).isInstanceOf(AccessDeniedException.class);
 
         verify(shopMemberRepository, never())
-                .findByIdAndShop_IdAndStatusAndDeletedAtIsNull(any(), any(), any());
+                .findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull(any(), any(), any());
     }
 
     @Test
@@ -359,7 +361,7 @@ class ShopServiceTest {
         when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
                 100L, 42L, ShopMemberStatus.ACTIVE
         )).thenReturn(Optional.of(ownerMember));
-        when(shopMemberRepository.findByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+        when(shopMemberRepository.findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull(
                 200L, 100L, ShopMemberStatus.ACTIVE
         )).thenReturn(Optional.of(ownerMember));
 
@@ -381,7 +383,7 @@ class ShopServiceTest {
         when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
                 100L, 42L, ShopMemberStatus.ACTIVE
         )).thenReturn(Optional.of(ownerMember));
-        when(shopMemberRepository.findByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+        when(shopMemberRepository.findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull(
                 999L, 100L, ShopMemberStatus.ACTIVE
         )).thenReturn(Optional.empty());
 
@@ -391,6 +393,93 @@ class ShopServiceTest {
                 999L,
                 new ChangeShopMemberRoleRequest(ShopMemberRole.MANAGER)
         )).isInstanceOf(ShopMemberNotFoundException.class)
+                .hasMessage("Shop member not found");
+    }
+
+    @Test
+    void ownerDeactivatesActiveEmployeeWithAudit() {
+        Shop shop = shop(owner, 100L, "Collector Cave");
+        ShopMember ownerMember = member(shop, owner, 200L, ShopMemberRole.OWNER);
+        User employeeUser = user(43L, "employee@example.com");
+        ShopMember employee = member(shop, employeeUser, 201L, ShopMemberRole.EMPLOYEE);
+        when(shopRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(shop));
+        when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
+                100L, 42L, ShopMemberStatus.ACTIVE
+        )).thenReturn(Optional.of(ownerMember));
+        when(shopMemberRepository.findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+                201L, 100L, ShopMemberStatus.ACTIVE
+        )).thenReturn(Optional.of(employee));
+
+        shopService.deactivateMember(authenticatedOwner, 100L, 201L);
+
+        assertThat(employee.getStatus()).isEqualTo(ShopMemberStatus.INACTIVE);
+        assertThat(employee.getUpdatedBy()).isEqualTo(42L);
+    }
+
+    @Test
+    void membershipMutationFinderUsesPessimisticWriteLock() throws NoSuchMethodException {
+        var method = ShopMemberRepository.class.getMethod(
+                "findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull",
+                Long.class,
+                Long.class,
+                ShopMemberStatus.class
+        );
+
+        assertThat(method.getAnnotation(Lock.class))
+                .isNotNull()
+                .extracting(Lock::value)
+                .isEqualTo(LockModeType.PESSIMISTIC_WRITE);
+    }
+
+    @Test
+    void managerCannotDeactivateShopMember() {
+        Shop shop = shop(owner, 100L, "Collector Cave");
+        ShopMember manager = member(shop, owner, 200L, ShopMemberRole.MANAGER);
+        when(shopRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(shop));
+        when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
+                100L, 42L, ShopMemberStatus.ACTIVE
+        )).thenReturn(Optional.of(manager));
+
+        assertThatThrownBy(() -> shopService.deactivateMember(authenticatedOwner, 100L, 201L))
+                .isInstanceOf(AccessDeniedException.class);
+
+        verify(shopMemberRepository, never())
+                .findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull(any(), any(), any());
+    }
+
+    @Test
+    void ownerMembershipCannotBeDeactivated() {
+        Shop shop = shop(owner, 100L, "Collector Cave");
+        ShopMember ownerMember = member(shop, owner, 200L, ShopMemberRole.OWNER);
+        when(shopRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(shop));
+        when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
+                100L, 42L, ShopMemberStatus.ACTIVE
+        )).thenReturn(Optional.of(ownerMember));
+        when(shopMemberRepository.findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+                200L, 100L, ShopMemberStatus.ACTIVE
+        )).thenReturn(Optional.of(ownerMember));
+
+        assertThatThrownBy(() -> shopService.deactivateMember(authenticatedOwner, 100L, 200L))
+                .isInstanceOf(ShopOwnerCannotBeDeactivatedException.class)
+                .hasMessage("Shop owner membership cannot be deactivated");
+
+        assertThat(ownerMember.getStatus()).isEqualTo(ShopMemberStatus.ACTIVE);
+    }
+
+    @Test
+    void inactiveOrForeignMemberCannotBeDeactivated() {
+        Shop shop = shop(owner, 100L, "Collector Cave");
+        ShopMember ownerMember = member(shop, owner, 200L, ShopMemberRole.OWNER);
+        when(shopRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(shop));
+        when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
+                100L, 42L, ShopMemberStatus.ACTIVE
+        )).thenReturn(Optional.of(ownerMember));
+        when(shopMemberRepository.findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+                999L, 100L, ShopMemberStatus.ACTIVE
+        )).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> shopService.deactivateMember(authenticatedOwner, 100L, 999L))
+                .isInstanceOf(ShopMemberNotFoundException.class)
                 .hasMessage("Shop member not found");
     }
 

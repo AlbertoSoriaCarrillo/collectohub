@@ -5,11 +5,11 @@ Repositorio: `AlbertoSoriaCarrillo/collectohub`
 Rama de integracion efectiva: `dev` en
 `SUPERVISED_ACTIVE_NO_ENFORCEMENT`.
 
-Estado de entrega: la lectura y el alta segura de miembros de EPIC 45C estan
-integradas en `dev`. La rama `codex/45c-change-member-role` contiene la siguiente
-fase backend, limitada al cambio auditado entre MANAGER y EMPLOYEE por un OWNER
-activo. La PR #18 incorpora el contrato API que faltaba tras la revision y
-requiere nuevos checks remotos y revision/fusion humana.
+Estado de entrega: las EPIC 45C-A, 45C-B y 45C-C de lectura, alta segura y cambio
+de rol de miembros estan integradas en `dev`. La rama
+`codex/45c-deactivate-member` contiene la EPIC 45C-D, limitada a la desactivacion auditada de
+MANAGER o EMPLOYEE por un OWNER activo, sin permitir desactivar al OWNER.
+Requiere checks remotos y revision/fusion humana.
 
 ## 1. Propósito de este documento
 
@@ -247,9 +247,10 @@ final completo.
 ### MVP5
 
 EPIC 45A y 45B estan integradas. EPIC 45C incorpora lectura backend protegida
-de miembros activos para OWNER/MANAGER y alta acotada solo para OWNER, sin datos
-personales. El cambio de rol backend esta pendiente de entrega; 45C permanece
-abierta para perfil profesional, desactivacion e invariantes del ultimo OWNER.
+de miembros activos para OWNER/MANAGER, alta acotada y cambio seguro de rol solo
+para OWNER, sin datos personales. La desactivacion backend esta pendiente de
+entrega; 45C permanece abierta para perfil profesional, compatibilidad `STAFF`
+y cierre del esquema aditivo.
 
 ## 8. EPICs recientes completadas
 
@@ -291,11 +292,11 @@ separados, paginacion avanzada, decisiones de taxonomia y MISSING
 legacy/persistido, produccion, social, marketplace y pagos.
 
 EPIC 45A deja la auditoria y el diseno ejecutable de MVP5 y 45B esta integrada.
-La lectura y el alta segura de 45C estan integradas. La siguiente fase queda en
-`codex/45c-change-member-role`: solo un OWNER activo puede cambiar una membership
-activa entre MANAGER y EMPLOYEE, sin modificar al OWNER ni exponer datos
-personales. Mientras su entrega siga abierta no se inicia otra fase ni otra
-EPIC. El horario automatico no se activa en este cierre.
+La lectura, el alta segura y el cambio de rol de 45C estan integrados. La
+siguiente fase queda en `codex/45c-deactivate-member`: solo un OWNER activo puede
+desactivar una membership MANAGER o EMPLOYEE activa, sin desactivar al OWNER ni
+exponer datos personales. Mientras su entrega siga abierta no se inicia otra
+fase ni otra EPIC. El horario automatico no se activa en este cierre.
 
 La API de GitHub confirmo repositorio privado, Squash merging y merge commits
 activados, Rebase merging y auto-merge desactivados. Los endpoints de rulesets
@@ -445,14 +446,16 @@ cuenta activa existente por email normalizado como MANAGER o EMPLOYEE. Las
 respuestas no incluyen email, nombre ni otros campos personales; los duplicados
 se rechazan con conflicto estable.
 
-La fase siguiente incorpora `PUT /api/shops/{shopId}/members/{memberId}/role`:
-solo un OWNER activo puede cambiar una membership activa de la misma tienda
-entre MANAGER y EMPLOYEE. El OWNER no es mutable por este contrato, la respuesta
-conserva la proyeccion minima y la mutacion registra `updatedBy`.
+El cambio de rol mediante `PUT /api/shops/{shopId}/members/{memberId}/role` esta
+integrado. La fase siguiente incorpora
+`DELETE /api/shops/{shopId}/members/{memberId}`: solo un OWNER activo puede
+desactivar una membership MANAGER o EMPLOYEE activa de la misma tienda. Conserva
+la fila como `INACTIVE`, registra `updatedBy` y devuelve `204` sin datos
+personales; el OWNER no puede desactivarse por este contrato.
 
 45C permanece abierta. No se han implementado todavia perfil profesional,
-desactivacion de miembros, compatibilidad `STAFF`, esquema aditivo o el cierre
-integral de la invariante del ultimo OWNER.
+compatibilidad `STAFF`, transferencia de ownership ni el cierre del esquema
+aditivo.
 
 ## 14. Documentos prioritarios para reconstruir contexto
 
@@ -574,7 +577,8 @@ Estado esperado al continuar:
 - `dev` como rama de integracion efectiva;
 - MVP4 `MVP4_CLOSED_WITH_LIMITATIONS`;
 - EPIC 45A y 45B integradas;
-- EPIC 45C con lectura y alta integradas, y cambio de rol pendiente de entrega;
+- EPIC 45C con lectura, alta y cambio de rol integrados, y desactivacion
+  pendiente de entrega;
 - horario automatico no activado;
 - ninguna automatizacion puede fusionar.
 

@@ -37,6 +37,7 @@ import com.collectohub.shops.application.InvalidShopMemberRoleException;
 import com.collectohub.shops.application.ShopMemberCandidateNotFoundException;
 import com.collectohub.shops.application.ShopMemberNotFoundException;
 import com.collectohub.shops.application.ShopMembershipAlreadyExistsException;
+import com.collectohub.shops.application.ShopOwnerCannotBeDeactivatedException;
 import com.collectohub.shared.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -95,6 +96,7 @@ public class GlobalExceptionHandler {
             InvalidReservationFilterException.class,
             InvalidReservationRequestException.class,
             InvalidShopMemberRoleException.class,
+            ShopOwnerCannotBeDeactivatedException.class,
             UnsupportedInterfaceLanguageException.class
     })
     ResponseEntity<ErrorResponse> handleCatalogBadRequest(RuntimeException ex, HttpServletRequest request) {

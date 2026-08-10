@@ -1,5 +1,6 @@
 package com.collectohub.shops.domain;
 
 public enum ShopMemberStatus {
-    ACTIVE
+    ACTIVE,
+    INACTIVE
 }
