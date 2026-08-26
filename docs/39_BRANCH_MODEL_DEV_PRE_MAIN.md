@@ -107,7 +107,14 @@ Antes de una EPIC y despues de un squash merge protegido:
 
 ```powershell
 Set-Location $env:COLLECTOHUB_WORKTREE
-git status --short
+$worktreeStatus = @(git status --porcelain)
+if ($LASTEXITCODE -ne 0) {
+    throw "Unable to inspect Git worktree"
+}
+if ($worktreeStatus.Count -ne 0) {
+    Write-Error "Working tree is not clean. Automation must stop."
+    exit 1
+}
 git branch --show-current
 git fetch origin --prune
 git switch dev
@@ -117,12 +124,15 @@ git rev-parse HEAD
 git rev-parse origin/dev
 ```
 
-La primera comprobacion de estado se ejecuta antes de cambiar o actualizar
-ramas; cualquier cambio local detiene el proceso. Despues se exige nuevamente
-worktree limpio y `HEAD == origin/dev`. Antes de trabajo nuevo se consulta
-GitHub. Debe existir cero PR abierta con base `dev` y head `codex/*` o
-`quality/*`; cualquier coincidencia produce `PENDING_DELIVERY_EXISTS` y bloquea
-otra EPIC.
+El guard comprueba de forma ejecutable el codigo de salida y exige que
+`git status --porcelain` no produzca ninguna linea antes de cambiar o actualizar
+ramas. Mostrar `git status --short` no es un mecanismo de control suficiente.
+Un resultado no vacio produce `EPIC_BLOCKED`: no se cambia de rama, no se hace
+pull, no se modifica nada y no se intenta ocultar el cambio mediante reset o
+clean automaticos. Despues se exige nuevamente worktree limpio y
+`HEAD == origin/dev`. Antes de trabajo nuevo se consulta GitHub. Debe existir
+cero PR abierta con base `dev` y head `codex/*` o `quality/*`; cualquier
+coincidencia produce `PENDING_DELIVERY_EXISTS` y bloquea otra EPIC.
 
 ## Siete checks obligatorios
 

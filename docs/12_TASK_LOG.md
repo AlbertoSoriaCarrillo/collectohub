@@ -41,6 +41,12 @@
   de la base: `BASE_GUARD_UNAVAILABLE` bloquea la fusion automatica cuando el
   guard no puede demostrarse; `BASE_MOVED_HUMAN_ACTION_REQUIRED` queda reservado
   para un cambio observado de `origin/dev`.
+- La review final sobre `d6dcac2f4afa79ae5c904e4fa6f6a29868a1e391`
+  detecto dos P1 adicionales. El preflight comprueba ahora de forma ejecutable
+  el resultado de Git y aborta ante cualquier salida de `status --porcelain`
+  antes de switch/pull. La activacion supervisada historica queda `COMPLETED`,
+  mientras la transicion `AUTONOMOUS_DEV_AUTO_MERGE_GUARDED` permanece
+  `PENDING`, con horario pausado, autoridad humana y `AGENTS.md` vigente.
 
 ## 2026-08-26 - EPIC 45B-FIX - Contratos publicos y coherencia de reservas
 

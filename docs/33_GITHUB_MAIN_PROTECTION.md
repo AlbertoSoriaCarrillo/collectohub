@@ -3,8 +3,13 @@
 Fecha: 2026-08-26
 Repositorio: `AlbertoSoriaCarrillo/collectohub`
 Visibilidad: privado
-Modo documentado: `AUTONOMOUS_DEV_AUTO_MERGE_GUARDED`
-Horario programado: `PAUSED`
+```text
+SUPERVISED_ACTIVATION=COMPLETED
+AUTONOMOUS_DEV_AUTO_MERGE_GUARDED_TRANSITION=PENDING
+SCHEDULE=PAUSED
+CURRENT_MERGE_AUTHORITY=HUMAN_ONLY
+ROOT_POLICY=AGENTS.md supervised policy remains authoritative
+```
 
 Este documento describe controles operativos, no protecciones tecnicas. Con el
 plan actual, GitHub no aplica branch protection ni rulesets enforced a este
@@ -24,19 +29,24 @@ No se ha configurado ni modificado ningun ajuste remoto en esta tarea.
 
 ## Estados operativos
 
-`AUTONOMOUS_DEV_AUTO_MERGE_GUARDED` significa exactamente que:
+La activacion supervisada historica del modelo `dev -> pre -> main` esta
+completada. Ese hito no activo auto-merge ni concedio autoridad de fusion a la
+automatizacion.
+
+`AUTONOMOUS_DEV_AUTO_MERGE_GUARDED` describe exclusivamente el objetivo futuro
+de transicion. Cuando esa transicion llegue a completarse significara que:
 
 - `dev` es la rama de integracion efectiva;
 - GitHub no aplica tecnicamente branch protection ni rulesets;
 - los controles se aplican mediante el procedimiento de Codex;
 - no se puede afirmar que `main`, `dev` o `pre` esten tecnicamente protegidas;
-- la automatizacion solo puede fusionar `codex/* -> dev` o
+- la automatizacion podra fusionar solo `codex/* -> dev` o
   `quality/* -> dev` cuando pasan todas las condiciones normativas;
 - `dev -> pre` y `pre -> main` siempre requieren intervencion humana;
 - `main` y `pre` siguen siendo ramas permanentes;
 - el push directo esta prohibido por politica, aunque GitHub no pueda impedirlo.
 
-La transicion queda completada. El commit de activacion
+La activacion supervisada historica quedo completada. El commit de activacion
 `5f5c45c6cec89e442c246508eb421ac641f8a967` esta presente simultaneamente en
 `origin/main`, `origin/dev` y `origin/pre`, y `dev` es la rama de integracion
 efectiva.
@@ -50,11 +60,18 @@ La primera ejecucion bajo supervision humana tambien se completo correctamente:
 - detencion segura porque la siguiente EPIC aun no estaba seleccionada;
 - cero commit, push, pull request o fusion.
 
-El modo queda documentado, pero el horario permanece `PAUSED`. Esta
-reconciliacion de las propias reglas termina en `HUMAN_MERGE_REQUIRED` y no se
-auto-fusiona. La activacion exige integrar esta politica en `dev`, reparar la
-ascendencia `dev -> pre -> main`, configurar el working copy canonico y validar
-manualmente una ejecucion completa del nuevo contrato.
+La transicion autonoma permanece `PENDING`; no esta activa, operativa, completada
+ni autorizada. Esta reconciliacion de las propias reglas termina en
+`HUMAN_MERGE_REQUIRED` y no se auto-fusiona. Antes de completar la transicion se
+debe integrar esta politica en `dev`, reparar la ascendencia `dev -> pre -> main`,
+adaptar `AGENTS.md` y la automatizacion local, disponer de un guard atomico
+verificable del base SHA, configurar `COLLECTOHUB_WORKTREE` y validar manualmente
+una ejecucion supervisada completa del nuevo contrato.
+
+Mientras falte cualquiera de esas condiciones, `SCHEDULE=PAUSED`, la politica
+supervisada de `AGENTS.md` sigue siendo la autoridad y tanto `codex/* -> dev`
+como `quality/* -> dev` son `HUMAN ONLY`. No existe autoridad automatica de
+merge.
 
 ## Siete checks obligatorios
 

@@ -134,6 +134,14 @@ now identifies an absent or unprovable atomic base guard, while
 `BASE_MOVED_HUMAN_ACTION_REQUIRED` is reserved for an observed movement of
 `origin/dev` after validation.
 
+The final review on `d6dcac2f4afa79ae5c904e4fa6f6a29868a1e391`
+found two additional P1 issues. The clean-worktree preflight now checks the Git
+command result and fails closed when porcelain output is not empty before any
+switch or pull. The branch-protection guide now records the historical
+supervised activation as completed and the autonomous transition explicitly as
+`PENDING`, with `SCHEDULE=PAUSED`, human-only current merge authority and root
+`AGENTS.md` remaining authoritative.
+
 ## Validation
 
 - `git diff --check`: `PASS`.
