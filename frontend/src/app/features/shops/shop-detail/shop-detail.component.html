@@ -95,7 +95,7 @@
                 <span class="visual-token" aria-hidden="true">{{ (product.catalogItemTitle || product.masterProductName || '').slice(0, 1).toUpperCase() }}</span>
                 <strong>{{ product.catalogItemTitle || product.masterProductName }}</strong>
                 <span>{{ product.masterProductFranchise || product.masterProductCategoryCode }}</span>
-                <span>{{ priceLabel(product) }} - {{ 'inventory.stockCount' | translate: { count: product.stockQuantity } }}</span>
+                <span>{{ priceLabel(product) }}</span>
               </a>
             }
           </div>

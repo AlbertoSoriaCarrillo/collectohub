@@ -183,23 +183,13 @@ public class ReservationService {
                 .orElseThrow(() -> new ShopProductNotFoundException(shopProductId));
         if (!shopProduct.isPubliclyVisible()
                 || !shopProduct.getShop().isActive()
-                || !hasPublicReference(shopProduct)) {
+                || !shopProduct.hasPublicReference()) {
             throw new ReservationUnavailableException("Shop product cannot be reserved");
         }
         if (shopProduct.getStockQuantity() <= 0) {
             throw new ReservationUnavailableException("Shop product has no stock available");
         }
         return shopProduct;
-    }
-
-    private boolean hasPublicReference(ShopProduct shopProduct) {
-        if (shopProduct.getMasterProduct() != null) {
-            return shopProduct.getMasterProduct().isActive();
-        }
-        if (shopProduct.getCatalogItemEdition() != null) {
-            return shopProduct.getCatalogItemEdition().isPubliclyVisible();
-        }
-        return shopProduct.getCatalogItem() != null && shopProduct.getCatalogItem().isPubliclyVisible();
     }
 
     private Reservation findActiveReservation(Long reservationId) {

@@ -55,7 +55,8 @@ completo y conserva las limitaciones documentadas.
 El modo operativo actual es `SUPERVISED_ACTIVE_NO_ENFORCEMENT`. `dev` es la
 rama de integracion efectiva, toda fusion es humana, la automatizacion nunca
 fusiona y una entrega termina en `HUMAN_MERGE_REQUIRED`. GitHub no aplica
-protecciones enforced. EPIC 45B esta integrada. Las EPIC 45C-A a 45C-D tienen
+protecciones enforced. EPIC 45B esta integrada historicamente, pero una revision
+tardia reabrio su cierre mediante 45B-FIX. Las EPIC 45C-A a 45C-D tienen
 integradas la lectura, el alta acotada, el cambio seguro de rol y la
 desactivacion backend auditada. Perfil, compatibilidad `STAFF`, transferencia de
 ownership y cierre del esquema aditivo requieren EPICs posteriores
@@ -67,7 +68,7 @@ independientes.
 | Catalog Knowledge Base | Parcial; fundamentos MVP 2, fachada de lectura, frontend editorial publico, creators y relaciones de items implementados |
 | User Collections | Alta, edicion y enlace catalogado de items manuales cerrados; datos personales preservados |
 | Social | Futuro |
-| Shops & Inventory | Base legacy/editorial parcial; 45B y las fases 45C-A a 45C-D integradas; siguiente alcance sin seleccionar |
+| Shops & Inventory | Base legacy/editorial parcial; 45B reabierta hasta integrar 45B-FIX; 45C-A a 45C-D integradas y 45C aun abierta |
 | Matching | Recomendaciones por edicion, item y fallback legacy |
 | Commerce | Reservas sin pago; resto futuro |
 | Content Creators | Base editorial de creators implementada; herramientas sociales/creador futuras |
@@ -196,9 +197,11 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 - Algunos filtros frontend MVP son numericos/manuales, como `shopId`, `userId` o `shopProductId`.
 - No hay subida real de imagenes; los productos y colecciones se gestionan sin archivos.
 - El Docker frontend usa `apiBaseUrl = "http://localhost:8080"` y depende del backend publicado en el host.
-- `npm ci` mantiene el baseline conocido de 16 vulnerabilidades en dependencias
-  de desarrollo/transitivas; no se han actualizado versiones fuera del alcance
-  de esta fase ni se ha ejecutado `npm audit fix`.
+- La medicion actual de `npm ci`, realizada por EPIC 45B-FIX el 2026-08-26,
+  informa 23 vulnerabilidades (2 bajas, 2 moderadas, 18 altas y 1 critica) en
+  dependencias de desarrollo/transitivas. Las 16 registradas en validaciones
+  historicas corresponden a esas fechas; no se han actualizado versiones fuera
+  del alcance de esta fase ni se ha ejecutado `npm audit fix`.
 - Los tests Testcontainers se saltan si Docker no esta disponible.
 - Los E2E Playwright no se ejecutan en CI y requieren entorno local ya levantado.
 - MVP4 conserva como limitaciones imagenes y almacenamiento real, `quantity`
@@ -402,7 +405,7 @@ rulesets enforced en el plan actual.
 - Playwright headless: `npm run e2e` correcto con smoke, auth/colecciones, i18n y flujo MVP principal.
 - Playwright headed: `npm run e2e:headed` correcto.
 
-## EPIC 45B integrada y EPIC 45C iniciada
+## EPIC 45B-FIX pendiente y EPIC 45C abierta
 
 EPIC 45A audita y disena MVP5 en
 `docs/40_MVP5_SHOPS_INVENTORY_RESERVATIONS_DESIGN.md`. La base actual queda
@@ -416,13 +419,17 @@ privacidad, reglas de stock, concurrencia, recorridos y plan 45B-45J. Pagos,
 pedidos, envios, marketplace completo, social, movil y produccion permanecen
 excluidos.
 
-EPIC 45B separa el DTO publico de inventario del gestionado para que `notes`
-no salga en lecturas publicas. Las reservas y sus tipos frontend aceptan ofertas
-editoriales puras con `masterProductId` nullable y proyeccion de item/edicion,
-manteniendo clientes legacy. La matriz local completa pasa sin migraciones ni
-dependencias nuevas.
+EPIC 45B separo el DTO publico de inventario del gestionado para que `notes` no
+salga en lecturas publicas y permitio reservas editoriales puras. Una revision
+tardia detecto que el DTO publico aun exponia `stockQuantity`, que reservas
+rechazaba un producto visible por referencia editorial cuando el master legacy
+estaba inactivo y que `productName` priorizaba legacy. 45B-FIX corrige los tres
+contratos con regresiones de API, servicio y frontend; 45B no se considera
+correctamente cerrada hasta integrar esa FIX. `availableQuantity` permanece
+fuera hasta implementar holds reales en 45G.
 
-45B esta integrada en `dev`. **EPIC 45C - Perfil profesional y miembros de
+45B esta integrada historicamente en `dev` y reabierta hasta integrar 45B-FIX.
+**EPIC 45C - Perfil profesional y miembros de
 tienda** incorpora el listado backend protegido de memberships activas, con
 orden estable y proyeccion sin datos personales. OWNER y MANAGER pueden leer;
 EMPLOYEE y no miembros no. Solo OWNER puede dar de alta una cuenta activa como
@@ -431,6 +438,10 @@ la fila y auditando el actor sin permitir desactivar al OWNER. Las fases 45C-A a
 45C-D estan integradas. Perfil profesional, compatibilidad `STAFF`, transferencia
 de ownership y cierre del esquema aditivo requieren EPICs posteriores
 independientes; el siguiente alcance no esta seleccionado.
+
+45B-FIX no corrige la promocion `dev -> main` de la PR #21. La reconciliacion
+del estado 45C y del flujo `dev -> pre -> main` queda como tarea posterior
+independiente.
 
 Vision, alcance y roadmap: `docs/00_PRODUCT_VISION.md`,
 `docs/01_ROADMAP.md`, `docs/02_MVP1_SCOPE.md` y

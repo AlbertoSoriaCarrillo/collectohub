@@ -33,7 +33,6 @@
         <mat-chip-set [attr.aria-label]="'inventory.publicStatusAria' | translate">
           <mat-chip>{{ 'enums.commercialStatus.' + item.commercialStatus | translate }}</mat-chip>
           <mat-chip>{{ 'enums.physicalCondition.' + item.physicalCondition | translate }}</mat-chip>
-          <mat-chip>{{ 'inventory.stockCount' | translate: { count: item.stockQuantity } }}</mat-chip>
           <mat-chip>{{ referenceSourceKey(item) | translate }}</mat-chip>
         </mat-chip-set>
 

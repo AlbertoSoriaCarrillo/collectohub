@@ -39,7 +39,11 @@ public record ReservationResponse(
                 reservation.getShop().getName(),
                 shopProduct.getId(),
                 masterProduct == null ? null : masterProduct.getId(),
-                masterProduct == null ? catalogItem.getTitle() : masterProduct.getName(),
+                firstNonBlank(
+                        edition == null ? null : edition.getEditionName(),
+                        catalogItem == null ? null : catalogItem.getTitle(),
+                        masterProduct == null ? null : masterProduct.getName()
+                ),
                 catalogItem == null ? null : catalogItem.getId(),
                 catalogItem == null ? null : catalogItem.getTitle(),
                 edition == null ? null : edition.getId(),
@@ -52,6 +56,15 @@ public record ReservationResponse(
                 reservation.getCompletedAt(),
                 reservation.getCreatedAt()
         );
+    }
+
+    private static String firstNonBlank(String... values) {
+        for (String value : values) {
+            if (value != null && !value.isBlank()) {
+                return value;
+            }
+        }
+        return null;
     }
 
     public ReservationResponse(

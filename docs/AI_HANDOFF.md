@@ -5,10 +5,13 @@ Repositorio: `AlbertoSoriaCarrillo/collectohub`
 Rama de integracion efectiva: `dev` en
 `SUPERVISED_ACTIVE_NO_ENFORCEMENT`.
 
-Estado de entrega: las EPIC 45C-A, 45C-B, 45C-C y 45C-D de lectura, alta segura,
-cambio de rol y desactivacion auditada de miembros estan integradas en `dev`.
-No existe una entrega `codex/*` o `quality/*` abierta hacia `dev`. La siguiente
-EPIC requiere decidir y documentar un alcance independiente antes de implementarlo.
+Estado de entrega: 45B esta historicamente integrada, pero una revision tardia
+reabrio su cierre mediante EPIC 45B-FIX. La rama
+`codex/45b-fix-post-review` corrige la exposicion publica de stock fisico, la
+incoherencia de referencias reservables y la prioridad legacy de
+`ReservationResponse.productName`; requiere integracion humana en `dev`.
+Las EPIC 45C-A a 45C-D estan integradas, pero 45C permanece abierta y no se
+reconcilia en esta FIX.
 
 ## 1. Propósito de este documento
 
@@ -245,7 +248,9 @@ final completo.
 
 ### MVP5
 
-EPIC 45A y 45B estan integradas. Las fases 45C-A a 45C-D incorporan lectura
+EPIC 45A esta integrada. 45B esta historicamente integrada, pero no debe
+considerarse correctamente cerrada hasta integrar 45B-FIX. Las fases 45C-A a
+45C-D incorporan lectura
 backend protegida de miembros activos para OWNER/MANAGER, alta acotada, cambio
 seguro de rol y desactivacion auditada solo para OWNER, sin datos personales.
 Perfil profesional, compatibilidad `STAFF` y cierre del esquema aditivo deben
@@ -290,11 +295,14 @@ E2E/Playwright, imagenes y almacenamiento real, `quantity` frente a ejemplares
 separados, paginacion avanzada, decisiones de taxonomia y MISSING
 legacy/persistido, produccion, social, marketplace y pagos.
 
-EPIC 45A deja la auditoria y el diseno ejecutable de MVP5 y 45B esta integrada.
+EPIC 45A deja la auditoria y el diseno ejecutable de MVP5. 45B esta integrada
+historicamente, pero queda reabierta hasta integrar 45B-FIX: el DTO publico aun
+exponia `stockQuantity`, reservas no compartia la regla de referencia publica y
+el nombre de reserva priorizaba legacy sobre edicion/item.
 Las fases 45C-A a 45C-D estan integradas en `dev`; la PR #19 fue fusionada
 manualmente como `0395b6d8ab6786b406ad9c0e772b09571b252f12` y su arbol coincide
-con el head validado `dc8b1cabdef1d674513ababc13a696ae28393d4f`. No hay otra
-entrega abierta hacia `dev`. Antes de continuar se debe elegir y definir como
+con el head validado `dc8b1cabdef1d674513ababc13a696ae28393d4f`. Al iniciar
+45B-FIX no habia otra entrega abierta hacia `dev`. Antes de continuar se debe elegir y definir como
 EPIC independiente uno de los alcances restantes de 45C. El horario automatico
 no se activa en este cierre.
 
@@ -438,7 +446,13 @@ prerrequisitos la separacion de DTO publicos/internos, la sanitizacion de notas,
 la compatibilidad de reservas con inventario editorial puro y la posterior
 consistencia transaccional de stock. No implementa funcionalidad.
 
-45B completo los contratos seguros de inventario y reservas editoriales. 45C
+45B introdujo los contratos seguros de inventario y reservas editoriales, pero
+su revision tardia detecto tres defectos que 45B-FIX corrige en la rama de
+entrega actual: `PublicShopProductResponse` deja de exponer `stockQuantity`,
+inventario y reservas comparten la misma regla OR de referencia publica y
+`ReservationResponse.productName` usa el primer nombre no vacio en orden
+edicion, item y legacy. `availableQuantity` permanece diferida hasta que 45G
+implemente holds y su calculo real. 45C
 anade `GET /api/shops/{shopId}/members`: devuelve memberships activas en
 orden de id solo a OWNER/MANAGER activos. Tambien incorpora
 `POST /api/shops/{shopId}/members` para que solo un OWNER activo agregue una
@@ -457,6 +471,10 @@ personales; el OWNER no puede desactivarse por este contrato.
 compatibilidad `STAFF`, transferencia de ownership ni el cierre del esquema
 aditivo. El siguiente alcance no esta seleccionado: debe definirse como una EPIC
 independiente antes de implementar cambios.
+
+Esta FIX no corrige la promocion `dev -> main` realizada mediante PR #21. La
+reconciliacion de 45C y del flujo `dev -> pre -> main` es una tarea posterior e
+independiente.
 
 ## 14. Documentos prioritarios para reconstruir contexto
 
@@ -577,8 +595,9 @@ Estado esperado al continuar:
 - modo `SUPERVISED_ACTIVE_NO_ENFORCEMENT`;
 - `dev` como rama de integracion efectiva;
 - MVP4 `MVP4_CLOSED_WITH_LIMITATIONS`;
-- EPIC 45A y 45B integradas;
-- EPIC 45C-A a 45C-D integradas, sin siguiente alcance seleccionado;
+- EPIC 45A integrada y 45B reabierta hasta integrar 45B-FIX;
+- EPIC 45C-A a 45C-D integradas, con 45C aun abierta;
+- reconciliacion de 45C y del flujo `dev -> pre -> main` pendiente y separada;
 - horario automatico no activado;
 - ninguna automatizacion puede fusionar.
 

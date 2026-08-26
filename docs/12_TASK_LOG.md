@@ -1,5 +1,38 @@
 # Registro de avance
 
+## 2026-08-26 - EPIC 45B-FIX - Contratos publicos y coherencia de reservas
+
+- Base `42c8998608d4bbcb8b241fdbf760ce59f4ab0712`; rama
+  `codex/45b-fix-post-review`. La entrega reabre el cierre de 45B tras una
+  revision tardia y no inicia ningun alcance de 45C.
+- `PublicShopProductResponse` deja de exponer `stockQuantity`, `notes` y
+  auditoria. El inventario gestionado conserva stock y notas; no se inventa
+  `availableQuantity` antes de los holds de 45G. Las dos vistas frontend
+  publicas dejan de mostrar el stock fisico.
+- `ShopProduct.hasPublicReference()` concentra la regla ya usada por inventario:
+  master activo OR item editorial publico con edicion publica cuando exista.
+  Reservas delega en la misma regla, por lo que un bridge con master inactivo y
+  referencia editorial publica vuelve a ser reservable.
+- `ReservationResponse.productName` usa el primer valor no vacio entre nombre de
+  edicion, titulo de item y nombre legacy, sin asumir referencias no nulas.
+- Regresion previa demostrada: JSON publico con stock, bridge editorial
+  rechazado, prioridad legacy incorrecta y UI publica mostrando stock. Validacion
+  dirigida final: backend 79 tests y frontend 9 tests, sin fallos ni omitidos.
+- Backend completo: 466 tests, 0 fallos, 0 errores y 4
+  `SKIPPED_WITH_REASON` porque Docker Desktop no estaba activo; esta FIX no toca
+  persistencia ni migraciones. Frontend completo: 59 archivos/244 tests y build
+  correcto. `npm ci` conserva 23 vulnerabilidades conocidas; no se ejecuto
+  `npm audit fix`.
+- Verificador integral contra `origin/dev`: `PASS`; diff, conflictos, tests
+  eliminados/ignorados y parser PowerShell tambien quedaron verdes.
+- Pruebas nuevas: 9 casos backend. Pruebas modificadas: regresiones JSON,
+  servicio legacy y dos consumidores frontend. Pruebas eliminadas: 0. Pruebas
+  ignoradas nuevas: 0. Migraciones, dependencias, manifests, lockfiles,
+  workflows, Docker y secretos: 0.
+- 45B no queda correctamente cerrada hasta integrar esta FIX mediante revision y
+  merge humanos. La PR #21 y la reconciliacion de 45C y del flujo
+  `dev -> pre -> main` quedan fuera y se procesaran en otra tarea.
+
 ## 2026-08-07 - EPIC 45C-D - Desactivacion segura de miembros
 
 - Anadido `DELETE /api/shops/{shopId}/members/{memberId}` para que solo un
