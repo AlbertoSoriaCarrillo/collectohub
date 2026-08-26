@@ -29,7 +29,6 @@ public record PublicShopProductResponse(
         String editorialReferenceSource,
         BigDecimal priceAmount,
         String currency,
-        Integer stockQuantity,
         String commercialStatus,
         String physicalCondition,
         boolean visible,
@@ -51,7 +50,7 @@ public record PublicShopProductResponse(
                 managed.catalogItemEditionName(), managed.catalogItemEditionFormat(), managed.catalogItemEditionIsbn(),
                 managed.catalogItemEditionEan(), managed.catalogItemEditionCoverImageUrl(), managed.catalogPublisherName(),
                 managed.catalogFranchiseName(), managed.editorialReferenceSource(), managed.priceAmount(),
-                managed.currency(), managed.stockQuantity(), managed.commercialStatus(), managed.physicalCondition(),
+                managed.currency(), managed.commercialStatus(), managed.physicalCondition(),
                 managed.visible(), managed.unitNumber(), managed.totalLimitedUnits()
         );
     }

@@ -201,8 +201,12 @@ La fachada editorial agrega busqueda y detalle sin activar todavia
 | POST | `/api/shops/{shopId}/products` | Protegido | `shop_members` OWNER o MANAGER | `masterProductId` o `catalogItemId`/`catalogItemEditionId`, mas campos comerciales | `ShopProductResponse` legacy/editorial | `400`, `401`, `403`, `404`, `409` |
 | PUT | `/api/shops/{shopId}/products/{shopProductId}` | Protegido | `shop_members` OWNER o MANAGER | Campos de `UpdateShopProductRequest` | `ShopProductResponse` | `400`, `401`, `403`, `404` |
 | GET | `/api/shops/{shopId}/products/my` | Protegido | Miembro activo de tienda | No | Inventario completo no eliminado de la tienda | `401`, `403`, `404` |
-| GET | `/api/shops/{shopId}/products` | Publico | Solo productos visibles y disponibles | Filtros `masterProductId`, `categoryCode`, `name`, `franchise`, `collectionName`, `physicalCondition`, `commercialStatus` | Lista publica de `ShopProductResponse` | `400`, `404` |
-| GET | `/api/shop-products/{shopProductId}` | Publico | Solo producto visible, disponible y activo | No | `ShopProductResponse` | `404` |
+| GET | `/api/shops/{shopId}/products` | Publico | Solo productos visibles y disponibles | Filtros `masterProductId`, `categoryCode`, `name`, `franchise`, `collectionName`, `physicalCondition`, `commercialStatus` | Lista publica de `PublicShopProductResponse` | `400`, `404` |
+| GET | `/api/shop-products/{shopProductId}` | Publico | Solo producto visible, disponible y activo | No | `PublicShopProductResponse` | `404` |
+
+`PublicShopProductResponse` no expone `stockQuantity`, `notes` ni auditoria.
+Los endpoints gestionados conservan el stock fisico interno. No se publica
+`availableQuantity` hasta que 45G implemente holds y su calculo transaccional.
 
 Enums:
 
@@ -275,3 +279,7 @@ Transiciones MVP:
 - Usuario: cancelar reserva propia en `PENDING` o `ACCEPTED`.
 - No hay job automatico de expiracion en el MVP.
 - Crear una reserva no reduce automaticamente `shop_products.stock_quantity`.
+- Una oferta es reservable si tiene al menos una referencia publica valida: un
+  master legacy activo, o un item editorial publico cuya edicion tambien sea
+  publica cuando exista. `productName` usa el primer valor no vacio entre nombre
+  de edicion, titulo de item y nombre de master legacy.

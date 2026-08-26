@@ -1,7 +1,9 @@
 # CollectoHub backlog after MVP 1
 
 Estado actual: modo `SUPERVISED_ACTIVE_NO_ENFORCEMENT`, MVP4
-`MVP4_CLOSED_WITH_LIMITATIONS` y las fases 45C-A a 45C-D integradas. Perfil
+`MVP4_CLOSED_WITH_LIMITATIONS` y 45B reabierta por EPIC 45B-FIX tras una
+revision tardia. Las fases 45C-A a 45C-D estan integradas, pero 45C permanece
+abierta. Perfil
 profesional, reconciliacion `STAFF`, transferencia de ownership y cierre del
 esquema aditivo requieren EPICs independientes antes de implementarse. El orden
 funcional sigue `docs/01_ROADMAP.md`.
@@ -171,7 +173,8 @@ EPIC 45A deja auditado y disenado MVP5 en
 `docs/40_MVP5_SHOPS_INVENTORY_RESERVATIONS_DESIGN.md`. No implementa
 funcionalidad. El plan ejecutable queda dividido en 45B-45J.
 
-EPIC 45B esta integrada en `dev`.
+EPIC 45B esta integrada historicamente en `dev`, pero no debe considerarse
+correctamente cerrada hasta integrar EPIC 45B-FIX.
 
 **EPIC 45B - Contratos seguros y compatibilidad editorial de reservas.**
 
@@ -180,6 +183,15 @@ EPIC 45B esta integrada en `dev`.
 soporten ofertas editoriales puras sin asumir `masterProductId`, preservar
 clientes legacy y anadir regresiones de API, privacidad y autorizacion. No
 implementa todavia locks, holds o idempotencia de stock, reservados a 45G.
+
+**EPIC 45B-FIX - Contratos publicos y coherencia de reservas.**
+
+Es la unica entrega prioritaria antes de seleccionar otra fase. Elimina
+`stockQuantity` de `PublicShopProductResponse` sin inventar
+`availableQuantity`, comparte entre inventario y reservas la regla de
+referencia publica y prioriza el nombre de edicion/item sobre legacy en
+`ReservationResponse`. Incluye regresiones MVC, de servicio y frontend. No
+implementa holds, locks, migraciones ni trabajo de 45C.
 
 **EPIC 45C - Perfil profesional y miembros de tienda (desglosada).**
 
@@ -195,6 +207,9 @@ MANAGER o EMPLOYEE, sin desactivar al OWNER y con auditoria del actor. No existe
 todavia transferencia de ownership, reconciliacion `STAFF`, cierre del esquema
 aditivo ni edicion de perfil profesional; cada alcance restante debe definirse
 como una EPIC independiente antes de implementarse.
+
+La reconciliacion completa del estado 45C y de la promocion incorrecta
+`dev -> main` mediante PR #21 queda para una tarea posterior independiente.
 
 ## MVP 6 - Social basico
 
@@ -245,9 +260,9 @@ integracion solo cambia de `main` a `dev` tras verificar que `origin/dev` y
 
 EPIC 44F, EPIC 44G-A a 44G-D-FIX y EPIC 44H-A a 44H-C estan completadas. MVP4
 queda `MVP4_CLOSED_WITH_LIMITATIONS`; los limites se enumeran en
-`docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md`. EPIC 45A, 45B y la fase de lectura de
-miembros de 45C conservan el orden secuencial; no iniciar QUALITY-B ni otra EPIC
-en paralelo mientras exista una entrega abierta.
+`docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md`. EPIC 45B-FIX es la entrega secuencial
+actual; no iniciar QUALITY-B, reconciliacion de 45C ni otra EPIC mientras su PR
+permanezca abierta.
 
 - No adelantar una fase porque exista una tabla, rol o pantalla legacy.
 - Cada EPIC debe declarar que objetivo de producto valida.

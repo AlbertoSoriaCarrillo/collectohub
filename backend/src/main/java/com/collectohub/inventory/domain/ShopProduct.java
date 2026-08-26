@@ -272,4 +272,12 @@ public class ShopProduct {
     public boolean isPubliclyVisible() {
         return isActive() && visible && commercialStatus == ShopProductCommercialStatus.AVAILABLE;
     }
+
+    public boolean hasPublicReference() {
+        boolean legacyPublic = masterProduct != null && masterProduct.isActive();
+        boolean editorialPublic = catalogItem != null
+                && catalogItem.isPubliclyVisible()
+                && (catalogItemEdition == null || catalogItemEdition.isPubliclyVisible());
+        return legacyPublic || editorialPublic;
+    }
 }

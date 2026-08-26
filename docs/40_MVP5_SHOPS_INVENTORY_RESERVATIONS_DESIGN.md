@@ -167,8 +167,9 @@ Reglas objetivo:
 4. Una oferta editorial pura es valida en inventario, detalle, matching y
    reserva. Ningun contrato de reserva puede asumir master legacy presente.
 5. La proyeccion de producto de una reserva incluye IDs y etiquetas editoriales
-   opcionales, mas fallback legacy. El nombre visible se resuelve en orden:
-   edicion/item editorial y despues master legacy.
+   opcionales, mas fallback legacy. El nombre visible usa el primer valor no
+   vacio en este orden: nombre de edicion, titulo del item y nombre del master
+   legacy.
 6. No se introduce inventario libre sin identidad catalogada en MVP5.
 7. Filas legacy permanecen legibles/editables. No hay backfill automatico salvo
    puente `VERIFIED`; las propuestas no verificadas nunca se aplican.
@@ -224,10 +225,12 @@ Se separan proyecciones publicas, internas y de reserva:
   expresamente como publico; nunca owner ID ni membership.
 - `ManagedShopResponse`: perfil, membership actual y campos de gestion.
 - `PublicShopProductResponse`: identidad editorial/legacy publica, precio,
-  condicion, estado visible y `availableQuantity`; nunca `notes`, campos de
-  auditoria ni stock fisico interno.
-- `ManagedShopProductResponse`: anade `stockQuantity`, cantidades reservada y
-  disponible, visibilidad y `notes`.
+  condicion y estado visible; nunca `notes`, campos de auditoria ni
+  `stockQuantity` fisico interno. Durante 45B-FIX tampoco expone
+  `availableQuantity`, porque su semantica depende de holds aun no implementados.
+- El contrato gestionado vigente conserva `stockQuantity`, visibilidad y
+  `notes`; cantidades reservada y disponible se incorporaran con la contabilidad
+  transaccional correspondiente.
 - `ReservationResponse`: para el usuario, solo su reserva; para la tienda,
   display name consentido y mensaje de la reserva. No se expone email, telefono,
   colecciones privadas ni un buscador de usuarios.
@@ -382,6 +385,11 @@ sola vez.
 9. **45J - Datos demo, validacion integral y cierre de MVP5.** Escenario
    idempotente, API/DB/UI, concurrencia controlada, accesibilidad y cierre con
    limitaciones reales.
+
+45B fue integrada antes de terminar una revision tardia. EPIC 45B-FIX corrige
+la exposicion de stock del DTO publico, unifica la regla observable de referencia
+publica entre inventario y reservas y aplica la prioridad de nombre definida en
+la seccion 7. No implementa disponibilidad calculada ni modifica 45C.
 
 Cada ejecucion implementa como maximo una EPIC y se detiene ante una PR previa
 abierta hacia `dev`. La siguiente tarea unica despues de integrar 45A es 45B.
