@@ -129,6 +129,11 @@ made activation-aware, the clean-worktree check now precedes branch switching
 or pulling, and the complete validation matrix was executed because this diff
 changes an API contract document and executable command examples.
 
+The third review found one valid state-model issue. `BASE_GUARD_UNAVAILABLE`
+now identifies an absent or unprovable atomic base guard, while
+`BASE_MOVED_HUMAN_ACTION_REQUIRED` is reserved for an observed movement of
+`origin/dev` after validation.
+
 ## Validation
 
 - `git diff --check`: `PASS`.

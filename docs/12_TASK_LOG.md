@@ -25,7 +25,7 @@
   `HUMAN_MERGE_REQUIRED`.
 - Validacion documental: `git diff --check` y
   `scripts/quality/verify.ps1 -BaseRef origin/dev -DocumentationOnly`, `PASS`.
-  Backend y frontend: `NOT_RUN: documentation only`; E2E/Playwright:
+  La matriz completa tambien termino en `PASS`; E2E/Playwright:
   `SKIPPED_WITH_REASON` por exclusion expresa.
 - La primera review Codex detecto cuatro observaciones validas: autoridad humana
   vigente, carrera del base SHA, ruta personal versionada y referencias legacy
@@ -37,6 +37,10 @@
   tests, 0 fallos/errores y 4 `SKIPPED_WITH_REASON` por Docker no disponible;
   frontend 59 archivos/244 tests y build `PASS`; 23 vulnerabilidades conocidas,
   sin `npm audit fix`. E2E/Playwright permanecio excluido.
+- La tercera review distinguio un guard atomico ausente de un movimiento real
+  de la base: `BASE_GUARD_UNAVAILABLE` bloquea la fusion automatica cuando el
+  guard no puede demostrarse; `BASE_MOVED_HUMAN_ACTION_REQUIRED` queda reservado
+  para un cambio observado de `origin/dev`.
 
 ## 2026-08-26 - EPIC 45B-FIX - Contratos publicos y coherencia de reservas
 

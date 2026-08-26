@@ -183,8 +183,7 @@ La API de merge disponible protege `expected_head_sha`, pero no fija
 atomicamente el base SHA. Mientras no exista branch protection, merge queue u
 otro compare-and-swap verificable sobre la base, la condicion 23 no puede
 demostrarse y el resultado obligatorio es
-`BASE_MOVED_HUMAN_ACTION_REQUIRED`, incluso si una consulta previa vio el mismo
-SHA.
+`BASE_GUARD_UNAVAILABLE`, incluso si una consulta previa vio el mismo SHA.
 
 ## Estados de automatizacion
 
@@ -193,6 +192,8 @@ SHA.
 - `REVIEW_THREADS_PENDING`: existe al menos una conversacion sin resolver.
 - `LOCAL_PASS_REMOTE_PENDING`: validacion local correcta y checks remotos aun no
   concluidos en `SUCCESS`.
+- `BASE_GUARD_UNAVAILABLE`: no existe un guard atomico verificable para fijar el
+  base SHA; no se intenta la fusion automatica.
 - `BASE_MOVED_HUMAN_ACTION_REQUIRED`: `origin/dev` cambio desde la validacion.
 - `EPIC_BLOCKED`: fallo de alcance, validacion, seguridad o entrega.
 - `PENDING_DELIVERY_EXISTS`: otra PR temporal hacia `dev` bloquea trabajo nuevo.
