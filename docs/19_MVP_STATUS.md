@@ -197,9 +197,11 @@ El MVP funcional de backend y frontend esta implementado para el flujo base:
 - Algunos filtros frontend MVP son numericos/manuales, como `shopId`, `userId` o `shopProductId`.
 - No hay subida real de imagenes; los productos y colecciones se gestionan sin archivos.
 - El Docker frontend usa `apiBaseUrl = "http://localhost:8080"` y depende del backend publicado en el host.
-- `npm ci` mantiene el baseline conocido de 16 vulnerabilidades en dependencias
-  de desarrollo/transitivas; no se han actualizado versiones fuera del alcance
-  de esta fase ni se ha ejecutado `npm audit fix`.
+- La medicion actual de `npm ci`, realizada por EPIC 45B-FIX el 2026-08-26,
+  informa 23 vulnerabilidades (2 bajas, 2 moderadas, 18 altas y 1 critica) en
+  dependencias de desarrollo/transitivas. Las 16 registradas en validaciones
+  historicas corresponden a esas fechas; no se han actualizado versiones fuera
+  del alcance de esta fase ni se ha ejecutado `npm audit fix`.
 - Los tests Testcontainers se saltan si Docker no esta disponible.
 - Los E2E Playwright no se ejecutan en CI y requieren entorno local ya levantado.
 - MVP4 conserva como limitaciones imagenes y almacenamiento real, `quantity`
