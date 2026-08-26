@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   CreateShopProductRequest,
+  PublicShopProductResponse,
   ShopProductResponse,
   ShopProductSearchFilters,
   UpdateShopProductRequest
@@ -46,8 +47,8 @@ export class InventoryService {
   getPublicShopProducts(
     shopId: number,
     filters: ShopProductSearchFilters = {}
-  ): Observable<ShopProductResponse[]> {
-    return this.http.get<ShopProductResponse[]>(
+  ): Observable<PublicShopProductResponse[]> {
+    return this.http.get<PublicShopProductResponse[]>(
       `${this.apiBaseUrl}/api/shops/${shopId}/products`,
       {
         params: this.toParams(filters)
@@ -55,8 +56,8 @@ export class InventoryService {
     );
   }
 
-  getPublicShopProduct(shopProductId: number): Observable<ShopProductResponse> {
-    return this.http.get<ShopProductResponse>(
+  getPublicShopProduct(shopProductId: number): Observable<PublicShopProductResponse> {
+    return this.http.get<PublicShopProductResponse>(
       `${this.apiBaseUrl}/api/shop-products/${shopProductId}`
     );
   }

@@ -3,7 +3,7 @@
 Fecha: 2026-08-02
 Repositorio: `AlbertoSoriaCarrillo/collectohub`
 Visibilidad: privado
-Estado de esta entrega: `SUPERVISED_ACTIVATION_PENDING_ALIGNMENT`
+Estado operativo actual: `SUPERVISED_ACTIVE_NO_ENFORCEMENT`
 
 Este documento describe controles operativos, no protecciones tecnicas. Con el
 plan actual, GitHub no aplica branch protection ni rulesets enforced a este
@@ -35,25 +35,24 @@ No se ha configurado ni modificado ningun ajuste remoto en esta tarea.
 - `main` y `pre` siguen siendo ramas permanentes;
 - el push directo esta prohibido por politica, aunque GitHub no pueda impedirlo.
 
-La activacion es condicional. Hasta que el commit que contiene esta politica
-este presente simultaneamente en `origin/main`, `origin/dev` y `origin/pre`, el
-estado es `SUPERVISED_ACTIVATION_PENDING_ALIGNMENT`, `main` sigue siendo la rama
-de integracion efectiva y la automatizacion permanece `PAUSED`.
+La transicion queda completada. El commit de activacion
+`5f5c45c6cec89e442c246508eb421ac641f8a967` esta presente simultaneamente en
+`origin/main`, `origin/dev` y `origin/pre`, y `dev` es la rama de integracion
+efectiva.
 
-La igualdad de refs es necesaria, pero la activacion operativa completa tambien
-requiere:
+La primera ejecucion bajo supervision humana tambien se completo correctamente:
 
-1. fusion manual de la PR de esta tarea en `main`;
-2. fast-forward manual de `dev` y `pre` al commit integrado;
-3. confirmacion de que `origin/main`, `origin/dev` y `origin/pre` coinciden;
-4. adaptacion separada de la automatizacion al modo supervisado, sin permiso de
-   fusion;
-5. primera ejecucion bajo supervision humana.
+- remoto y arbol local correctos;
+- `dev` local actualizado exclusivamente mediante fast-forward;
+- cero PR abiertas desde `codex/*` o `quality/*` hacia `dev`;
+- cero cambios de producto;
+- detencion segura porque la siguiente EPIC aun no estaba seleccionada;
+- cero commit, push, pull request o fusion.
 
-Si las refs ya coinciden pero los pasos 4 o 5 siguen pendientes, la alineacion
-esta completa pero la activacion operativa no: la automatizacion continua
-`PAUSED`. Esta tarea no fusiona la PR, no alinea ramas y no activa ni modifica
-la automatizacion.
+La automatizacion nunca fusiona y toda entrega termina en
+`HUMAN_MERGE_REQUIRED`. El horario automatico no se activa en este cierre y
+requiere una autorizacion separada; esa decision no rebaja el estado operativo
+ya completado ni permite ejecutar mas de una EPIC.
 
 ## Siete checks obligatorios
 

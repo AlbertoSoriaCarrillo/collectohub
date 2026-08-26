@@ -2,8 +2,7 @@
 
 Fecha: 2026-08-02
 Repositorio: `AlbertoSoriaCarrillo/collectohub`
-Estado de esta entrega: `SUPERVISED_ACTIVATION_PENDING_ALIGNMENT`
-Estado objetivo: `SUPERVISED_ACTIVE_NO_ENFORCEMENT`
+Estado operativo actual: `SUPERVISED_ACTIVE_NO_ENFORCEMENT`
 
 Este documento define la estrategia normativa de ramas. No crea ramas, no
 configura rulesets o branch protection, no fusiona pull requests y no activa
@@ -25,29 +24,23 @@ automatizaciones.
 
 Este estado no equivale a `PROTECTED_ACTIVE`.
 
-## Activacion condicional
+## Activacion completada
 
-La PR que introduce este cambio parte de `main` y apunta a `main` porque el modo
-supervisado aun no esta integrado. Antes de esa integracion, `main` sigue siendo
-la rama de integracion efectiva.
+La activacion operativa se completo el 2026-08-02. El commit
+`5f5c45c6cec89e442c246508eb421ac641f8a967` esta presente simultaneamente en
+`origin/main`, `origin/dev` y `origin/pre`; por tanto `dev` es la rama de
+integracion efectiva.
 
-Hasta que el commit integrado que contiene esta politica este presente
-simultaneamente en `origin/main`, `origin/dev` y `origin/pre`, el estado es
-`SUPERVISED_ACTIVATION_PENDING_ALIGNMENT` y la automatizacion permanece
-`PAUSED`.
+La primera ejecucion supervisada verifico remoto correcto, arbol limpio,
+alineacion de las tres ramas, actualizacion local de `dev` solo por fast-forward
+y cero PR abiertas de entrega hacia `dev`. No hizo cambios de producto, commit,
+push, pull request ni fusion, y se detuvo de forma segura porque la siguiente
+EPIC no estaba seleccionada.
 
-La activacion operativa completa exige, en este orden:
-
-1. fusion manual de esta PR en `main`;
-2. actualizacion manual por fast-forward de `dev` y `pre` al commit integrado;
-3. igualdad demostrada de `origin/main`, `origin/dev` y `origin/pre`;
-4. adaptacion de la automatizacion al flujo supervisado, sin permiso de fusion;
-5. primera ejecucion bajo supervision humana.
-
-La igualdad de las tres refs es una condicion necesaria. Si se alcanza pero la
-automatizacion no esta adaptada o no se ha realizado la primera ejecucion
-supervisada, la alineacion esta completa pero la activacion operativa sigue
-pendiente y la automatizacion continua `PAUSED`.
+El modo activo sigue siendo procedimental: la automatizacion no tiene permiso
+de fusion, toda entrega termina en `HUMAN_MERGE_REQUIRED` y toda fusion es
+humana. El horario automatico no se activa en este cierre y requiere una
+autorizacion separada.
 
 ## Ramas permanentes
 

@@ -3,6 +3,7 @@ package com.collectohub.inventory.api;
 import com.collectohub.auth.security.AuthenticatedUser;
 import com.collectohub.inventory.application.InventoryService;
 import com.collectohub.inventory.dto.CreateShopProductRequest;
+import com.collectohub.inventory.dto.PublicShopProductResponse;
 import com.collectohub.inventory.dto.ShopProductResponse;
 import com.collectohub.inventory.dto.UpdateShopProductRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -66,7 +67,7 @@ public class ShopInventoryController {
 
     @GetMapping
     @Operation(summary = "List public visible shop products")
-    public List<ShopProductResponse> publicShopProducts(
+    public List<PublicShopProductResponse> publicShopProducts(
             @PathVariable Long shopId,
             @RequestParam(required = false) Long masterProductId,
             @RequestParam(required = false) String categoryCode,

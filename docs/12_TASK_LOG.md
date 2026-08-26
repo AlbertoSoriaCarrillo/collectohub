@@ -1,5 +1,95 @@
 # Registro de avance
 
+## 2026-08-07 - EPIC 45C-D - Desactivacion segura de miembros
+
+- Anadido `DELETE /api/shops/{shopId}/members/{memberId}` para que solo un
+  OWNER activo desactive una membership activa MANAGER o EMPLOYEE de la misma
+  tienda.
+- La fila se conserva con estado `INACTIVE` y auditoria `updatedBy`; el contrato
+  devuelve `204` sin datos personales. No permite desactivar al OWNER y trata
+  memberships inactivas o de otra tienda como no encontradas.
+- Anadidas regresiones de servicio y API para autenticacion, autorizacion,
+  aislamiento por tienda/estado, proteccion del OWNER y auditoria. Regresion
+  previa demostrada por fallo de compilacion; validacion dirigida final: 44
+  tests backend, 0 fallos, errores u omitidos.
+- El cambio de rol y la desactivacion cargan la membership objetivo con el mismo
+  bloqueo pesimista de escritura, evitando que una actualizacion concurrente
+  restaure por error el estado `ACTIVE` despues de un `204`.
+- Sin transferencia de ownership, migraciones, compatibilidad `STAFF`, frontend,
+  dependencias, E2E ni Playwright. Esta entrega queda formalmente cerrada como
+  EPIC 45C-D; el perfil profesional y el resto del antiguo alcance paraguas de
+  45C requieren EPICs posteriores independientes.
+
+## 2026-08-07 - EPIC 45C - Fase de cambio seguro de rol
+
+- Anadido `PUT /api/shops/{shopId}/members/{memberId}/role` para que solo un
+  OWNER activo cambie una membership activa de la misma tienda entre MANAGER y
+  EMPLOYEE.
+- El contrato no permite asignar ni modificar OWNER, conserva la respuesta
+  minima sin datos personales, limita la consulta a la tienda y registra el
+  actor en `updatedBy`.
+- Regresion previa demostrada por fallo de compilacion. Validacion dirigida: 36
+  tests backend, 0 fallos, errores u omitidos. Matriz completa
+  `scripts/quality/verify.ps1 -BaseRef origin/dev`: PASS; backend 448 tests,
+  frontend 59 archivos/244 tests y build correcto. Cuatro tests backend
+  condicionados a Docker: `SKIPPED_WITH_REASON` porque Docker no estaba
+  disponible y esta fase no modifica migraciones. E2E/Playwright:
+  `SKIPPED_WITH_REASON` por exclusion expresa.
+- Sin desactivacion, transferencia de ownership, migraciones, frontend,
+  dependencias ni compatibilidad `STAFF`. 45C permanece abierta para esas fases.
+
+## 2026-08-07 - EPIC 45C - Fase de alta segura de miembros
+
+- Anadido `POST /api/shops/{shopId}/members` para que un OWNER activo incorpore
+  una cuenta activa existente por email exacto normalizado como MANAGER o
+  EMPLOYEE; MANAGER y EMPLOYEE no pueden mutar memberships.
+- La respuesta conserva la proyeccion minima sin email ni nombre. OWNER no se
+  puede autoasignar por este contrato; cuentas ausentes/inactivas producen un
+  error generico y las altas repetidas o concurrentes un conflicto estable.
+- Anadidas regresiones de servicio y API para autenticacion, autorizacion,
+  validacion, privacidad, normalizacion, auditoria y duplicados. Sin cambios de
+  rol, desactivacion, migraciones, frontend, dependencias, E2E ni Playwright.
+- Regresion previa demostrada por fallo de compilacion. Validacion dirigida: 27
+  tests backend, 0 fallos, errores u omitidos. Matriz final
+  `scripts/quality/verify.ps1 -BaseRef origin/dev`: PASS; backend 439 tests,
+  frontend 59 archivos/244 tests y build correcto. E2E/Playwright:
+  `SKIPPED_WITH_REASON` por exclusion expresa.
+- 45C permanece abierta: quedan perfil profesional, cambio/desactivacion de
+  miembros, compatibilidad `STAFF`, esquema aditivo e invariante del ultimo
+  OWNER.
+
+## 2026-08-07 - EPIC 45C - Fase de lectura segura de miembros
+
+- Anadido `GET /api/shops/{shopId}/members` como contrato backend protegido.
+- OWNER y MANAGER activos de la tienda pueden listar memberships activas en
+  orden estable; EMPLOYEE, usuarios ajenos y anonimos no obtienen acceso.
+- La respuesta reutiliza la proyeccion minima de membership y no expone email,
+  nombre ni otros datos personales del usuario.
+- Anadidas regresiones de servicio y API para orden, roles, privacidad y
+  autenticacion. Sin mutaciones de miembros, migraciones, frontend,
+  dependencias, holds, stock, E2E ni Playwright.
+- Validacion dirigida: 18 tests backend, 0 fallos, errores u omitidos.
+  `scripts/quality/verify.ps1 -BaseRef origin/dev`: PASS; backend 430 tests,
+  frontend 59 archivos/244 tests y build correcto. E2E/Playwright:
+  `SKIPPED_WITH_REASON` por exclusion expresa.
+- 45C permanece abierta: quedan perfil profesional, alta/cambio/desactivacion
+  de miembros e invariantes del ultimo OWNER.
+
+## 2026-08-06 - EPIC 45B - Contratos seguros y reservas editoriales
+
+- Separada la respuesta publica de inventario de la respuesta gestionada; las
+  lecturas publicas ya no serializan `notes`, mientras miembros autorizados
+  conservan el contrato interno.
+- Las reservas aceptan ofertas editoriales puras sin asumir
+  `masterProductId`; la respuesta expone identidad editorial nullable y el
+  frontend conserva compatibilidad con ofertas legacy.
+- Anadidas regresiones de privacidad API y de creacion de reserva editorial.
+- Validacion dirigida: backend 70 tests y frontend 244 tests correctos.
+- `scripts/quality/verify.ps1 -BaseRef origin/dev`: PASS; E2E/Playwright
+  `SKIPPED_WITH_REASON` por exclusion expresa del alcance.
+- Sin migraciones, dependencias nuevas, locks, holds, idempotencia ni cambios
+  de stock. Entrega pendiente de PR y fusion humana; despues corresponde 45C.
+
 ## 2026-07-13 - EPIC 44D-FIX2 - Validacion final e invalidacion de busquedas obsoletas
 
 - Protegidas busquedas editorial y legacy con identificadores vigentes; cambios
@@ -2561,3 +2651,59 @@ Siguiente paso: crear el backend en la carpeta backend.
   tests ignorados nuevos: 0; secretos introducidos: 0. Warnings conservados: 16
   vulnerabilidades npm sin `npm audit fix` y bundle inicial 631.54 kB frente al
   budget de 500 kB.
+
+## 2026-08-02 - Cierre de activacion supervisada y reconciliacion del backlog
+
+- Preflight en `dev`: arbol limpio, `HEAD == origin/dev == origin/main ==
+  origin/pre == 5f5c45c6cec89e442c246508eb421ac641f8a967`, commit de activacion
+  ancestro de las tres ramas y cero PR abiertas desde `codex/*` o `quality/*`
+  hacia `dev`.
+- Creada exclusivamente `quality/supervised-activation-closeout` desde `dev`.
+  No se inicia una EPIC funcional.
+- Registrada como completada la primera ejecucion supervisada: remoto correcto,
+  arbol limpio, fast-forward exclusivo de `dev`, cero PR de entrega, cero
+  cambios de producto y detencion segura por ausencia de siguiente EPIC. No
+  hizo commit, push, PR ni fusion.
+- Estado operativo actual: `SUPERVISED_ACTIVE_NO_ENFORCEMENT`; `dev` es la rama
+  de integracion efectiva, GitHub no aplica protecciones enforced, la
+  automatizacion nunca fusiona, toda entrega termina en
+  `HUMAN_MERGE_REQUIRED` y toda fusion es humana.
+- MVP4 queda `MVP4_CLOSED_WITH_LIMITATIONS`. Se reconocen como demostrados alta
+  editorial, edicion opcional, items manuales y enlace posterior, WANTED/OWNED,
+  missing calculado, privacidad, propiedad, filtros, ordenaciones, progreso,
+  compatibilidad legacy y recorrido integral/UI humano.
+- Se conservan como limitaciones E2E/Playwright, imagenes y almacenamiento real,
+  `quantity` frente a ejemplares separados, paginacion avanzada, decisiones de
+  taxonomia y MISSING legacy/persistido, produccion, social, marketplace y
+  pagos.
+- Siguiente tarea unica seleccionada: EPIC 45A - Auditoria y diseno ejecutable
+  de MVP5: tiendas profesionales, inventario editorial y reservas. Es
+  exclusivamente documental y no se inicia en esta entrega.
+- El horario automatico no se activa. No se modifican workflows, backend,
+  frontend, scripts, Docker, migraciones, dependencias, manifests, lockfiles ni
+  tests.
+
+## 2026-08-02 - EPIC 45A auditoria y diseno ejecutable de MVP5
+
+- Base real `origin/dev`:
+  `522ce0b99812ba635e6f3bedefd21e3c11249463`; rama exclusiva
+  `codex/45a-mvp5-audit-design`.
+- Auditados backend, frontend, changelogs, seguridad, pruebas y documentos de
+  tiendas, miembros, inventario, matching y reservas. No se implementa codigo.
+- La base vigente permite tienda, OWNER/MANAGER, inventario legacy/editorial y
+  reservas basicas, pero no incluye administracion de miembros, stock
+  transaccional, idempotencia, expiracion efectiva o metricas.
+- Hallazgos prioritarios: `ShopProductResponse` se reutiliza en lectura publica
+  e interna y expone `notes`; las reservas asumen `masterProduct` aunque el
+  inventario admite ofertas editoriales puras; la comprobacion de stock no usa
+  locks y un retry puede duplicar reservas.
+- Definidos identidad editorial principal, fallback legacy, matriz de permisos,
+  proyecciones publicas/internas, disponibilidad por holds, locks PostgreSQL,
+  clave idempotente, expiracion repetible y recorridos OWNER/usuario.
+- Plan ejecutable dividido en 45B-45J y matriz de pruebas con persistencia real,
+  concurrencia, privacidad, frontend y QA integral.
+- Archivos permitidos limitados a diseno, evidencia y cuatro documentos de
+  estado. Sin backend, frontend, scripts, exports, migraciones, workflows,
+  Docker, manifests, lockfiles, dependencias ni tests.
+- Siguiente tarea unica tras revision/integracion humana de 45A: EPIC 45B -
+  contratos seguros y compatibilidad editorial de reservas.

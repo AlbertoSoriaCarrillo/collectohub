@@ -1,15 +1,16 @@
-# MVP4 partial closure review - EPIC 44H-C
+# MVP4 closure review - EPIC 44H-C and supervised closeout
 
 Fecha: 2026-08-01
 
-Estado: `MVP4_PARTIALLY_CLOSED`
+Estado actual: `MVP4_CLOSED_WITH_LIMITATIONS`
 
 ## Alcance demostrado
 
-EPIC 44H-C completa la validacion integral definida en
+EPIC 44H-C completo la validacion integral definida en
 `docs/30_MVP4_DEMO_VALIDATION_DESIGN.md` sobre el escenario local `44hc3`.
-Este cierre demuestra los recorridos MVP4 implementados; no declara MVP4
-cerrado como producto ni incorpora funcionalidad nueva.
+Su estado al publicarse fue `MVP4_PARTIALLY_CLOSED`. La decision humana de
+2026-08-02 reconoce ahora ese alcance como `MVP4_CLOSED_WITH_LIMITATIONS`, sin
+declarar el producto final completo ni incorporar funcionalidad nueva.
 
 Base: `309d5db6069354577ffc606620dd33307063ad19`
 
@@ -17,6 +18,27 @@ Rama: `codex/44h-c`
 
 Servicios: PostgreSQL, backend y frontend healthy en el Docker Compose local de
 este repositorio.
+
+## Decision de cierre
+
+Queda demostrado:
+
+- alta editorial con edicion opcional;
+- items manuales y enlace posterior al catalogo;
+- transicion WANTED/OWNED y missing calculado;
+- privacidad y propiedad;
+- filtros, ordenaciones y progreso;
+- compatibilidad legacy;
+- escenario integral y recorrido UI humano.
+
+El cierre conserva como limitaciones no bloqueantes:
+
+- E2E/Playwright pospuestos;
+- imagenes y almacenamiento real;
+- `quantity` frente a ejemplares separados;
+- paginacion avanzada;
+- decisiones restantes de taxonomia y MISSING legacy/persistido;
+- produccion, social, marketplace y pagos fuera de MVP4.
 
 ## Dataset e idempotencia
 
@@ -107,10 +129,11 @@ Resultado de rotacion: PASS.
 
 ## Limites del cierre
 
-Permanecen fuera de 44H-C: E2E/Playwright, produccion, quantity/copias
-consolidadas, imagenes, paginacion, social, marketplace, pagos y decisiones
-abiertas de `docs/26_MVP4_COLLECTIONS_DESIGN.md`.
+Permanecen fuera de MVP4: E2E/Playwright, produccion, `quantity`/copias
+consolidadas, imagenes y almacenamiento real, paginacion avanzada, social,
+marketplace, pagos y las decisiones abiertas de taxonomia y MISSING de
+`docs/26_MVP4_COLLECTIONS_DESIGN.md`.
 
-MVP4 queda cerrado unicamente en el grado `MVP4_PARTIALLY_CLOSED` definido por
-44H-C. La siguiente tarea funcional no se selecciona en esta ejecucion; primero
-debe revisarse e integrarse la PR de 44H-C y reconciliarse el backlog real.
+MVP4 queda `MVP4_CLOSED_WITH_LIMITATIONS`: se cierra la fase demostrada, no el
+producto final completo. La siguiente tarea unica seleccionada es EPIC 45A,
+exclusivamente documental; no se inicia en este cierre.
