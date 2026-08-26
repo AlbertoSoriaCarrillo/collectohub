@@ -124,10 +124,20 @@ an atomic base-SHA guard before future activation, keep the workstation path in
 local configuration, and identify the remaining legacy `STAFF` references
 instead of claiming they were already reconciled.
 
+The second review found three valid issues. The future/manual merge wording was
+made activation-aware, the clean-worktree check now precedes branch switching
+or pulling, and the complete validation matrix was executed because this diff
+changes an API contract document and executable command examples.
+
 ## Validation
 
 - `git diff --check`: `PASS`.
 - `scripts/quality/verify.ps1 -BaseRef origin/dev -DocumentationOnly`: `PASS`.
-- Backend: `NOT_RUN: documentation only`.
-- Frontend: `NOT_RUN: documentation only`.
+- `scripts/quality/verify.ps1 -BaseRef origin/dev`: `PASS` after one
+  sandbox-permission retry for the Maven cache.
+- Backend: 466 tests, 0 failures, 0 errors, 4
+  `SKIPPED_WITH_REASON: Docker unavailable; no migration diff`.
+- Frontend: 59 files and 244 tests, production build `PASS`, 23 known
+  vulnerabilities, no `npm audit fix`.
+- Warning: initial bundle 631.54 kB, 131.54 kB over budget.
 - E2E/Playwright: `SKIPPED_WITH_REASON: explicitly excluded`.

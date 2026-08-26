@@ -96,9 +96,11 @@ Antes de fusionar, la verificacion final debe confirmar:
 - ausencia de conversaciones o bloqueos pendientes;
 - ausencia de cambios posteriores a la revision.
 
-La fusion se realiza manualmente mediante **Squash and merge**. Si cambia
-`dev`, el head o el diff, se repite la revision y, cuando corresponda, los siete
-checks sobre el head actualizado.
+Tras la activacion futura, la automatizacion realiza **Squash and merge** solo
+con el guard completo. Mientras el horario siga `PAUSED` y la politica raiz
+conserve el modo supervisado, la fusion permanece manual. Si cambia `dev`, el
+head o el diff, se repite la revision y, cuando corresponda, los siete checks
+sobre el head actualizado.
 
 Mientras exista una PR abierta hacia `dev` desde `codex/*` o `quality/*`, sea o
 no borrador y con cualquier estado de checks, no se inicia otra EPIC.

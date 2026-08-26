@@ -31,6 +31,12 @@
   vigente, carrera del base SHA, ruta personal versionada y referencias legacy
   `STAFF` restantes. Se corrigieron en la misma rama; el modo futuro queda
   inactivo hasta disponer de guard atomico de base y adaptar la politica raiz.
+- La segunda review detecto autoridad de merge incoherente, comprobacion tardia
+  del worktree y validacion insuficiente para contratos/comandos documentados.
+  Se corrigieron las dos reglas y se ejecuto la matriz completa: backend 466
+  tests, 0 fallos/errores y 4 `SKIPPED_WITH_REASON` por Docker no disponible;
+  frontend 59 archivos/244 tests y build `PASS`; 23 vulnerabilidades conocidas,
+  sin `npm audit fix`. E2E/Playwright permanecio excluido.
 
 ## 2026-08-26 - EPIC 45B-FIX - Contratos publicos y coherencia de reservas
 

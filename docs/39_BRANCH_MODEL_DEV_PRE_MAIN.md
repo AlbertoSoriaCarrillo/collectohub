@@ -107,16 +107,20 @@ Antes de una EPIC y despues de un squash merge protegido:
 
 ```powershell
 Set-Location $env:COLLECTOHUB_WORKTREE
-git switch dev
+git status --short
+git branch --show-current
 git fetch origin --prune
+git switch dev
 git pull --ff-only origin dev
 git status --short
 git rev-parse HEAD
 git rev-parse origin/dev
 ```
 
-Se exige worktree limpio y `HEAD == origin/dev`. Antes de trabajo nuevo se
-consulta GitHub. Debe existir cero PR abierta con base `dev` y head `codex/*` o
+La primera comprobacion de estado se ejecuta antes de cambiar o actualizar
+ramas; cualquier cambio local detiene el proceso. Despues se exige nuevamente
+worktree limpio y `HEAD == origin/dev`. Antes de trabajo nuevo se consulta
+GitHub. Debe existir cero PR abierta con base `dev` y head `codex/*` o
 `quality/*`; cualquier coincidencia produce `PENDING_DELIVERY_EXISTS` y bloquea
 otra EPIC.
 
