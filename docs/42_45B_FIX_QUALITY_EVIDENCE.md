@@ -82,12 +82,14 @@ transaccionales todavia no implementados, reservados a 45G.
 Resultado local previo al verificador: `PASS`
 Verificador completo contra `origin/dev`: `PASS`; politica, parser, backend,
 frontend tests y build correctos sobre el diff documental final
-Commit: pendiente
-Push: pendiente
-PR: pendiente
-Checks remotos: se registran en la PR sobre el SHA final; no se afirman dentro
-de este commit
+Commit validado: `27ede189518d451b83a7af121c31cb4e03ea8cd8`
+Push: completado en `origin/codex/45b-fix-post-review`
+PR: #22, fusionada hacia `dev` el 2026-08-26
+Squash resultante: `1c3b26ed00d7d82c5145388b0ee228992644485b`
+Checks remotos: los siete obligatorios quedaron en `SUCCESS` sobre el head
+validado
 Riesgos: `availableQuantity`, holds, locks e idempotencia siguen pendientes de
 45G. Esta FIX no corrige la promocion `dev -> main` realizada mediante PR #21.
-Siguiente tarea: reconciliacion independiente del estado 45C y del flujo
-`dev -> pre -> main`
+Estado 45B: `CLOSED_AFTER_45B_FIX`
+Estado 45B-FIX: `INTEGRATED_IN_DEV`
+Siguiente tarea tras la reconciliacion documental: `NEXT_EPIC=45C-E`

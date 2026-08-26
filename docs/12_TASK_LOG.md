@@ -1,5 +1,33 @@
 # Registro de avance
 
+## 2026-08-26 - Reconciliacion 45C, ramas y automatizacion
+
+- Working copy canonico fijado en `C:\Users\Alber\Documents\collectohub`; las
+  referencias operativas a `C:\Users\Alber\Desktop\collectohub` quedan
+  obsoletas. Remoto: `AlbertoSoriaCarrillo/collectohub`.
+- PR #22 integro 45B-FIX en `dev` como
+  `1c3b26ed00d7d82c5145388b0ee228992644485b`, desde el head validado
+  `27ede189518d451b83a7af121c31cb4e03ea8cd8`, con siete checks en `SUCCESS`.
+  45B queda `CLOSED_AFTER_45B_FIX`; 45B-FIX, `INTEGRATED_IN_DEV`.
+- 45C-A a 45C-D estan integradas y 45C permanece `OPEN`. El trabajo restante se
+  separa en 45C-E (perfil backend y contratos publico/gestionado), 45C-F
+  (evidencia `STAFF -> EMPLOYEE`, esquema/upgrade aditivo) y 45C-G (cierre
+  backend). `NEXT_EPIC=45C-E`. Transferencia de ownership queda
+  `FUTURE / OUT_OF_MVP5`.
+- Refs auditadas: `dev=1c3b26e`, `pre=5f5c45c`, `main=b3876ad`. PR #21 omitio
+  `pre` mediante squash; el arbol de `main@b3876ad` coincide con
+  `dev@42c8998`, pero `dev` no es ancestro de `pre`. La reparacion documentada,
+  no ejecutada, es `dev -> pre -> main` con dos promociones humanas y **Create a
+  merge commit**.
+- Modo futuro documentado: `AUTONOMOUS_DEV_AUTO_MERGE_GUARDED`, solo para
+  `codex/* -> dev` y `quality/* -> dev`. Las promociones permanentes siguen
+  `HUMAN ONLY`. El horario permanece `PAUSED` y esta PR de proceso requiere
+  `HUMAN_MERGE_REQUIRED`.
+- Validacion documental: `git diff --check` y
+  `scripts/quality/verify.ps1 -BaseRef origin/dev -DocumentationOnly`, `PASS`.
+  Backend y frontend: `NOT_RUN: documentation only`; E2E/Playwright:
+  `SKIPPED_WITH_REASON` por exclusion expresa.
+
 ## 2026-08-26 - EPIC 45B-FIX - Contratos publicos y coherencia de reservas
 
 - Base `42c8998608d4bbcb8b241fdbf760ce59f4ab0712`; rama
@@ -29,9 +57,10 @@
   servicio legacy y dos consumidores frontend. Pruebas eliminadas: 0. Pruebas
   ignoradas nuevas: 0. Migraciones, dependencias, manifests, lockfiles,
   workflows, Docker y secretos: 0.
-- 45B no queda correctamente cerrada hasta integrar esta FIX mediante revision y
-  merge humanos. La PR #21 y la reconciliacion de 45C y del flujo
-  `dev -> pre -> main` quedan fuera y se procesaran en otra tarea.
+- Estado posterior: PR #22 integro esta FIX en `dev`; 45B queda
+  `CLOSED_AFTER_45B_FIX` y 45B-FIX `INTEGRATED_IN_DEV`. La promocion incorrecta
+  de PR #21 se reconcilia documentalmente en la entrada posterior de este mismo
+  dia.
 
 ## 2026-08-07 - EPIC 45C-D - Desactivacion segura de miembros
 
