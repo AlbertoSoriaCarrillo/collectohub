@@ -1,8 +1,9 @@
 # CollectoHub backlog after MVP 1
 
 Estado actual: modo `SUPERVISED_ACTIVE_NO_ENFORCEMENT`, MVP4
-`MVP4_CLOSED_WITH_LIMITATIONS` y EPIC 45C con lectura, alta y cambio seguro de
-rol integrados; la desactivacion backend esta pendiente de entrega. El orden
+`MVP4_CLOSED_WITH_LIMITATIONS` y las fases 45C-A a 45C-D integradas. Perfil
+profesional, reconciliacion `STAFF`, transferencia de ownership y cierre del
+esquema aditivo requieren EPICs independientes antes de implementarse. El orden
 funcional sigue `docs/01_ROADMAP.md`.
 
 ## Must fix antes de ensenar portfolio
