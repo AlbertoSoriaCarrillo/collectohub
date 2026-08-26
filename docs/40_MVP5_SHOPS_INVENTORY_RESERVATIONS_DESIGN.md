@@ -187,8 +187,11 @@ representa un cuarto rol ni existe evidencia versionada de filas persistidas con
 ese valor. 45C-F debe inspeccionar evidencia de datos reales antes de decidir si
 hace falta una migracion. Si existe, debe mapear `STAFF` a `EMPLOYEE` de forma
 aditiva e idempotente y demostrar que conserva usuario, tienda, estado y
-permisos. La documentacion y exports usan ya `EMPLOYEE`; 45D reconciliara las
-claves de traduccion frontend sin mezclar ese trabajo en 45C.
+permisos. `docs/16_MVP_API_ENDPOINTS.md` y el export Markdown usan ya
+`EMPLOYEE`, pero `docs/export/database-tables.csv` y
+`docs/22_PORTFOLIO_REVIEW.md` conservan referencias legacy pendientes de
+reconciliacion en 45C-F. 45D reconciliara las claves de traduccion frontend sin
+mezclar ese trabajo en 45C.
 
 | Accion | OWNER | MANAGER | EMPLOYEE | Usuario autenticado | Visitante |
 | --- | --- | --- | --- | --- | --- |

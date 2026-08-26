@@ -6,8 +6,9 @@ Modo documentado: `AUTONOMOUS_DEV_AUTO_MERGE_GUARDED`
 
 Horario programado: `PAUSED`
 
-Working copy canonico:
-`C:\Users\Alber\Documents\collectohub`
+Working copy canonico local: variable `COLLECTOHUB_WORKTREE`. Its value belongs
+to local automation configuration and must not be committed because workstation
+paths can contain personal identifiers.
 
 GitHub no aplica branch protection ni rulesets enforced en el plan actual. Las
 garantias descritas aqui son procedimentales; no equivalen a
@@ -17,6 +18,8 @@ Este documento define el modo futuro, no lo activa. Mientras el horario siga
 `PAUSED` y la politica raiz de ejecucion conserve el flujo humano supervisado,
 toda fusion sigue siendo humana. La adaptacion de esa politica y de la
 automatizacion es una precondicion de la primera prueba manual protegida.
+Ademas, `expected_head_sha` solo fija el head: el modo no puede activarse hasta
+disponer de un mecanismo atomico que rechace el merge si cambia el base SHA.
 
 ## Ramas y metodos de integracion
 
@@ -103,7 +106,7 @@ conflicto o contenido exclusivo nuevo, detenerse con
 Antes de una EPIC y despues de un squash merge protegido:
 
 ```powershell
-Set-Location 'C:\Users\Alber\Documents\collectohub'
+Set-Location $env:COLLECTOHUB_WORKTREE
 git switch dev
 git fetch origin --prune
 git pull --ff-only origin dev
@@ -157,7 +160,8 @@ cumplen simultaneamente las 31 condiciones siguientes:
 20. nuevos tests ignorados = 0;
 21. secretos introducidos = 0;
 22. no existe modificacion posterior a la revision final;
-23. `origin/dev` no se ha movido desde la validacion;
+23. `origin/dev` no se ha movido desde la validacion y un guard atomico rechaza
+    la operacion si el base SHA cambia antes de crear el merge;
 24. el metodo es exclusivamente **Squash and merge**;
 25. la operacion esta protegida mediante `expected_head_sha`;
 26. no se utiliza el auto-merge nativo de GitHub;
@@ -170,6 +174,13 @@ cumplen simultaneamente las 31 condiciones siguientes:
 Si cualquiera falla, la automatizacion no fusiona. No resuelve conversaciones
 solo para obtener permiso: corrige un defecto valido en la misma rama, repite
 validacion/checks/review y vuelve a comprobar todas las condiciones.
+
+La API de merge disponible protege `expected_head_sha`, pero no fija
+atomicamente el base SHA. Mientras no exista branch protection, merge queue u
+otro compare-and-swap verificable sobre la base, la condicion 23 no puede
+demostrarse y el resultado obligatorio es
+`BASE_MOVED_HUMAN_ACTION_REQUIRED`, incluso si una consulta previa vio el mismo
+SHA.
 
 ## Estados de automatizacion
 
@@ -188,12 +199,13 @@ El horario permanece `PAUSED`. Solo puede reactivarse despues de:
 
 1. integrar esta reconciliacion en `dev`;
 2. confirmar coherencia documental;
-3. configurar la automatizacion exclusivamente con
-   `C:\Users\Alber\Documents\collectohub`;
+3. configurar `COLLECTOHUB_WORKTREE` en la automatizacion local con el checkout
+   canonico acordado, sin versionar la ruta personal;
 4. adaptar la politica raiz de ejecucion y la automatizacion al guard aqui
    definido, sin debilitar el verificador;
 5. completar la reparacion `dev -> pre -> main`;
-6. ejecutar manualmente un ciclo completo
+6. disponer de un guard atomico del base SHA y demostrar que falla cerrado;
+7. ejecutar manualmente un ciclo completo
    `AUTONOMOUS_DEV_AUTO_MERGE_GUARDED` que sincronice `dev`, implemente una unica
    EPIC, abra la PR, espere checks y review, reconsulte conversaciones, fusione
    solo si procede, vuelva a sincronizar `dev` y termine en

@@ -154,6 +154,10 @@ Only after the prior delivery pull request is reviewed and merged or closed may 
 
 ## Current Codex automation contract
 
+While scheduled execution is `PAUSED` and root `AGENTS.md` retains the
+supervised policy, this is the active fail-closed contract. The guarded merge
+steps above are a future activation target, not current authority.
+
 Before starting an EPIC, Codex must:
 
 1. Query GitHub for open `codex/*` or `quality/*` pull requests with base `dev`.
@@ -166,9 +170,12 @@ Before starting an EPIC, Codex must:
 8. Wait for the seven required checks, perform self-review, and record the current head as `expected_head_sha`.
 9. Wait at least ten minutes after ready-for-review and re-query head, base, diff,
    checks, reviews and conversations.
-10. If every guarded condition passes, squash-merge to `dev`, re-synchronize
-    local `dev`, report `EPIC_MERGED_TO_DEV`, and stop. Otherwise report the
-    precise blocking state and stop without merging or starting another EPIC.
+10. Report `HUMAN_MERGE_REQUIRED` and stop without merging or starting another
+    EPIC.
+
+Only after root policy is explicitly adapted, branch ancestry is repaired, and
+an atomic base-SHA guard is available may a separate supervised activation test
+replace step 10 with the guarded squash-merge outcome described above.
 
 ## QUALITY-B definition (not implemented)
 

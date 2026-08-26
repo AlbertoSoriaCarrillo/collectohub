@@ -5,7 +5,8 @@ Repositorio: `AlbertoSoriaCarrillo/collectohub`
 Rama de integracion efectiva: `dev`.
 Modo futuro documentado: `AUTONOMOUS_DEV_AUTO_MERGE_GUARDED`.
 Horario: `PAUSED`.
-Working copy canonico: `C:\Users\Alber\Documents\collectohub`.
+Working copy canonico local: variable `COLLECTOHUB_WORKTREE`; su valor se guarda
+en la configuracion local de la automatizacion, no en el repositorio.
 
 Estado de entrega: PR #22 integro 45B-FIX en `dev` como
 `1c3b26ed00d7d82c5145388b0ee228992644485b`. 45B queda
@@ -99,14 +100,14 @@ Los E2E/Playwright están pospuestos hasta que los recorridos completos de usuar
 ### Backend
 
 ```powershell
-cd C:\Users\Alber\Documents\collectohub\backend
+Set-Location (Join-Path $env:COLLECTOHUB_WORKTREE 'backend')
 .\mvnw.cmd clean verify
 ```
 
 ### Frontend
 
 ```powershell
-cd C:\Users\Alber\Documents\collectohub\frontend
+Set-Location (Join-Path $env:COLLECTOHUB_WORKTREE 'frontend')
 npm.cmd ci
 npm.cmd test -- --watch=false
 npm.cmd run build
@@ -115,7 +116,7 @@ npm.cmd run build
 ### Revisión final
 
 ```powershell
-cd C:\Users\Alber\Documents\collectohub
+Set-Location $env:COLLECTOHUB_WORKTREE
 git diff --check
 git status
 git log -3 --oneline
@@ -124,7 +125,7 @@ git log -3 --oneline
 ### Docker, solo cuando sea necesario
 
 ```powershell
-cd C:\Users\Alber\Documents\collectohub\infra
+Set-Location (Join-Path $env:COLLECTOHUB_WORKTREE 'infra')
 docker compose down
 docker compose up --build -d
 docker compose ps
@@ -156,7 +157,8 @@ seleccionada.
 
 El horario automatico permanece `PAUSED`. Solo podra activarse tras integrar
 esta reconciliacion, reparar `dev -> pre -> main`, configurar el working copy
-canonico y validar manualmente un ciclo protegido completo.
+canonico, adaptar la politica raiz, disponer de un guard atomico del base SHA y
+validar manualmente un ciclo protegido completo.
 
 Despues de activar, `codex/<epic>` y `quality/<epic>` parten de `origin/dev`
 actualizado y apuntan a `dev`. Los siete checks, autorrevision,
@@ -164,7 +166,8 @@ actualizado y apuntan a `dev`. Los siete checks, autorrevision,
 head/base/diff/reviews/conversaciones son obligatorios. Solo si pasan las 31
 condiciones de `docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md` la automatizacion usa
 **Squash and merge**, vuelve a sincronizar `dev` y termina en
-`EPIC_MERGED_TO_DEV`.
+`EPIC_MERGED_TO_DEV`. `expected_head_sha` no fija la base; sin un guard atomico
+de base el modo permanece inactivo y el merge es humano.
 
 Las promociones `dev -> pre` y `pre -> main` conservan los siete checks y
 requieren head/base exactos, validacion funcional o autorizacion humana segun

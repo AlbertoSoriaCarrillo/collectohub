@@ -14,13 +14,14 @@ workflows, dependencies and Docker are excluded.
 ## Canonical repository
 
 ```text
-CANONICAL_WORKING_COPY=C:\Users\Alber\Documents\collectohub
+CANONICAL_WORKING_COPY=COLLECTOHUB_WORKTREE local setting
 REMOTE=AlbertoSoriaCarrillo/collectohub
 ```
 
-`C:\Users\Alber\Desktop\collectohub` belongs to the previous installation and
-is not an operational working copy. The local automation must use only the
-canonical Documents path before its schedule can be reactivated.
+The exact workstation path belongs in local automation configuration, not in
+versioned documentation. The obsolete checkout from the previous installation
+must not be used. `COLLECTOHUB_WORKTREE` must point to the canonical checkout
+before the schedule can be reactivated.
 
 ## 45B and 45B-FIX closure
 
@@ -107,8 +108,21 @@ or new exclusive content, stop with
 source-branch deletion, rebase, force push, direct permanent-branch pushes and
 automatic promotions are forbidden.
 
+The current merge API protects the head SHA but does not atomically pin the base
+SHA. Therefore the future mode cannot activate until an atomic base guard is
+available and demonstrated fail-closed. Until then the root human-only policy
+remains authoritative.
+
 The schedule remains `PAUSED`. This process-policy PR is explicitly excluded
 from automatic merge and must end in `HUMAN_MERGE_REQUIRED`.
+
+## Review corrections
+
+The first Codex review found four valid issues. The same branch was corrected
+to keep the active loop human-only while root policy remains unchanged, require
+an atomic base-SHA guard before future activation, keep the workstation path in
+local configuration, and identify the remaining legacy `STAFF` references
+instead of claiming they were already reconciled.
 
 ## Validation
 

@@ -2,9 +2,9 @@
 
 ## 2026-08-26 - Reconciliacion 45C, ramas y automatizacion
 
-- Working copy canonico fijado en `C:\Users\Alber\Documents\collectohub`; las
-  referencias operativas a `C:\Users\Alber\Desktop\collectohub` quedan
-  obsoletas. Remoto: `AlbertoSoriaCarrillo/collectohub`.
+- Working copy canonico configurado localmente mediante
+  `COLLECTOHUB_WORKTREE`; su valor no se versiona para evitar exponer rutas con
+  identificadores personales. Remoto: `AlbertoSoriaCarrillo/collectohub`.
 - PR #22 integro 45B-FIX en `dev` como
   `1c3b26ed00d7d82c5145388b0ee228992644485b`, desde el head validado
   `27ede189518d451b83a7af121c31cb4e03ea8cd8`, con siete checks en `SUCCESS`.
@@ -27,6 +27,10 @@
   `scripts/quality/verify.ps1 -BaseRef origin/dev -DocumentationOnly`, `PASS`.
   Backend y frontend: `NOT_RUN: documentation only`; E2E/Playwright:
   `SKIPPED_WITH_REASON` por exclusion expresa.
+- La primera review Codex detecto cuatro observaciones validas: autoridad humana
+  vigente, carrera del base SHA, ruta personal versionada y referencias legacy
+  `STAFF` restantes. Se corrigieron en la misma rama; el modo futuro queda
+  inactivo hasta disponer de guard atomico de base y adaptar la politica raiz.
 
 ## 2026-08-26 - EPIC 45B-FIX - Contratos publicos y coherencia de reservas
 
