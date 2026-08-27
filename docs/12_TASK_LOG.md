@@ -2694,6 +2694,12 @@ Siguiente paso: crear el backend en la carpeta backend.
   migraciones, Docker, datos locales, cuentas, credenciales, tests eliminados,
   tests ignorados nuevos, E2E ni Playwright. No se configuran protecciones
   remotas, no se fusiona ninguna PR y no se inicia otra tarea.
+- La revision Codex sobre
+  `6ad44d150a918a00119ddd6cc9c6bf15005a7bfb` detecto el ultimo P1 de
+  sincronizacion de `dev`. El preflight compartido ahora falla cerrado si
+  `fetch`, `switch` o `pull` devuelven error, si no puede resolver `HEAD` u
+  `origin/dev`, o si ambos SHA no coinciden. En cualquiera de esos casos el
+  resultado es `EPIC_BLOCKED` y no se inicia otra EPIC.
 
 ## 2026-08-02 - Activacion documental del modo supervisado sin enforcement
 

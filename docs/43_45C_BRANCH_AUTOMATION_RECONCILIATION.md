@@ -142,6 +142,12 @@ supervised activation as completed and the autonomous transition explicitly as
 `PENDING`, with `SCHEDULE=PAUSED`, human-only current merge authority and root
 `AGENTS.md` remaining authoritative.
 
+The review on `6ad44d150a918a00119ddd6cc9c6bf15005a7bfb` found one final P1:
+`Abort when dev synchronization does not complete`. The shared preflight now
+fails closed on nonzero `fetch`, `switch` and `pull` results, fails if either
+local `HEAD` or `origin/dev` cannot be resolved, and explicitly requires both
+SHAs to match before an EPIC may start or after a future protected merge.
+
 ## Validation
 
 - `git diff --check`: `PASS`.

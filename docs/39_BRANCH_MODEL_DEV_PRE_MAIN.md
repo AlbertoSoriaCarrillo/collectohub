@@ -112,16 +112,32 @@ if ($LASTEXITCODE -ne 0) {
     throw "Unable to inspect Git worktree"
 }
 if ($worktreeStatus.Count -ne 0) {
-    Write-Error "Working tree is not clean. Automation must stop."
-    exit 1
+    throw "Working tree is not clean. Automation must stop."
 }
 git branch --show-current
 git fetch origin --prune
+if ($LASTEXITCODE -ne 0) {
+    throw "git fetch failed. Automation must stop."
+}
 git switch dev
+if ($LASTEXITCODE -ne 0) {
+    throw "git switch dev failed. Automation must stop."
+}
 git pull --ff-only origin dev
-git status --short
-git rev-parse HEAD
-git rev-parse origin/dev
+if ($LASTEXITCODE -ne 0) {
+    throw "git pull --ff-only origin dev failed. Automation must stop."
+}
+$localDev = git rev-parse HEAD
+if ($LASTEXITCODE -ne 0) {
+    throw "Unable to resolve local dev HEAD."
+}
+$remoteDev = git rev-parse origin/dev
+if ($LASTEXITCODE -ne 0) {
+    throw "Unable to resolve origin/dev."
+}
+if ($localDev.Trim() -ne $remoteDev.Trim()) {
+    throw "Local dev is not aligned with origin/dev. Automation must stop."
+}
 ```
 
 El guard comprueba de forma ejecutable el codigo de salida y exige que
@@ -129,8 +145,14 @@ El guard comprueba de forma ejecutable el codigo de salida y exige que
 ramas. Mostrar `git status --short` no es un mecanismo de control suficiente.
 Un resultado no vacio produce `EPIC_BLOCKED`: no se cambia de rama, no se hace
 pull, no se modifica nada y no se intenta ocultar el cambio mediante reset o
-clean automaticos. Despues se exige nuevamente worktree limpio y
-`HEAD == origin/dev`. Antes de trabajo nuevo se consulta GitHub. Debe existir
+clean automaticos. Los fallos de `fetch`, `switch`, `pull` o de resolucion de
+refs tambien producen `EPIC_BLOCKED` de inmediato. La ejecucion solo puede
+continuar si la comparacion ejecutable confirma `HEAD == origin/dev`; una
+desalineacion local/remota durante este preflight inicial tambien produce
+`EPIC_BLOCKED`, no `BASE_MOVED_HUMAN_ACTION_REQUIRED`. Como el mismo bloque se
+ejecuta antes de una EPIC y despues de un futuro squash merge protegido, esa
+igualdad es obligatoria en ambos momentos y su fallo impide iniciar otra EPIC.
+Antes de trabajo nuevo se consulta GitHub. Debe existir
 cero PR abierta con base `dev` y head `codex/*` o `quality/*`; cualquier
 coincidencia produce `PENDING_DELIVERY_EXISTS` y bloquea otra EPIC.
 
