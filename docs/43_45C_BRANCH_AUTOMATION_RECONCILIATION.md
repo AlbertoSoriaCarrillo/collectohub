@@ -161,6 +161,13 @@ every page of open PRs toward `dev`, validates the aggregated page and PR
 structure, and fails closed on API, pagination, JSON or incomplete-response
 errors before any mutation of `dev`.
 
+The review on `54f22ed8f79669b8dde81e391ac38092f1384c6c` found a Windows
+PowerShell 5.1 incompatibility. `ConvertFrom-Json -NoEnumerate` was removed and
+the paginated JSON is now wrapped in an object whose `pages` property preserves
+the outer array. The final block was exercised with `powershell.exe` 5.1 using
+empty, normal, `codex/*`, `quality/*`, multipage, invalid-JSON and
+missing-field cases.
+
 ## Validation
 
 - `git diff --check`: `PASS`.

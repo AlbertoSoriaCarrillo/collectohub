@@ -136,10 +136,11 @@ if ($LASTEXITCODE -ne 0) {
     throw "Unable to query pending delivery pull requests. Automation must stop."
 }
 try {
-    $pendingPages = ConvertFrom-Json `
-        -InputObject ($pendingPagesJson -join [Environment]::NewLine) `
-        -NoEnumerate `
-        -ErrorAction Stop
+    $pendingPagesText = $pendingPagesJson -join [Environment]::NewLine
+    $wrappedPendingJson = '{"pages":' + $pendingPagesText + '}'
+    $parsedPendingResponse = $wrappedPendingJson |
+        ConvertFrom-Json -ErrorAction Stop
+    $pendingPages = $parsedPendingResponse.pages
 } catch {
     throw "Unable to parse pending delivery pull requests. Automation must stop."
 }
@@ -216,6 +217,9 @@ API, autenticacion, paginacion, parsing o respuesta incompleta produce
 cero PR abierta con base `dev` y head `codex/*` o `quality/*`. Cualquier
 coincidencia produce `PENDING_DELIVERY_EXISTS` y detiene la ejecucion sin
 cambiar ni actualizar `dev`.
+
+El objeto JSON envolvente conserva el array exterior de paginas bajo Windows
+PowerShell 5.1 sin depender de parametros exclusivos de PowerShell 7.
 
 Solo con cero entregas pendientes se sincroniza `dev`. Los fallos de `fetch`,
 `switch`, `pull` o de resolucion de refs producen `EPIC_BLOCKED` de inmediato.

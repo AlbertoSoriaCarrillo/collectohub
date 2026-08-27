@@ -2712,6 +2712,12 @@ Siguiente paso: crear el backend en la carpeta backend.
   `gh api --paginate --slurp`, agrega todas las paginas y valida su estructura
   y los campos de cada PR. Cualquier fallo o respuesta parcial produce
   `EPIC_BLOCKED` antes de cambiar o actualizar `dev`.
+- La revision sobre `54f22ed8f79669b8dde81e391ac38092f1384c6c`
+  detecto que `ConvertFrom-Json -NoEnumerate` no existe en Windows PowerShell
+  5.1. El JSON paginado se envuelve ahora en un objeto cuya propiedad `pages`
+  conserva el array exterior. El bloque se comprobo realmente con
+  `powershell.exe` 5.1 para pagina vacia, PR normal, `codex/*`, `quality/*`,
+  multiples paginas, JSON invalido y campo requerido ausente.
 
 ## 2026-08-02 - Activacion documental del modo supervisado sin enforcement
 
