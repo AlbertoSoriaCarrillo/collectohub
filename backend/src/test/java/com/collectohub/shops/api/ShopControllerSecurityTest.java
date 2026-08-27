@@ -6,6 +6,12 @@ import com.collectohub.auth.security.JwtService;
 import com.collectohub.config.SecurityConfig;
 import com.collectohub.shared.api.GlobalExceptionHandler;
 import com.collectohub.shops.application.ShopService;
+import com.collectohub.shops.application.ShopMembershipAlreadyExistsException;
+import com.collectohub.shops.application.ShopMemberNotFoundException;
+import com.collectohub.shops.application.ShopOwnerCannotBeDeactivatedException;
+import com.collectohub.shops.dto.AddShopMemberRequest;
+import com.collectohub.shops.dto.ChangeShopMemberRoleRequest;
+import com.collectohub.shops.dto.ShopMemberResponse;
 import com.collectohub.shops.dto.ShopResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,8 +31,10 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -160,6 +168,231 @@ class ShopControllerSecurityTest {
                 .andExpect(jsonPath("$.id").value(100))
                 .andExpect(jsonPath("$.name").value("Updated Shop"))
                 .andExpect(jsonPath("$.currentUserMembership.role").value("OWNER"));
+    }
+
+    @Test
+    void managerCanListMembersWithoutExposingPersonalFields() throws Exception {
+        when(shopService.listMembers(any(), eq(100L))).thenReturn(List.of(
+                new ShopMemberResponse(200L, 42L, "MANAGER", "ACTIVE"),
+                new ShopMemberResponse(201L, 43L, "EMPLOYEE", "ACTIVE")
+        ));
+
+        mockMvc.perform(get("/api/shops/100/members")
+                        .header("Authorization", "Bearer " + token()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(200))
+                .andExpect(jsonPath("$[0].role").value("MANAGER"))
+                .andExpect(jsonPath("$[1].userId").value(43))
+                .andExpect(jsonPath("$[1].email").doesNotExist());
+    }
+
+    @Test
+    void listMembersWithoutTokenReturnsUnauthorized() throws Exception {
+        mockMvc.perform(get("/api/shops/100/members"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.status").value(401));
+    }
+
+    @Test
+    void employeeCannotListMembers() throws Exception {
+        when(shopService.listMembers(any(), eq(100L)))
+                .thenThrow(new AccessDeniedException("User cannot list this shop's members"));
+
+        mockMvc.perform(get("/api/shops/100/members")
+                        .header("Authorization", "Bearer " + token()))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.status").value(403));
+    }
+
+    @Test
+    void ownerCanAddMemberWithoutPersonalFieldsInResponse() throws Exception {
+        when(shopService.addMember(any(), eq(100L), any()))
+                .thenReturn(new ShopMemberResponse(201L, 43L, "EMPLOYEE", "ACTIVE"));
+
+        mockMvc.perform(post("/api/shops/100/members")
+                        .header("Authorization", "Bearer " + token())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "email": "employee@example.com",
+                                  "role": "EMPLOYEE"
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(201))
+                .andExpect(jsonPath("$.userId").value(43))
+                .andExpect(jsonPath("$.role").value("EMPLOYEE"))
+                .andExpect(jsonPath("$.email").doesNotExist())
+                .andExpect(jsonPath("$.name").doesNotExist());
+    }
+
+    @Test
+    void addMemberNormalizesEmailBeforeValidation() throws Exception {
+        when(shopService.addMember(any(), eq(100L), any()))
+                .thenReturn(new ShopMemberResponse(201L, 43L, "EMPLOYEE", "ACTIVE"));
+
+        mockMvc.perform(post("/api/shops/100/members")
+                        .header("Authorization", "Bearer " + token())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "email": " EMPLOYEE@EXAMPLE.COM ",
+                                  "role": "EMPLOYEE"
+                                }
+                                """))
+                .andExpect(status().isCreated());
+
+        verify(shopService).addMember(any(), eq(100L),
+                org.mockito.ArgumentMatchers.argThat((AddShopMemberRequest request) ->
+                        request.email().equals("EMPLOYEE@EXAMPLE.COM")));
+    }
+
+    @Test
+    void addMemberRequiresAuthenticationAndValidEmail() throws Exception {
+        String body = """
+                {
+                  "email": "not-an-email",
+                  "role": "EMPLOYEE"
+                }
+                """;
+
+        mockMvc.perform(post("/api/shops/100/members")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(post("/api/shops/100/members")
+                        .header("Authorization", "Bearer " + token())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void addMemberRejectsOwnerRoleAndMapsDuplicateToConflict() throws Exception {
+        mockMvc.perform(post("/api/shops/100/members")
+                        .header("Authorization", "Bearer " + token())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "email": "employee@example.com",
+                                  "role": "OWNER"
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+
+        when(shopService.addMember(any(), eq(100L), any()))
+                .thenThrow(new ShopMembershipAlreadyExistsException());
+        mockMvc.perform(post("/api/shops/100/members")
+                        .header("Authorization", "Bearer " + token())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "email": "employee@example.com",
+                                  "role": "EMPLOYEE"
+                                }
+                                """))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409));
+    }
+
+    @Test
+    void ownerCanChangeMemberRoleWithoutPersonalFieldsInResponse() throws Exception {
+        when(shopService.changeMemberRole(any(), eq(100L), eq(201L), any()))
+                .thenReturn(new ShopMemberResponse(201L, 43L, "MANAGER", "ACTIVE"));
+
+        mockMvc.perform(put("/api/shops/100/members/201/role")
+                        .header("Authorization", "Bearer " + token())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "role": "MANAGER"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(201))
+                .andExpect(jsonPath("$.userId").value(43))
+                .andExpect(jsonPath("$.role").value("MANAGER"))
+                .andExpect(jsonPath("$.email").doesNotExist())
+                .andExpect(jsonPath("$.name").doesNotExist());
+
+        verify(shopService).changeMemberRole(any(), eq(100L), eq(201L),
+                org.mockito.ArgumentMatchers.argThat((ChangeShopMemberRoleRequest request) ->
+                        request.role() == com.collectohub.shops.domain.ShopMemberRole.MANAGER));
+    }
+
+    @Test
+    void changeMemberRoleRequiresAuthenticationAndRejectsOwnerRole() throws Exception {
+        String body = """
+                {
+                  "role": "OWNER"
+                }
+                """;
+
+        mockMvc.perform(put("/api/shops/100/members/201/role")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(put("/api/shops/100/members/201/role")
+                        .header("Authorization", "Bearer " + token())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void changeMemberRoleMapsUnavailableMembershipToNotFound() throws Exception {
+        when(shopService.changeMemberRole(any(), eq(100L), eq(999L), any()))
+                .thenThrow(new ShopMemberNotFoundException());
+
+        mockMvc.perform(put("/api/shops/100/members/999/role")
+                        .header("Authorization", "Bearer " + token())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "role": "EMPLOYEE"
+                                }
+                                """))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Shop member not found"));
+    }
+
+    @Test
+    void ownerCanDeactivateMember() throws Exception {
+        mockMvc.perform(delete("/api/shops/100/members/201")
+                        .header("Authorization", "Bearer " + token()))
+                .andExpect(status().isNoContent());
+
+        verify(shopService).deactivateMember(any(), eq(100L), eq(201L));
+    }
+
+    @Test
+    void deactivateMemberRequiresAuthentication() throws Exception {
+        mockMvc.perform(delete("/api/shops/100/members/201"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void deactivateMemberMapsUnavailableMembershipToNotFound() throws Exception {
+        org.mockito.Mockito.doThrow(new ShopMemberNotFoundException())
+                .when(shopService).deactivateMember(any(), eq(100L), eq(999L));
+
+        mockMvc.perform(delete("/api/shops/100/members/999")
+                        .header("Authorization", "Bearer " + token()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Shop member not found"));
+    }
+
+    @Test
+    void deactivateMemberRejectsOwnerMembership() throws Exception {
+        org.mockito.Mockito.doThrow(new ShopOwnerCannotBeDeactivatedException())
+                .when(shopService).deactivateMember(any(), eq(100L), eq(200L));
+
+        mockMvc.perform(delete("/api/shops/100/members/200")
+                        .header("Authorization", "Bearer " + token()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Shop owner membership cannot be deactivated"));
     }
 
     private String token() {

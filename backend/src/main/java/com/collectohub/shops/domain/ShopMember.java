@@ -61,13 +61,17 @@ public class ShopMember {
     }
 
     public static ShopMember owner(Shop shop, User user) {
+        return active(shop, user, ShopMemberRole.OWNER, user.getId());
+    }
+
+    public static ShopMember active(Shop shop, User user, ShopMemberRole role, Long createdBy) {
         ShopMember member = new ShopMember();
         member.shop = shop;
         member.user = user;
-        member.role = ShopMemberRole.OWNER;
+        member.role = role;
         member.status = ShopMemberStatus.ACTIVE;
         member.createdAt = Instant.now();
-        member.createdBy = user.getId();
+        member.createdBy = createdBy;
         return member;
     }
 
@@ -91,11 +95,31 @@ public class ShopMember {
         return status;
     }
 
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    public Long getUpdatedBy() {
+        return updatedBy;
+    }
+
     public Instant getDeletedAt() {
         return deletedAt;
     }
 
     public boolean canManageShop() {
         return status == ShopMemberStatus.ACTIVE && deletedAt == null && role.canManageShop();
+    }
+
+    public void changeRole(ShopMemberRole role, Long updatedBy) {
+        this.role = role;
+        this.updatedAt = Instant.now();
+        this.updatedBy = updatedBy;
+    }
+
+    public void deactivate(Long updatedBy) {
+        this.status = ShopMemberStatus.INACTIVE;
+        this.updatedAt = Instant.now();
+        this.updatedBy = updatedBy;
     }
 }

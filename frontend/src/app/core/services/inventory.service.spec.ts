@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { ShopProductResponse } from '../models/inventory.model';
+import { PublicShopProductResponse, ShopProductResponse } from '../models/inventory.model';
 import { InventoryService } from './inventory.service';
 
 describe('InventoryService', () => {
@@ -26,6 +26,24 @@ describe('InventoryService', () => {
     unitNumber: null,
     totalLimitedUnits: null,
     notes: 'Public note'
+  };
+
+  const publicProduct: PublicShopProductResponse = {
+    id: 11,
+    shopId: 9,
+    masterProductId: 5,
+    masterProductName: 'One Piece 1',
+    masterProductCategoryCode: 'MANGA_COMIC',
+    masterProductFranchise: 'One Piece',
+    masterProductCollectionName: 'One Piece',
+    masterProductVolumeNumber: '1',
+    priceAmount: 12.95,
+    currency: 'EUR',
+    commercialStatus: 'AVAILABLE',
+    physicalCondition: 'NEW',
+    visible: true,
+    unitNumber: null,
+    totalLimitedUnits: null
   };
 
   beforeEach(() => {
@@ -125,11 +143,13 @@ describe('InventoryService', () => {
 
   it('loads a public shop product', () => {
     service.getPublicShopProduct(11).subscribe((response) => {
-      expect(response).toEqual(product);
+      expect(response).toEqual(publicProduct);
+      expect(response).not.toHaveProperty('notes');
+      expect(response).not.toHaveProperty('stockQuantity');
     });
 
     const request = httpTestingController.expectOne('http://localhost:8080/api/shop-products/11');
     expect(request.request.method).toBe('GET');
-    request.flush(product);
+    request.flush(publicProduct);
   });
 });

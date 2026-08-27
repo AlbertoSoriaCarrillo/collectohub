@@ -38,6 +38,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -273,6 +274,25 @@ class InventoryServiceTest {
         var response = inventoryService.getPublicShopProduct(300L);
 
         assertThat(response.masterProductId()).isNull();
+        assertThat(response.catalogItemId()).isEqualTo(500L);
+    }
+
+    @Test
+    void inactiveLegacyReferenceDoesNotHidePublicEditorialReference() {
+        MasterProduct inactiveLegacy = masterProduct(201L);
+        ReflectionTestUtils.setField(inactiveLegacy, "deletedAt", Instant.now());
+        CatalogItem catalogItem = editorialItem(500L);
+        ShopProduct product = withId(ShopProduct.create(
+                shop, inactiveLegacy, catalogItem, null,
+                com.collectohub.inventory.domain.ShopProductEditorialReferenceSource.VERIFIED_BRIDGE,
+                BigDecimal.TEN, "EUR", 1, ShopProductCommercialStatus.AVAILABLE,
+                PhysicalCondition.NEW, true, null, null, null, 42L
+        ), 301L);
+        when(shopProductRepository.findByIdAndDeletedAtIsNull(301L)).thenReturn(Optional.of(product));
+
+        var response = inventoryService.getPublicShopProduct(301L);
+
+        assertThat(response.masterProductId()).isEqualTo(201L);
         assertThat(response.catalogItemId()).isEqualTo(500L);
     }
 

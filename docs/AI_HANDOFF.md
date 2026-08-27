@@ -1,9 +1,17 @@
 # CollectoHub - AI Handoff
 
-Última actualización verificada: 2026-08-02
+Última actualización verificada: 2026-08-26
 Repositorio: `AlbertoSoriaCarrillo/collectohub`
-Rama de integracion esperada: `main` durante la alineacion supervisada; `dev`
-solo despues de `SUPERVISED_ACTIVE_NO_ENFORCEMENT`.
+Rama de integracion efectiva: `dev`.
+Modo futuro documentado: `AUTONOMOUS_DEV_AUTO_MERGE_GUARDED`.
+Horario: `PAUSED`.
+Working copy canonico local: variable `COLLECTOHUB_WORKTREE`; su valor se guarda
+en la configuracion local de la automatizacion, no en el repositorio.
+
+Estado de entrega: PR #22 integro 45B-FIX en `dev` como
+`1c3b26ed00d7d82c5145388b0ee228992644485b`. 45B queda
+`CLOSED_AFTER_45B_FIX` y 45B-FIX `INTEGRATED_IN_DEV`. Las EPIC 45C-A a 45C-D
+estan integradas, pero 45C permanece abierta. `NEXT_EPIC=45C-E`.
 
 ## 1. Propósito de este documento
 
@@ -92,14 +100,14 @@ Los E2E/Playwright están pospuestos hasta que los recorridos completos de usuar
 ### Backend
 
 ```powershell
-cd C:\Users\Alber\Desktop\collectohub\backend
+Set-Location (Join-Path $env:COLLECTOHUB_WORKTREE 'backend')
 .\mvnw.cmd clean verify
 ```
 
 ### Frontend
 
 ```powershell
-cd C:\Users\Alber\Desktop\collectohub\frontend
+Set-Location (Join-Path $env:COLLECTOHUB_WORKTREE 'frontend')
 npm.cmd ci
 npm.cmd test -- --watch=false
 npm.cmd run build
@@ -108,7 +116,7 @@ npm.cmd run build
 ### Revisión final
 
 ```powershell
-cd C:\Users\Alber\Desktop\collectohub
+Set-Location $env:COLLECTOHUB_WORKTREE
 git diff --check
 git status
 git log -3 --oneline
@@ -117,7 +125,7 @@ git log -3 --oneline
 ### Docker, solo cuando sea necesario
 
 ```powershell
-cd C:\Users\Alber\Desktop\collectohub\infra
+Set-Location (Join-Path $env:COLLECTOHUB_WORKTREE 'infra')
 docker compose down
 docker compose up --build -d
 docker compose ps
@@ -134,24 +142,32 @@ de `docs/32_QUALITY_GATES.md`. El modelo normativo de ramas esta en
 `docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md` y el procedimiento supervisado en
 `docs/33_GITHUB_MAIN_PROTECTION.md`.
 
-El objetivo es `SUPERVISED_ACTIVE_NO_ENFORCEMENT`: `dev` es la rama de
-integracion efectiva, GitHub no aplica branch protection ni rulesets enforced,
-y todos los controles dependen del procedimiento de Codex y revision humana.
+El modo futuro documentado es `AUTONOMOUS_DEV_AUTO_MERGE_GUARDED`: `dev` es la
+rama de integracion efectiva, GitHub no aplica branch protection ni rulesets
+enforced y todos los controles dependen del procedimiento de Codex.
 No se debe describir ninguna rama como tecnicamente protegida. El push directo
 esta prohibido por politica aunque GitHub no pueda impedirlo.
 
-Hasta que el commit de activacion este presente simultaneamente en
-`origin/main`, `origin/dev` y `origin/pre`, el estado es
-`SUPERVISED_ACTIVATION_PENDING_ALIGNMENT`, `main` sigue siendo la rama efectiva
-y la automatizacion permanece `PAUSED`. La activacion completa tambien exige
-adaptar la automatizacion sin permiso de fusion y realizar la primera ejecucion
-bajo supervision humana.
+El commit de activacion `5f5c45c6cec89e442c246508eb421ac641f8a967` esta
+presente simultaneamente en `origin/main`, `origin/dev` y `origin/pre`. La
+primera ejecucion supervisada se completo correctamente con arbol limpio,
+fast-forward exclusivo de `dev`, cero PR de entrega, cero cambios de producto y
+cero commit, push, PR o fusion. Se detuvo porque la siguiente EPIC aun no estaba
+seleccionada.
+
+El horario automatico permanece `PAUSED`. Solo podra activarse tras integrar
+esta reconciliacion, reparar `dev -> pre -> main`, configurar el working copy
+canonico, adaptar la politica raiz, disponer de un guard atomico del base SHA y
+validar manualmente un ciclo protegido completo.
 
 Despues de activar, `codex/<epic>` y `quality/<epic>` parten de `origin/dev`
-actualizado y apuntan a `dev`. Los siete checks, la autorrevision y
-`expected_head_sha` son obligatorios. Codex informa `HUMAN_MERGE_REQUIRED` y
-termina; una persona vuelve a comprobar head, base `dev`, diff, checks,
-conversaciones y cambios posteriores antes de usar **Squash and merge**.
+actualizado y apuntan a `dev`. Los siete checks, autorrevision,
+`expected_head_sha`, diez minutos desde ready-for-review y una consulta final de
+head/base/diff/reviews/conversaciones son obligatorios. Solo si pasan las 31
+condiciones de `docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md` la automatizacion usa
+**Squash and merge**, vuelve a sincronizar `dev` y termina en
+`EPIC_MERGED_TO_DEV`. `expected_head_sha` no fija la base; sin un guard atomico
+de base el modo permanece inactivo y el merge es humano.
 
 Las promociones `dev -> pre` y `pre -> main` conservan los siete checks y
 requieren head/base exactos, validacion funcional o autorizacion humana segun
@@ -166,7 +182,8 @@ destino de vuelta hacia la fuente para actualizar una PR.
 
 Antes de otra EPIC se consultan PR abiertas de entrega hacia la rama efectiva.
 Una coincidencia impide iniciar trabajo nuevo. Una ejecucion procesa como
-maximo una EPIC o una PR pendiente, nunca fusiona y termina despues de informar.
+maximo una EPIC o una PR pendiente y termina despues de fusionar de forma
+protegida o informar el bloqueo.
 
 ## 6. Resumen funcional del producto
 
@@ -229,7 +246,22 @@ Los E2E continúan pospuestos.
 
 ### MVP4
 
-En curso: colecciones finales de usuario sobre catálogo editorial.
+Cerrado con limitaciones: alta editorial, edicion opcional, items manuales,
+enlace posterior, WANTED/OWNED, missing calculado, privacidad, propiedad,
+filtros, ordenaciones, progreso, compatibilidad legacy y recorrido integral
+demostrados. Estado: `MVP4_CLOSED_WITH_LIMITATIONS`; no equivale a producto
+final completo.
+
+### MVP5
+
+EPIC 45A esta integrada. 45B queda `CLOSED_AFTER_45B_FIX` y 45B-FIX
+`INTEGRATED_IN_DEV`. Las fases 45C-A a 45C-D incorporan lectura
+backend protegida de miembros activos para OWNER/MANAGER, alta acotada, cambio
+seguro de rol y desactivacion auditada solo para OWNER, sin datos personales.
+45C-E cubrira perfil backend y contratos publico/gestionado; 45C-F auditara
+compatibilidad `STAFF -> EMPLOYEE`, esquema y upgrade aditivo; 45C-G cerrara
+invariantes, privacidad, regresiones y documentacion backend.
+`NEXT_EPIC=45C-E`. Transferencia de ownership queda `FUTURE / OUT_OF_MVP5`.
 
 ## 8. EPICs recientes completadas
 
@@ -244,29 +276,42 @@ Resumen relevante:
 - EPIC 44B: contrato backend de `collection_items` y compatibilidad editorial.
 - EPIC 44B-FIX: cierre de tests de privacidad, `referenceKind`, documentación y exports.
 - EPIC 44C: flujo frontend de creación y edición de colecciones.
+- EPIC 44D a 44G-D-FIX: alta editorial, items manuales, progreso, detalle final
+  y regresion.
+- EPIC 44H-A a 44H-C: dataset, validacion integral y evidencia de cierre MVP4.
+- Activacion supervisada: alineacion de `main`/`dev`/`pre` y primera ejecucion
+  supervisada completadas.
 
 ## 9. Estado actual verificado
 
-Fecha de verificacion: 2026-08-02
+Fecha de verificacion: 2026-08-26
 
-`main` esta integrada en
-`f46d2a6dacc39cf47a4994a55818d748235bf5db` mediante la PR #7 de EPIC 44H-C.
-Sus siete checks remotos concluyeron en `SUCCESS`. El estado funcional es
-`MVP4_PARTIALLY_CLOSED`, con evidencia en
+Refs auditadas: `origin/dev=1c3b26ed00d7d82c5145388b0ee228992644485b`,
+`origin/pre=5f5c45c6cec89e442c246508eb421ac641f8a967` y
+`origin/main=b3876ad39c20b7d49047bea4768fa82cc8890c82`. `dev` es la rama
+de integracion efectiva.
+
+La primera ejecucion supervisada comprobo remoto correcto, arbol limpio,
+alineacion de refs, fast-forward exclusivo de `dev` y cero PR abiertas desde
+`codex/*` o `quality/*` hacia `dev`. No hizo cambios de producto, commit, push,
+PR ni fusion; se detuvo porque la siguiente EPIC no estaba seleccionada.
+
+MVP4 queda `MVP4_CLOSED_WITH_LIMITATIONS`, con evidencia en
 `docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md` y
-`docs/38_44H_C_QUALITY_EVIDENCE.md`.
+`docs/38_44H_C_QUALITY_EVIDENCE.md`. Se conserva como limitaciones
+E2E/Playwright, imagenes y almacenamiento real, `quantity` frente a ejemplares
+separados, paginacion avanzada, decisiones de taxonomia y MISSING
+legacy/persistido, produccion, social, marketplace y pagos.
 
-La activacion supervisada es una tarea documental y no selecciona una EPIC
-funcional. Su auditoria inicial demostro
-`HEAD == origin/main == origin/dev == origin/pre == 27e3b77cb707296912d9c1507ef2061b8e02ec02`
-y cero PR abiertas de entrega hacia `main` o `dev`.
-
-Esta entrega permanece en `SUPERVISED_ACTIVATION_PENDING_ALIGNMENT`: la PR debe
-fusionarse manualmente en `main` y el commit integrado debe alinearse por
-fast-forward en `dev` y `pre`. Hasta entonces `main` sigue siendo la rama de
-integracion y la automatizacion permanece `PAUSED`. No se activa
-`SUPERVISED_ACTIVE_NO_ENFORCEMENT` hasta completar tambien la adaptacion de la
-automatizacion sin permiso de fusion y una primera ejecucion supervisada.
+EPIC 45A deja la auditoria y el diseno ejecutable de MVP5. PR #22 integro
+45B-FIX: el DTO publico ya no expone `stockQuantity`, reservas comparte la regla
+de referencia publica y el nombre de reserva prioriza edicion/item sobre legacy.
+Las fases 45C-A a 45C-D estan integradas en `dev`; la PR #19 fue fusionada
+manualmente como `0395b6d8ab6786b406ad9c0e772b09571b252f12` y su arbol coincide
+con el head validado `dc8b1cabdef1d674513ababc13a696ae28393d4f`. Al iniciar
+45B-FIX no habia otra entrega abierta hacia `dev`. El siguiente alcance queda
+seleccionado como `NEXT_EPIC=45C-E`. El horario automatico no se activa en este
+cierre.
 
 La API de GitHub confirmo repositorio privado, Squash merging y merge commits
 activados, Rebase merging y auto-merge desactivados. Los endpoints de rulesets
@@ -388,62 +433,59 @@ Reglas principales:
 - datos privados sanitizados en lecturas públicas;
 - propietario recibe respuesta completa.
 
-## 12. Plan actual de MVP4
+## 12. Cierre actual de MVP4
 
-Orden previsto:
+EPIC 44A a 44H-C estan completadas. MVP4 queda
+`MVP4_CLOSED_WITH_LIMITATIONS`, no como producto final completo. Estan
+demostrados alta editorial, edicion opcional, items manuales, enlace posterior,
+WANTED/OWNED, missing calculado, privacidad, propiedad, filtros, ordenaciones,
+progreso, compatibilidad legacy y recorrido integral con UI humana.
 
-1. EPIC 44A - Diseño y auditoría. Completada.
-2. EPIC 44B - Contrato backend y compatibilidad editorial. Completada.
-3. EPIC 44B-FIX - Tests y documentación. Completada.
-4. EPIC 44C - Flujo frontend de creación y edición de colecciones. Completada.
-5. EPIC 44D - Alta desde catálogo y selección de edición. Completada.
-6. EPIC 44E-A1 - Esquema y contrato base de items manuales. Completada.
-7. EPIC 44E-A2 - Creación y edición backend de items manuales. Implementada en el cambio actual; pendiente de verificar su commit publicado.
-8. EPIC 44E-A3 - Enlace posterior de item manual al catálogo.
-9. EPIC 44F - OWNED, WANTED y faltantes calculados.
-10. EPIC 44G - Detalle final, filtros, ordenación y progreso.
-11. EPIC 44H - Datos demo, validación integral y cierre parcial de MVP4.
+Permanecen como limitaciones E2E/Playwright, imagenes y almacenamiento real,
+`quantity` frente a ejemplares separados, paginacion avanzada, decisiones de
+taxonomia y MISSING legacy/persistido, produccion, social, marketplace y pagos.
 
-Las decisiones ejecutables y el cierre de 44G-A a 44G-D-FIX estan en
-`docs/29_MVP4_DETAIL_FILTERS_SORTING_DESIGN.md`. El diseno ejecutable de 44H esta
-en `docs/30_MVP4_DEMO_VALIDATION_DESIGN.md`; 44H-B implementa el orquestador,
-44H-C-FIX corrige respuestas vacias y 44H-C demuestra el recorrido integral en
-`docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md`.
+## 13. EPIC 45C en curso
 
-El orden puede adaptarse si GitHub o la implementación real muestran dependencias distintas.
+EPIC 45A audita la base real y deja el diseno ejecutable de MVP5 en
+`docs/40_MVP5_SHOPS_INVENTORY_RESERVATIONS_DESIGN.md`. Identifica como
+prerrequisitos la separacion de DTO publicos/internos, la sanitizacion de notas,
+la compatibilidad de reservas con inventario editorial puro y la posterior
+consistencia transaccional de stock. No implementa funcionalidad.
 
-## 13. Alcance recomendado para EPIC 44C
+45B introdujo los contratos seguros de inventario y reservas editoriales. PR #22
+integro 45B-FIX en `dev`: `PublicShopProductResponse` deja de exponer
+`stockQuantity`, inventario y reservas comparten la misma regla OR de referencia
+publica y `ReservationResponse.productName` usa el primer nombre no vacio en
+orden edicion, item y legacy. La medicion npm actual fue 23 vulnerabilidades;
+las 16 anteriores son historicas y no se ejecuto `npm audit fix`.
+`availableQuantity` permanece diferida hasta que 45G implemente holds y su
+calculo real. 45C
+anade `GET /api/shops/{shopId}/members`: devuelve memberships activas en
+orden de id solo a OWNER/MANAGER activos. Tambien incorpora
+`POST /api/shops/{shopId}/members` para que solo un OWNER activo agregue una
+cuenta activa existente por email normalizado como MANAGER o EMPLOYEE. Las
+respuestas no incluyen email, nombre ni otros campos personales; los duplicados
+se rechazan con conflicto estable.
 
-EPIC 44C debería centrarse solo en el contenedor colección:
+El cambio de rol mediante `PUT /api/shops/{shopId}/members/{memberId}/role` esta
+integrado. Tambien esta integrada la desactivacion mediante
+`DELETE /api/shops/{shopId}/members/{memberId}`: solo un OWNER activo puede
+desactivar una membership MANAGER o EMPLOYEE activa de la misma tienda. Conserva
+la fila como `INACTIVE`, registra `updatedBy` y devuelve `204` sin datos
+personales; el OWNER no puede desactivarse por este contrato.
 
-- creación;
-- edición;
-- nombre;
-- descripción;
-- visibilidad;
-- categoría actual;
-- validaciones;
-- loading/error/saving;
-- navegación correcta;
-- tests frontend;
-- i18n;
-- mejoras mínimas de listado y detalle para cerrar el recorrido.
+45C permanece abierta. El backend ya contiene campos y edicion de perfil, pero
+comparte un unico `ShopResponse` entre lectura publica y gestionada. El trabajo
+restante queda dividido en 45C-E (contratos y privacidad del perfil backend),
+45C-F (evidencia/migracion opcional `STAFF -> EMPLOYEE`, constraints y upgrade)
+y 45C-G (cierre de invariantes, regresiones y documentacion backend).
+`NEXT_EPIC=45C-E`. Transferencia de ownership queda `FUTURE / OUT_OF_MVP5`.
 
-No debería incluir todavía:
-
-- selección de catalog item;
-- selección de edición;
-- items manuales;
-- enlace manual;
-- OWNED/WANTED/MISSING;
-- missing calculado;
-- progreso;
-- estadísticas;
-- imágenes reales;
-- filtros avanzados;
-- rutas nuevas;
-- backend;
-- migraciones.
+PR #21 promovio `dev -> main` mediante squash omitiendo `pre`. El arbol actual
+de `main@b3876ad` coincide con `dev@42c8998`, pero la ascendencia no. La
+reparacion pendiente es una promocion humana `dev -> pre` y despues
+`pre -> main`, ambas con **Create a merge commit**, sin reescribir historia.
 
 ## 14. Documentos prioritarios para reconstruir contexto
 
@@ -559,13 +601,18 @@ Trabajaremos igual que hasta ahora:
 - no comandos Docker destructivos;
 - no asumas que una salida local está publicada hasta verla en GitHub.
 
-Estado esperado al crear este documento:
+Estado esperado al continuar:
 
-- EPIC 44A completada;
-- EPIC 44B completada;
-- EPIC 44B-FIX completada;
-- EPIC 44C completada localmente; pendiente de verificar su commit publicado;
-- siguiente tarea esperada: EPIC 44D.
+- modo futuro `AUTONOMOUS_DEV_AUTO_MERGE_GUARDED`, horario `PAUSED`;
+- `dev` como rama de integracion efectiva;
+- MVP4 `MVP4_CLOSED_WITH_LIMITATIONS`;
+- EPIC 45A integrada, 45B `CLOSED_AFTER_45B_FIX` y 45B-FIX
+  `INTEGRATED_IN_DEV`;
+- EPIC 45C-A a 45C-D integradas, con 45C aun abierta;
+- `NEXT_EPIC=45C-E` y ownership transfer `FUTURE / OUT_OF_MVP5`;
+- reparacion humana `dev -> pre -> main` pendiente;
+- horario automatico no activado;
+- auto-merge protegido solo para futuras entregas temporales hacia `dev`.
 
 Empieza revisando GitHub.
 ```

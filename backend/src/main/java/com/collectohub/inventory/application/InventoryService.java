@@ -19,6 +19,7 @@ import com.collectohub.inventory.domain.ShopProduct;
 import com.collectohub.inventory.domain.ShopProductCommercialStatus;
 import com.collectohub.inventory.domain.ShopProductEditorialReferenceSource;
 import com.collectohub.inventory.dto.CreateShopProductRequest;
+import com.collectohub.inventory.dto.PublicShopProductResponse;
 import com.collectohub.inventory.dto.ShopProductResponse;
 import com.collectohub.inventory.dto.UpdateShopProductRequest;
 import com.collectohub.inventory.infrastructure.ShopProductRepository;
@@ -151,7 +152,7 @@ public class InventoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<ShopProductResponse> publicShopProducts(
+    public List<PublicShopProductResponse> publicShopProducts(
             Long shopId,
             Long masterProductId,
             String categoryCode,
@@ -218,19 +219,19 @@ public class InventoryService {
         }
 
         return shopProductRepository.findAll(specification, Sort.by("id").ascending()).stream()
-                .filter(this::hasPublicReference)
-                .map(ShopProductResponse::from)
+                .filter(ShopProduct::hasPublicReference)
+                .map(PublicShopProductResponse::from)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public ShopProductResponse getPublicShopProduct(Long shopProductId) {
+    public PublicShopProductResponse getPublicShopProduct(Long shopProductId) {
         ShopProduct shopProduct = shopProductRepository.findByIdAndDeletedAtIsNull(shopProductId)
                 .filter(ShopProduct::isPubliclyVisible)
                 .filter(product -> product.getShop().isActive())
-                .filter(this::hasPublicReference)
+                .filter(ShopProduct::hasPublicReference)
                 .orElseThrow(() -> new ShopProductNotFoundException(shopProductId));
-        return ShopProductResponse.from(shopProduct);
+        return PublicShopProductResponse.from(shopProduct);
     }
 
     private Shop findActiveShop(Long shopId) {
@@ -369,15 +370,6 @@ public class InventoryService {
         return request.masterProductId() != null
                 || request.catalogItemId() != null
                 || request.catalogItemEditionId() != null;
-    }
-
-    private boolean hasPublicReference(ShopProduct product) {
-        boolean legacyPublic = product.getMasterProduct() != null && product.getMasterProduct().isActive();
-        boolean editorialPublic = product.getCatalogItem() != null
-                && product.getCatalogItem().isPubliclyVisible()
-                && (product.getCatalogItemEdition() == null
-                || product.getCatalogItemEdition().isPubliclyVisible());
-        return legacyPublic || editorialPublic;
     }
 
     private Long idOf(MasterProduct value) { return value == null ? null : value.getId(); }

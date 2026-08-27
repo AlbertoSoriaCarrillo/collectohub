@@ -170,6 +170,8 @@ later product phase.
 | `POST /api/shops` | Authenticated user | `CreateShopRequest` | `ShopResponse` | `LEGACY_FUTURE` |
 | `GET /api/shops/my` | Active shop member | None | `List<ShopResponse>` | `LEGACY_FUTURE` |
 | `GET /api/shops/{shopId}` | Public | None | `ShopResponse` | `LEGACY_FUTURE` |
+| `GET /api/shops/{shopId}/members` | Shop `OWNER` or `MANAGER` | None | `List<ShopMemberResponse>` | `MVP5_PARTIAL` |
+| `POST /api/shops/{shopId}/members` | Shop `OWNER` | `AddShopMemberRequest` | `ShopMemberResponse` | `MVP5_PARTIAL` |
 | `PUT /api/shops/{shopId}` | Shop `OWNER` or `MANAGER` | `UpdateShopRequest` | `ShopResponse` | `LEGACY_FUTURE` |
 
 Creating a shop also creates an internal `OWNER` membership and grants the
@@ -182,8 +184,8 @@ global `SHOP_OWNER` role if absent.
 | `POST /api/shops/{shopId}/products` | `ShopInventoryController` | `OWNER` or `MANAGER` | `CreateShopProductRequest` | `ShopProductResponse` | `LEGACY_FUTURE` |
 | `PUT /api/shops/{shopId}/products/{shopProductId}` | `ShopInventoryController` | `OWNER` or `MANAGER` | `UpdateShopProductRequest` | `ShopProductResponse` | `LEGACY_FUTURE` |
 | `GET /api/shops/{shopId}/products/my` | `ShopInventoryController` | Active shop member | None | `List<ShopProductResponse>` | `LEGACY_FUTURE` |
-| `GET /api/shops/{shopId}/products` | `ShopInventoryController` | Public | Product/category/name/franchise/collection/condition/status filters | `List<ShopProductResponse>` | `LEGACY_FUTURE` |
-| `GET /api/shop-products/{shopProductId}` | `PublicShopProductController` | Public visible entry | None | `ShopProductResponse` | `LEGACY_FUTURE` |
+| `GET /api/shops/{shopId}/products` | `ShopInventoryController` | Public | Product/category/name/franchise/collection/condition/status filters | `List<PublicShopProductResponse>` | `LEGACY_FUTURE` |
+| `GET /api/shop-products/{shopProductId}` | `PublicShopProductController` | Public visible entry | None | `PublicShopProductResponse` | `LEGACY_FUTURE` |
 
 ## Reservations
 

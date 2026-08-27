@@ -3,7 +3,9 @@ package com.collectohub.shops.infrastructure;
 import com.collectohub.shops.domain.ShopMember;
 import com.collectohub.shops.domain.ShopMemberRole;
 import com.collectohub.shops.domain.ShopMemberStatus;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,6 +18,26 @@ public interface ShopMemberRepository extends JpaRepository<ShopMember, Long> {
     Optional<ShopMember> findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
             Long shopId,
             Long userId,
+            ShopMemberStatus status
+    );
+
+    Optional<ShopMember> findByShop_IdAndUser_Id(Long shopId, Long userId);
+
+    Optional<ShopMember> findByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+            Long id,
+            Long shopId,
+            ShopMemberStatus status
+    );
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Optional<ShopMember> findForUpdateByIdAndShop_IdAndStatusAndDeletedAtIsNull(
+            Long id,
+            Long shopId,
+            ShopMemberStatus status
+    );
+
+    List<ShopMember> findByShop_IdAndStatusAndDeletedAtIsNullOrderByIdAsc(
+            Long shopId,
             ShopMemberStatus status
     );
 

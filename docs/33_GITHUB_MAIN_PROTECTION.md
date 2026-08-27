@@ -1,21 +1,27 @@
-# Flujo supervisado de ramas en GitHub Free
+# Flujo protegido por procedimiento en GitHub Free
 
-Fecha: 2026-08-02
+Fecha: 2026-08-26
 Repositorio: `AlbertoSoriaCarrillo/collectohub`
 Visibilidad: privado
-Estado de esta entrega: `SUPERVISED_ACTIVATION_PENDING_ALIGNMENT`
+```text
+SUPERVISED_ACTIVATION=COMPLETED
+AUTONOMOUS_DEV_AUTO_MERGE_GUARDED_TRANSITION=PENDING
+SCHEDULE=PAUSED
+CURRENT_MERGE_AUTHORITY=HUMAN_ONLY
+ROOT_POLICY=AGENTS.md supervised policy remains authoritative
+```
 
 Este documento describe controles operativos, no protecciones tecnicas. Con el
 plan actual, GitHub no aplica branch protection ni rulesets enforced a este
 repositorio privado. Las garantias dependen del procedimiento de Codex y de la
-revision y fusion humanas.
+  verificacion de Codex. Las promociones permanentes siguen siendo humanas.
 
 La consulta fiable de la API de GitHub realizada el 2026-08-02 confirmo:
 
 - `Allow squash merging`: activado;
 - `Allow merge commits`: activado;
 - `Allow rebase merging`: desactivado;
-- auto-merge nativo de GitHub: desactivado y no necesario para este modo;
+- auto-merge nativo de GitHub: desactivado y prohibido para este modo;
 - los endpoints de rulesets y branch protection responden `403` e indican que
   se requiere GitHub Pro o que el repositorio sea publico.
 
@@ -23,37 +29,49 @@ No se ha configurado ni modificado ningun ajuste remoto en esta tarea.
 
 ## Estados operativos
 
-`SUPERVISED_ACTIVE_NO_ENFORCEMENT` significa exactamente que:
+La activacion supervisada historica del modelo `dev -> pre -> main` esta
+completada. Ese hito no activo auto-merge ni concedio autoridad de fusion a la
+automatizacion.
+
+`AUTONOMOUS_DEV_AUTO_MERGE_GUARDED` describe exclusivamente el objetivo futuro
+de transicion. Cuando esa transicion llegue a completarse significara que:
 
 - `dev` es la rama de integracion efectiva;
 - GitHub no aplica tecnicamente branch protection ni rulesets;
-- los controles se aplican mediante el procedimiento de Codex y revision
-  humana;
+- los controles se aplican mediante el procedimiento de Codex;
 - no se puede afirmar que `main`, `dev` o `pre` esten tecnicamente protegidas;
-- ninguna automatizacion tiene permiso para fusionar pull requests;
-- toda fusion requiere intervencion humana;
+- la automatizacion podra fusionar solo `codex/* -> dev` o
+  `quality/* -> dev` cuando pasan todas las condiciones normativas;
+- `dev -> pre` y `pre -> main` siempre requieren intervencion humana;
 - `main` y `pre` siguen siendo ramas permanentes;
 - el push directo esta prohibido por politica, aunque GitHub no pueda impedirlo.
 
-La activacion es condicional. Hasta que el commit que contiene esta politica
-este presente simultaneamente en `origin/main`, `origin/dev` y `origin/pre`, el
-estado es `SUPERVISED_ACTIVATION_PENDING_ALIGNMENT`, `main` sigue siendo la rama
-de integracion efectiva y la automatizacion permanece `PAUSED`.
+La activacion supervisada historica quedo completada. El commit de activacion
+`5f5c45c6cec89e442c246508eb421ac641f8a967` esta presente simultaneamente en
+`origin/main`, `origin/dev` y `origin/pre`, y `dev` es la rama de integracion
+efectiva.
 
-La igualdad de refs es necesaria, pero la activacion operativa completa tambien
-requiere:
+La primera ejecucion bajo supervision humana tambien se completo correctamente:
 
-1. fusion manual de la PR de esta tarea en `main`;
-2. fast-forward manual de `dev` y `pre` al commit integrado;
-3. confirmacion de que `origin/main`, `origin/dev` y `origin/pre` coinciden;
-4. adaptacion separada de la automatizacion al modo supervisado, sin permiso de
-   fusion;
-5. primera ejecucion bajo supervision humana.
+- remoto y arbol local correctos;
+- `dev` local actualizado exclusivamente mediante fast-forward;
+- cero PR abiertas desde `codex/*` o `quality/*` hacia `dev`;
+- cero cambios de producto;
+- detencion segura porque la siguiente EPIC aun no estaba seleccionada;
+- cero commit, push, pull request o fusion.
 
-Si las refs ya coinciden pero los pasos 4 o 5 siguen pendientes, la alineacion
-esta completa pero la activacion operativa no: la automatizacion continua
-`PAUSED`. Esta tarea no fusiona la PR, no alinea ramas y no activa ni modifica
-la automatizacion.
+La transicion autonoma permanece `PENDING`; no esta activa, operativa, completada
+ni autorizada. Esta reconciliacion de las propias reglas termina en
+`HUMAN_MERGE_REQUIRED` y no se auto-fusiona. Antes de completar la transicion se
+debe integrar esta politica en `dev`, reparar la ascendencia `dev -> pre -> main`,
+adaptar `AGENTS.md` y la automatizacion local, disponer de un guard atomico
+verificable del base SHA, configurar `COLLECTOHUB_WORKTREE` y validar manualmente
+una ejecucion supervisada completa del nuevo contrato.
+
+Mientras falte cualquiera de esas condiciones, `SCHEDULE=PAUSED`, la politica
+supervisada de `AGENTS.md` sigue siendo la autoridad y tanto `codex/* -> dev`
+como `quality/* -> dev` son `HUMAN ONLY`. No existe autoridad automatica de
+merge.
 
 ## Siete checks obligatorios
 
@@ -81,10 +99,12 @@ Despues de la activacion:
 3. Se abre una PR con base exacta `dev`.
 4. Se ejecutan los siete checks.
 5. Codex realiza autorrevision y registra `expected_head_sha`.
-6. Codex informa `HUMAN_MERGE_REQUIRED` y termina sin fusionar ni iniciar otra
-   EPIC.
+6. Codex espera al menos diez minutos desde ready-for-review, reconsulta GitHub
+   y aplica el contrato completo de `docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md`.
+7. Solo si todas las condiciones pasan, usa **Squash and merge**, sincroniza
+   `dev`, informa `EPIC_MERGED_TO_DEV` y termina sin iniciar otra EPIC.
 
-Antes de fusionar, una persona debe verificar:
+Antes de fusionar, la verificacion final debe confirmar:
 
 - head actual de la PR igual a `expected_head_sha`;
 - base exacta `dev`;
@@ -93,9 +113,11 @@ Antes de fusionar, una persona debe verificar:
 - ausencia de conversaciones o bloqueos pendientes;
 - ausencia de cambios posteriores a la revision.
 
-La fusion se realiza manualmente mediante **Squash and merge**. Si cambia
-`dev`, el head o el diff, se repite la revision y, cuando corresponda, los siete
-checks sobre el head actualizado.
+Tras la activacion futura, la automatizacion realiza **Squash and merge** solo
+con el guard completo. Mientras el horario siga `PAUSED` y la politica raiz
+conserve el modo supervisado, la fusion permanece manual. Si cambia `dev`, el
+head o el diff, se repite la revision y, cuando corresponda, los siete checks
+sobre el head actualizado.
 
 Mientras exista una PR abierta hacia `dev` desde `codex/*` o `quality/*`, sea o
 no borrador y con cualquier estado de checks, no se inicia otra EPIC.
@@ -143,7 +165,7 @@ No se fusiona `main` de vuelta hacia `pre` para actualizar la PR.
 - GitHub no bloquea force push o borrado mediante rulesets enforced.
 - GitHub no garantiza por si solo el metodo correcto de fusion.
 - Los checks pueden ejecutarse, pero su cumplimiento es procedimental.
-- `SUPERVISED_ACTIVE_NO_ENFORCEMENT` no debe confundirse con
+- `AUTONOMOUS_DEV_AUTO_MERGE_GUARDED` no debe confundirse con
   `PROTECTED_ACTIVE`.
 - La politica prohibe push directo, force push y borrado de ramas permanentes,
   aunque el proveedor no lo impida tecnicamente.
@@ -163,8 +185,9 @@ Antes de cualquier EPIC:
    `git fetch origin`, exigir arbol limpio, actualizar solo por fast-forward y
    demostrar que el `HEAD` local coincide con `origin/<rama>`.
 
-La automatizacion es estrictamente secuencial y nunca fusiona. Una entrega
-verde termina en `HUMAN_MERGE_REQUIRED`.
+La automatizacion es estrictamente secuencial. Una entrega verde solo termina
+en `EPIC_MERGED_TO_DEV` si supera el guard completo; cualquier desviacion evita
+el merge y produce el estado de bloqueo correspondiente.
 
 ## Verificacion posterior humana
 

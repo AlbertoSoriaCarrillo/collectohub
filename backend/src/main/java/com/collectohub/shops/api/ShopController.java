@@ -3,6 +3,9 @@ package com.collectohub.shops.api;
 import com.collectohub.auth.security.AuthenticatedUser;
 import com.collectohub.shops.application.ShopService;
 import com.collectohub.shops.dto.CreateShopRequest;
+import com.collectohub.shops.dto.AddShopMemberRequest;
+import com.collectohub.shops.dto.ChangeShopMemberRoleRequest;
+import com.collectohub.shops.dto.ShopMemberResponse;
 import com.collectohub.shops.dto.ShopResponse;
 import com.collectohub.shops.dto.UpdateShopRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,6 +56,48 @@ public class ShopController {
     @Operation(summary = "Get public shop details")
     public ShopResponse getShop(@PathVariable Long shopId) {
         return shopService.getPublicShop(shopId);
+    }
+
+    @GetMapping("/{shopId}/members")
+    @Operation(summary = "List active shop members when the authenticated user can manage the shop")
+    public List<ShopMemberResponse> listMembers(
+            @AuthenticationPrincipal AuthenticatedUser user,
+            @PathVariable Long shopId
+    ) {
+        return shopService.listMembers(user, shopId);
+    }
+
+    @PostMapping("/{shopId}/members")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Add an existing user as a shop member when the authenticated user is the owner")
+    public ShopMemberResponse addMember(
+            @AuthenticationPrincipal AuthenticatedUser user,
+            @PathVariable Long shopId,
+            @Valid @RequestBody AddShopMemberRequest request
+    ) {
+        return shopService.addMember(user, shopId, request);
+    }
+
+    @PutMapping("/{shopId}/members/{memberId}/role")
+    @Operation(summary = "Change an active shop member role when the authenticated user is the owner")
+    public ShopMemberResponse changeMemberRole(
+            @AuthenticationPrincipal AuthenticatedUser user,
+            @PathVariable Long shopId,
+            @PathVariable Long memberId,
+            @Valid @RequestBody ChangeShopMemberRoleRequest request
+    ) {
+        return shopService.changeMemberRole(user, shopId, memberId, request);
+    }
+
+    @DeleteMapping("/{shopId}/members/{memberId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Deactivate an active shop member when the authenticated user is the owner")
+    public void deactivateMember(
+            @AuthenticationPrincipal AuthenticatedUser user,
+            @PathVariable Long shopId,
+            @PathVariable Long memberId
+    ) {
+        shopService.deactivateMember(user, shopId, memberId);
     }
 
     @PutMapping("/{shopId}")

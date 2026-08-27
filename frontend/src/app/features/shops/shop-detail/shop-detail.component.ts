@@ -8,7 +8,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { ErrorMessageService } from '../../../core/http/error-message.service';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
-import { ShopProductResponse } from '../../../core/models/inventory.model';
+import { PublicShopProductResponse } from '../../../core/models/inventory.model';
 import { ShopMemberResponse, ShopResponse } from '../../../core/models/shop.model';
 import { InventoryService } from '../../../core/services/inventory.service';
 import { ShopService } from '../../../core/services/shop.service';
@@ -29,7 +29,7 @@ export class ShopDetailComponent implements OnInit {
 
   readonly shop = signal<ShopResponse | null>(null);
   readonly membership = signal<ShopMemberResponse | null>(null);
-  readonly publicProducts = signal<ShopProductResponse[]>([]);
+  readonly publicProducts = signal<PublicShopProductResponse[]>([]);
   readonly publicProductsLoading = signal(false);
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
@@ -61,7 +61,7 @@ export class ShopDetailComponent implements OnInit {
     return role === 'OWNER' || role === 'MANAGER';
   }
 
-  priceLabel(product: ShopProductResponse): string {
+  priceLabel(product: PublicShopProductResponse): string {
     return `${product.priceAmount} ${product.currency}`;
   }
 

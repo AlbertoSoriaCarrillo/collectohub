@@ -183,7 +183,7 @@ public class ReservationService {
                 .orElseThrow(() -> new ShopProductNotFoundException(shopProductId));
         if (!shopProduct.isPubliclyVisible()
                 || !shopProduct.getShop().isActive()
-                || !shopProduct.getMasterProduct().isActive()) {
+                || !shopProduct.hasPublicReference()) {
             throw new ReservationUnavailableException("Shop product cannot be reserved");
         }
         if (shopProduct.getStockQuantity() <= 0) {

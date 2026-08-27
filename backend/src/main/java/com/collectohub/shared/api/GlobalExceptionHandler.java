@@ -33,6 +33,11 @@ import com.collectohub.reservations.application.InvalidReservationTransitionExce
 import com.collectohub.reservations.application.ReservationNotFoundException;
 import com.collectohub.reservations.application.ReservationUnavailableException;
 import com.collectohub.shops.application.ShopNotFoundException;
+import com.collectohub.shops.application.InvalidShopMemberRoleException;
+import com.collectohub.shops.application.ShopMemberCandidateNotFoundException;
+import com.collectohub.shops.application.ShopMemberNotFoundException;
+import com.collectohub.shops.application.ShopMembershipAlreadyExistsException;
+import com.collectohub.shops.application.ShopOwnerCannotBeDeactivatedException;
 import com.collectohub.shared.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -90,6 +95,8 @@ public class GlobalExceptionHandler {
             InvalidShopProductReferenceException.class,
             InvalidReservationFilterException.class,
             InvalidReservationRequestException.class,
+            InvalidShopMemberRoleException.class,
+            ShopOwnerCannotBeDeactivatedException.class,
             UnsupportedInterfaceLanguageException.class
     })
     ResponseEntity<ErrorResponse> handleCatalogBadRequest(RuntimeException ex, HttpServletRequest request) {
@@ -120,6 +127,30 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ShopNotFoundException.class)
     ResponseEntity<ErrorResponse> handleShopNotFound(ShopNotFoundException ex, HttpServletRequest request) {
         return build(HttpStatus.NOT_FOUND, ex.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(ShopMemberCandidateNotFoundException.class)
+    ResponseEntity<ErrorResponse> handleShopMemberCandidateNotFound(
+            ShopMemberCandidateNotFoundException ex,
+            HttpServletRequest request
+    ) {
+        return build(HttpStatus.NOT_FOUND, ex.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(ShopMemberNotFoundException.class)
+    ResponseEntity<ErrorResponse> handleShopMemberNotFound(
+            ShopMemberNotFoundException ex,
+            HttpServletRequest request
+    ) {
+        return build(HttpStatus.NOT_FOUND, ex.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(ShopMembershipAlreadyExistsException.class)
+    ResponseEntity<ErrorResponse> handleShopMembershipAlreadyExists(
+            ShopMembershipAlreadyExistsException ex,
+            HttpServletRequest request
+    ) {
+        return build(HttpStatus.CONFLICT, ex.getMessage(), request, List.of());
     }
 
     @ExceptionHandler(MasterProductNotFoundException.class)
