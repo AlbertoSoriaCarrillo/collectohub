@@ -106,7 +106,20 @@ conflicto o contenido exclusivo nuevo, detenerse con
 Antes de una EPIC y despues de un squash merge protegido:
 
 ```powershell
-Set-Location $env:COLLECTOHUB_WORKTREE
+if ([string]::IsNullOrWhiteSpace($env:COLLECTOHUB_WORKTREE)) {
+    throw "COLLECTOHUB_WORKTREE is not configured."
+}
+if (-not (Test-Path -LiteralPath $env:COLLECTOHUB_WORKTREE -PathType Container)) {
+    throw "COLLECTOHUB_WORKTREE does not exist."
+}
+Set-Location -LiteralPath $env:COLLECTOHUB_WORKTREE -ErrorAction Stop
+$remote = git remote get-url origin
+if ($LASTEXITCODE -ne 0) {
+    throw "Unable to read Git remote."
+}
+if ($remote.Trim() -notmatch '^https://github\.com/AlbertoSoriaCarrillo/collectohub(?:\.git)?$') {
+    throw "Unexpected repository remote."
+}
 $worktreeStatus = @(git status --porcelain)
 if ($LASTEXITCODE -ne 0) {
     throw "Unable to inspect Git worktree"
@@ -114,7 +127,23 @@ if ($LASTEXITCODE -ne 0) {
 if ($worktreeStatus.Count -ne 0) {
     throw "Working tree is not clean. Automation must stop."
 }
-git branch --show-current
+$pendingJson = gh pr list --repo AlbertoSoriaCarrillo/collectohub --state open --base dev --json number,headRefName
+if ($LASTEXITCODE -ne 0) {
+    throw "Unable to query pending delivery pull requests. Automation must stop."
+}
+try {
+    $pendingPullRequests = @($pendingJson | ConvertFrom-Json -ErrorAction Stop)
+} catch {
+    throw "Unable to parse pending delivery pull requests. Automation must stop."
+}
+$pendingDeliveries = @(
+    $pendingPullRequests | Where-Object {
+        $_.headRefName.StartsWith('codex/') -or $_.headRefName.StartsWith('quality/')
+    }
+)
+if ($pendingDeliveries.Count -ne 0) {
+    throw "PENDING_DELIVERY_EXISTS"
+}
 git fetch origin --prune
 if ($LASTEXITCODE -ne 0) {
     throw "git fetch failed. Automation must stop."
@@ -140,21 +169,34 @@ if ($localDev.Trim() -ne $remoteDev.Trim()) {
 }
 ```
 
-El guard comprueba de forma ejecutable el codigo de salida y exige que
-`git status --porcelain` no produzca ninguna linea antes de cambiar o actualizar
-ramas. Mostrar `git status --short` no es un mecanismo de control suficiente.
-Un resultado no vacio produce `EPIC_BLOCKED`: no se cambia de rama, no se hace
-pull, no se modifica nada y no se intenta ocultar el cambio mediante reset o
-clean automaticos. Los fallos de `fetch`, `switch`, `pull` o de resolucion de
-refs tambien producen `EPIC_BLOCKED` de inmediato. La ejecucion solo puede
-continuar si la comparacion ejecutable confirma `HEAD == origin/dev`; una
-desalineacion local/remota durante este preflight inicial tambien produce
-`EPIC_BLOCKED`, no `BASE_MOVED_HUMAN_ACTION_REQUIRED`. Como el mismo bloque se
-ejecuta antes de una EPIC y despues de un futuro squash merge protegido, esa
-igualdad es obligatoria en ambos momentos y su fallo impide iniciar otra EPIC.
-Antes de trabajo nuevo se consulta GitHub. Debe existir
-cero PR abierta con base `dev` y head `codex/*` o `quality/*`; cualquier
-coincidencia produce `PENDING_DELIVERY_EXISTS` y bloquea otra EPIC.
+La configuracion local `COLLECTOHUB_WORKTREE` debe existir y apuntar a un
+directorio. `Set-Location -ErrorAction Stop` impide continuar silenciosamente
+desde el directorio anterior y el remoto debe identificar exactamente el
+repositorio esperado antes de ejecutar otros comandos Git. Cualquier fallo de
+configuracion, ubicacion o identidad del repositorio produce `EPIC_BLOCKED`.
+
+El guard comprueba despues el codigo de salida de Git y exige que
+`git status --porcelain` no produzca ninguna linea. Mostrar
+`git status --short` no es un mecanismo de control suficiente. Un resultado no
+vacio produce `EPIC_BLOCKED`: no se cambia de rama, no se hace pull, no se
+modifica nada y no se intenta ocultar el cambio mediante reset o clean
+automaticos.
+
+Antes de `fetch`, `switch` o `pull`, la consulta autenticada a GitHub debe
+completar correctamente y su JSON debe poder analizarse. Un fallo de red, API,
+autenticacion o parsing produce `EPIC_BLOCKED`; nunca equivale a cero PR. Debe
+existir cero PR abierta con base `dev` y head `codex/*` o `quality/*`. Cualquier
+coincidencia produce `PENDING_DELIVERY_EXISTS` y detiene la ejecucion sin cambiar
+ni actualizar `dev`.
+
+Solo con cero entregas pendientes se sincroniza `dev`. Los fallos de `fetch`,
+`switch`, `pull` o de resolucion de refs producen `EPIC_BLOCKED` de inmediato.
+La ejecucion solo puede continuar si la comparacion ejecutable confirma
+`HEAD == origin/dev`; una desalineacion local/remota durante este preflight
+inicial tambien produce `EPIC_BLOCKED`, no
+`BASE_MOVED_HUMAN_ACTION_REQUIRED`. Como el mismo bloque se ejecuta antes de una
+EPIC y despues de un futuro squash merge protegido, esa igualdad es obligatoria
+en ambos momentos y su fallo impide iniciar otra EPIC.
 
 ## Siete checks obligatorios
 

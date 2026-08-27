@@ -2700,6 +2700,13 @@ Siguiente paso: crear el backend en la carpeta backend.
   `fetch`, `switch` o `pull` devuelven error, si no puede resolver `HEAD` u
   `origin/dev`, o si ambos SHA no coinciden. En cualquiera de esos casos el
   resultado es `EPIC_BLOCKED` y no se inicia otra EPIC.
+- La revision sobre `b63575ffc83b3b411e3922a330ef5c3531a77a37`
+  detecto dos P2 finales. La configuracion y existencia de
+  `COLLECTOHUB_WORKTREE`, el cambio de directorio fail-closed y el remoto
+  esperado se validan antes de otras operaciones Git. La consulta de entregas
+  pendientes se ejecuta y analiza antes de actualizar `dev`; cualquier fallo
+  produce `EPIC_BLOCKED` y una coincidencia produce
+  `PENDING_DELIVERY_EXISTS` sin cambiar ni actualizar la rama.
 
 ## 2026-08-02 - Activacion documental del modo supervisado sin enforcement
 

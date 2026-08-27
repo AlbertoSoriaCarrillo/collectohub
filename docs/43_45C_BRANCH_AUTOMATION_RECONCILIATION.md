@@ -148,6 +148,13 @@ fails closed on nonzero `fetch`, `switch` and `pull` results, fails if either
 local `HEAD` or `origin/dev` cannot be resolved, and explicitly requires both
 SHAs to match before an EPIC may start or after a future protected merge.
 
+The review on `b63575ffc83b3b411e3922a330ef5c3531a77a37` found two P2 issues.
+The preflight now validates `COLLECTOHUB_WORKTREE`, enters it with
+`-ErrorAction Stop`, and verifies the expected remote before other Git
+operations. It also queries and parses pending delivery PRs before any
+`fetch`, `switch` or `pull`; lookup failure blocks the run, and a matching PR
+produces `PENDING_DELIVERY_EXISTS` without updating `dev`.
+
 ## Validation
 
 - `git diff --check`: `PASS`.
