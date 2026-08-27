@@ -180,3 +180,24 @@ missing-field cases.
   vulnerabilities, no `npm audit fix`.
 - Warning: initial bundle 631.54 kB, 131.54 kB over budget.
 - E2E/Playwright: `SKIPPED_WITH_REASON: explicitly excluded`.
+
+## Manual supervised automation dry-run
+
+Date: 2026-08-27
+
+Objective: manually validate the local flow after the `dev -> pre -> main`
+reconciliation and topology repair, without starting a product EPIC or
+activating the scheduler.
+
+- canonical worktree env validated: PASS
+- expected repository remote validated: PASS
+- clean-worktree guard: PASS
+- exhaustive pending-delivery lookup: PASS
+- PowerShell 5.1 compatibility: PASS
+- dev sync fail-closed: PASS
+- local dev == origin/dev: PASS
+- branch topology dev -> pre -> main: PASS
+- dry-run branch created from current dev: PASS
+- scheduler: PAUSED
+- autonomous merge authority: NOT ACTIVE
+- NEXT_EPIC remains: 45C-E
