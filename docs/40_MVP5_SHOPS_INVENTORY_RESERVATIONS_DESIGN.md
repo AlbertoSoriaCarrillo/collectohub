@@ -167,8 +167,9 @@ Reglas objetivo:
 4. Una oferta editorial pura es valida en inventario, detalle, matching y
    reserva. Ningun contrato de reserva puede asumir master legacy presente.
 5. La proyeccion de producto de una reserva incluye IDs y etiquetas editoriales
-   opcionales, mas fallback legacy. El nombre visible se resuelve en orden:
-   edicion/item editorial y despues master legacy.
+   opcionales, mas fallback legacy. El nombre visible usa el primer valor no
+   vacio en este orden: nombre de edicion, titulo del item y nombre del master
+   legacy.
 6. No se introduce inventario libre sin identidad catalogada en MVP5.
 7. Filas legacy permanecen legibles/editables. No hay backfill automatico salvo
    puente `VERIFIED`; las propuestas no verificadas nunca se aplican.
@@ -182,12 +183,15 @@ propiedad salvo un endpoint administrativo futuro expresamente separado.
 El rol canonico de dominio, persistencia y API es `EMPLOYEE`, como define
 `ShopMemberRole`. En los artefactos versionados auditados, `STAFF` es un nombre
 legacy presente solo en documentacion, exports y claves de traduccion; no
-representa un cuarto rol. 45C
-debe mapear cualquier valor legacy `STAFF` a `EMPLOYEE`, devolver siempre
-`EMPLOYEE` y reconciliar `docs/16_MVP_API_ENDPOINTS.md` y los exports. 45D debe
-reconciliar las claves de traduccion. Las pruebas de upgrade deben demostrar
-que las memberships conservan usuario, tienda, estado y permisos durante el
-mapeo.
+representa un cuarto rol ni existe evidencia versionada de filas persistidas con
+ese valor. 45C-F debe inspeccionar evidencia de datos reales antes de decidir si
+hace falta una migracion. Si existe, debe mapear `STAFF` a `EMPLOYEE` de forma
+aditiva e idempotente y demostrar que conserva usuario, tienda, estado y
+permisos. `docs/16_MVP_API_ENDPOINTS.md` y el export Markdown usan ya
+`EMPLOYEE`, pero `docs/export/database-tables.csv` y
+`docs/22_PORTFOLIO_REVIEW.md` conservan referencias legacy pendientes de
+reconciliacion en 45C-F. 45D reconciliara las claves de traduccion frontend sin
+mezclar ese trabajo en 45C.
 
 | Accion | OWNER | MANAGER | EMPLOYEE | Usuario autenticado | Visitante |
 | --- | --- | --- | --- | --- | --- |
@@ -224,10 +228,12 @@ Se separan proyecciones publicas, internas y de reserva:
   expresamente como publico; nunca owner ID ni membership.
 - `ManagedShopResponse`: perfil, membership actual y campos de gestion.
 - `PublicShopProductResponse`: identidad editorial/legacy publica, precio,
-  condicion, estado visible y `availableQuantity`; nunca `notes`, campos de
-  auditoria ni stock fisico interno.
-- `ManagedShopProductResponse`: anade `stockQuantity`, cantidades reservada y
-  disponible, visibilidad y `notes`.
+  condicion y estado visible; nunca `notes`, campos de auditoria ni
+  `stockQuantity` fisico interno. Durante 45B-FIX tampoco expone
+  `availableQuantity`, porque su semantica depende de holds aun no implementados.
+- El contrato gestionado vigente conserva `stockQuantity`, visibilidad y
+  `notes`; cantidades reservada y disponible se incorporaran con la contabilidad
+  transaccional correspondiente.
 - `ReservationResponse`: para el usuario, solo su reserva; para la tienda,
   display name consentido y mensaje de la reserva. No se expone email, telefono,
   colecciones privadas ni un buscador de usuarios.
@@ -363,9 +369,18 @@ sola vez.
 1. **45B - Contratos seguros y compatibilidad editorial de reservas.** Separar
    DTO publicos/internos, sanitizar inventario, hacer nullable/editorial la
    proyeccion de reserva y anadir regresiones. Sin stock transaccional todavia.
-2. **45C - Perfil profesional y miembros de tienda.** Backend, esquema aditivo,
-   permisos OWNER/MANAGER/EMPLOYEE, invariantes del ultimo OWNER y pruebas de
-   propiedad/privacidad.
+2. **45C - Perfil profesional y miembros de tienda.** 45C-A a 45C-D estan
+   integradas. El cierre restante se divide en:
+   - **45C-E - Perfil backend y contratos de tienda.** Separar proyecciones
+     publica y gestionada, endurecer sanitizacion y validar la edicion existente
+     para OWNER/MANAGER, sin frontend ni esquema.
+   - **45C-F - Compatibilidad y esquema de memberships.** Auditar datos antes de
+     decidir migracion `STAFF -> EMPLOYEE`; cuando exista evidencia, aplicar
+     upgrade aditivo e idempotente y constraints con pruebas PostgreSQL de
+     preservacion.
+   - **45C-G - Cierre backend de 45C.** Revalidar invariantes, autorizacion,
+     privacidad, compatibilidad, API/exports y evidencia, sin absorber 45D.
+   Transferencia de ownership permanece `FUTURE / OUT_OF_MVP5`.
 3. **45D - UX de perfil y miembros.** Edicion de tienda, lista/gestion permitida,
    estados loading/error/retry/vacio y guardas UX sin sustituir backend.
 4. **45E - Inventario profesional backend.** Filtros editoriales, proyecciones
@@ -383,8 +398,14 @@ sola vez.
    idempotente, API/DB/UI, concurrencia controlada, accesibilidad y cierre con
    limitaciones reales.
 
+45B fue integrada antes de terminar una revision tardia. EPIC 45B-FIX corrige
+la exposicion de stock del DTO publico, unifica la regla observable de referencia
+publica entre inventario y reservas y aplica la prioridad de nombre definida en
+la seccion 7. No implementa disponibilidad calculada ni modifica 45C.
+
 Cada ejecucion implementa como maximo una EPIC y se detiene ante una PR previa
-abierta hacia `dev`. La siguiente tarea unica despues de integrar 45A es 45B.
+abierta hacia `dev`. 45B queda `CLOSED_AFTER_45B_FIX`; la siguiente tarea unica
+es `NEXT_EPIC=45C-E`.
 
 ## 16. Archivos permitidos y prohibidos en 45A
 

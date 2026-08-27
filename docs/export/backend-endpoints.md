@@ -184,8 +184,8 @@ global `SHOP_OWNER` role if absent.
 | `POST /api/shops/{shopId}/products` | `ShopInventoryController` | `OWNER` or `MANAGER` | `CreateShopProductRequest` | `ShopProductResponse` | `LEGACY_FUTURE` |
 | `PUT /api/shops/{shopId}/products/{shopProductId}` | `ShopInventoryController` | `OWNER` or `MANAGER` | `UpdateShopProductRequest` | `ShopProductResponse` | `LEGACY_FUTURE` |
 | `GET /api/shops/{shopId}/products/my` | `ShopInventoryController` | Active shop member | None | `List<ShopProductResponse>` | `LEGACY_FUTURE` |
-| `GET /api/shops/{shopId}/products` | `ShopInventoryController` | Public | Product/category/name/franchise/collection/condition/status filters | `List<ShopProductResponse>` | `LEGACY_FUTURE` |
-| `GET /api/shop-products/{shopProductId}` | `PublicShopProductController` | Public visible entry | None | `ShopProductResponse` | `LEGACY_FUTURE` |
+| `GET /api/shops/{shopId}/products` | `ShopInventoryController` | Public | Product/category/name/franchise/collection/condition/status filters | `List<PublicShopProductResponse>` | `LEGACY_FUTURE` |
+| `GET /api/shop-products/{shopProductId}` | `PublicShopProductController` | Public visible entry | None | `PublicShopProductResponse` | `LEGACY_FUTURE` |
 
 ## Reservations
 

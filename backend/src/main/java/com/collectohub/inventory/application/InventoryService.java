@@ -219,7 +219,7 @@ public class InventoryService {
         }
 
         return shopProductRepository.findAll(specification, Sort.by("id").ascending()).stream()
-                .filter(this::hasPublicReference)
+                .filter(ShopProduct::hasPublicReference)
                 .map(PublicShopProductResponse::from)
                 .toList();
     }
@@ -229,7 +229,7 @@ public class InventoryService {
         ShopProduct shopProduct = shopProductRepository.findByIdAndDeletedAtIsNull(shopProductId)
                 .filter(ShopProduct::isPubliclyVisible)
                 .filter(product -> product.getShop().isActive())
-                .filter(this::hasPublicReference)
+                .filter(ShopProduct::hasPublicReference)
                 .orElseThrow(() -> new ShopProductNotFoundException(shopProductId));
         return PublicShopProductResponse.from(shopProduct);
     }
@@ -370,15 +370,6 @@ public class InventoryService {
         return request.masterProductId() != null
                 || request.catalogItemId() != null
                 || request.catalogItemEditionId() != null;
-    }
-
-    private boolean hasPublicReference(ShopProduct product) {
-        boolean legacyPublic = product.getMasterProduct() != null && product.getMasterProduct().isActive();
-        boolean editorialPublic = product.getCatalogItem() != null
-                && product.getCatalogItem().isPubliclyVisible()
-                && (product.getCatalogItemEdition() == null
-                || product.getCatalogItemEdition().isPubliclyVisible());
-        return legacyPublic || editorialPublic;
     }
 
     private Long idOf(MasterProduct value) { return value == null ? null : value.getId(); }

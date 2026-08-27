@@ -1,10 +1,12 @@
 # CollectoHub backlog after MVP 1
 
-Estado actual: modo `SUPERVISED_ACTIVE_NO_ENFORCEMENT`, MVP4
-`MVP4_CLOSED_WITH_LIMITATIONS` y las fases 45C-A a 45C-D integradas. Perfil
-profesional, reconciliacion `STAFF`, transferencia de ownership y cierre del
-esquema aditivo requieren EPICs independientes antes de implementarse. El orden
-funcional sigue `docs/01_ROADMAP.md`.
+Estado actual: modo futuro `AUTONOMOUS_DEV_AUTO_MERGE_GUARDED` documentado con
+horario `PAUSED`, MVP4 `MVP4_CLOSED_WITH_LIMITATIONS`, 45B
+`CLOSED_AFTER_45B_FIX` y 45B-FIX `INTEGRATED_IN_DEV`. Las fases 45C-A a 45C-D
+estan integradas, pero 45C permanece `OPEN`. El trabajo restante se divide en
+45C-E a 45C-G y la unica siguiente EPIC es `45C-E`. La transferencia de
+ownership queda `FUTURE / OUT_OF_MVP5`. El orden funcional sigue
+`docs/01_ROADMAP.md`.
 
 ## Must fix antes de ensenar portfolio
 
@@ -21,8 +23,8 @@ Antes de cada demo se debe confirmar:
 Pulido recomendado para portfolio, no bloqueante del MVP:
 
 - anadir capturas reales desktop/mobile a `docs/assets/screenshots/`;
-- revisar las 7 vulnerabilidades npm transitivas/dev con actualizaciones
-  compatibles;
+- revisar las 23 vulnerabilidades npm medidas por 45B-FIX con actualizaciones
+  compatibles; las mediciones de 7 y 16 quedan como evidencia historica;
 - reducir o redefinir conscientemente el budget del bundle inicial;
 - revisar warnings futuros de Mockito/JDK y APIs de test deprecadas.
 
@@ -130,15 +132,13 @@ manual de proteccion de `main`. No cambia producto, dependencias, migraciones ni
 contratos. La proteccion remota queda como accion administrativa supervisada
 fuera del repositorio.
 
-El modelo `dev -> pre -> main` esta activo como
-`SUPERVISED_ACTIVE_NO_ENFORCEMENT`. El commit de activacion
-`5f5c45c6cec89e442c246508eb421ac641f8a967` esta en `origin/main`, `origin/dev`
-y `origin/pre`, y la primera ejecucion supervisada termino correctamente sin
-cambios de producto, commit, push, PR ni fusion. `dev` es la rama de integracion
-efectiva. La automatizacion nunca fusiona, las entregas terminan en
-`HUMAN_MERGE_REQUIRED` y toda fusion es humana. GitHub no aplica protecciones
-enforced y este estado no equivale a `PROTECTED_ACTIVE`. Cualquier PR abierta
-desde `codex/*` o `quality/*` hacia `dev` bloquea otra EPIC.
+El modelo normativo sigue `dev -> pre -> main`. PR #21 promovio incorrectamente
+`dev -> main` mediante squash y omitio `pre`; la reparacion pendiente es una PR
+humana `dev -> pre` seguida de otra `pre -> main`, ambas mediante **Create a
+merge commit**. El futuro modo `AUTONOMOUS_DEV_AUTO_MERGE_GUARDED` permite
+**Squash and merge** automatico solo para `codex/* -> dev` o
+`quality/* -> dev` tras el guard completo. GitHub no aplica protecciones
+enforced y este estado no equivale a `PROTECTED_ACTIVE`.
 
 El horario automatico no se activa en este cierre. QUALITY-B permanece definida
 y no implementada; no compite con la unica siguiente tarea seleccionada.
@@ -171,15 +171,25 @@ EPIC 45A deja auditado y disenado MVP5 en
 `docs/40_MVP5_SHOPS_INVENTORY_RESERVATIONS_DESIGN.md`. No implementa
 funcionalidad. El plan ejecutable queda dividido en 45B-45J.
 
-EPIC 45B esta integrada en `dev`.
+EPIC 45B esta `CLOSED_AFTER_45B_FIX`. PR #22 integro 45B-FIX en `dev` como
+`1c3b26ed00d7d82c5145388b0ee228992644485b`.
 
 **EPIC 45B - Contratos seguros y compatibilidad editorial de reservas.**
 
-45B debe separar DTO publicos e internos de tienda/inventario, impedir que
+45B separa DTO publicos e internos de inventario, impide que
 `notes` internos aparezcan en lectura publica, hacer que reservas y su frontend
 soporten ofertas editoriales puras sin asumir `masterProductId`, preservar
-clientes legacy y anadir regresiones de API, privacidad y autorizacion. No
+clientes legacy y anade regresiones de API, privacidad y autorizacion. No
 implementa todavia locks, holds o idempotencia de stock, reservados a 45G.
+
+**EPIC 45B-FIX - Contratos publicos y coherencia de reservas.**
+
+Estado: `INTEGRATED_IN_DEV`. Elimina
+`stockQuantity` de `PublicShopProductResponse` sin inventar
+`availableQuantity`, comparte entre inventario y reservas la regla de
+referencia publica y prioriza el nombre de edicion/item sobre legacy en
+`ReservationResponse`. Incluye regresiones MVC, de servicio y frontend. No
+implementa holds, locks, migraciones ni trabajo de 45C.
 
 **EPIC 45C - Perfil profesional y miembros de tienda (desglosada).**
 
@@ -189,12 +199,25 @@ implementa todavia locks, holds o idempotencia de stock, reservados a 45G.
 activa existente por email normalizado, admite MANAGER/EMPLOYEE, no devuelve
 datos personales y rechaza duplicados de forma estable. El cambio seguro entre
 MANAGER y EMPLOYEE tambien esta integrado. Estas unidades quedan identificadas
-como 45C-A (lectura), 45C-B (alta) y 45C-C (cambio de rol). La EPIC 45C-D,
-cerrada por esta entrega, permite solo al OWNER desactivar una membership activa
-MANAGER o EMPLOYEE, sin desactivar al OWNER y con auditoria del actor. No existen
-todavia transferencia de ownership, reconciliacion `STAFF`, cierre del esquema
-aditivo ni edicion de perfil profesional; cada alcance restante debe definirse
-como una EPIC independiente antes de implementarse.
+como 45C-A (lectura), 45C-B (alta) y 45C-C (cambio de rol). 45C-D permite solo
+al OWNER desactivar una membership activa MANAGER o EMPLOYEE, sin desactivar al
+OWNER y con auditoria del actor. 45C-A a 45C-D estan integradas.
+
+Trabajo restante:
+
+- **45C-E - Perfil backend y contratos de tienda.** Separar la proyeccion
+  publica del contrato gestionado, endurecer sanitizacion y documentar/validar la
+  edicion ya existente para OWNER/MANAGER. No incluye frontend ni esquema.
+- **45C-F - Compatibilidad y esquema de memberships.** Auditar datos reales
+  antes de decidir migracion `STAFF -> EMPLOYEE`; si existe evidencia, aplicar
+  upgrade aditivo e idempotente. Endurecer constraints solo con pruebas de
+  upgrade que preserven shop, user, status y permisos.
+- **45C-G - Cierre backend de 45C.** Revalidar invariantes, autorizacion,
+  privacidad, compatibilidad y documentacion y cerrar formalmente 45C sin
+  absorber frontend 45D.
+
+`NEXT_EPIC=45C-E`. Transferencia de ownership no es requisito de 45C ni MVP5 y
+permanece `FUTURE / OUT_OF_MVP5`.
 
 ## MVP 6 - Social basico
 
@@ -245,9 +268,9 @@ integracion solo cambia de `main` a `dev` tras verificar que `origin/dev` y
 
 EPIC 44F, EPIC 44G-A a 44G-D-FIX y EPIC 44H-A a 44H-C estan completadas. MVP4
 queda `MVP4_CLOSED_WITH_LIMITATIONS`; los limites se enumeran en
-`docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md`. EPIC 45A, 45B y la fase de lectura de
-miembros de 45C conservan el orden secuencial; no iniciar QUALITY-B ni otra EPIC
-en paralelo mientras exista una entrega abierta.
+`docs/31_MVP4_PARTIAL_CLOSURE_REVIEW.md`. 45B-FIX esta integrada. Tras integrar
+esta reconciliacion y completar las precondiciones operativas, la entrega
+secuencial unica es 45C-E; no iniciar QUALITY-B ni otra EPIC en paralelo.
 
 - No adelantar una fase porque exista una tabla, rol o pantalla legacy.
 - Cada EPIC debe declarar que objetivo de producto valida.

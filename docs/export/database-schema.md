@@ -503,7 +503,7 @@ FK: `fk_shops_owner_user`. Index: `idx_shops_owner_user_id`. Check:
 | `id` | `BIGINT IDENTITY` | Yes | Primary key. |
 | `shop_id` | `BIGINT` | Yes | FK to `shops.id`. |
 | `user_id` | `BIGINT` | Yes | FK to `users.id`. |
-| `role` | `VARCHAR(30)` | Yes | Internal role: `OWNER`, `MANAGER` or `STAFF`. |
+| `role` | `VARCHAR(30)` | Yes | Internal role: `OWNER`, `MANAGER` or `EMPLOYEE`; `STAFF` is a legacy label pending data-evidence audit. |
 | `status` | `VARCHAR(30)` | Yes | Membership state, default `ACTIVE`. |
 | audit set | shared columns | Mixed | Creation, update and soft-delete metadata. |
 

@@ -4,14 +4,14 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { AuthService } from '../../../core/auth/auth.service';
-import { ShopProductResponse } from '../../../core/models/inventory.model';
+import { PublicShopProductResponse } from '../../../core/models/inventory.model';
 import { InventoryService } from '../../../core/services/inventory.service';
 import { ReservationService } from '../../../core/services/reservation.service';
 import { ShopService } from '../../../core/services/shop.service';
 import { ShopProductDetailComponent } from './shop-product-detail.component';
 
 describe('ShopProductDetailComponent', () => {
-  const product: ShopProductResponse = {
+  const product: PublicShopProductResponse = {
     id: 11,
     shopId: 9,
     masterProductId: 5,
@@ -22,13 +22,11 @@ describe('ShopProductDetailComponent', () => {
     masterProductVolumeNumber: '1',
     priceAmount: 12.95,
     currency: 'EUR',
-    stockQuantity: 3,
     commercialStatus: 'AVAILABLE',
     physicalCondition: 'NEW',
     visible: true,
     unitNumber: null,
-    totalLimitedUnits: null,
-    notes: 'Public note'
+    totalLimitedUnits: null
   };
 
   let reservationService: {
@@ -127,6 +125,7 @@ describe('ShopProductDetailComponent', () => {
     expect(compiled.textContent).toContain('One Piece 1');
     expect(compiled.textContent).toContain('Akihabara Store');
     expect(compiled.textContent).toContain('12.95 EUR');
+    expect(compiled.textContent).not.toMatch(/3 (en stock|in stock)/);
   });
 
   it('creates a reservation for authenticated user', async () => {

@@ -3,6 +3,7 @@ package com.collectohub.reservations.application;
 import com.collectohub.auth.security.AuthenticatedUser;
 import com.collectohub.catalog.domain.MasterProduct;
 import com.collectohub.catalog.domain.CatalogItem;
+import com.collectohub.catalog.domain.CatalogItemEdition;
 import com.collectohub.catalog.domain.ProductCategory;
 import com.collectohub.inventory.application.ShopProductNotFoundException;
 import com.collectohub.inventory.domain.PhysicalCondition;
@@ -34,6 +35,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -108,6 +110,7 @@ class ReservationServiceTest {
         assertThat(response.shopId()).isEqualTo(500L);
         assertThat(response.quantity()).isEqualTo(1);
         assertThat(response.status()).isEqualTo("PENDING");
+        assertThat(response.productName()).isEqualTo("Dragon Ball 1");
         assertThat(response.expiresAt()).isNotNull();
     }
 
@@ -133,6 +136,126 @@ class ReservationServiceTest {
         assertThat(response.masterProductId()).isNull();
         assertThat(response.productName()).isEqualTo("Akira 1");
         assertThat(response.catalogItemId()).isEqualTo(501L);
+    }
+
+    @Test
+    void createsReservationWhenInactiveLegacyReferenceHasPublicEditorialReference() {
+        MasterProduct inactiveLegacy = masterProduct(201L);
+        ReflectionTestUtils.setField(inactiveLegacy, "deletedAt", Instant.now());
+        CatalogItem catalogItem = mock(CatalogItem.class);
+        when(catalogItem.getId()).thenReturn(501L);
+        when(catalogItem.getTitle()).thenReturn("Akira 1");
+        when(catalogItem.isPubliclyVisible()).thenReturn(true);
+        ShopProduct bridgedProduct = referencedShopProduct(902L, inactiveLegacy, catalogItem, null);
+        when(userRepository.findById(42L)).thenReturn(Optional.of(user));
+        when(shopProductRepository.findByIdAndDeletedAtIsNull(902L)).thenReturn(Optional.of(bridgedProduct));
+        when(reservationRepository.save(any(Reservation.class)))
+                .thenAnswer(invocation -> withId(invocation.getArgument(0), 702L));
+
+        var response = reservationService.createReservation(
+                AuthenticatedUser.from(user), new CreateReservationRequest(902L, 1, null));
+
+        assertThat(response.productName()).isEqualTo("Akira 1");
+        assertThat(response.catalogItemId()).isEqualTo(501L);
+    }
+
+    @Test
+    void productWithoutAnyPublicReferenceCannotBeReserved() {
+        MasterProduct inactiveLegacy = masterProduct(201L);
+        ReflectionTestUtils.setField(inactiveLegacy, "deletedAt", Instant.now());
+        CatalogItem archivedItem = mock(CatalogItem.class);
+        ShopProduct privateProduct = referencedShopProduct(903L, inactiveLegacy, archivedItem, null);
+        when(userRepository.findById(42L)).thenReturn(Optional.of(user));
+        when(shopProductRepository.findByIdAndDeletedAtIsNull(903L)).thenReturn(Optional.of(privateProduct));
+
+        assertThatThrownBy(() -> reservationService.createReservation(
+                AuthenticatedUser.from(user), new CreateReservationRequest(903L, 1, null)
+        )).isInstanceOf(ReservationUnavailableException.class);
+    }
+
+    @Test
+    void reservationProductNamePrefersEditionThenEditorialItemBeforeLegacy() {
+        CatalogItem catalogItem = mock(CatalogItem.class);
+        when(catalogItem.getId()).thenReturn(501L);
+        when(catalogItem.getTitle()).thenReturn("Akira 1");
+        when(catalogItem.isPubliclyVisible()).thenReturn(true);
+        CatalogItemEdition edition = mock(CatalogItemEdition.class);
+        when(edition.getId()).thenReturn(601L);
+        when(edition.getEditionName()).thenReturn("Deluxe edition");
+        when(edition.isPubliclyVisible()).thenReturn(true);
+        ShopProduct bridgedProduct = referencedShopProduct(904L, masterProduct, catalogItem, edition);
+        when(userRepository.findById(42L)).thenReturn(Optional.of(user));
+        when(shopProductRepository.findByIdAndDeletedAtIsNull(904L)).thenReturn(Optional.of(bridgedProduct));
+        when(reservationRepository.save(any(Reservation.class)))
+                .thenAnswer(invocation -> withId(invocation.getArgument(0), 704L));
+
+        var response = reservationService.createReservation(
+                AuthenticatedUser.from(user), new CreateReservationRequest(904L, 1, null));
+
+        assertThat(response.productName()).isEqualTo("Deluxe edition");
+        assertThat(response.catalogItemTitle()).isEqualTo("Akira 1");
+        assertThat(response.masterProductId()).isEqualTo(200L);
+    }
+
+    @Test
+    void createsReservationForPureEditorialEditionProduct() {
+        CatalogItem catalogItem = mock(CatalogItem.class);
+        when(catalogItem.getId()).thenReturn(501L);
+        when(catalogItem.getTitle()).thenReturn("Akira 1");
+        when(catalogItem.isPubliclyVisible()).thenReturn(true);
+        CatalogItemEdition edition = mock(CatalogItemEdition.class);
+        when(edition.getId()).thenReturn(601L);
+        when(edition.getEditionName()).thenReturn("Deluxe edition");
+        when(edition.isPubliclyVisible()).thenReturn(true);
+        ShopProduct editorialProduct = referencedShopProduct(906L, null, catalogItem, edition);
+        when(userRepository.findById(42L)).thenReturn(Optional.of(user));
+        when(shopProductRepository.findByIdAndDeletedAtIsNull(906L)).thenReturn(Optional.of(editorialProduct));
+        when(reservationRepository.save(any(Reservation.class)))
+                .thenAnswer(invocation -> withId(invocation.getArgument(0), 706L));
+
+        var response = reservationService.createReservation(
+                AuthenticatedUser.from(user), new CreateReservationRequest(906L, 1, null));
+
+        assertThat(response.masterProductId()).isNull();
+        assertThat(response.catalogItemEditionId()).isEqualTo(601L);
+        assertThat(response.productName()).isEqualTo("Deluxe edition");
+    }
+
+    @Test
+    void nonPublicEditionMakesEditorialReferenceUnavailable() {
+        CatalogItem catalogItem = mock(CatalogItem.class);
+        when(catalogItem.isPubliclyVisible()).thenReturn(true);
+        CatalogItemEdition archivedEdition = mock(CatalogItemEdition.class);
+        when(archivedEdition.isPubliclyVisible()).thenReturn(false);
+        ShopProduct privateProduct = referencedShopProduct(907L, null, catalogItem, archivedEdition);
+        when(userRepository.findById(42L)).thenReturn(Optional.of(user));
+        when(shopProductRepository.findByIdAndDeletedAtIsNull(907L)).thenReturn(Optional.of(privateProduct));
+
+        assertThatThrownBy(() -> reservationService.createReservation(
+                AuthenticatedUser.from(user), new CreateReservationRequest(907L, 1, null)
+        )).isInstanceOf(ReservationUnavailableException.class);
+    }
+
+    @Test
+    void reservationProductNameFallsBackFromBlankEditionToEditorialItem() {
+        CatalogItem catalogItem = mock(CatalogItem.class);
+        when(catalogItem.getId()).thenReturn(501L);
+        when(catalogItem.getTitle()).thenReturn("Akira 1");
+        when(catalogItem.isPubliclyVisible()).thenReturn(true);
+        CatalogItemEdition edition = mock(CatalogItemEdition.class);
+        when(edition.getId()).thenReturn(601L);
+        when(edition.getEditionName()).thenReturn("   ");
+        when(edition.isPubliclyVisible()).thenReturn(true);
+        ShopProduct bridgedProduct = referencedShopProduct(905L, masterProduct, catalogItem, edition);
+        when(userRepository.findById(42L)).thenReturn(Optional.of(user));
+        when(shopProductRepository.findByIdAndDeletedAtIsNull(905L)).thenReturn(Optional.of(bridgedProduct));
+        when(reservationRepository.save(any(Reservation.class)))
+                .thenAnswer(invocation -> withId(invocation.getArgument(0), 705L));
+
+        var response = reservationService.createReservation(
+                AuthenticatedUser.from(user), new CreateReservationRequest(905L, 1, null));
+
+        assertThat(response.productName()).isEqualTo("Akira 1");
     }
 
     @Test
@@ -470,6 +593,31 @@ class ReservationServiceTest {
                 commercialStatus,
                 PhysicalCondition.NEW,
                 visible,
+                null,
+                null,
+                null,
+                owner.getId()
+        ), id);
+    }
+
+    private ShopProduct referencedShopProduct(
+            Long id,
+            MasterProduct legacy,
+            CatalogItem catalogItem,
+            CatalogItemEdition edition
+    ) {
+        return withId(ShopProduct.create(
+                shop,
+                legacy,
+                catalogItem,
+                edition,
+                ShopProductEditorialReferenceSource.VERIFIED_BRIDGE,
+                BigDecimal.TEN,
+                "EUR",
+                3,
+                ShopProductCommercialStatus.AVAILABLE,
+                PhysicalCondition.NEW,
+                true,
                 null,
                 null,
                 null,
