@@ -201,3 +201,27 @@ activating the scheduler.
 - scheduler: PAUSED
 - autonomous merge authority: NOT ACTIVE
 - NEXT_EPIC remains: 45C-E
+
+### Immutable execution evidence
+
+- dry-run branch: `quality/manual-supervised-automation-dry-run`
+- dry-run base branch: `dev`
+- fetched `origin/dev` SHA used by the run:
+  `0c0bbddbb456143321b2521cbb96244c505c9cd0`
+- fetched `origin/pre` SHA used for ancestry validation:
+  `0c9335ad408a5fbf7ecc05f6b03c0e087039b41b`
+- fetched `origin/main` SHA used for ancestry validation:
+  `60076de6406939c002fa787a3da1cd9844002d67`
+- dry-run branch base SHA:
+  `0c0bbddbb456143321b2521cbb96244c505c9cd0`
+- `DRY_RUN_EXECUTION_HEAD`, reviewed by Codex before this correction:
+  `b8f99ed0d3dda71d33ad447d34a8e944ed782a07`
+- topology assertion validated for those exact SHAs:
+  `0c0bbddbb456143321b2521cbb96244c505c9cd0 (dev) ->
+  0c9335ad408a5fbf7ecc05f6b03c0e087039b41b (pre) ->
+  60076de6406939c002fa787a3da1cd9844002d67 (main)`
+
+The correction commit produced after this evidence was reviewed is the
+`REVIEW_FIX_HEAD`; it is intentionally distinct from the original
+`DRY_RUN_EXECUTION_HEAD` above and does not replace the historical execution
+SHA.
