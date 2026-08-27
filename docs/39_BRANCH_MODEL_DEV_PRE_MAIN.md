@@ -127,18 +127,42 @@ if ($LASTEXITCODE -ne 0) {
 if ($worktreeStatus.Count -ne 0) {
     throw "Working tree is not clean. Automation must stop."
 }
-$pendingJson = gh pr list --repo AlbertoSoriaCarrillo/collectohub --state open --base dev --json number,headRefName
+$pendingPagesJson = @(
+    gh api --paginate --slurp `
+        -H "Accept: application/vnd.github+json" `
+        "/repos/AlbertoSoriaCarrillo/collectohub/pulls?state=open&base=dev&per_page=100"
+)
 if ($LASTEXITCODE -ne 0) {
     throw "Unable to query pending delivery pull requests. Automation must stop."
 }
 try {
-    $pendingPullRequests = @($pendingJson | ConvertFrom-Json -ErrorAction Stop)
+    $pendingPages = ConvertFrom-Json `
+        -InputObject ($pendingPagesJson -join [Environment]::NewLine) `
+        -NoEnumerate `
+        -ErrorAction Stop
 } catch {
     throw "Unable to parse pending delivery pull requests. Automation must stop."
 }
+if ($null -eq $pendingPages -or $pendingPages -isnot [System.Array]) {
+    throw "Incomplete pending delivery response. Automation must stop."
+}
+$pendingPullRequests = @()
+foreach ($page in $pendingPages) {
+    if ($null -eq $page -or $page -isnot [System.Array]) {
+        throw "Incomplete pending delivery page. Automation must stop."
+    }
+    foreach ($pullRequest in $page) {
+        if ($null -eq $pullRequest.base.ref -or $null -eq $pullRequest.head.ref) {
+            throw "Incomplete pending delivery pull request. Automation must stop."
+        }
+        $pendingPullRequests += $pullRequest
+    }
+}
 $pendingDeliveries = @(
     $pendingPullRequests | Where-Object {
-        $_.headRefName.StartsWith('codex/') -or $_.headRefName.StartsWith('quality/')
+        $_.base.ref -eq 'dev' -and (
+            $_.head.ref.StartsWith('codex/') -or $_.head.ref.StartsWith('quality/')
+        )
     }
 )
 if ($pendingDeliveries.Count -ne 0) {
@@ -182,12 +206,16 @@ vacio produce `EPIC_BLOCKED`: no se cambia de rama, no se hace pull, no se
 modifica nada y no se intenta ocultar el cambio mediante reset o clean
 automaticos.
 
-Antes de `fetch`, `switch` o `pull`, la consulta autenticada a GitHub debe
-completar correctamente y su JSON debe poder analizarse. Un fallo de red, API,
-autenticacion o parsing produce `EPIC_BLOCKED`; nunca equivale a cero PR. Debe
-existir cero PR abierta con base `dev` y head `codex/*` o `quality/*`. Cualquier
-coincidencia produce `PENDING_DELIVERY_EXISTS` y detiene la ejecucion sin cambiar
-ni actualizar `dev`.
+Antes de `fetch`, `switch` o `pull`, `gh api --paginate --slurp` recorre todas
+las paginas de PR abiertas hacia `dev`, sin depender del limite predeterminado
+de 30 de `gh pr list` ni asumir un maximo arbitrario. La consulta autenticada
+debe completar correctamente, el JSON agregado debe poder analizarse como una
+lista de paginas y cada PR debe incluir `base.ref` y `head.ref`. Un fallo de red,
+API, autenticacion, paginacion, parsing o respuesta incompleta produce
+`EPIC_BLOCKED`; una respuesta parcial nunca equivale a cero PR. Debe existir
+cero PR abierta con base `dev` y head `codex/*` o `quality/*`. Cualquier
+coincidencia produce `PENDING_DELIVERY_EXISTS` y detiene la ejecucion sin
+cambiar ni actualizar `dev`.
 
 Solo con cero entregas pendientes se sincroniza `dev`. Los fallos de `fetch`,
 `switch`, `pull` o de resolucion de refs producen `EPIC_BLOCKED` de inmediato.

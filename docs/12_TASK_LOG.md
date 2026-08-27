@@ -2707,6 +2707,11 @@ Siguiente paso: crear el backend en la carpeta backend.
   pendientes se ejecuta y analiza antes de actualizar `dev`; cualquier fallo
   produce `EPIC_BLOCKED` y una coincidencia produce
   `PENDING_DELIVERY_EXISTS` sin cambiar ni actualizar la rama.
+- La revision sobre `1bb27b8914c3b2ed4271e9b85086b9c4f2b31115`
+  detecto el limite predeterminado de 30 resultados. La consulta usa ahora
+  `gh api --paginate --slurp`, agrega todas las paginas y valida su estructura
+  y los campos de cada PR. Cualquier fallo o respuesta parcial produce
+  `EPIC_BLOCKED` antes de cambiar o actualizar `dev`.
 
 ## 2026-08-02 - Activacion documental del modo supervisado sin enforcement
 

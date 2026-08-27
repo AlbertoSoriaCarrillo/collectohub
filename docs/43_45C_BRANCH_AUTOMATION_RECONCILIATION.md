@@ -155,6 +155,12 @@ operations. It also queries and parses pending delivery PRs before any
 `fetch`, `switch` or `pull`; lookup failure blocks the run, and a matching PR
 produces `PENDING_DELIVERY_EXISTS` without updating `dev`.
 
+The review on `1bb27b8914c3b2ed4271e9b85086b9c4f2b31115` found one final P2.
+The pending-delivery query now uses `gh api --paginate --slurp` to retrieve
+every page of open PRs toward `dev`, validates the aggregated page and PR
+structure, and fails closed on API, pagination, JSON or incomplete-response
+errors before any mutation of `dev`.
+
 ## Validation
 
 - `git diff --check`: `PASS`.
