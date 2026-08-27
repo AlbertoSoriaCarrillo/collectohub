@@ -152,7 +152,9 @@ class InventoryControllerSecurityTest {
         mockMvc.perform(get("/api/shops/100/products/my")
                         .header("Authorization", "Bearer " + ownerToken()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(300));
+                .andExpect(jsonPath("$[0].id").value(300))
+                .andExpect(jsonPath("$[0].stockQuantity").value(2))
+                .andExpect(jsonPath("$[0].notes").value("Internal shelf"));
     }
 
     @Test
@@ -164,7 +166,24 @@ class InventoryControllerSecurityTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].visible").value(true))
                 .andExpect(jsonPath("$[0].commercialStatus").value("AVAILABLE"))
-                .andExpect(jsonPath("$[0].notes").doesNotExist());
+                .andExpect(jsonPath("$[0].stockQuantity").doesNotExist())
+                .andExpect(jsonPath("$[0].notes").doesNotExist())
+                .andExpect(jsonPath("$[0].createdBy").doesNotExist())
+                .andExpect(jsonPath("$[0].updatedBy").doesNotExist());
+    }
+
+    @Test
+    void publicEditorialProductDetailDoesNotExposeInternalFields() throws Exception {
+        when(inventoryService.getPublicShopProduct(301L)).thenReturn(editorialPublicShopProductResponse());
+
+        mockMvc.perform(get("/api/shop-products/301"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.catalogItemId").value(500))
+                .andExpect(jsonPath("$.catalogItemEditionId").value(600))
+                .andExpect(jsonPath("$.stockQuantity").doesNotExist())
+                .andExpect(jsonPath("$.notes").doesNotExist())
+                .andExpect(jsonPath("$.createdBy").doesNotExist())
+                .andExpect(jsonPath("$.updatedBy").doesNotExist());
     }
 
     @Test
@@ -273,6 +292,40 @@ class InventoryControllerSecurityTest {
                 "NEW",
                 true,
                 null,
+                null,
+                "Internal shelf"
+        );
+    }
+
+    private PublicShopProductResponse editorialPublicShopProductResponse() {
+        return new PublicShopProductResponse(
+                301L,
+                100L,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                500L,
+                "Akira 1",
+                "1",
+                400L,
+                "Akira",
+                600L,
+                "Deluxe edition",
+                "PAPERBACK",
+                "9788490000001",
+                null,
+                null,
+                "Planeta",
+                null,
+                "MANUAL_EDITORIAL",
+                new BigDecimal("14.99"),
+                "EUR",
+                "AVAILABLE",
+                "NEW",
+                true,
                 null,
                 null
         );

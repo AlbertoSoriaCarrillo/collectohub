@@ -1,5 +1,87 @@
 # Registro de avance
 
+## 2026-08-26 - Reconciliacion 45C, ramas y automatizacion
+
+- Working copy canonico configurado localmente mediante
+  `COLLECTOHUB_WORKTREE`; su valor no se versiona para evitar exponer rutas con
+  identificadores personales. Remoto: `AlbertoSoriaCarrillo/collectohub`.
+- PR #22 integro 45B-FIX en `dev` como
+  `1c3b26ed00d7d82c5145388b0ee228992644485b`, desde el head validado
+  `27ede189518d451b83a7af121c31cb4e03ea8cd8`, con siete checks en `SUCCESS`.
+  45B queda `CLOSED_AFTER_45B_FIX`; 45B-FIX, `INTEGRATED_IN_DEV`.
+- 45C-A a 45C-D estan integradas y 45C permanece `OPEN`. El trabajo restante se
+  separa en 45C-E (perfil backend y contratos publico/gestionado), 45C-F
+  (evidencia `STAFF -> EMPLOYEE`, esquema/upgrade aditivo) y 45C-G (cierre
+  backend). `NEXT_EPIC=45C-E`. Transferencia de ownership queda
+  `FUTURE / OUT_OF_MVP5`.
+- Refs auditadas: `dev=1c3b26e`, `pre=5f5c45c`, `main=b3876ad`. PR #21 omitio
+  `pre` mediante squash; el arbol de `main@b3876ad` coincide con
+  `dev@42c8998`, pero `dev` no es ancestro de `pre`. La reparacion documentada,
+  no ejecutada, es `dev -> pre -> main` con dos promociones humanas y **Create a
+  merge commit**.
+- Modo futuro documentado: `AUTONOMOUS_DEV_AUTO_MERGE_GUARDED`, solo para
+  `codex/* -> dev` y `quality/* -> dev`. Las promociones permanentes siguen
+  `HUMAN ONLY`. El horario permanece `PAUSED` y esta PR de proceso requiere
+  `HUMAN_MERGE_REQUIRED`.
+- Validacion documental: `git diff --check` y
+  `scripts/quality/verify.ps1 -BaseRef origin/dev -DocumentationOnly`, `PASS`.
+  La matriz completa tambien termino en `PASS`; E2E/Playwright:
+  `SKIPPED_WITH_REASON` por exclusion expresa.
+- La primera review Codex detecto cuatro observaciones validas: autoridad humana
+  vigente, carrera del base SHA, ruta personal versionada y referencias legacy
+  `STAFF` restantes. Se corrigieron en la misma rama; el modo futuro queda
+  inactivo hasta disponer de guard atomico de base y adaptar la politica raiz.
+- La segunda review detecto autoridad de merge incoherente, comprobacion tardia
+  del worktree y validacion insuficiente para contratos/comandos documentados.
+  Se corrigieron las dos reglas y se ejecuto la matriz completa: backend 466
+  tests, 0 fallos/errores y 4 `SKIPPED_WITH_REASON` por Docker no disponible;
+  frontend 59 archivos/244 tests y build `PASS`; 23 vulnerabilidades conocidas,
+  sin `npm audit fix`. E2E/Playwright permanecio excluido.
+- La tercera review distinguio un guard atomico ausente de un movimiento real
+  de la base: `BASE_GUARD_UNAVAILABLE` bloquea la fusion automatica cuando el
+  guard no puede demostrarse; `BASE_MOVED_HUMAN_ACTION_REQUIRED` queda reservado
+  para un cambio observado de `origin/dev`.
+- La review final sobre `d6dcac2f4afa79ae5c904e4fa6f6a29868a1e391`
+  detecto dos P1 adicionales. El preflight comprueba ahora de forma ejecutable
+  el resultado de Git y aborta ante cualquier salida de `status --porcelain`
+  antes de switch/pull. La activacion supervisada historica queda `COMPLETED`,
+  mientras la transicion `AUTONOMOUS_DEV_AUTO_MERGE_GUARDED` permanece
+  `PENDING`, con horario pausado, autoridad humana y `AGENTS.md` vigente.
+
+## 2026-08-26 - EPIC 45B-FIX - Contratos publicos y coherencia de reservas
+
+- Base `42c8998608d4bbcb8b241fdbf760ce59f4ab0712`; rama
+  `codex/45b-fix-post-review`. La entrega reabre el cierre de 45B tras una
+  revision tardia y no inicia ningun alcance de 45C.
+- `PublicShopProductResponse` deja de exponer `stockQuantity`, `notes` y
+  auditoria. El inventario gestionado conserva stock y notas; no se inventa
+  `availableQuantity` antes de los holds de 45G. Las dos vistas frontend
+  publicas dejan de mostrar el stock fisico.
+- `ShopProduct.hasPublicReference()` concentra la regla ya usada por inventario:
+  master activo OR item editorial publico con edicion publica cuando exista.
+  Reservas delega en la misma regla, por lo que un bridge con master inactivo y
+  referencia editorial publica vuelve a ser reservable.
+- `ReservationResponse.productName` usa el primer valor no vacio entre nombre de
+  edicion, titulo de item y nombre legacy, sin asumir referencias no nulas.
+- Regresion previa demostrada: JSON publico con stock, bridge editorial
+  rechazado, prioridad legacy incorrecta y UI publica mostrando stock. Validacion
+  dirigida final: backend 79 tests y frontend 9 tests, sin fallos ni omitidos.
+- Backend completo: 466 tests, 0 fallos, 0 errores y 4
+  `SKIPPED_WITH_REASON` porque Docker Desktop no estaba activo; esta FIX no toca
+  persistencia ni migraciones. Frontend completo: 59 archivos/244 tests y build
+  correcto. `npm ci` conserva 23 vulnerabilidades conocidas; no se ejecuto
+  `npm audit fix`.
+- Verificador integral contra `origin/dev`: `PASS`; diff, conflictos, tests
+  eliminados/ignorados y parser PowerShell tambien quedaron verdes.
+- Pruebas nuevas: 9 casos backend. Pruebas modificadas: regresiones JSON,
+  servicio legacy y dos consumidores frontend. Pruebas eliminadas: 0. Pruebas
+  ignoradas nuevas: 0. Migraciones, dependencias, manifests, lockfiles,
+  workflows, Docker y secretos: 0.
+- Estado posterior: PR #22 integro esta FIX en `dev`; 45B queda
+  `CLOSED_AFTER_45B_FIX` y 45B-FIX `INTEGRATED_IN_DEV`. La promocion incorrecta
+  de PR #21 se reconcilia documentalmente en la entrada posterior de este mismo
+  dia.
+
 ## 2026-08-07 - EPIC 45C-D - Desactivacion segura de miembros
 
 - Anadido `DELETE /api/shops/{shopId}/members/{memberId}` para que solo un
@@ -2612,6 +2694,30 @@ Siguiente paso: crear el backend en la carpeta backend.
   migraciones, Docker, datos locales, cuentas, credenciales, tests eliminados,
   tests ignorados nuevos, E2E ni Playwright. No se configuran protecciones
   remotas, no se fusiona ninguna PR y no se inicia otra tarea.
+- La revision Codex sobre
+  `6ad44d150a918a00119ddd6cc9c6bf15005a7bfb` detecto el ultimo P1 de
+  sincronizacion de `dev`. El preflight compartido ahora falla cerrado si
+  `fetch`, `switch` o `pull` devuelven error, si no puede resolver `HEAD` u
+  `origin/dev`, o si ambos SHA no coinciden. En cualquiera de esos casos el
+  resultado es `EPIC_BLOCKED` y no se inicia otra EPIC.
+- La revision sobre `b63575ffc83b3b411e3922a330ef5c3531a77a37`
+  detecto dos P2 finales. La configuracion y existencia de
+  `COLLECTOHUB_WORKTREE`, el cambio de directorio fail-closed y el remoto
+  esperado se validan antes de otras operaciones Git. La consulta de entregas
+  pendientes se ejecuta y analiza antes de actualizar `dev`; cualquier fallo
+  produce `EPIC_BLOCKED` y una coincidencia produce
+  `PENDING_DELIVERY_EXISTS` sin cambiar ni actualizar la rama.
+- La revision sobre `1bb27b8914c3b2ed4271e9b85086b9c4f2b31115`
+  detecto el limite predeterminado de 30 resultados. La consulta usa ahora
+  `gh api --paginate --slurp`, agrega todas las paginas y valida su estructura
+  y los campos de cada PR. Cualquier fallo o respuesta parcial produce
+  `EPIC_BLOCKED` antes de cambiar o actualizar `dev`.
+- La revision sobre `54f22ed8f79669b8dde81e391ac38092f1384c6c`
+  detecto que `ConvertFrom-Json -NoEnumerate` no existe en Windows PowerShell
+  5.1. El JSON paginado se envuelve ahora en un objeto cuya propiedad `pages`
+  conserva el array exterior. El bloque se comprobo realmente con
+  `powershell.exe` 5.1 para pagina vacia, PR normal, `codex/*`, `quality/*`,
+  multiples paginas, JSON invalido y campo requerido ausente.
 
 ## 2026-08-02 - Activacion documental del modo supervisado sin enforcement
 

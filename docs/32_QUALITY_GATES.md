@@ -1,18 +1,23 @@
 # CollectoHub quality gates
 
 Date established: 2026-07-31
-Last operational update: 2026-08-02
+Last operational update: 2026-08-26
 Scope: permanent repository policy, local verification, CI, pull requests, and auditable evidence.
 
 An EPIC is not complete merely because code exists. Closure requires the checks applicable to its actual diff, real evidence, a focused pull request, and green required checks. An unexecuted requirement is `SKIPPED_WITH_REASON`, `NOT_RUN`, or `BLOCKED`; it is never `PASS`.
 
-The current delivery mode is `SUPERVISED_ACTIVE_NO_ENFORCEMENT`. `dev` is the effective integration branch. GitHub does not enforce branch protection or rulesets for this private repository on the current plan, so checks and merge rules are enforced procedurally by Codex and human review. This state is not `PROTECTED_ACTIVE`.
+The documented target delivery mode is `AUTONOMOUS_DEV_AUTO_MERGE_GUARDED`.
+`dev` is the effective integration branch. GitHub does not enforce branch
+protection or rulesets for this private repository on the current plan, so the
+guard remains procedural and is not `PROTECTED_ACTIVE`. Scheduled execution is
+still `PAUSED` pending the prerequisites in
+`docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md`.
 
 ## Current tooling audit
 
 The repository currently has Java 25, Maven Wrapper, Spring Boot tests, PostgreSQL Testcontainers, Angular 21, Vitest through the Angular unit-test builder, Prettier, and the pre-existing `.github/workflows/ci.yml`. Testcontainers tests use `disabledWithoutDocker = true`, so Docker-dependent evidence must report a skip honestly when Docker is unavailable.
 
-There is no configured JaCoCo threshold, frontend coverage gate, ESLint, Java static-analysis plugin, dependency scanner, or secret scanner. Prettier exists but no repository-wide format gate was previously defined. The lockfile exposes optional Vitest coverage peers but the project does not declare or configure a coverage provider. E2E and Playwright remain postponed. The latest recorded npm installation reported 16 historical vulnerabilities; QUALITY-A does not reclassify or repair them and forbids `npm audit fix` and `npm audit fix --force`.
+There is no configured JaCoCo threshold, frontend coverage gate, ESLint, Java static-analysis plugin, dependency scanner, or secret scanner. Prettier exists but no repository-wide format gate was previously defined. The lockfile exposes optional Vitest coverage peers but the project does not declare or configure a coverage provider. E2E and Playwright remain postponed. The latest recorded npm installation reported 23 vulnerabilities; the previous 16 are historical evidence. This policy does not reclassify or repair them and forbids `npm audit fix` and `npm audit fix --force`.
 
 ## Universal evidence rules
 
@@ -21,8 +26,12 @@ There is no configured JaCoCo threshold, frontend coverage gate, ESLint, Java st
 - Never weaken a check or assertion to obtain green output.
 - A required check that cannot run blocks commit. An intentionally inapplicable check must have a precise reason.
 - Local success permits pushing only a temporary `codex/*` or `quality/*` branch.
-- A delivery pull request targets `dev` and requires all seven remote checks in `SUCCESS`, final self-review, exact `expected_head_sha`, and human authorization before merge.
-- The automation never merges, never enables auto-merge, and never pushes directly to `dev`, `pre`, or `main`.
+- A delivery pull request targets `dev` and requires all seven remote checks in
+  `SUCCESS`, final self-review, exact `expected_head_sha`, ten minutes since
+  ready-for-review, and a fresh re-query of every guarded condition.
+- The automation may squash-merge only `codex/* -> dev` or `quality/* -> dev`
+  under the complete guarded contract. It never uses GitHub native auto-merge,
+  never pushes directly to a permanent branch, and never merges promotions.
 - Use `docs/templates/EPIC_QUALITY_EVIDENCE.md` for durable EPIC evidence.
 
 ## Quality matrix
@@ -102,7 +111,7 @@ powershell-parse
 
 The workflows detect structural, backend, frontend, policy, parser, and verification failures. GitHub does not technically prevent merge on this private repository under the current plan. Therefore, a red, pending, absent, or stale result blocks human authorization procedurally. The reviewer must confirm all seven checks against the current head SHA immediately before merge.
 
-A temporary delivery pull request into `dev` uses manual **Squash and merge** only after:
+A temporary delivery pull request into `dev` uses **Squash and merge** only after:
 
 - exact base `dev`;
 - head equal to the recorded `expected_head_sha`;
@@ -110,9 +119,17 @@ A temporary delivery pull request into `dev` uses manual **Squash and merge** on
 - seven checks in `SUCCESS`;
 - self-review without blocking findings;
 - zero unresolved conversations;
+- zero `CHANGES_REQUESTED` reviews;
+- at least ten minutes since ready-for-review followed by a fresh GitHub query;
 - no post-review changes.
 
-The automation must finish with `HUMAN_MERGE_REQUIRED`. It must not merge, close the pull request, enable auto-merge, delete the branch, or update permanent branches directly.
+The full 31-condition decision gate is normative in
+`docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md`. If every condition passes, guarded
+automation may squash-merge the temporary branch, must not delete it
+automatically, must re-synchronize `dev`, and reports `EPIC_MERGED_TO_DEV`. If
+any condition fails it does not merge and reports the applicable blocking
+state. A process-policy PR that explicitly requires human review finishes with
+`HUMAN_MERGE_REQUIRED`.
 
 Promotions `dev -> pre` and `pre -> main` are outside ordinary EPIC delivery and follow `docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md`.
 
@@ -137,6 +154,10 @@ Only after the prior delivery pull request is reviewed and merged or closed may 
 
 ## Current Codex automation contract
 
+While scheduled execution is `PAUSED` and root `AGENTS.md` retains the
+supervised policy, this is the active fail-closed contract. The guarded merge
+steps above are a future activation target, not current authority.
+
 Before starting an EPIC, Codex must:
 
 1. Query GitHub for open `codex/*` or `quality/*` pull requests with base `dev`.
@@ -147,10 +168,18 @@ Before starting an EPIC, Codex must:
 6. Run the applicable tests and `scripts/quality/verify.ps1 -BaseRef origin/dev`.
 7. Push only the temporary branch and open a pull request with base `dev`.
 8. Wait for the seven required checks, perform self-review, and record the current head as `expected_head_sha`.
-9. Finish with `HUMAN_MERGE_REQUIRED` and stop without merging or starting another EPIC.
+9. Wait at least ten minutes after ready-for-review and re-query head, base, diff,
+   checks, reviews and conversations.
+10. Report `HUMAN_MERGE_REQUIRED` and stop without merging or starting another
+    EPIC.
+
+Only after root policy is explicitly adapted, branch ancestry is repaired, and
+an atomic base-SHA guard is available may a separate supervised activation test
+replace step 10 with the guarded squash-merge outcome described above.
 
 ## QUALITY-B definition (not implemented)
 
-`EPIC QUALITY-B - Coverage, static analysis, and dependency security` will establish baselines from measured results before choosing thresholds. It should add JaCoCo, compatible Vitest/Angular coverage, a no-coverage-regression policy, Java static analysis, frontend lint, secret scanning, and dependency assessment with an explicit baseline for existing vulnerabilities. It must review the 16 historically recorded npm vulnerabilities under controlled updates, prohibit automatic fixes, and introduce gradual thresholds. It must not invent percentages or impose an arbitrary 100% target.
+`EPIC QUALITY-B - Coverage, static analysis, and dependency security` will establish baselines from measured results before choosing thresholds. It should add JaCoCo, compatible Vitest/Angular coverage, a no-coverage-regression policy, Java static analysis, frontend lint, secret scanning, and dependency assessment with an explicit baseline for existing vulnerabilities. It must review the current 23-vulnerability measurement and retain the previous 16 as historical evidence, prohibit automatic fixes, and introduce gradual thresholds. It must not invent percentages or impose an arbitrary 100% target.
 
-QUALITY-B remains defined but not implemented. The single next documented task is EPIC 45A, a documentation-only audit and executable design for MVP5 shops, editorial inventory, and reservations. This quality-gates correction does not start EPIC 45A.
+QUALITY-B remains defined but not implemented. It does not displace the active
+MVP5 sequence; the single next documented product task is EPIC 45C-E.

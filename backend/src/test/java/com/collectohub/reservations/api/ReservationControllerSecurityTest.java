@@ -31,6 +31,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -80,6 +81,26 @@ class ReservationControllerSecurityTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(700))
                 .andExpect(jsonPath("$.status").value("PENDING"));
+    }
+
+    @Test
+    void serializesEditorialReservationWithNullableLegacyFields() throws Exception {
+        when(reservationService.createReservation(any(), any())).thenReturn(editorialReservationResponse());
+
+        mockMvc.perform(post("/api/reservations")
+                        .header("Authorization", "Bearer " + userToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "shopProductId": 901,
+                                  "quantity": 1
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.productName").value("Akira 1"))
+                .andExpect(jsonPath("$.masterProductId").value(nullValue()))
+                .andExpect(jsonPath("$.catalogItemId").value(501))
+                .andExpect(jsonPath("$.catalogItemEditionId").value(nullValue()));
     }
 
     @Test
@@ -291,6 +312,30 @@ class ReservationControllerSecurityTest {
                 "Accepted",
                 Instant.parse("2026-06-19T10:00:00Z"),
                 "COMPLETED".equals(status) ? Instant.parse("2026-06-18T10:00:00Z") : null,
+                Instant.parse("2026-06-17T10:00:00Z")
+        );
+    }
+
+    private ReservationResponse editorialReservationResponse() {
+        return new ReservationResponse(
+                701L,
+                42L,
+                "Alice",
+                500L,
+                "Collector Cave",
+                901L,
+                null,
+                "Akira 1",
+                501L,
+                "Akira 1",
+                null,
+                null,
+                1,
+                "PENDING",
+                null,
+                null,
+                Instant.parse("2026-06-19T10:00:00Z"),
+                null,
                 Instant.parse("2026-06-17T10:00:00Z")
         );
     }
