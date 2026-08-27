@@ -1,90 +1,238 @@
-# Modelo supervisado de ramas dev -> pre -> main
+# Modelo de ramas dev -> pre -> main
 
-Fecha: 2026-08-02
-Repositorio: `AlbertoSoriaCarrillo/collectohub`
-Estado operativo actual: `SUPERVISED_ACTIVE_NO_ENFORCEMENT`
+Fecha de reconciliacion: 2026-08-26
 
-Este documento define la estrategia normativa de ramas. No crea ramas, no
-configura rulesets o branch protection, no fusiona pull requests y no activa
-automatizaciones.
+Modo documentado: `AUTONOMOUS_DEV_AUTO_MERGE_GUARDED`
 
-## Significado del estado objetivo
+Horario programado: `PAUSED`
 
-`SUPERVISED_ACTIVE_NO_ENFORCEMENT` significa:
+Working copy canonico local: variable `COLLECTOHUB_WORKTREE`. Its value belongs
+to local automation configuration and must not be committed because workstation
+paths can contain personal identifiers.
 
-- `dev` es la rama de integracion efectiva;
-- GitHub no aplica tecnicamente branch protection ni rulesets enforced;
-- los controles se aplican mediante el procedimiento de Codex y revision
-  humana;
-- no se afirma que ninguna rama este tecnicamente protegida;
-- la automatizacion no puede fusionar pull requests;
-- toda fusion requiere intervencion humana;
-- `main`, `dev` y `pre` son ramas permanentes;
-- el push directo esta prohibido por politica, aunque GitHub no lo bloquee.
+GitHub no aplica branch protection ni rulesets enforced en el plan actual. Las
+garantias descritas aqui son procedimentales; no equivalen a
+`PROTECTED_ACTIVE`.
 
-Este estado no equivale a `PROTECTED_ACTIVE`.
+Este documento define el modo futuro, no lo activa. Mientras el horario siga
+`PAUSED` y la politica raiz de ejecucion conserve el flujo humano supervisado,
+toda fusion sigue siendo humana. La adaptacion de esa politica y de la
+automatizacion es una precondicion de la primera prueba manual protegida.
+Ademas, `expected_head_sha` solo fija el head: el modo no puede activarse hasta
+disponer de un mecanismo atomico que rechace el merge si cambia el base SHA.
 
-## Activacion completada
+## Ramas y metodos de integracion
 
-La activacion operativa se completo el 2026-08-02. El commit
-`5f5c45c6cec89e442c246508eb421ac641f8a967` esta presente simultaneamente en
-`origin/main`, `origin/dev` y `origin/pre`; por tanto `dev` es la rama de
-integracion efectiva.
+El flujo normativo es:
 
-La primera ejecucion supervisada verifico remoto correcto, arbol limpio,
-alineacion de las tres ramas, actualizacion local de `dev` solo por fast-forward
-y cero PR abiertas de entrega hacia `dev`. No hizo cambios de producto, commit,
-push, pull request ni fusion, y se detuvo de forma segura porque la siguiente
-EPIC no estaba seleccionada.
+```text
+codex/* o quality/*
+        |
+        v
+       dev
+        |
+        v
+       pre
+        |
+        v
+      main
+```
 
-El modo activo sigue siendo procedimental: la automatizacion no tiene permiso
-de fusion, toda entrega termina en `HUMAN_MERGE_REQUIRED` y toda fusion es
-humana. El horario automatico no se activa en este cierre y requiere una
-autorizacion separada.
+- `codex/* -> dev` y `quality/* -> dev`: entrega temporal, exclusivamente
+  **Squash and merge**, con el guard completo de este documento.
+- `dev -> pre`: promocion `HUMAN ONLY`, exclusivamente **Create a merge
+  commit**.
+- `pre -> main`: promocion `HUMAN ONLY`, exclusivamente **Create a merge
+  commit**, con autorizacion humana explicita.
+- Rebase, force push, push directo a ramas permanentes, auto-merge nativo de
+  GitHub y borrado automatico de la rama fuente estan prohibidos.
+- Una ejecucion procesa como maximo una EPIC o una PR pendiente y nunca empieza
+  otra EPIC despues de entregar o bloquear la actual.
 
-## Ramas permanentes
+## Estado real de las ramas tras PR #21
 
-### `main`
+La auditoria del 2026-08-26 obtuvo:
 
-- Es la rama estable y de produccion.
-- No admite push directo por politica ni fusion automatica.
-- Recibe unicamente promociones desde `pre` despues de la activacion.
-- Cada release requiere PR, siete checks en `SUCCESS`, autorizacion humana
-  explicita y fusion manual mediante **Create a merge commit**.
-- Squash and merge y Rebase and merge estan prohibidos para releases.
+```text
+DEV_SHA=1c3b26ed00d7d82c5145388b0ee228992644485b
+PRE_SHA=5f5c45c6cec89e442c246508eb421ac641f8a967
+MAIN_SHA=b3876ad39c20b7d49047bea4768fa82cc8890c82
+MERGE_BASE_DEV_PRE=5f5c45c6cec89e442c246508eb421ac641f8a967
+MERGE_BASE_PRE_MAIN=5f5c45c6cec89e442c246508eb421ac641f8a967
+MERGE_BASE_DEV_MAIN=5f5c45c6cec89e442c246508eb421ac641f8a967
+DEV_IS_ANCESTOR_OF_PRE=false
+PRE_IS_ANCESTOR_OF_MAIN=true
+```
 
-### `pre`
+PR #21 promovio `dev -> main` mediante squash y omitio `pre`. El commit
+`b3876ad39c20b7d49047bea4768fa82cc8890c82` tiene como unico padre
+`5f5c45c6cec89e442c246508eb421ac641f8a967`; por eso el contenido promovido de
+`dev` no figura como ancestro de `main`. La comprobacion de arboles demuestra que
+el arbol de `main@b3876ad` coincide exactamente con `dev@42c8998`, por lo que
+`main` no aporta cambios de contenido exclusivos que deban invertirse o
+sincronizarse hacia atras. PR #22 avanzo despues `dev` a `1c3b26e`.
 
-- Es la rama de preproduccion.
-- No admite push directo por politica ni fusion automatica.
-- Recibe promociones desde `dev` mediante PR.
-- Requiere siete checks en `SUCCESS` y validacion funcional humana.
-- La promocion se fusiona manualmente mediante **Create a merge commit**.
-- Squash and merge y Rebase and merge estan prohibidos.
-- No se desarrolla funcionalidad directamente en `pre`.
+## Reparacion de ascendencia pendiente
 
-### `dev`
+No se reescribe historia, no se revierte PR #21 y no se hace reverse merge.
 
-- Es la rama de integracion efectiva solo en
-  `SUPERVISED_ACTIVE_NO_ENFORCEMENT`.
-- No admite push directo por politica.
-- Recibe PR desde `codex/<epic>` y `quality/<epic>`.
-- La entrega se fusiona manualmente mediante **Squash and merge**.
-- La automatizacion valida e informa, pero no fusiona.
+1. Integrar esta reconciliacion exclusivamente en `dev`.
+2. Abrir `dev -> pre` con head/base exactos, siete checks `SUCCESS`, diff
+   esperado, validacion funcional humana, cero conversaciones pendientes y refs
+   sin cambios. Fusionar manualmente con **Create a merge commit** y comprobar:
 
-## Ramas temporales
+   ```powershell
+   git fetch origin --prune
+   git merge-base --is-ancestor origin/dev origin/pre
+   ```
 
-Despues de la activacion, `codex/<epic>` y `quality/<epic>`:
+3. Abrir `pre -> main` con head/base exactos, siete checks `SUCCESS`, diff
+   esperado, revision, autorizacion humana explicita, cero conversaciones y refs
+   sin cambios. Fusionar manualmente con **Create a merge commit** y comprobar:
 
-- parten siempre de `origin/dev` actualizado;
-- apuntan a `dev`;
-- contienen una unica tarea y un unico commit logico;
-- no incorporan alcance ajeno a la tarea;
-- no se eliminan automaticamente.
+   ```powershell
+   git fetch origin --prune
+   git merge-base --is-ancestor origin/pre origin/main
+   ```
 
-Una ejecucion procesa como maximo una EPIC o una PR pendiente.
+La topologia y la igualdad de arbol comprobadas indican que esta secuencia puede
+restaurar la ascendencia sin reescribir historia. Antes de cada merge deben
+repetirse las comprobaciones porque las refs pueden cambiar. Si Git detecta un
+conflicto o contenido exclusivo nuevo, detenerse con
+`BRANCH_RECOVERY_REQUIRES_SEPARATE_DECISION`.
+
+## Preflight secuencial y sincronizacion de dev
+
+Antes de una EPIC y despues de un squash merge protegido:
+
+```powershell
+if ([string]::IsNullOrWhiteSpace($env:COLLECTOHUB_WORKTREE)) {
+    throw "COLLECTOHUB_WORKTREE is not configured."
+}
+if (-not (Test-Path -LiteralPath $env:COLLECTOHUB_WORKTREE -PathType Container)) {
+    throw "COLLECTOHUB_WORKTREE does not exist."
+}
+Set-Location -LiteralPath $env:COLLECTOHUB_WORKTREE -ErrorAction Stop
+$remote = git remote get-url origin
+if ($LASTEXITCODE -ne 0) {
+    throw "Unable to read Git remote."
+}
+if ($remote.Trim() -notmatch '^https://github\.com/AlbertoSoriaCarrillo/collectohub(?:\.git)?$') {
+    throw "Unexpected repository remote."
+}
+$worktreeStatus = @(git status --porcelain)
+if ($LASTEXITCODE -ne 0) {
+    throw "Unable to inspect Git worktree"
+}
+if ($worktreeStatus.Count -ne 0) {
+    throw "Working tree is not clean. Automation must stop."
+}
+$pendingPagesJson = @(
+    gh api --paginate --slurp `
+        -H "Accept: application/vnd.github+json" `
+        "/repos/AlbertoSoriaCarrillo/collectohub/pulls?state=open&base=dev&per_page=100"
+)
+if ($LASTEXITCODE -ne 0) {
+    throw "Unable to query pending delivery pull requests. Automation must stop."
+}
+try {
+    $pendingPagesText = $pendingPagesJson -join [Environment]::NewLine
+    $wrappedPendingJson = '{"pages":' + $pendingPagesText + '}'
+    $parsedPendingResponse = $wrappedPendingJson |
+        ConvertFrom-Json -ErrorAction Stop
+    $pendingPages = $parsedPendingResponse.pages
+} catch {
+    throw "Unable to parse pending delivery pull requests. Automation must stop."
+}
+if ($null -eq $pendingPages -or $pendingPages -isnot [System.Array]) {
+    throw "Incomplete pending delivery response. Automation must stop."
+}
+$pendingPullRequests = @()
+foreach ($page in $pendingPages) {
+    if ($null -eq $page -or $page -isnot [System.Array]) {
+        throw "Incomplete pending delivery page. Automation must stop."
+    }
+    foreach ($pullRequest in $page) {
+        if ($null -eq $pullRequest.base.ref -or $null -eq $pullRequest.head.ref) {
+            throw "Incomplete pending delivery pull request. Automation must stop."
+        }
+        $pendingPullRequests += $pullRequest
+    }
+}
+$pendingDeliveries = @(
+    $pendingPullRequests | Where-Object {
+        $_.base.ref -eq 'dev' -and (
+            $_.head.ref.StartsWith('codex/') -or $_.head.ref.StartsWith('quality/')
+        )
+    }
+)
+if ($pendingDeliveries.Count -ne 0) {
+    throw "PENDING_DELIVERY_EXISTS"
+}
+git fetch origin --prune
+if ($LASTEXITCODE -ne 0) {
+    throw "git fetch failed. Automation must stop."
+}
+git switch dev
+if ($LASTEXITCODE -ne 0) {
+    throw "git switch dev failed. Automation must stop."
+}
+git pull --ff-only origin dev
+if ($LASTEXITCODE -ne 0) {
+    throw "git pull --ff-only origin dev failed. Automation must stop."
+}
+$localDev = git rev-parse HEAD
+if ($LASTEXITCODE -ne 0) {
+    throw "Unable to resolve local dev HEAD."
+}
+$remoteDev = git rev-parse origin/dev
+if ($LASTEXITCODE -ne 0) {
+    throw "Unable to resolve origin/dev."
+}
+if ($localDev.Trim() -ne $remoteDev.Trim()) {
+    throw "Local dev is not aligned with origin/dev. Automation must stop."
+}
+```
+
+La configuracion local `COLLECTOHUB_WORKTREE` debe existir y apuntar a un
+directorio. `Set-Location -ErrorAction Stop` impide continuar silenciosamente
+desde el directorio anterior y el remoto debe identificar exactamente el
+repositorio esperado antes de ejecutar otros comandos Git. Cualquier fallo de
+configuracion, ubicacion o identidad del repositorio produce `EPIC_BLOCKED`.
+
+El guard comprueba despues el codigo de salida de Git y exige que
+`git status --porcelain` no produzca ninguna linea. Mostrar
+`git status --short` no es un mecanismo de control suficiente. Un resultado no
+vacio produce `EPIC_BLOCKED`: no se cambia de rama, no se hace pull, no se
+modifica nada y no se intenta ocultar el cambio mediante reset o clean
+automaticos.
+
+Antes de `fetch`, `switch` o `pull`, `gh api --paginate --slurp` recorre todas
+las paginas de PR abiertas hacia `dev`, sin depender del limite predeterminado
+de 30 de `gh pr list` ni asumir un maximo arbitrario. La consulta autenticada
+debe completar correctamente, el JSON agregado debe poder analizarse como una
+lista de paginas y cada PR debe incluir `base.ref` y `head.ref`. Un fallo de red,
+API, autenticacion, paginacion, parsing o respuesta incompleta produce
+`EPIC_BLOCKED`; una respuesta parcial nunca equivale a cero PR. Debe existir
+cero PR abierta con base `dev` y head `codex/*` o `quality/*`. Cualquier
+coincidencia produce `PENDING_DELIVERY_EXISTS` y detiene la ejecucion sin
+cambiar ni actualizar `dev`.
+
+El objeto JSON envolvente conserva el array exterior de paginas bajo Windows
+PowerShell 5.1 sin depender de parametros exclusivos de PowerShell 7.
+
+Solo con cero entregas pendientes se sincroniza `dev`. Los fallos de `fetch`,
+`switch`, `pull` o de resolucion de refs producen `EPIC_BLOCKED` de inmediato.
+La ejecucion solo puede continuar si la comparacion ejecutable confirma
+`HEAD == origin/dev`; una desalineacion local/remota durante este preflight
+inicial tambien produce `EPIC_BLOCKED`, no
+`BASE_MOVED_HUMAN_ACTION_REQUIRED`. Como el mismo bloque se ejecuta antes de una
+EPIC y despues de un futuro squash merge protegido, esa igualdad es obligatoria
+en ambos momentos y su fallo impide iniciar otra EPIC.
 
 ## Siete checks obligatorios
+
+Los siete resultados deben pertenecer al head actual y estar en `SUCCESS`:
 
 1. `Validate repository structure`;
 2. `Backend build and tests`;
@@ -94,106 +242,85 @@ Una ejecucion procesa como maximo una EPIC o una PR pendiente.
 6. `frontend-verify`;
 7. `powershell-parse`.
 
-Los checks se ejecutan en GitHub, pero su obligatoriedad no esta enforced por
-rulesets en el plan actual. Codex y la persona que fusiona deben comprobar que
-los siete estan en `SUCCESS`. Un resultado rojo, pendiente o ausente bloquea la
-fusion humana.
+## Guard de auto-merge hacia dev
 
-## Entrega `codex/<epic>` o `quality/<epic>` -> `dev`
+Una PR de entrega puede fusionarse automaticamente hacia `dev` solo cuando se
+cumplen simultaneamente las 31 condiciones siguientes:
 
-1. Crear la rama desde `origin/dev` actualizado y limpio.
-2. Implementar como maximo una EPIC.
-3. Ejecutar validacion local y abrir una PR con base exacta `dev`.
-4. Esperar los siete checks.
-5. Realizar autorrevision y registrar `expected_head_sha`.
-6. Informar `HUMAN_MERGE_REQUIRED` y terminar.
+1. la base exacta es `dev`;
+2. el head empieza exactamente por `codex/` o `quality/`;
+3. existe exactamente una PR de entrega abierta hacia `dev`;
+4. la PR esta abierta;
+5. la PR no es draft;
+6. la PR es mergeable;
+7. no existen conflictos;
+8. el base SHA actual coincide con la base usada para validacion;
+9. el head SHA actual coincide exactamente con `expected_head_sha`;
+10. el diff actual coincide con el revisado;
+11. los siete checks obligatorios corresponden al head actual y estan en
+    `SUCCESS`;
+12. la review automatica ha finalizado;
+13. han transcurrido al menos diez minutos desde ready-for-review;
+14. despues de esos diez minutos se ha vuelto a consultar GitHub;
+15. conversaciones sin resolver = 0;
+16. reviews `CHANGES_REQUESTED` = 0;
+17. self-review = `PASS`;
+18. archivos fuera de alcance = 0;
+19. tests eliminados = 0;
+20. nuevos tests ignorados = 0;
+21. secretos introducidos = 0;
+22. no existe modificacion posterior a la revision final;
+23. `origin/dev` no se ha movido desde la validacion y un guard atomico rechaza
+    la operacion si el base SHA cambia antes de crear el merge;
+24. el metodo es exclusivamente **Squash and merge**;
+25. la operacion esta protegida mediante `expected_head_sha`;
+26. no se utiliza el auto-merge nativo de GitHub;
+27. no se borra automaticamente la rama fuente;
+28. no se usa rebase;
+29. no se usa force push;
+30. no se modifica `pre`;
+31. no se modifica `main`.
 
-Codex y la automatizacion no tienen permiso para fusionar. Antes de la fusion,
-una persona comprueba:
+Si cualquiera falla, la automatizacion no fusiona. No resuelve conversaciones
+solo para obtener permiso: corrige un defecto valido en la misma rama, repite
+validacion/checks/review y vuelve a comprobar todas las condiciones.
 
-- head actual igual a `expected_head_sha`;
-- base exacta `dev`;
-- diff esperado;
-- siete checks en `SUCCESS`;
-- ausencia de conversaciones o bloqueos pendientes;
-- ausencia de cambios posteriores a la revision.
+La API de merge disponible protege `expected_head_sha`, pero no fija
+atomicamente el base SHA. Mientras no exista branch protection, merge queue u
+otro compare-and-swap verificable sobre la base, la condicion 23 no puede
+demostrarse y el resultado obligatorio es
+`BASE_GUARD_UNAVAILABLE`, incluso si una consulta previa vio el mismo SHA.
 
-La fusion humana usa **Squash and merge**. Si cambia `dev`, el head o el diff,
-se actualiza lo necesario y se repiten la revision y los checks aplicables.
+## Estados de automatizacion
 
-## Promocion `dev` -> `pre`
+- `EPIC_MERGED_TO_DEV`: guard completo superado, squash merge realizado y
+  `dev` local nuevamente limpia y alineada.
+- `REVIEW_THREADS_PENDING`: existe al menos una conversacion sin resolver.
+- `LOCAL_PASS_REMOTE_PENDING`: validacion local correcta y checks remotos aun no
+  concluidos en `SUCCESS`.
+- `BASE_GUARD_UNAVAILABLE`: no existe un guard atomico verificable para fijar el
+  base SHA; no se intenta la fusion automatica.
+- `BASE_MOVED_HUMAN_ACTION_REQUIRED`: `origin/dev` cambio desde la validacion.
+- `EPIC_BLOCKED`: fallo de alcance, validacion, seguridad o entrega.
+- `PENDING_DELIVERY_EXISTS`: otra PR temporal hacia `dev` bloquea trabajo nuevo.
 
-- PR con head exacto `dev` y base exacta `pre`;
-- siete checks en `SUCCESS`;
-- validacion funcional humana;
-- ningun cambio funcional nuevo dentro de la promocion;
-- comprobacion inmediatamente anterior de refs, head, base y diff sin cambios;
-- fusion manual mediante **Create a merge commit**;
-- nunca Squash and merge;
-- nunca Rebase and merge.
+## Activacion del horario
 
-Si `dev`, `pre` o la PR cambian despues de la validacion, se repite la revision.
-No se fusiona `pre` de vuelta hacia `dev`. Despues de fusionar debe pasar:
+El horario permanece `PAUSED`. Solo puede reactivarse despues de:
 
-```powershell
-git merge-base --is-ancestor origin/dev origin/pre
-```
+1. integrar esta reconciliacion en `dev`;
+2. confirmar coherencia documental;
+3. configurar `COLLECTOHUB_WORKTREE` en la automatizacion local con el checkout
+   canonico acordado, sin versionar la ruta personal;
+4. adaptar la politica raiz de ejecucion y la automatizacion al guard aqui
+   definido, sin debilitar el verificador;
+5. completar la reparacion `dev -> pre -> main`;
+6. disponer de un guard atomico del base SHA y demostrar que falla cerrado;
+7. ejecutar manualmente un ciclo completo
+   `AUTONOMOUS_DEV_AUTO_MERGE_GUARDED` que sincronice `dev`, implemente una unica
+   EPIC, abra la PR, espere checks y review, reconsulte conversaciones, fusione
+   solo si procede, vuelva a sincronizar `dev` y termine en
+   `EPIC_MERGED_TO_DEV`.
 
-## Promocion `pre` -> `main`
-
-- PR con head exacto `pre` y base exacta `main`;
-- siete checks en `SUCCESS`;
-- autorizacion humana explicita;
-- comprobacion inmediatamente anterior de refs, head, base y diff sin cambios;
-- fusion manual mediante **Create a merge commit**;
-- nunca Squash and merge;
-- nunca Rebase and merge.
-
-Si `pre`, `main` o la PR cambian despues de la autorizacion, se solicita una
-nueva autorizacion explicita. No se fusiona `main` de vuelta hacia `pre`.
-Despues de fusionar debe pasar:
-
-```powershell
-git merge-base --is-ancestor origin/pre origin/main
-```
-
-Se prepara un tag cuando corresponda.
-
-## Entrega secuencial
-
-Antes de iniciar una EPIC se consulta GitHub por PR abiertas desde `codex/*` o
-`quality/*` hacia la rama de integracion efectiva. Cualquier coincidencia
-bloquea una nueva EPIC, con independencia de que sea borrador o de que sus
-checks esten verdes, pendientes, rojos o ausentes. La ejecucion solo puede
-validar, revisar o informar esa PR pendiente; nunca fusionarla.
-
-Despues de que una persona fusione o cierre la entrega anterior, la siguiente
-ejecucion vuelve a la rama efectiva, ejecuta `git fetch origin`, exige arbol
-limpio, actualiza solo por fast-forward y demuestra que `HEAD` coincide con el
-ref remoto antes de seleccionar trabajo.
-
-## Configuracion esperada del repositorio
-
-- `Allow squash merging`: activado;
-- `Allow merge commits`: activado;
-- `Allow rebase merging`: desactivado;
-- auto-merge nativo de GitHub: no necesario.
-
-La API de GitHub confirmo esos cuatro valores el 2026-08-02. Esta observacion no
-equivale a branch protection: GitHub no garantiza que se elija el metodo
-correcto, por lo que la persona que fusiona debe aplicar el metodo asociado a
-cada tipo de PR.
-
-## Limitaciones y futura proteccion real
-
-En el plan gratuito actual GitHub no bloquea tecnicamente push directo, force
-push o borrado mediante rulesets enforced; tampoco garantiza los checks ni el
-metodo de fusion. La politica prohibe esas acciones, pero la garantia es
-procedimental.
-
-Cuando exista GitHub Pro, Team o equivalente se debe crear una tarea separada
-para configurar, probar y evidenciar branch protection y rulesets reales. No se
-debe declarar `PROTECTED_ACTIVE` hasta completar esa tarea.
-
-La guia operativa y la evidencia de los ajustes remotos estan en
-`docs/33_GITHUB_MAIN_PROTECTION.md`.
+Esta PR de reconciliacion modifica las propias reglas del proceso: no se
+auto-fusiona y termina en `HUMAN_MERGE_REQUIRED`.

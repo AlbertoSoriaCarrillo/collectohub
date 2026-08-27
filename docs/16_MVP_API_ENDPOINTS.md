@@ -41,7 +41,8 @@ subfases de integracion visual 38B y 38D.
 
 - Autenticacion: `Authorization: Bearer <accessToken>` para endpoints protegidos.
 - Roles globales: `ADMIN`, `USER`, `SHOP_OWNER`, `CONTENT_CREATOR`.
-- Roles internos de tienda: `OWNER`, `MANAGER`, `STAFF`.
+- Roles internos de tienda: `OWNER`, `MANAGER`, `EMPLOYEE`. `STAFF` es una
+  etiqueta legacy no canonica y no representa un cuarto rol.
 - Los permisos de tienda se resuelven con `shop_members`, no solo con rol global.
 - Las colecciones privadas ajenas devuelven `404` en lectura para no revelar su existencia.
 - Los DTOs publicos no exponen `passwordHash`, hashes de refresh token ni datos internos de seguridad.

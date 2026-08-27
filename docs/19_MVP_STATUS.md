@@ -1,6 +1,6 @@
 # CollectoHub MVP status
 
-Fecha de revision: 2026-08-06.
+Fecha de revision: 2026-08-26.
 
 ## Estado general
 
@@ -52,15 +52,14 @@ filtros, ordenaciones, progreso, compatibilidad legacy y el escenario integral
 con recorrido UI humano. Este cierre no presenta MVP4 como producto final
 completo y conserva las limitaciones documentadas.
 
-El modo operativo actual es `SUPERVISED_ACTIVE_NO_ENFORCEMENT`. `dev` es la
-rama de integracion efectiva, toda fusion es humana, la automatizacion nunca
-fusiona y una entrega termina en `HUMAN_MERGE_REQUIRED`. GitHub no aplica
-protecciones enforced. EPIC 45B esta integrada historicamente, pero una revision
-tardia reabrio su cierre mediante 45B-FIX. Las EPIC 45C-A a 45C-D tienen
-integradas la lectura, el alta acotada, el cambio seguro de rol y la
-desactivacion backend auditada. Perfil, compatibilidad `STAFF`, transferencia de
-ownership y cierre del esquema aditivo requieren EPICs posteriores
-independientes.
+El modo futuro `AUTONOMOUS_DEV_AUTO_MERGE_GUARDED` esta documentado y el horario
+permanece `PAUSED`. `dev` es la rama de integracion efectiva; solo entregas
+`codex/*` o `quality/*` hacia `dev` podran usar squash merge automatico tras el
+guard completo. Las promociones `dev -> pre` y `pre -> main` siguen siendo
+humanas. EPIC 45B esta `CLOSED_AFTER_45B_FIX` y 45B-FIX
+`INTEGRATED_IN_DEV`. 45C-A a 45C-D estan integradas; 45C permanece `OPEN`, con
+45C-E como unica siguiente EPIC. Transferencia de ownership queda
+`FUTURE / OUT_OF_MVP5`.
 
 | Dominio | Estado actual |
 | --- | --- |
@@ -68,7 +67,7 @@ independientes.
 | Catalog Knowledge Base | Parcial; fundamentos MVP 2, fachada de lectura, frontend editorial publico, creators y relaciones de items implementados |
 | User Collections | Alta, edicion y enlace catalogado de items manuales cerrados; datos personales preservados |
 | Social | Futuro |
-| Shops & Inventory | Base legacy/editorial parcial; 45B reabierta hasta integrar 45B-FIX; 45C-A a 45C-D integradas y 45C aun abierta |
+| Shops & Inventory | Base legacy/editorial parcial; 45B cerrada tras 45B-FIX integrada; 45C-A a 45C-D integradas, 45C abierta y 45C-E siguiente |
 | Matching | Recomendaciones por edicion, item y fallback legacy |
 | Commerce | Reservas sin pago; resto futuro |
 | Content Creators | Base editorial de creators implementada; herramientas sociales/creador futuras |
@@ -345,8 +344,8 @@ Playwright y no aplica arreglos automaticos de vulnerabilidades. La ejecucion
 remota `30660752632` y el CI anterior `30660753236` terminaron correctamente
 sobre el head `ea71a5918f917c4b7fd2e5a9eba9759044cd4c19` de la PR #2.
 
-La estrategia `dev -> pre -> main` esta activa como
-`SUPERVISED_ACTIVE_NO_ENFORCEMENT` y documentada en
+La estrategia `dev -> pre -> main` y el futuro modo
+`AUTONOMOUS_DEV_AUTO_MERGE_GUARDED` estan documentados en
 `docs/39_BRANCH_MODEL_DEV_PRE_MAIN.md`. `.github/workflows/ci.yml` permite sus
 tres jobs en PR hacia `dev`, `pre` y `main`; junto con
 `.github/workflows/quality-gates.yml` expone los siete checks obligatorios. Su
@@ -405,14 +404,14 @@ rulesets enforced en el plan actual.
 - Playwright headless: `npm run e2e` correcto con smoke, auth/colecciones, i18n y flujo MVP principal.
 - Playwright headed: `npm run e2e:headed` correcto.
 
-## EPIC 45B-FIX pendiente y EPIC 45C abierta
+## EPIC 45B cerrada tras 45B-FIX y EPIC 45C abierta
 
 EPIC 45A audita y disena MVP5 en
-`docs/40_MVP5_SHOPS_INVENTORY_RESERVATIONS_DESIGN.md`. La base actual queda
-clasificada como parcial: soporta tiendas, inventario legacy/editorial y
-reservas basicas, pero comparte DTO publico/interno, no soporta reservas de
-oferta editorial pura y no implementa holds, locks, idempotencia, expiracion
-efectiva, gestion de miembros o metricas.
+`docs/40_MVP5_SHOPS_INVENTORY_RESERVATIONS_DESIGN.md`. La base auditada por 45A
+era parcial. Desde entonces 45B/45B-FIX separan inventario publico/gestionado y
+soportan reservas editoriales puras; 45C-A a 45C-D gestionan memberships. El
+perfil de tienda aun comparte DTO publico/gestionado y siguen pendientes holds,
+locks, idempotencia, expiracion efectiva y metricas.
 
 El diseno fija identidad editorial, compatibilidad legacy, permisos,
 privacidad, reglas de stock, concurrencia, recorridos y plan 45B-45J. Pagos,
@@ -424,24 +423,30 @@ salga en lecturas publicas y permitio reservas editoriales puras. Una revision
 tardia detecto que el DTO publico aun exponia `stockQuantity`, que reservas
 rechazaba un producto visible por referencia editorial cuando el master legacy
 estaba inactivo y que `productName` priorizaba legacy. 45B-FIX corrige los tres
-contratos con regresiones de API, servicio y frontend; 45B no se considera
-correctamente cerrada hasta integrar esa FIX. `availableQuantity` permanece
-fuera hasta implementar holds reales en 45G.
+contratos con regresiones de API, servicio y frontend. PR #22 integro 45B-FIX en
+`dev` como `1c3b26ed00d7d82c5145388b0ee228992644485b`; 45B queda
+`CLOSED_AFTER_45B_FIX` y 45B-FIX `INTEGRATED_IN_DEV`. La medicion npm actual de
+esa entrega fue 23 vulnerabilidades; las 16 anteriores son evidencia historica
+y no se ejecuto `npm audit fix`. `availableQuantity` permanece fuera hasta
+implementar holds reales en 45G.
 
-45B esta integrada historicamente en `dev` y reabierta hasta integrar 45B-FIX.
 **EPIC 45C - Perfil profesional y miembros de
 tienda** incorpora el listado backend protegido de memberships activas, con
 orden estable y proyeccion sin datos personales. OWNER y MANAGER pueden leer;
 EMPLOYEE y no miembros no. Solo OWNER puede dar de alta una cuenta activa como
 MANAGER o EMPLOYEE, cambiar su rol y desactivar MANAGER o EMPLOYEE, conservando
 la fila y auditando el actor sin permitir desactivar al OWNER. Las fases 45C-A a
-45C-D estan integradas. Perfil profesional, compatibilidad `STAFF`, transferencia
-de ownership y cierre del esquema aditivo requieren EPICs posteriores
-independientes; el siguiente alcance no esta seleccionado.
+45C-D estan integradas. 45C-E separara y endurecera el perfil backend publico y
+gestionado; 45C-F auditara compatibilidad `STAFF -> EMPLOYEE`, esquema y upgrade
+aditivo; 45C-G cerrara invariantes, regresiones, privacidad y documentacion
+backend. `NEXT_EPIC=45C-E`. Transferencia de ownership queda
+`FUTURE / OUT_OF_MVP5` y no bloquea 45C.
 
-45B-FIX no corrige la promocion `dev -> main` de la PR #21. La reconciliacion
-del estado 45C y del flujo `dev -> pre -> main` queda como tarea posterior
-independiente.
+PR #21 promovio `dev -> main` mediante squash omitiendo `pre`; no se reescribe
+historia. La reparacion documentada es promocionar manualmente `dev -> pre` y
+despues `pre -> main`, ambas con **Create a merge commit**, siete checks y refs
+exactas. El horario permanece `PAUSED` hasta completar esa reparacion y validar
+manualmente el nuevo modo protegido.
 
 Vision, alcance y roadmap: `docs/00_PRODUCT_VISION.md`,
 `docs/01_ROADMAP.md`, `docs/02_MVP1_SCOPE.md` y
