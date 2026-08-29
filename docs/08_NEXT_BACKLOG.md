@@ -205,9 +205,12 @@ OWNER y con auditoria del actor. 45C-A a 45C-D estan integradas.
 
 Trabajo restante:
 
-- **45C-E - Perfil backend y contratos de tienda.** Separar la proyeccion
-  publica del contrato gestionado, endurecer sanitizacion y documentar/validar la
-  edicion ya existente para OWNER/MANAGER. No incluye frontend ni esquema.
+- **45C-E - Perfil backend y contratos de tienda.** `IMPLEMENTED_PENDING_REVIEW`
+  en `codex/45c-e-shop-profile-contracts`: separa `PublicShopResponse` de
+  `ManagedShopResponse`, excluye membership del contrato publico sin romper la
+  expiracion ya consumida por el cliente existente y
+  valida la edicion ya existente para OWNER/MANAGER. No incluye frontend ni
+  esquema.
 - **45C-F - Compatibilidad y esquema de memberships.** Auditar datos reales
   antes de decidir migracion `STAFF -> EMPLOYEE`; si existe evidencia, aplicar
   upgrade aditivo e idempotente. Endurecer constraints solo con pruebas de

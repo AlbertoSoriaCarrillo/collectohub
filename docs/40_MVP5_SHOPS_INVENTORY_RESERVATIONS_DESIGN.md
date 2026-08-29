@@ -59,7 +59,7 @@ versionados encontrados; no son resultados de ejecucion.
 | --- | --- | --- | --- |
 | Tiendas | Crear tienda y OWNER local | Vigente | `ShopService` crea `shops`, `shop_members.OWNER` y asigna rol global `SHOP_OWNER` si falta. |
 | Tiendas | Listar tiendas asociadas | Vigente | `GET /api/shops/my`; solo memberships activas. |
-| Tiendas | Detalle publico | Vigente con riesgo | `GET /api/shops/{id}` comparte `ShopResponse`; expone contacto de negocio y regla de expiracion sin DTO publico separado. |
+| Tiendas | Detalle publico | Implementado en 45C-E | `GET /api/shops/{id}` usa `PublicShopResponse`: conserva perfil/contacto y expiracion consumida por el cliente existente, pero excluye membership. |
 | Tiendas | Editar perfil | Backend vigente, UX incompleta | OWNER/MANAGER pueden usar `PUT`; `ShopService.updateShop()` no tiene pantalla dedicada. |
 | Miembros | OWNER/MANAGER/EMPLOYEE | Esquema vigente | La pertenencia autoriza por tienda; no existe API ni UI para listar o administrar miembros. |
 | Inventario | Alta/edicion legacy | Vigente | `masterProductId` sigue admitido. |

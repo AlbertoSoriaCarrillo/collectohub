@@ -165,6 +165,18 @@ class ShopServiceTest {
     }
 
     @Test
+    void publicShopUsesSanitizedProjection() {
+        Shop shop = shop(owner, 100L, "Collector Cave");
+        when(shopRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(shop));
+
+        var response = shopService.getPublicShop(100L);
+
+        assertThat(response.id()).isEqualTo(100L);
+        assertThat(response.name()).isEqualTo("Collector Cave");
+        assertThat(response.status()).isEqualTo("ACTIVE");
+    }
+
+    @Test
     void userCannotModifyShopWhenNotMember() {
         Shop shop = shop(owner, 100L, "Collector Cave");
         when(shopRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(shop));
@@ -213,6 +225,28 @@ class ShopServiceTest {
         assertThat(response.currency()).isEqualTo("EUR");
         assertThat(response.defaultReservationExpirationHours()).isEqualTo(72);
         assertThat(response.currentUserMembership().role()).isEqualTo("OWNER");
+    }
+
+    @Test
+    void managerCanModifyShopAndReceivesManagedProjection() {
+        Shop shop = shop(owner, 100L, "Collector Cave");
+        ShopMember manager = member(shop, owner, 200L, ShopMemberRole.MANAGER);
+        when(shopRepository.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.of(shop));
+        when(shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
+                100L,
+                42L,
+                ShopMemberStatus.ACTIVE
+        )).thenReturn(Optional.of(manager));
+
+        var response = shopService.updateShop(
+                authenticatedOwner,
+                100L,
+                new UpdateShopRequest("Managed Shop", null, null, null, null, null, 72, null)
+        );
+
+        assertThat(response.name()).isEqualTo("Managed Shop");
+        assertThat(response.defaultReservationExpirationHours()).isEqualTo(72);
+        assertThat(response.currentUserMembership().role()).isEqualTo("MANAGER");
     }
 
     @Test

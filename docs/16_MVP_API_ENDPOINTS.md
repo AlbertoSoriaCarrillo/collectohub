@@ -84,19 +84,23 @@ Notas:
 
 | Metodo | Path | Acceso | Permiso | Body | Respuesta | Errores |
 | --- | --- | --- | --- | --- | --- | --- |
-| POST | `/api/shops` | Protegido | Usuario autenticado | `name`, `description`, `contactEmail`, `contactPhone`, `country`, `currency`, `defaultReservationExpirationHours`, `logoUrl` | `ShopResponse` con `currentUserMembership` OWNER | `400`, `401` |
-| GET | `/api/shops/my` | Protegido | Miembro de tiendas propias | No | Lista de `ShopResponse` | `401` |
-| GET | `/api/shops/{shopId}` | Publico | Datos publicos basicos | No | `ShopResponse` sin datos internos sensibles | `404` |
+| POST | `/api/shops` | Protegido | Usuario autenticado | `name`, `description`, `contactEmail`, `contactPhone`, `country`, `currency`, `defaultReservationExpirationHours`, `logoUrl` | `ManagedShopResponse` con `currentUserMembership` OWNER | `400`, `401` |
+| GET | `/api/shops/my` | Protegido | Miembro de tiendas propias | No | Lista de `ManagedShopResponse` | `401` |
+| GET | `/api/shops/{shopId}` | Publico | Datos publicos basicos | No | `PublicShopResponse`; sin membership | `404` |
 | GET | `/api/shops/{shopId}/members` | Protegido | `shop_members` OWNER o MANAGER | No | Lista ordenada de `ShopMemberResponse` sin datos personales | `401`, `403`, `404` |
 | POST | `/api/shops/{shopId}/members` | Protegido | `shop_members` OWNER | `email`, `role` MANAGER o EMPLOYEE | `ShopMemberResponse` sin datos personales | `400`, `401`, `403`, `404`, `409` |
 | PUT | `/api/shops/{shopId}/members/{memberId}/role` | Protegido | `shop_members` OWNER | `role` MANAGER o EMPLOYEE | `ShopMemberResponse` sin datos personales | `400`, `401`, `403`, `404` |
 | DELETE | `/api/shops/{shopId}/members/{memberId}` | Protegido | `shop_members` OWNER | No | Sin contenido; desactiva solo MANAGER o EMPLOYEE activos | `400`, `401`, `403`, `404` |
-| PUT | `/api/shops/{shopId}` | Protegido | `shop_members` OWNER o MANAGER | Campos de `UpdateShopRequest` | `ShopResponse` | `400`, `401`, `403`, `404` |
+| PUT | `/api/shops/{shopId}` | Protegido | `shop_members` OWNER o MANAGER | Campos de `UpdateShopRequest` | `ManagedShopResponse` | `400`, `401`, `403`, `404` |
 
 Valores por defecto:
 
 - `currency`: `EUR` si no se informa.
 - `defaultReservationExpirationHours`: 48 si no se informa.
+
+`PublicShopResponse` expone el perfil comercial, el contacto de negocio y la
+regla de expiracion ya consumida por el cliente publico. Nunca incluye
+membership. `ManagedShopResponse` anade la membership activa del solicitante.
 
 ## Catalogo maestro
 

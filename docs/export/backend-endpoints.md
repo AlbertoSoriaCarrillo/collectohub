@@ -167,12 +167,12 @@ later product phase.
 
 | Method and path | Access/permission | Request | Response | Status |
 | --- | --- | --- | --- | --- |
-| `POST /api/shops` | Authenticated user | `CreateShopRequest` | `ShopResponse` | `LEGACY_FUTURE` |
-| `GET /api/shops/my` | Active shop member | None | `List<ShopResponse>` | `LEGACY_FUTURE` |
-| `GET /api/shops/{shopId}` | Public | None | `ShopResponse` | `LEGACY_FUTURE` |
+| `POST /api/shops` | Authenticated user | `CreateShopRequest` | `ManagedShopResponse` | `LEGACY_FUTURE` |
+| `GET /api/shops/my` | Active shop member | None | `List<ManagedShopResponse>` | `LEGACY_FUTURE` |
+| `GET /api/shops/{shopId}` | Public | None | `PublicShopResponse` | `LEGACY_FUTURE` |
 | `GET /api/shops/{shopId}/members` | Shop `OWNER` or `MANAGER` | None | `List<ShopMemberResponse>` | `MVP5_PARTIAL` |
 | `POST /api/shops/{shopId}/members` | Shop `OWNER` | `AddShopMemberRequest` | `ShopMemberResponse` | `MVP5_PARTIAL` |
-| `PUT /api/shops/{shopId}` | Shop `OWNER` or `MANAGER` | `UpdateShopRequest` | `ShopResponse` | `LEGACY_FUTURE` |
+| `PUT /api/shops/{shopId}` | Shop `OWNER` or `MANAGER` | `UpdateShopRequest` | `ManagedShopResponse` | `LEGACY_FUTURE` |
 
 Creating a shop also creates an internal `OWNER` membership and grants the
 global `SHOP_OWNER` role if absent.
