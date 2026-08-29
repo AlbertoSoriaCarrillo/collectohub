@@ -1,9 +1,8 @@
 package com.collectohub.shops.dto;
 
 import com.collectohub.shops.domain.Shop;
-import com.collectohub.shops.domain.ShopMember;
 
-public record ShopResponse(
+public record PublicShopResponse(
         Long id,
         String name,
         String description,
@@ -13,16 +12,11 @@ public record ShopResponse(
         String currency,
         Integer defaultReservationExpirationHours,
         String logoUrl,
-        String status,
-        ShopMemberResponse currentUserMembership
+        String status
 ) {
 
-    public static ShopResponse publicFrom(Shop shop) {
-        return from(shop, null);
-    }
-
-    public static ShopResponse from(Shop shop, ShopMember currentUserMembership) {
-        return new ShopResponse(
+    public static PublicShopResponse from(Shop shop) {
+        return new PublicShopResponse(
                 shop.getId(),
                 shop.getName(),
                 shop.getDescription(),
@@ -32,8 +26,7 @@ public record ShopResponse(
                 shop.getCurrency(),
                 shop.getDefaultReservationExpirationHours(),
                 shop.getLogoUrl(),
-                shop.getStatus().name(),
-                currentUserMembership == null ? null : ShopMemberResponse.from(currentUserMembership)
+                shop.getStatus().name()
         );
     }
 }

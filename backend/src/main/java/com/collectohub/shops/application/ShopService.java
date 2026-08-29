@@ -8,8 +8,9 @@ import com.collectohub.shops.domain.ShopMemberStatus;
 import com.collectohub.shops.dto.CreateShopRequest;
 import com.collectohub.shops.dto.AddShopMemberRequest;
 import com.collectohub.shops.dto.ChangeShopMemberRoleRequest;
+import com.collectohub.shops.dto.ManagedShopResponse;
+import com.collectohub.shops.dto.PublicShopResponse;
 import com.collectohub.shops.dto.ShopMemberResponse;
-import com.collectohub.shops.dto.ShopResponse;
 import com.collectohub.shops.dto.UpdateShopRequest;
 import com.collectohub.shops.infrastructure.ShopMemberRepository;
 import com.collectohub.shops.infrastructure.ShopRepository;
@@ -59,7 +60,7 @@ public class ShopService {
     }
 
     @Transactional
-    public ShopResponse createShop(AuthenticatedUser authenticatedUser, CreateShopRequest request) {
+    public ManagedShopResponse createShop(AuthenticatedUser authenticatedUser, CreateShopRequest request) {
         User owner = currentUser(authenticatedUser);
         ensureShopOwnerGlobalRole(owner);
         Shop shop = Shop.create(
@@ -78,7 +79,7 @@ public class ShopService {
 
         Shop savedShop = shopRepository.save(shop);
         ShopMember ownerMember = shopMemberRepository.save(ShopMember.owner(savedShop, owner));
-        return ShopResponse.from(savedShop, ownerMember);
+        return ManagedShopResponse.from(savedShop, ownerMember);
     }
 
     private void ensureShopOwnerGlobalRole(User owner) {
@@ -91,20 +92,20 @@ public class ShopService {
     }
 
     @Transactional(readOnly = true)
-    public List<ShopResponse> myShops(AuthenticatedUser authenticatedUser) {
+    public List<ManagedShopResponse> myShops(AuthenticatedUser authenticatedUser) {
         return shopMemberRepository.findByUser_IdAndStatusAndDeletedAtIsNull(
                         authenticatedUser.id(),
                         ShopMemberStatus.ACTIVE
                 ).stream()
                 .filter(member -> member.getShop().isActive())
-                .map(member -> ShopResponse.from(member.getShop(), member))
+                .map(member -> ManagedShopResponse.from(member.getShop(), member))
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public ShopResponse getPublicShop(Long shopId) {
+    public PublicShopResponse getPublicShop(Long shopId) {
         Shop shop = findActiveShop(shopId);
-        return ShopResponse.publicFrom(shop);
+        return PublicShopResponse.from(shop);
     }
 
     @Transactional(readOnly = true)
@@ -232,7 +233,7 @@ public class ShopService {
     }
 
     @Transactional
-    public ShopResponse updateShop(AuthenticatedUser authenticatedUser, Long shopId, UpdateShopRequest request) {
+    public ManagedShopResponse updateShop(AuthenticatedUser authenticatedUser, Long shopId, UpdateShopRequest request) {
         Shop shop = findActiveShop(shopId);
         ShopMember member = shopMemberRepository.findByShop_IdAndUser_IdAndStatusAndDeletedAtIsNull(
                         shopId,
@@ -256,7 +257,7 @@ public class ShopService {
                 authenticatedUser.id()
         );
 
-        return ShopResponse.from(shop, member);
+        return ManagedShopResponse.from(shop, member);
     }
 
     private User currentUser(AuthenticatedUser authenticatedUser) {

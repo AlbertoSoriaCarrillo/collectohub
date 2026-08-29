@@ -11,7 +11,9 @@ en la configuracion local de la automatizacion, no en el repositorio.
 Estado de entrega: PR #22 integro 45B-FIX en `dev` como
 `1c3b26ed00d7d82c5145388b0ee228992644485b`. 45B queda
 `CLOSED_AFTER_45B_FIX` y 45B-FIX `INTEGRATED_IN_DEV`. Las EPIC 45C-A a 45C-D
-estan integradas, pero 45C permanece abierta. `NEXT_EPIC=45C-E`.
+estan integradas; 45C-E esta `IMPLEMENTED_PENDING_REVIEW` en
+`codex/45c-e-shop-profile-contracts`. 45C permanece abierta y
+`NEXT_EPIC=45C-E` hasta integrar esta entrega.
 
 ## 1. Propósito de este documento
 
@@ -258,10 +260,10 @@ EPIC 45A esta integrada. 45B queda `CLOSED_AFTER_45B_FIX` y 45B-FIX
 `INTEGRATED_IN_DEV`. Las fases 45C-A a 45C-D incorporan lectura
 backend protegida de miembros activos para OWNER/MANAGER, alta acotada, cambio
 seguro de rol y desactivacion auditada solo para OWNER, sin datos personales.
-45C-E cubrira perfil backend y contratos publico/gestionado; 45C-F auditara
+45C-E separa el perfil backend publico/gestionado y esta pendiente de revision; 45C-F auditara
 compatibilidad `STAFF -> EMPLOYEE`, esquema y upgrade aditivo; 45C-G cerrara
 invariantes, privacidad, regresiones y documentacion backend.
-`NEXT_EPIC=45C-E`. Transferencia de ownership queda `FUTURE / OUT_OF_MVP5`.
+`NEXT_EPIC=45C-E` hasta integrar la entrega. Transferencia de ownership queda `FUTURE / OUT_OF_MVP5`.
 
 ## 8. EPICs recientes completadas
 
@@ -475,12 +477,20 @@ desactivar una membership MANAGER o EMPLOYEE activa de la misma tienda. Conserva
 la fila como `INACTIVE`, registra `updatedBy` y devuelve `204` sin datos
 personales; el OWNER no puede desactivarse por este contrato.
 
-45C permanece abierta. El backend ya contiene campos y edicion de perfil, pero
-comparte un unico `ShopResponse` entre lectura publica y gestionada. El trabajo
-restante queda dividido en 45C-E (contratos y privacidad del perfil backend),
+45C permanece abierta. 45C-E separa `PublicShopResponse` de
+`ManagedShopResponse`: la lectura publica conserva perfil/contacto y la
+expiracion ya consumida por el cliente existente, pero excluye membership;
+creacion, listado propio y
+edicion conservan la proyeccion gestionada. La entrega valida que OWNER y
+MANAGER pueden editar sin incluir frontend ni esquema. El trabajo restante queda dividido en 45C-E (pendiente de revision),
 45C-F (evidencia/migracion opcional `STAFF -> EMPLOYEE`, constraints y upgrade)
 y 45C-G (cierre de invariantes, regresiones y documentacion backend).
-`NEXT_EPIC=45C-E`. Transferencia de ownership queda `FUTURE / OUT_OF_MVP5`.
+`NEXT_EPIC=45C-E` hasta su integracion. Transferencia de ownership queda `FUTURE / OUT_OF_MVP5`.
+
+Validacion de la entrega 45C-E: regresion dirigida 47/47; matriz completa con
+backend 468 tests (4 omitidos por Docker no disponible), frontend 59 archivos y
+244 tests, build de produccion, politica, diff y parser en PASS. E2E/Playwright
+queda `SKIPPED_WITH_REASON` por exclusion del alcance.
 
 PR #21 promovio `dev -> main` mediante squash omitiendo `pre`. El arbol actual
 de `main@b3876ad` coincide con `dev@42c8998`, pero la ascendencia no. La

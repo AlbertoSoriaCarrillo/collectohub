@@ -5,8 +5,9 @@ import com.collectohub.shops.application.ShopService;
 import com.collectohub.shops.dto.CreateShopRequest;
 import com.collectohub.shops.dto.AddShopMemberRequest;
 import com.collectohub.shops.dto.ChangeShopMemberRoleRequest;
+import com.collectohub.shops.dto.ManagedShopResponse;
+import com.collectohub.shops.dto.PublicShopResponse;
 import com.collectohub.shops.dto.ShopMemberResponse;
-import com.collectohub.shops.dto.ShopResponse;
 import com.collectohub.shops.dto.UpdateShopRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,7 +40,7 @@ public class ShopController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a shop for the authenticated user")
-    public ShopResponse createShop(
+    public ManagedShopResponse createShop(
             @AuthenticationPrincipal AuthenticatedUser user,
             @Valid @RequestBody CreateShopRequest request
     ) {
@@ -48,13 +49,13 @@ public class ShopController {
 
     @GetMapping("/my")
     @Operation(summary = "Get shops associated with the authenticated user")
-    public List<ShopResponse> myShops(@AuthenticationPrincipal AuthenticatedUser user) {
+    public List<ManagedShopResponse> myShops(@AuthenticationPrincipal AuthenticatedUser user) {
         return shopService.myShops(user);
     }
 
     @GetMapping("/{shopId}")
     @Operation(summary = "Get public shop details")
-    public ShopResponse getShop(@PathVariable Long shopId) {
+    public PublicShopResponse getShop(@PathVariable Long shopId) {
         return shopService.getPublicShop(shopId);
     }
 
@@ -102,7 +103,7 @@ public class ShopController {
 
     @PutMapping("/{shopId}")
     @Operation(summary = "Update a shop when the authenticated user can manage it")
-    public ShopResponse updateShop(
+    public ManagedShopResponse updateShop(
             @AuthenticationPrincipal AuthenticatedUser user,
             @PathVariable Long shopId,
             @Valid @RequestBody UpdateShopRequest request

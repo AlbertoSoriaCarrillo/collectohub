@@ -58,7 +58,7 @@ permanece `PAUSED`. `dev` es la rama de integracion efectiva; solo entregas
 guard completo. Las promociones `dev -> pre` y `pre -> main` siguen siendo
 humanas. EPIC 45B esta `CLOSED_AFTER_45B_FIX` y 45B-FIX
 `INTEGRATED_IN_DEV`. 45C-A a 45C-D estan integradas; 45C permanece `OPEN`, con
-45C-E como unica siguiente EPIC. Transferencia de ownership queda
+45C-E `IMPLEMENTED_PENDING_REVIEW` como unica entrega activa. Transferencia de ownership queda
 `FUTURE / OUT_OF_MVP5`.
 
 | Dominio | Estado actual |
@@ -67,7 +67,7 @@ humanas. EPIC 45B esta `CLOSED_AFTER_45B_FIX` y 45B-FIX
 | Catalog Knowledge Base | Parcial; fundamentos MVP 2, fachada de lectura, frontend editorial publico, creators y relaciones de items implementados |
 | User Collections | Alta, edicion y enlace catalogado de items manuales cerrados; datos personales preservados |
 | Social | Futuro |
-| Shops & Inventory | Base legacy/editorial parcial; 45B cerrada tras 45B-FIX integrada; 45C-A a 45C-D integradas, 45C abierta y 45C-E siguiente |
+| Shops & Inventory | Base legacy/editorial parcial; 45B cerrada tras 45B-FIX integrada; 45C-A a 45C-D integradas y 45C-E pendiente de revision |
 | Matching | Recomendaciones por edicion, item y fallback legacy |
 | Commerce | Reservas sin pago; resto futuro |
 | Content Creators | Base editorial de creators implementada; herramientas sociales/creador futuras |
@@ -409,8 +409,8 @@ rulesets enforced en el plan actual.
 EPIC 45A audita y disena MVP5 en
 `docs/40_MVP5_SHOPS_INVENTORY_RESERVATIONS_DESIGN.md`. La base auditada por 45A
 era parcial. Desde entonces 45B/45B-FIX separan inventario publico/gestionado y
-soportan reservas editoriales puras; 45C-A a 45C-D gestionan memberships. El
-perfil de tienda aun comparte DTO publico/gestionado y siguen pendientes holds,
+soportan reservas editoriales puras; 45C-A a 45C-D gestionan memberships. 45C-E
+separa el perfil publico del gestionado y siguen pendientes holds,
 locks, idempotencia, expiracion efectiva y metricas.
 
 El diseno fija identidad editorial, compatibilidad legacy, permisos,
@@ -436,10 +436,10 @@ orden estable y proyeccion sin datos personales. OWNER y MANAGER pueden leer;
 EMPLOYEE y no miembros no. Solo OWNER puede dar de alta una cuenta activa como
 MANAGER o EMPLOYEE, cambiar su rol y desactivar MANAGER o EMPLOYEE, conservando
 la fila y auditando el actor sin permitir desactivar al OWNER. Las fases 45C-A a
-45C-D estan integradas. 45C-E separara y endurecera el perfil backend publico y
-gestionado; 45C-F auditara compatibilidad `STAFF -> EMPLOYEE`, esquema y upgrade
+45C-D estan integradas. 45C-E esta implementada y pendiente de revision con
+contratos backend publico/gestionado separados; 45C-F auditara compatibilidad `STAFF -> EMPLOYEE`, esquema y upgrade
 aditivo; 45C-G cerrara invariantes, regresiones, privacidad y documentacion
-backend. `NEXT_EPIC=45C-E`. Transferencia de ownership queda
+backend. `NEXT_EPIC=45C-E` hasta integrar su entrega. Transferencia de ownership queda
 `FUTURE / OUT_OF_MVP5` y no bloquea 45C.
 
 PR #21 promovio `dev -> main` mediante squash omitiendo `pre`; no se reescribe

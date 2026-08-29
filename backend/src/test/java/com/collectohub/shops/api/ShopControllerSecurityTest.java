@@ -12,7 +12,8 @@ import com.collectohub.shops.application.ShopOwnerCannotBeDeactivatedException;
 import com.collectohub.shops.dto.AddShopMemberRequest;
 import com.collectohub.shops.dto.ChangeShopMemberRoleRequest;
 import com.collectohub.shops.dto.ShopMemberResponse;
-import com.collectohub.shops.dto.ShopResponse;
+import com.collectohub.shops.dto.ManagedShopResponse;
+import com.collectohub.shops.dto.PublicShopResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -132,6 +133,8 @@ class ShopControllerSecurityTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(100))
                 .andExpect(jsonPath("$.name").value("Collector Cave"))
+                .andExpect(jsonPath("$.contactEmail").value("shop@example.com"))
+                .andExpect(jsonPath("$.defaultReservationExpirationHours").value(48))
                 .andExpect(jsonPath("$.currentUserMembership").doesNotExist());
     }
 
@@ -399,8 +402,8 @@ class ShopControllerSecurityTest {
         return jwtService.generateAccessToken(TestSecurityConfiguration.testUser("alice@example.com"));
     }
 
-    private ShopResponse publicShopResponse() {
-        return new ShopResponse(
+    private PublicShopResponse publicShopResponse() {
+        return new PublicShopResponse(
                 100L,
                 "Collector Cave",
                 "Rare items",
@@ -410,17 +413,16 @@ class ShopControllerSecurityTest {
                 "EUR",
                 48,
                 null,
-                "ACTIVE",
-                null
+                "ACTIVE"
         );
     }
 
-    private ShopResponse privateShopResponse() {
+    private ManagedShopResponse privateShopResponse() {
         return privateShopResponse("Collector Cave");
     }
 
-    private ShopResponse privateShopResponse(String name) {
-        return new ShopResponse(
+    private ManagedShopResponse privateShopResponse(String name) {
+        return new ManagedShopResponse(
                 100L,
                 name,
                 "Rare items",

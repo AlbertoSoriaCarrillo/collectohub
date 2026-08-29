@@ -1,5 +1,22 @@
 # Registro de avance
 
+## 2026-08-29 - EPIC 45C-E - Perfil backend y contratos de tienda
+
+- Base verificada `origin/dev=1dd01c25cc8a8679b6e1b486f89888d87a0e5deb`; rama
+  `codex/45c-e-shop-profile-contracts`.
+- Separados `PublicShopResponse` y `ManagedShopResponse`. El contrato publico
+  conserva perfil/contacto de negocio y la expiracion ya consumida por el
+  cliente existente, pero excluye la membership; creacion, listado propio y
+  edicion mantienen los campos de gestion.
+- Conservada y validada la edicion existente para OWNER/MANAGER. Sin frontend,
+  esquema, migraciones ni dependencias.
+- Regresion previa: fallo de compilacion por DTOs inexistentes. Validacion
+  dirigida final: 47 tests, 0 fallos, 0 errores y 0 omitidos. Matriz completa:
+  backend 468 tests, 0 fallos/errores y 4 `SKIPPED_WITH_REASON` por Docker no
+  disponible; frontend 59 archivos/244 tests y build; politica, diff y parser
+  en PASS. E2E/Playwright no ejecutado por exclusion expresa.
+- Estado: `IMPLEMENTED_PENDING_REVIEW`; `NEXT_EPIC=45C-E` hasta integrar la PR.
+
 ## 2026-08-26 - Reconciliacion 45C, ramas y automatizacion
 
 - Working copy canonico configurado localmente mediante
